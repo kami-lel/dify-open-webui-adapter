@@ -20,13 +20,31 @@
 ## [Unreleased]
 
 ### Added
-
-- basic single-round functionality
-
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## [1.0.0] - 2025-09-15
+
+### Added
+
+- basic single-round functionality
 
 
 

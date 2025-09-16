@@ -55,6 +55,7 @@ class Pipe:
     def __init__(self):
         self.valves = self.Valves()
         self.base_url = None
+        self.models = {}
 
     def pipe(self, body):
         self.base_url = self.valves.DIFY_BACKEND_API_BASE_URL
@@ -79,29 +80,38 @@ class Pipe:
                 "fail to get user message from body {}: {}".format(body, err)
             ) from err
 
+        # Extract model id from the model name
+        model_id = body["model"][body["model"].find(".") + 1 :]
+        workflow_id, api_secret_key = self.models[model_id]
+
         if ENABLE_DEBUG:
             debug_lines.append("## user message")
             debug_lines.append(message)
+            debug_lines.append("## model id")
+            debug_lines.append(model_id)
 
         # send request to Dify
-        # fixme use try to catch request error
+        # FIXME use try to catch request error
+        url = self._gen_request_url(workflow_id)
+        headers = self._gen_headers(api_secret_key)
+        payloads = self._build_payload(message, body)
 
         response = requests.post(
-            self._gen_request_url(),
-            headers=self._gen_headers(),
-            data=self._build_payload(message, body),
+            url,
+            headers=headers,
+            data=payloads,
             timeout=REQUEST_TIMEOUT,
         )
         if ENABLE_DEBUG:
             debug_lines.append("## request url")
-            debug_lines.append(self._gen_request_url())
+            debug_lines.append(url)
             debug_lines.append("## headers")
-            debug_lines.append(repr(self._gen_headers()))
+            debug_lines.append(headers)
             debug_lines.append("## payloads")
-            debug_lines.append(repr(self._build_payload(message, body)))
+            debug_lines.append(repr(payloads))
 
         # parse returned data
-        # fixme error handling for non-200 response
+        # FIXME error handling for non-200 response
         content = response.json()
 
         try:
@@ -149,26 +159,27 @@ class Pipe:
         for workflow, key, model, name in zip(workflows, keys, models, names):
             if workflow and key and model:
                 # use model id when model name is not given
-                entry = {"id": model, "name": name or model}
-                opt.append(entry)
+                opt_entry = {"id": model, "name": name or model}
+                opt.append(opt_entry)
+
+                # save model data
+                self.models[model] = [workflow, key]
 
         return opt
 
-    def _gen_request_url(self):
-        workflow_id = self.valves.DIFY_WORKFLOW_ID_1  # HACK
+    def _gen_request_url(self, workflow_id):
         return "{}/workflows/{}/run".format(self.base_url, workflow_id)
 
-    def _gen_headers(self):
-        api_key = self.valves.DIFY_API_KEY_1  # HACK
+    def _gen_headers(self, api_secret_key):
         return {
-            "Authorization": "Bearer {}".format(api_key),
+            "Authorization": "Bearer {}".format(api_secret_key),
             "Content-Type": "application/json",
         }
 
-    def _build_payload(self, message, everything):
+    def _build_payload(self, message, everything_for_debug):
         inputs = {"input": message}
         if ENABLE_DEBUG:
-            inputs["everything"] = repr(everything)
+            inputs["everything_for_debug"] = repr(everything_for_debug)
 
         payload_dict = {
             "inputs": inputs,

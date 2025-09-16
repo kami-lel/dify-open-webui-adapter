@@ -197,7 +197,7 @@ class Pipe:
     def _gen_request_url(self, app_type):
         if app_type == DIFY_APP.WORKFLOW:
             return "{}/workflows/run".format(self.base_url)
-        else:
+        else:  # Chatflow
             return "{}/chat-messages".format(self.base_url)
 
     def _gen_headers(self, api_secret_key, app_type):
@@ -207,6 +207,18 @@ class Pipe:
         }
 
     def _build_payload(self, message, app_type, *, everything_for_debug):
+        if app_type == DIFY_APP.WORKFLOW:
+            payload = self._build_payload_workflow(
+                message, everything_for_debug
+            )
+        else:  # Chatflow
+            payload = self._build_payload_chatflow(
+                message, everything_for_debug
+            )
+
+        return json.dumps(payload)
+
+    def _build_payload_workflow(self, message, everything_for_debug):
         inputs = {"input": message}
         if ENABLE_DEBUG:
             inputs["everything_for_debug"] = repr(everything_for_debug)
@@ -216,4 +228,8 @@ class Pipe:
             "response_mode": "blocking",
             "user": "user",
         }
-        return json.dumps(payload_dict)
+
+        return payload_dict
+
+    def _build_payload_chatflow(self, message, everything_for_debug):
+        return {}  # HACK

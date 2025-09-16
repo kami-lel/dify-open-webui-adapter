@@ -9,7 +9,7 @@ __version__ = "1.0.0-alpha"
 __author__ = "kamiLeL"
 
 
-ENABLE_DEBUG = True
+ENABLE_DEBUG = False
 REQUEST_TIMEOUT = 30
 
 

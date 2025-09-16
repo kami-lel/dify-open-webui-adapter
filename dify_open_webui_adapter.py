@@ -95,17 +95,21 @@ class Pipe:
             debug_lines.append(api_secret_key)
 
         # send request to Dify
-        # FIXME use try to catch request error
         url = self._gen_request_url(workflow_id)
         headers = self._gen_headers(api_secret_key)
         payloads = self._build_payload(message, body)
 
-        response = requests.post(
-            url,
-            headers=headers,
-            data=payloads,
-            timeout=REQUEST_TIMEOUT,
-        )
+        try:
+            response = requests.post(
+                url,
+                headers=headers,
+                data=payloads,
+                timeout=REQUEST_TIMEOUT,
+            )
+        except Exception as err:
+            raise ConnectionError(
+                "fail to request POST:{}".format(err)
+            ) from err
 
         if ENABLE_DEBUG:
             debug_lines.append("## request url")
@@ -116,7 +120,6 @@ class Pipe:
             debug_lines.append(repr(payloads))
 
         # parse returned data
-        # FIXME error handling for non-200 response
         content = response.json()
 
         try:

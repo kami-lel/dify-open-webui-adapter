@@ -11,11 +11,10 @@ __author__ = "kamiLeL"
 
 
 class DIFY_APP(Enum):
-    WORKFLOW = auto()
-    CHATFLOW = auto()
+    WORKFLOW = 0
+    CHATFLOW = 1
 
 
-DIFY_APP_TYPE = DIFY_APP.WORKFLOW
 REQUEST_TIMEOUT = 30
 ENABLE_DEBUG = False
 
@@ -32,6 +31,10 @@ class Pipe:
                 "Dify Backend Service API secret key to access 1st Dify app"
             ),
         )
+        DIFY_APP_TYPE_1: int = Field(
+            default=0,
+            description="type of 1st Dify app, 0=Workflow, 1=Chatflow",
+        )
         OWU_MODEL_ID_1: str = Field(
             default="",
             description="model id as it is used in Open WebUI of 1st Dify app",
@@ -44,9 +47,11 @@ class Pipe:
             ),
         )
         DIFY_API_KEY_2: str = Field(default="")
+        DIFY_APP_TYPE_2: int = Field(default=0)
         OWU_MODEL_ID_2: str = Field(default="")
         OWU_MODEL_NAME_2: str = Field(default="")
         DIFY_API_KEY_3: str = Field(default="")
+        DIFY_APP_TYPE_3: int = Field(default=0)
         OWU_MODEL_ID_3: str = Field(default="")
         OWU_MODEL_NAME_3: str = Field(default="")
 
@@ -80,7 +85,7 @@ class Pipe:
 
         # Extract model id from the model name
         model_id = body["model"][body["model"].find(".") + 1 :]
-        api_secret_key, _ = self.models[model_id]
+        api_secret_key, app_type = self.models[model_id]
 
         if ENABLE_DEBUG:
             debug_lines.append("## user message")
@@ -91,9 +96,11 @@ class Pipe:
             debug_lines.append(api_secret_key)
 
         # send request to Dify
-        url = self._gen_request_url()
-        headers = self._gen_headers(api_secret_key)
-        payloads = self._build_payload(message, body)
+        url = self._gen_request_url(app_type)
+        headers = self._gen_headers(api_secret_key, app_type)
+        payloads = self._build_payload(
+            message, app_type, everything_for_debug=body
+        )
 
         try:
             response = requests.post(
@@ -147,6 +154,11 @@ class Pipe:
             self.valves.DIFY_API_KEY_2,
             self.valves.DIFY_API_KEY_3,
         ]
+        app_types = [
+            self.valves.DIFY_APP_TYPE_1,
+            self.valves.DIFY_APP_TYPE_2,
+            self.valves.DIFY_APP_TYPE_3,
+        ]
         models = [
             self.valves.OWU_MODEL_ID_1,
             self.valves.OWU_MODEL_ID_2,
@@ -159,32 +171,36 @@ class Pipe:
         ]
 
         opt = []
-        # add models only when given: api key, and model id
-        for key, model, name in zip(keys, models, names):
-            if key and model:
+        # add models only when given: api key, app type, and model id
+        for key, app_type, model, name in zip(keys, app_types, models, names):
+            try:  # convert to enum
+                app_type_enum = DIFY_APP(app_type)
+            except ValueError:
+                app_type_enum = None
+
+            if key and app_type_enum and model:
                 # use model id when model name is not given
                 opt_entry = {"id": model, "name": name or model}
                 opt.append(opt_entry)
 
                 # save model data
-                self.models[model] = [key, ""]  # HACK
+                self.models[model] = [key, app_type_enum]
 
         return opt
 
-    def _gen_request_url(self):
-        if DIFY_APP_TYPE == DIFY_APP.CHATFLOW:
-            # FIXME
-            return "{}/chat-messages".format(self.base_url)
-        else:
+    def _gen_request_url(self, app_type):
+        if app_type == DIFY_APP.WORKFLOW:
             return "{}/workflows/run".format(self.base_url)
+        else:
+            return "{}/chat-messages".format(self.base_url)
 
-    def _gen_headers(self, api_secret_key):
+    def _gen_headers(self, api_secret_key, app_type):
         return {
             "Authorization": "Bearer {}".format(api_secret_key),
             "Content-Type": "application/json",
         }
 
-    def _build_payload(self, message, everything_for_debug):
+    def _build_payload(self, message, app_type, *, everything_for_debug):
         inputs = {"input": message}
         if ENABLE_DEBUG:
             inputs["everything_for_debug"] = repr(everything_for_debug)

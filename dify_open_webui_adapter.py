@@ -19,21 +19,38 @@ class Pipe:
             default="https://api.dify.ai/v1",
             description="base URL to access Dify Backend Service API",
         )
-        DIFY_API_KEY: str = Field(
+        DIFY_WORKFLOW_ID_1: str = Field(
             default="",
-            description="secret key to access Dify Backend Service API",
+            description="id of specific version of 1st Dify workflow",
         )
-        DIFY_WORKFLOW_ID: str = Field(
-            default="", description="id of the specific Dify workflow"
+        DIFY_API_KEY_1: str = Field(
+            default="",
+            description=(
+                "Dify Backend Service API secret key "
+                "to access 1st Dify workflow"
+            ),
         )
-        OWU_MODEL_ID: str = Field(
-            default="dify-open-webui-adapter-model",
-            description="model id as it appears in Open WebUI",
+        OWU_MODEL_ID_1: str = Field(
+            default="",
+            description=(
+                "model id as it is used in Open WebUI of 1st Dify workflow"
+            ),
         )
-        OWU_MODEL_NAME: str = Field(
-            default="Dify-Open Webui Adapter Model",
-            description="model name as it appears in Open WebUI",
+        OWU_MODEL_NAME_1: str = Field(
+            default="",
+            description=(
+                "model name as it appears in Open WebUI of 1st Dify workflow,"
+                " optional"
+            ),
         )
+        DIFY_WORKFLOW_ID_2: str = Field(default="")
+        DIFY_API_KEY_2: str = Field(default="")
+        OWU_MODEL_ID_2: str = Field(default="")
+        OWU_MODEL_NAME_2: str = Field(default="")
+        DIFY_WORKFLOW_ID_3: str = Field(default="")
+        DIFY_API_KEY_3: str = Field(default="")
+        OWU_MODEL_ID_3: str = Field(default="")
+        OWU_MODEL_NAME_3: str = Field(default="")
 
     def __init__(self):
         self.valves = self.Valves()
@@ -107,10 +124,36 @@ class Pipe:
             return output
 
     def pipes(self):
-        return [{
-            "id": self.valves.OWU_MODEL_ID,
-            "name": self.valves.OWU_MODEL_NAME,
-        }]
+        workflows = [
+            self.valves.DIFY_WORKFLOW_ID_1,
+            self.valves.DIFY_WORKFLOW_ID_2,
+            self.valves.DIFY_WORKFLOW_ID_2,
+        ]
+        keys = [
+            self.valves.DIFY_API_KEY_1,
+            self.valves.DIFY_API_KEY_2,
+            self.valves.DIFY_API_KEY_3,
+        ]
+        models = [
+            self.valves.OWU_MODEL_ID_1,
+            self.valves.OWU_MODEL_ID_2,
+            self.valves.OWU_MODEL_ID_3,
+        ]
+        names = [
+            self.valves.OWU_MODEL_NAME_1,
+            self.valves.OWU_MODEL_NAME_2,
+            self.valves.OWU_MODEL_NAME_3,
+        ]
+
+        opt = []
+        # add models only when given: workflow id, api key, and model id
+        for workflow, key, model, name in zip(workflows, keys, models, names):
+            if workflow and key and model:
+                # use model id when model name is not given
+                entry = {"id": model, "name": name or model}
+                opt.append[entry]
+
+        return opt
 
     def _gen_request_url(self):
         return "{}/workflows/{}/run".format(self.base_url, self.workflow_id)

@@ -122,8 +122,12 @@ class Pipe:
         }
 
     def _build_payload(self, message, everything):
+        inputs = {"input": message}
+        if ENABLE_DEBUG:
+            inputs["everything"] = repr(everything)
+
         payload_dict = {
-            "inputs": {"input": message, "everything": everything},
+            "inputs": inputs,
             "response_mode": "blocking",
             "user": "user",
         }

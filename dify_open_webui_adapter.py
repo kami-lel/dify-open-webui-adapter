@@ -46,7 +46,26 @@ class Pipe:
         debug_lines = []
 
         # get user's input
-        message = body["messages"][0]["content"]
+        message = ""
+        try:
+            for msg in body["messages"]:
+                if msg["role"] == "user":
+                    message = msg["content"]
+                    break
+
+            if not message:
+                raise ValueError(
+                    "fail to find 'user' after exhausting 'messages'"
+                )
+
+        except (KeyError, IndexError, ValueError) as err:
+            raise ValueError(
+                "fail to get user message from body {}: {}".format(body, err)
+            ) from err
+
+        if ENABLE_DEBUG:
+            debug_lines.append("## user message")
+            debug_lines.append(message)
 
         # send request to Dify
         # FIXME use try to catch request error
@@ -68,7 +87,14 @@ class Pipe:
         # parse returned data
         # FIXME error handling for non-200 response
         content = response.json()
-        output = content["data"]["outputs"]["output"]
+
+        try:
+            output = content["data"]["outputs"]["output"]
+        except (KeyError, IndexError) as err:
+            raise ValueError(
+                "fail to parse response {}: {}".format(content, err)
+            ) from err
+
         if ENABLE_DEBUG:
             debug_lines.append("## response content")
             debug_lines.append(repr(content))

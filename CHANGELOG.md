@@ -21,12 +21,15 @@
 
 ### Added
 
-- allow single adapter to support multiple dify workflows
+- support Dify Chatflow
+- allow single adapter to support multiple Dify apps
 
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
+
+- handle various errors
 
 
 

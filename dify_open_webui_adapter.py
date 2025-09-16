@@ -1,5 +1,6 @@
 # todo docstring for this script
 
+from enum import Enum, auto
 import json
 
 from pydantic import BaseModel, Field
@@ -9,8 +10,14 @@ __version__ = "1.0.1-alpha"
 __author__ = "kamiLeL"
 
 
-ENABLE_DEBUG = False
+class DIFY_APP(Enum):
+    CHATFLOW = auto()
+    WORKFLOW = auto()
+
+
+DIFY_APP_TYPE = DIFY_APP.WORKFLOW
 REQUEST_TIMEOUT = 30
+ENABLE_DEBUG = False
 
 
 class Pipe:
@@ -19,35 +26,32 @@ class Pipe:
             default="https://api.dify.ai/v1",
             description="base URL to access Dify Backend Service API",
         )
-        DIFY_WORKFLOW_ID_1: str = Field(
+        DIFY_APP_ID_1: str = Field(
             default="",
-            description="id of specific version of 1st Dify workflow",
+            description="id of specific version of 1st Dify app",
         )
         DIFY_API_KEY_1: str = Field(
             default="",
             description=(
-                "Dify Backend Service API secret key "
-                "to access 1st Dify workflow"
+                "Dify Backend Service API secret key to access 1st Dify app"
             ),
         )
         OWU_MODEL_ID_1: str = Field(
             default="",
-            description=(
-                "model id as it is used in Open WebUI of 1st Dify workflow"
-            ),
+            description="model id as it is used in Open WebUI of 1st Dify app",
         )
         OWU_MODEL_NAME_1: str = Field(
             default="",
             description=(
-                "model name as it appears in Open WebUI of 1st Dify workflow,"
+                "model name as it appears in Open WebUI of 1st Dify app,"
                 " optional"
             ),
         )
-        DIFY_WORKFLOW_ID_2: str = Field(default="")
+        DIFY_APP_ID_2: str = Field(default="")
         DIFY_API_KEY_2: str = Field(default="")
         OWU_MODEL_ID_2: str = Field(default="")
         OWU_MODEL_NAME_2: str = Field(default="")
-        DIFY_WORKFLOW_ID_3: str = Field(default="")
+        DIFY_APP_ID_3: str = Field(default="")
         DIFY_API_KEY_3: str = Field(default="")
         OWU_MODEL_ID_3: str = Field(default="")
         OWU_MODEL_NAME_3: str = Field(default="")
@@ -82,20 +86,20 @@ class Pipe:
 
         # Extract model id from the model name
         model_id = body["model"][body["model"].find(".") + 1 :]
-        workflow_id, api_secret_key = self.models[model_id]
+        app_id, api_secret_key = self.models[model_id]
 
         if ENABLE_DEBUG:
             debug_lines.append("## user message")
             debug_lines.append(message)
             debug_lines.append("## model id")
             debug_lines.append(model_id)
-            debug_lines.append("## workflow id")
-            debug_lines.append(workflow_id)
+            debug_lines.append("## app id")
+            debug_lines.append(app_id)
             debug_lines.append("## api secret key")
             debug_lines.append(api_secret_key)
 
         # send request to Dify
-        url = self._gen_request_url(workflow_id)
+        url = self._gen_request_url(app_id)
         headers = self._gen_headers(api_secret_key)
         payloads = self._build_payload(message, body)
 
@@ -141,10 +145,10 @@ class Pipe:
             return output
 
     def pipes(self):
-        workflows = [
-            self.valves.DIFY_WORKFLOW_ID_1,
-            self.valves.DIFY_WORKFLOW_ID_2,
-            self.valves.DIFY_WORKFLOW_ID_2,
+        apps = [
+            self.valves.DIFY_APP_ID_1,
+            self.valves.DIFY_APP_ID_2,
+            self.valves.DIFY_APP_ID_2,
         ]
         keys = [
             self.valves.DIFY_API_KEY_1,
@@ -163,20 +167,20 @@ class Pipe:
         ]
 
         opt = []
-        # add models only when given: workflow id, api key, and model id
-        for workflow, key, model, name in zip(workflows, keys, models, names):
-            if workflow and key and model:
+        # add models only when given: app id, api key, and model id
+        for app, key, model, name in zip(apps, keys, models, names):
+            if app and key and model:
                 # use model id when model name is not given
                 opt_entry = {"id": model, "name": name or model}
                 opt.append(opt_entry)
 
                 # save model data
-                self.models[model] = [workflow, key]
+                self.models[model] = [app, key]
 
         return opt
 
-    def _gen_request_url(self, workflow_id):
-        return "{}/workflows/{}/run".format(self.base_url, workflow_id)
+    def _gen_request_url(self, app_id):
+        return "{}/workflows/{}/run".format(self.base_url, app_id)
 
     def _gen_headers(self, api_secret_key):
         return {

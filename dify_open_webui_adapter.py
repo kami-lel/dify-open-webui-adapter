@@ -193,6 +193,8 @@ class Pipe:
 
         return opt
 
+    # generate and build request  ##############################################
+
     def _gen_request_url(self, app_type):
         if app_type == DIFY_APP.WORKFLOW:
             return "{}/workflows/run".format(self.base_url)
@@ -221,6 +223,18 @@ class Pipe:
 
         return json.dumps(payload)
 
+    def _extract_output(
+        self, model_id, response_json, app_type, conversation_id
+    ):
+        if app_type == DIFY_APP.WORKFLOW:
+            return self._extract_output_workflow(response_json)
+        else:  # chatflow
+            return self._extract_output_chatflow(
+                model_id, response_json, conversation_id
+            )
+
+    # Workflow specific  #######################################################
+
     def _build_payload_workflow(self, message, everything_for_debug):
         inputs = {"input": message}
         if ENABLE_DEBUG:
@@ -233,6 +247,18 @@ class Pipe:
         }
 
         return payload_dict
+
+    def _extract_output_workflow(self, response_json):
+        try:
+            output = response_json["data"]["outputs"]["output"]
+        except (KeyError, IndexError) as err:
+            raise ValueError(
+                "fail to parse response {}: {}".format(response_json, err)
+            ) from err
+
+        return output
+
+    # Chatflow specific  #######################################################
 
     def _build_payload_chatflow(
         self, message, conversation_id, everything_for_debug
@@ -247,27 +273,8 @@ class Pipe:
             "response_mode": "blocking",
             "conversation_id": conversation_id,
             "user": USER_ROLE,
+            "auto_generate_name": False,
         }
-
-    def _extract_output(
-        self, model_id, response_json, app_type, conversation_id
-    ):
-        if app_type == DIFY_APP.WORKFLOW:
-            return self._extract_output_workflow(response_json)
-        else:  # chatflow
-            return self._extract_output_chatflow(
-                model_id, response_json, conversation_id
-            )
-
-    def _extract_output_workflow(self, response_json):
-        try:
-            output = response_json["data"]["outputs"]["output"]
-        except (KeyError, IndexError) as err:
-            raise ValueError(
-                "fail to parse response {}: {}".format(response_json, err)
-            ) from err
-
-        return output
 
     def _extract_output_chatflow(
         self, model_id, response_json, saved_conversation_id

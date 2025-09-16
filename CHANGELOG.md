@@ -20,6 +20,9 @@
 ## [Unreleased]
 
 ### Added
+
+- allow single adapter to support multiple dify workflows
+
 ### Changed
 ### Deprecated
 ### Removed

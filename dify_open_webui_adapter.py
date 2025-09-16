@@ -54,11 +54,10 @@ class Pipe:
 
     def __init__(self):
         self.valves = self.Valves()
+        self.base_url = None
 
     def pipe(self, body):
         self.base_url = self.valves.DIFY_BACKEND_API_BASE_URL
-        self.api_key = self.valves.DIFY_API_KEY
-        self.workflow_id = self.valves.DIFY_WORKFLOW_ID
 
         debug_lines = []
 
@@ -151,16 +150,18 @@ class Pipe:
             if workflow and key and model:
                 # use model id when model name is not given
                 entry = {"id": model, "name": name or model}
-                opt.append[entry]
+                opt.append(entry)
 
         return opt
 
     def _gen_request_url(self):
-        return "{}/workflows/{}/run".format(self.base_url, self.workflow_id)
+        workflow_id = self.valves.DIFY_WORKFLOW_ID_1  # HACK
+        return "{}/workflows/{}/run".format(self.base_url, workflow_id)
 
     def _gen_headers(self):
+        api_key = self.valves.DIFY_API_KEY_1  # HACK
         return {
-            "Authorization": "Bearer {}".format(self.api_key),
+            "Authorization": "Bearer {}".format(api_key),
             "Content-Type": "application/json",
         }
 

@@ -5,7 +5,7 @@ import json
 from pydantic import BaseModel, Field
 import requests
 
-__version__ = "1.0.0"
+__version__ = "1.0.1-alpha"
 __author__ = "kamiLeL"
 
 

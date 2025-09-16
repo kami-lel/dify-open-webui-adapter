@@ -26,10 +26,6 @@ class Pipe:
             default="https://api.dify.ai/v1",
             description="base URL to access Dify Backend Service API",
         )
-        DIFY_APP_ID_1: str = Field(
-            default="",
-            description="id of specific version of 1st Dify app",
-        )
         DIFY_API_KEY_1: str = Field(
             default="",
             description=(
@@ -47,11 +43,9 @@ class Pipe:
                 " optional"
             ),
         )
-        DIFY_APP_ID_2: str = Field(default="")
         DIFY_API_KEY_2: str = Field(default="")
         OWU_MODEL_ID_2: str = Field(default="")
         OWU_MODEL_NAME_2: str = Field(default="")
-        DIFY_APP_ID_3: str = Field(default="")
         DIFY_API_KEY_3: str = Field(default="")
         OWU_MODEL_ID_3: str = Field(default="")
         OWU_MODEL_NAME_3: str = Field(default="")
@@ -86,20 +80,18 @@ class Pipe:
 
         # Extract model id from the model name
         model_id = body["model"][body["model"].find(".") + 1 :]
-        app_id, api_secret_key = self.models[model_id]
+        api_secret_key, _ = self.models[model_id]
 
         if ENABLE_DEBUG:
             debug_lines.append("## user message")
             debug_lines.append(message)
             debug_lines.append("## model id")
             debug_lines.append(model_id)
-            debug_lines.append("## app id")
-            debug_lines.append(app_id)
             debug_lines.append("## api secret key")
             debug_lines.append(api_secret_key)
 
         # send request to Dify
-        url = self._gen_request_url(app_id)
+        url = self._gen_request_url()
         headers = self._gen_headers(api_secret_key)
         payloads = self._build_payload(message, body)
 
@@ -126,6 +118,13 @@ class Pipe:
         # parse returned data
         content = response.json()
 
+        if ENABLE_DEBUG:
+            debug_lines.append("## response content")
+            debug_lines.append(repr(content))
+
+        if ENABLE_DEBUG:  # HACK
+            return "\n".join(debug_lines)
+
         try:
             output = content["data"]["outputs"]["output"]
         except (KeyError, IndexError) as err:
@@ -134,8 +133,6 @@ class Pipe:
             ) from err
 
         if ENABLE_DEBUG:
-            debug_lines.append("## response content")
-            debug_lines.append(repr(content))
             debug_lines.append("\n\n----\n\n\n")
             debug_lines.append(output)
 
@@ -145,11 +142,6 @@ class Pipe:
             return output
 
     def pipes(self):
-        apps = [
-            self.valves.DIFY_APP_ID_1,
-            self.valves.DIFY_APP_ID_2,
-            self.valves.DIFY_APP_ID_2,
-        ]
         keys = [
             self.valves.DIFY_API_KEY_1,
             self.valves.DIFY_API_KEY_2,
@@ -167,24 +159,24 @@ class Pipe:
         ]
 
         opt = []
-        # add models only when given: app id, api key, and model id
-        for app, key, model, name in zip(apps, keys, models, names):
-            if app and key and model:
+        # add models only when given: api key, and model id
+        for key, model, name in zip(keys, models, names):
+            if key and model:
                 # use model id when model name is not given
                 opt_entry = {"id": model, "name": name or model}
                 opt.append(opt_entry)
 
                 # save model data
-                self.models[model] = [app, key]
+                self.models[model] = [key, ""]  # HACK
 
         return opt
 
-    def _gen_request_url(self, app_id):
+    def _gen_request_url(self):
         if DIFY_APP_TYPE == DIFY_APP.CHATFLOW:
-            return "{}/workflows/{}/run".format(self.base_url, app_id)
-        else:
             # FIXME
             return "{}/chat-messages".format(self.base_url)
+        else:
+            return "{}/workflows/run".format(self.base_url)
 
     def _gen_headers(self, api_secret_key):
         return {

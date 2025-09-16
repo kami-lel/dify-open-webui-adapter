@@ -20,6 +20,9 @@
 ## [Unreleased]
 
 ### Added
+
+- basic single-round functionality
+
 ### Changed
 ### Deprecated
 ### Removed

@@ -5,7 +5,7 @@ import json
 from pydantic import BaseModel, Field
 import requests
 
-__version__ = "1.0.0-alpha"
+__version__ = "1.0.0"
 __author__ = "kamiLeL"
 
 
@@ -68,7 +68,7 @@ class Pipe:
             debug_lines.append(message)
 
         # send request to Dify
-        # FIXME use try to catch request error
+        # fixme use try to catch request error
 
         response = requests.post(
             self._gen_request_url(),
@@ -85,7 +85,7 @@ class Pipe:
             debug_lines.append(repr(self._build_payload(message, body)))
 
         # parse returned data
-        # FIXME error handling for non-200 response
+        # fixme error handling for non-200 response
         content = response.json()
 
         try:

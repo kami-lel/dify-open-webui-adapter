@@ -89,6 +89,10 @@ class Pipe:
             debug_lines.append(message)
             debug_lines.append("## model id")
             debug_lines.append(model_id)
+            debug_lines.append("## workflow id")
+            debug_lines.append(workflow_id)
+            debug_lines.append("## api secret key")
+            debug_lines.append(api_secret_key)
 
         # send request to Dify
         # FIXME use try to catch request error
@@ -102,11 +106,12 @@ class Pipe:
             data=payloads,
             timeout=REQUEST_TIMEOUT,
         )
+
         if ENABLE_DEBUG:
             debug_lines.append("## request url")
             debug_lines.append(url)
             debug_lines.append("## headers")
-            debug_lines.append(headers)
+            debug_lines.append(repr(headers))
             debug_lines.append("## payloads")
             debug_lines.append(repr(payloads))
 
@@ -124,10 +129,10 @@ class Pipe:
         if ENABLE_DEBUG:
             debug_lines.append("## response content")
             debug_lines.append(repr(content))
-
-        if ENABLE_DEBUG:
             debug_lines.append("\n\n----\n\n\n")
             debug_lines.append(output)
+
+        if ENABLE_DEBUG:
             return "\n".join(debug_lines)
         else:
             return output

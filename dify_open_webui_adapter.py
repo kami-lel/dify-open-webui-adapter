@@ -1,16 +1,24 @@
 # todo docstring for this script
+# bug chatflow not working
 
+from enum import Enum
 import json
 
 from pydantic import BaseModel, Field
 import requests
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "kamiLeL"
 
 
-ENABLE_DEBUG = False
+class DIFY_APP(Enum):
+    WORKFLOW = 0
+    CHATFLOW = 1
+
+
 REQUEST_TIMEOUT = 30
+USER_ROLE = "user"
+ENABLE_DEBUG = False
 
 
 class Pipe:
@@ -19,33 +27,53 @@ class Pipe:
             default="https://api.dify.ai/v1",
             description="base URL to access Dify Backend Service API",
         )
-        DIFY_API_KEY: str = Field(
+        # settings for 1st Dify App  -------------------------------------------
+        DIFY_API_KEY_1: str = Field(
             default="",
-            description="secret key to access Dify Backend Service API",
+            description=(
+                "Dify Backend Service API secret key to access 1st Dify app"
+            ),
         )
-        DIFY_WORKFLOW_ID: str = Field(
-            default="", description="id of the specific Dify workflow"
+        DIFY_APP_TYPE_1: int = Field(
+            default=0,
+            description="type of 1st Dify app, 0=Workflow, 1=Chatflow",
         )
-        OWU_MODEL_ID: str = Field(
-            default="dify-open-webui-adapter-model",
-            description="model id as it appears in Open WebUI",
+        OWU_MODEL_ID_1: str = Field(
+            default="",
+            description="model id as it is used in Open WebUI of 1st Dify app",
         )
-        OWU_MODEL_NAME: str = Field(
-            default="Dify-Open Webui Adapter Model",
-            description="model name as it appears in Open WebUI",
+        OWU_MODEL_NAME_1: str = Field(
+            default="",
+            description=(
+                "model name as it appears in Open WebUI of 1st Dify app,"
+                " optional"
+            ),
         )
+
+        # settings for 2nd Dify App  -------------------------------------------
+        DIFY_API_KEY_2: str = Field(default="")
+        DIFY_APP_TYPE_2: int = Field(default=0)
+        OWU_MODEL_ID_2: str = Field(default="")
+        OWU_MODEL_NAME_2: str = Field(default="")
+
+        # settings for 3rd Dify App  -------------------------------------------
+        DIFY_API_KEY_3: str = Field(default="")
+        DIFY_APP_TYPE_3: int = Field(default=0)
+        OWU_MODEL_ID_3: str = Field(default="")
+        OWU_MODEL_NAME_3: str = Field(default="")
 
     def __init__(self):
         self.valves = self.Valves()
+        self.base_url = None
+        self.model_data = {}  # locally saving model-related data
+        self.debug_lines = []
 
     def pipe(self, body):
         self.base_url = self.valves.DIFY_BACKEND_API_BASE_URL
-        self.api_key = self.valves.DIFY_API_KEY
-        self.workflow_id = self.valves.DIFY_WORKFLOW_ID
 
-        debug_lines = []
+        self.debug_lines = []
 
-        # get user's input
+        # retrieve user input  -------------------------------------------------
         message = ""
         try:
             for msg in body["messages"]:
@@ -63,72 +91,214 @@ class Pipe:
                 "fail to get user message from body {}: {}".format(body, err)
             ) from err
 
+        # Extract model id from the model name
+        model_id = body["model"][body["model"].find(".") + 1 :]
+        api_secret_key, app_type, conversation_id = self.model_data[model_id]
+
         if ENABLE_DEBUG:
-            debug_lines.append("## user message")
-            debug_lines.append(message)
+            self.debug_lines.append("## body")
+            self.debug_lines.append(repr(body))
+            self.debug_lines.append("## user message")
+            self.debug_lines.append(message)
+            self.debug_lines.append("## model id")
+            self.debug_lines.append(model_id)
+            self.debug_lines.append("## api secret key")
+            self.debug_lines.append(api_secret_key)
+            self.debug_lines.append("## conversation id")
+            self.debug_lines.append(conversation_id)
 
-        # send request to Dify
-        # fixme use try to catch request error
-
-        response = requests.post(
-            self._gen_request_url(),
-            headers=self._gen_headers(),
-            data=self._build_payload(message, body),
-            timeout=REQUEST_TIMEOUT,
+        # send request to Dify  ------------------------------------------------
+        url = self._gen_request_url(app_type)
+        headers = self._gen_headers(api_secret_key, app_type)
+        payloads = self._build_payload(
+            message, app_type, conversation_id, everything_for_debug=body
         )
-        if ENABLE_DEBUG:
-            debug_lines.append("## request url")
-            debug_lines.append(self._gen_request_url())
-            debug_lines.append("## headers")
-            debug_lines.append(repr(self._gen_headers()))
-            debug_lines.append("## payloads")
-            debug_lines.append(repr(self._build_payload(message, body)))
-
-        # parse returned data
-        # fixme error handling for non-200 response
-        content = response.json()
 
         try:
-            output = content["data"]["outputs"]["output"]
-        except (KeyError, IndexError) as err:
-            raise ValueError(
-                "fail to parse response {}: {}".format(content, err)
+            response_json = requests.post(
+                url,
+                headers=headers,
+                data=payloads,
+                timeout=REQUEST_TIMEOUT,
+            )
+        except Exception as err:
+            raise ConnectionError(
+                "fail to request POST:{}".format(err)
             ) from err
 
         if ENABLE_DEBUG:
-            debug_lines.append("## response content")
-            debug_lines.append(repr(content))
+            self.debug_lines.append("## request url")
+            self.debug_lines.append(url)
+            self.debug_lines.append("## headers")
+            self.debug_lines.append(str(headers))
+            self.debug_lines.append("## payloads")
+            self.debug_lines.append(str(payloads))
+
+        # output  --------------------------------------------------------------
+        response_json = response_json.json()
 
         if ENABLE_DEBUG:
-            debug_lines.append("\n\n----\n\n\n")
-            debug_lines.append(output)
-            return "\n".join(debug_lines)
+            self.debug_lines.append("## response content")
+            self.debug_lines.append(repr(response_json))
+
+        output = self._extract_output(
+            model_id, response_json, app_type, conversation_id
+        )
+
+        if ENABLE_DEBUG:
+            self.debug_lines.append("\n\n----\n\n\n")
+            self.debug_lines.append(output)
+
+        if ENABLE_DEBUG:
+            return "\n".join(self.debug_lines)
         else:
             return output
 
     def pipes(self):
-        return [{
-            "id": self.valves.OWU_MODEL_ID,
-            "name": self.valves.OWU_MODEL_NAME,
-        }]
+        keys = [
+            self.valves.DIFY_API_KEY_1,
+            self.valves.DIFY_API_KEY_2,
+            self.valves.DIFY_API_KEY_3,
+        ]
+        app_types = [
+            self.valves.DIFY_APP_TYPE_1,
+            self.valves.DIFY_APP_TYPE_2,
+            self.valves.DIFY_APP_TYPE_3,
+        ]
+        models = [
+            self.valves.OWU_MODEL_ID_1,
+            self.valves.OWU_MODEL_ID_2,
+            self.valves.OWU_MODEL_ID_3,
+        ]
+        names = [
+            self.valves.OWU_MODEL_NAME_1,
+            self.valves.OWU_MODEL_NAME_2,
+            self.valves.OWU_MODEL_NAME_3,
+        ]
 
-    def _gen_request_url(self):
-        return "{}/workflows/{}/run".format(self.base_url, self.workflow_id)
+        opt = []
+        # add models only when given: api key, app type, and model id
+        for key, app_type, model, name in zip(keys, app_types, models, names):
+            try:  # convert to enum
+                app_type_enum = DIFY_APP(app_type)
+            except ValueError:
+                app_type_enum = None
 
-    def _gen_headers(self):
+            if key and app_type_enum and model:
+                # use model id when model name is not given
+                opt_entry = {"id": model, "name": name or model}
+                opt.append(opt_entry)
+
+                # save model data
+                self.model_data[model] = [key, app_type_enum, ""]
+
+        return opt
+
+    # generate and build request  ##############################################
+
+    def _gen_request_url(self, app_type):
+        if app_type == DIFY_APP.WORKFLOW:
+            return "{}/workflows/run".format(self.base_url)
+        else:  # Chatflow
+            return "{}/chat-messages".format(self.base_url)
+
+    def _gen_headers(self, api_secret_key, app_type):
         return {
-            "Authorization": "Bearer {}".format(self.api_key),
+            "Authorization": "Bearer {}".format(api_secret_key),
             "Content-Type": "application/json",
         }
 
-    def _build_payload(self, message, everything):
+    def _build_payload(
+        self, message, app_type, conversation_id, *, everything_for_debug
+    ):
+        everything_for_debug = str(everything_for_debug)
+
+        if app_type == DIFY_APP.WORKFLOW:
+            payload = self._build_payload_workflow(
+                message, everything_for_debug
+            )
+        else:  # Chatflow
+            payload = self._build_payload_chatflow(
+                message, conversation_id, everything_for_debug
+            )
+
+        return json.dumps(payload)
+
+    def _extract_output(
+        self, model_id, response_json, app_type, conversation_id
+    ):
+        if app_type == DIFY_APP.WORKFLOW:
+            return self._extract_output_workflow(response_json)
+        else:  # chatflow
+            return self._extract_output_chatflow(
+                model_id, response_json, conversation_id
+            )
+
+    # Workflow specific  #######################################################
+
+    def _build_payload_workflow(self, message, everything_for_debug):
         inputs = {"input": message}
         if ENABLE_DEBUG:
-            inputs["everything"] = repr(everything)
+            inputs["everything_for_debug"] = everything_for_debug
 
         payload_dict = {
             "inputs": inputs,
             "response_mode": "blocking",
-            "user": "user",
+            "user": USER_ROLE,
         }
-        return json.dumps(payload_dict)
+
+        return payload_dict
+
+    def _extract_output_workflow(self, response_json):
+        try:
+            output = response_json["data"]["outputs"]["output"]
+        except (KeyError, IndexError) as err:
+            raise ValueError(
+                "fail to parse response {}: {}".format(response_json, err)
+            ) from err
+
+        return output
+
+    # Chatflow specific  #######################################################
+
+    def _build_payload_chatflow(
+        self, message, conversation_id, everything_for_debug
+    ):
+        inputs = {}
+        if ENABLE_DEBUG:
+            inputs["everything_for_debug"] = everything_for_debug
+
+        return {
+            "inputs": inputs,
+            "query": message,
+            "response_mode": "blocking",
+            "conversation_id": conversation_id,
+            "user": USER_ROLE,
+            "auto_generate_name": False,
+        }
+
+    def _extract_output_chatflow(
+        self, model_id, response_json, saved_conversation_id
+    ):
+        try:
+            output = response_json["answer"]
+
+            # save returned conversation idea for future rounds
+            if not saved_conversation_id:
+                conversation_id = response_json["conversation_id"]
+                self.model_data[model_id][2] = conversation_id
+
+                if ENABLE_DEBUG:
+                    conversation_id = response_json["conversation_id"]
+                    self.model_data[model_id][2] = conversation_id
+                    self.debug_lines.append("## returned conversation id")
+                    self.debug_lines.append(conversation_id)
+
+        except (KeyError, IndexError) as err:
+            raise ValueError(
+                "fail to parse chatflow response {}: {}".format(
+                    response_json, err
+                )
+            ) from err
+
+        return output

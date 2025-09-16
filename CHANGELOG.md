@@ -20,13 +20,33 @@
 ## [Unreleased]
 
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## [1.1.0] - 2025-09-15
+
+### Added
 
 - support Dify Chatflow
 - allow single adapter to support multiple Dify apps
 
-### Changed
-### Deprecated
-### Removed
 ### Fixed
 
 - handle various errors
@@ -64,7 +84,8 @@
 
 
 
-[unreleased]: https://github.com/kami-lel/kami-log-py/compare/v1.0.0...dev
+[unreleased]: https://github.com/kami-lel/kami-log-py/compare/v1.1.0...dev
+[1.1.0]: https://github.com/kami-lel/kami-log-py/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/kami-lel/kami-log-py/releases/tag/v1.0.0
 
 

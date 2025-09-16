@@ -25,6 +25,14 @@ class Pipe:
         DIFY_WORKFLOW_ID: str = Field(
             default="", description="id of the specific Dify workflow"
         )
+        OWU_MODEL_ID: str = Field(
+            default="dify-open-webui-adapter-model",
+            description="model id as it appears in Open WebUI",
+        )
+        OWU_MODEL_NAME: str = Field(
+            default="Dify-Open Webui Adapter Model",
+            description="model name as it appears in Open WebUI",
+        )
 
     def __init__(self):
         self.valves = self.Valves()
@@ -52,6 +60,12 @@ class Pipe:
         content = response.json()
         output = content["data"]["outputs"]["output"]
         return output
+
+    def pipes(self):
+        return [{
+            "id": self.valves.OWU_MODEL_ID,
+            "name": self.valves.OWU_MODEL_NAME,
+        }]
 
     def _gen_request_url(self):
         return "{}/workflows/{}/run".format(self.base_url, self.workflow_id)

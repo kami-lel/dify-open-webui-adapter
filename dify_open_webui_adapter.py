@@ -11,8 +11,8 @@ __author__ = "kamiLeL"
 
 
 class DIFY_APP(Enum):
-    CHATFLOW = auto()
     WORKFLOW = auto()
+    CHATFLOW = auto()
 
 
 DIFY_APP_TYPE = DIFY_APP.WORKFLOW
@@ -180,7 +180,11 @@ class Pipe:
         return opt
 
     def _gen_request_url(self, app_id):
-        return "{}/workflows/{}/run".format(self.base_url, app_id)
+        if DIFY_APP_TYPE == DIFY_APP.CHATFLOW:
+            return "{}/workflows/{}/run".format(self.base_url, app_id)
+        else:
+            # FIXME
+            return "{}/chat-messages".format(self.base_url)
 
     def _gen_headers(self, api_secret_key):
         return {

@@ -1,6 +1,6 @@
 # todo docstring for this script
 
-from enum import Enum, auto
+from enum import Enum
 import json
 
 from pydantic import BaseModel, Field
@@ -25,6 +25,7 @@ class Pipe:
             default="https://api.dify.ai/v1",
             description="base URL to access Dify Backend Service API",
         )
+        # settings for 1st Dify App  -------------------------------------------
         DIFY_API_KEY_1: str = Field(
             default="",
             description=(
@@ -46,10 +47,14 @@ class Pipe:
                 " optional"
             ),
         )
+
+        # settings for 2nd Dify App  -------------------------------------------
         DIFY_API_KEY_2: str = Field(default="")
         DIFY_APP_TYPE_2: int = Field(default=0)
         OWU_MODEL_ID_2: str = Field(default="")
         OWU_MODEL_NAME_2: str = Field(default="")
+
+        # settings for 3rd Dify App  -------------------------------------------
         DIFY_API_KEY_3: str = Field(default="")
         DIFY_APP_TYPE_3: int = Field(default=0)
         OWU_MODEL_ID_3: str = Field(default="")
@@ -58,14 +63,14 @@ class Pipe:
     def __init__(self):
         self.valves = self.Valves()
         self.base_url = None
-        self.models = {}
+        self.model_data = {}  # locally saving model-related data
 
     def pipe(self, body):
         self.base_url = self.valves.DIFY_BACKEND_API_BASE_URL
 
         debug_lines = []
 
-        # get user's input
+        # retrieve user input  -------------------------------------------------
         message = ""
         try:
             for msg in body["messages"]:
@@ -85,7 +90,7 @@ class Pipe:
 
         # Extract model id from the model name
         model_id = body["model"][body["model"].find(".") + 1 :]
-        api_secret_key, app_type = self.models[model_id]
+        api_secret_key, app_type = self.model_data[model_id]
 
         if ENABLE_DEBUG:
             debug_lines.append("## user message")
@@ -95,7 +100,7 @@ class Pipe:
             debug_lines.append("## api secret key")
             debug_lines.append(api_secret_key)
 
-        # send request to Dify
+        # send request to Dify  ------------------------------------------------
         url = self._gen_request_url(app_type)
         headers = self._gen_headers(api_secret_key, app_type)
         payloads = self._build_payload(
@@ -122,7 +127,7 @@ class Pipe:
             debug_lines.append("## payloads")
             debug_lines.append(repr(payloads))
 
-        # parse returned data
+        # parse returned data  -------------------------------------------------
         content = response.json()
 
         if ENABLE_DEBUG:
@@ -139,6 +144,7 @@ class Pipe:
                 "fail to parse response {}: {}".format(content, err)
             ) from err
 
+        # output  --------------------------------------------------------------
         if ENABLE_DEBUG:
             debug_lines.append("\n\n----\n\n\n")
             debug_lines.append(output)
@@ -184,7 +190,7 @@ class Pipe:
                 opt.append(opt_entry)
 
                 # save model data
-                self.models[model] = [key, app_type_enum]
+                self.model_data[model] = [key, app_type_enum]
 
         return opt
 

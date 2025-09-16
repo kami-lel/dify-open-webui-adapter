@@ -1,4 +1,5 @@
 # todo docstring for this script
+# bug chatflow not working
 
 from enum import Enum
 import json
@@ -6,7 +7,7 @@ import json
 from pydantic import BaseModel, Field
 import requests
 
-__version__ = "1.0.1-alpha"
+__version__ = "1.1.0"
 __author__ = "kamiLeL"
 
 
@@ -17,7 +18,7 @@ class DIFY_APP(Enum):
 
 REQUEST_TIMEOUT = 30
 USER_ROLE = "user"
-ENABLE_DEBUG = True  # HACK
+ENABLE_DEBUG = False
 
 
 class Pipe:
@@ -286,6 +287,12 @@ class Pipe:
             if not saved_conversation_id:
                 conversation_id = response_json["conversation_id"]
                 self.model_data[model_id][2] = conversation_id
+
+                if ENABLE_DEBUG:
+                    conversation_id = response_json["conversation_id"]
+                    self.model_data[model_id][2] = conversation_id
+                    self.debug_lines.append("## returned conversation id")
+                    self.debug_lines.append(conversation_id)
 
         except (KeyError, IndexError) as err:
             raise ValueError(

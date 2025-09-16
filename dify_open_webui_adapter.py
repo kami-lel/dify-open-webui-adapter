@@ -9,6 +9,7 @@ __version__ = "1.0.0-alpha"
 __author__ = "kamiLeL"
 
 
+ENABLE_DEBUG = True
 REQUEST_TIMEOUT = 30
 
 
@@ -42,6 +43,8 @@ class Pipe:
         self.api_key = self.valves.DIFY_API_KEY
         self.workflow_id = self.valves.DIFY_WORKFLOW_ID
 
+        debug_lines = []
+
         # get user's input
         message = body["messages"][0]["content"]
 
@@ -51,15 +54,31 @@ class Pipe:
         response = requests.post(
             self._gen_request_url(),
             headers=self._gen_headers(),
-            data=self._build_payload(message),
+            data=self._build_payload(message, body),
             timeout=REQUEST_TIMEOUT,
         )
+        if ENABLE_DEBUG:
+            debug_lines.append("## request url")
+            debug_lines.append(self._gen_request_url())
+            debug_lines.append("## headers")
+            debug_lines.append(repr(self._gen_headers()))
+            debug_lines.append("## payloads")
+            debug_lines.append(repr(self._build_payload(message, body)))
 
         # parse returned data
         # FIXME error handling for non-200 response
         content = response.json()
         output = content["data"]["outputs"]["output"]
-        return output
+        if ENABLE_DEBUG:
+            debug_lines.append("## response content")
+            debug_lines.append(repr(content))
+
+        if ENABLE_DEBUG:
+            debug_lines.append("\n\n----\n\n\n")
+            debug_lines.append(output)
+            return "\n".join(debug_lines)
+        else:
+            return output
 
     def pipes(self):
         return [{
@@ -76,9 +95,9 @@ class Pipe:
             "Content-Type": "application/json",
         }
 
-    def _build_payload(self, message):
+    def _build_payload(self, message, everything):
         payload_dict = {
-            "inputs": {"input": message},
+            "inputs": {"input": message, "everything": everything},
             "response_mode": "blocking",
             "user": "user",
         }

@@ -1,5 +1,5 @@
 # todo docstring for this script
-# bug chatflow not working
+# BUG chatflow not working, only 1st message is repeated sent
 
 from enum import Enum
 import json

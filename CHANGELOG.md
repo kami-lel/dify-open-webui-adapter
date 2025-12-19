@@ -20,6 +20,9 @@
 ## [Unreleased]
 
 ### Added
+
+- use hooks-utility as Git Submodule
+
 ### Changed
 ### Deprecated
 ### Removed

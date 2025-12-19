@@ -12,7 +12,7 @@ __version__ = "1.1.1-alpha"
 __author__ = "kamiLeL"
 
 
-class DIFY_APP_TYPE_ENUM(Enum):
+class DIFY_APP_TYPE_ENUM(Enum):  # pylint: disable=missing-class-docstring
     WORKFLOW = 0
     CHATFLOW = 1
 
@@ -22,8 +22,8 @@ USER_ROLE = "user"
 ENABLE_DEBUG = False
 
 
-class Pipe:
-    class Valves(BaseModel):
+class Pipe:  # pylint: disable=missing-class-docstring
+    class Valves(BaseModel):  # pylint: disable=missing-class-docstring
         DIFY_BACKEND_API_BASE_URL: str = Field(
             default="https://api.dify.ai/v1",
             description="base URL to access Dify Backend Service API",
@@ -56,7 +56,7 @@ class Pipe:
         self.model_data = {}  # locally saving model-related data
         self.debug_lines = []
 
-    def pipe(self, body):
+    def pipe(self, body):  # pylint: disable=missing-function-docstring
         self.base_url = self.valves.DIFY_BACKEND_API_BASE_URL
 
         self.debug_lines = []
@@ -142,7 +142,7 @@ class Pipe:
         else:
             return output
 
-    def pipes(self):
+    def pipes(self):  # pylint: disable=missing-function-docstring
         keys = [
             self.valves.DIFY_API_KEY,
             self.valves.DIFY_API_KEY_2,
@@ -190,7 +190,7 @@ class Pipe:
         else:  # Chatflow
             return "{}/chat-messages".format(self.base_url)
 
-    def _gen_headers(self, api_secret_key, app_type):
+    def _gen_headers(self, api_secret_key, _):
         return {
             "Authorization": "Bearer {}".format(api_secret_key),
             "Content-Type": "application/json",

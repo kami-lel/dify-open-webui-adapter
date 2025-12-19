@@ -41,13 +41,11 @@ class Pipe:  # pylint: disable=missing-class-docstring
         )
         OWU_MODEL_ID: str = Field(
             default="",
-            description="model id as it is used in Open WebUI of Dify app",
+            description="model id as it is used in Open WebUI",
         )
         OWU_MODEL_NAME: str = Field(
             default="",
-            description=(
-                "model name as it appears in Open WebUI of Dify app, optional"
-            ),
+            description="model name as it appears in Open WebUI, optional",
         )
 
     def __init__(self):

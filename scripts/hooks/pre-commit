@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# shellcheck source=/dev/null
+source "$(dirname "${BASH_SOURCE[0]}")/../hooks_utility/hooks_utility.sh"
+
+echo "pre-commit" | hooks_utility_enter
+
+# perform branch protection
+hooks_utility_protect_branch
+
+# ensure file modification  ----------------------------------------------------
+
+# make sure CHANGELOG.md is edited when finish feature branch
+hooks_utility_ensure_changelog_edited 'CHANGELOG.md'
+
+# make sure version is bumped when finish feature branch
+version_line_pattern='^__version__ *= *"[0-9.]+"$'
+hooks_utility_ensure_version_updated 'dify_open_webui_adapter.py' \
+    "${version_line_pattern}"
+
+echo "pre-commit" | hooks_utility_pass
+
+exit 0

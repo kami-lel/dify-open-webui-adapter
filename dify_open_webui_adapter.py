@@ -1,6 +1,5 @@
 # Todo docstring for this script
 # Bug chatflow not working, only 1st message is repeated sent
-# Fixme dont use 3 pipes
 
 from enum import Enum
 import json
@@ -143,26 +142,11 @@ class Pipe:  # pylint: disable=missing-class-docstring
             return output
 
     def pipes(self):  # pylint: disable=missing-function-docstring
-        keys = [
-            self.valves.DIFY_API_KEY,
-            self.valves.DIFY_API_KEY_2,
-            self.valves.DIFY_API_KEY_3,
-        ]
-        app_types = [
-            self.valves.DIFY_APP_TYPE,
-            self.valves.DIFY_APP_TYPE_2,
-            self.valves.DIFY_APP_TYPE_3,
-        ]
-        models = [
-            self.valves.OWU_MODEL_ID,
-            self.valves.OWU_MODEL_ID_2,
-            self.valves.OWU_MODEL_ID_3,
-        ]
-        names = [
-            self.valves.OWU_MODEL_NAME,
-            self.valves.OWU_MODEL_NAME_2,
-            self.valves.OWU_MODEL_NAME_3,
-        ]
+        # Fixme clean up, no need for arrays
+        keys = [self.valves.DIFY_API_KEY]
+        app_types = [self.valves.DIFY_APP_TYPE]
+        models = [self.valves.OWU_MODEL_ID]
+        names = [self.valves.OWU_MODEL_NAME]
 
         opt = []
         # add models only when given: api key, app type, and model id

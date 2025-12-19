@@ -1,5 +1,6 @@
 # Todo docstring for this script
 # Bug chatflow not working, only 1st message is repeated sent
+# Fixme dont use 3 pipes
 
 from enum import Enum
 import json

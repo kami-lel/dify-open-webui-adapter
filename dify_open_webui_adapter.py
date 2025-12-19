@@ -11,9 +11,9 @@ __version__ = "1.1.1-alpha"
 __author__ = "kamiLeL"
 
 
-class DIFY_APP_TYPE_ENUM(Enum):  # pylint: disable=missing-class-docstring
+class DIFY_APP_TYPE_ENUM(Enum):  # pylint: disable=all
     WORKFLOW = 0
-    CHATFLOW = 1
+    CHATFLOW = 1  # multi-turn chats
 
 
 REQUEST_TIMEOUT = 30

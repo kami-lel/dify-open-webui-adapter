@@ -24,6 +24,9 @@
 - use hooks-utility as Git Submodule
 
 ### Changed
+
+- each adapter instance only supports single App now
+
 ### Deprecated
 ### Removed
 ### Fixed

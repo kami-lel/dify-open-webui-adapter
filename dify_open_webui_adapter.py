@@ -12,7 +12,7 @@ __version__ = "1.1.1-alpha"
 __author__ = "kamiLeL"
 
 
-class DIFY_APP(Enum):
+class DIFY_APP_TYPE_ENUM(Enum):
     WORKFLOW = 0
     CHATFLOW = 1
 
@@ -28,40 +28,27 @@ class Pipe:
             default="https://api.dify.ai/v1",
             description="base URL to access Dify Backend Service API",
         )
-        # settings for 1st Dify App  -------------------------------------------
-        DIFY_API_KEY_1: str = Field(
+        # settings for Dify App  -----------------------------------------------
+        DIFY_API_KEY: str = Field(
             default="",
             description=(
-                "Dify Backend Service API secret key to access 1st Dify app"
+                "Dify Backend Service API secret key to access Dify app"
             ),
         )
-        DIFY_APP_TYPE_1: int = Field(
+        DIFY_APP_TYPE: int = Field(
             default=0,
-            description="type of 1st Dify app, 0=Workflow, 1=Chatflow",
+            description="type of the Dify app, 0=Workflow, 1=Chatflow",
         )
-        OWU_MODEL_ID_1: str = Field(
+        OWU_MODEL_ID: str = Field(
             default="",
-            description="model id as it is used in Open WebUI of 1st Dify app",
+            description="model id as it is used in Open WebUI of Dify app",
         )
-        OWU_MODEL_NAME_1: str = Field(
+        OWU_MODEL_NAME: str = Field(
             default="",
             description=(
-                "model name as it appears in Open WebUI of 1st Dify app,"
-                " optional"
+                "model name as it appears in Open WebUI of Dify app, optional"
             ),
         )
-
-        # settings for 2nd Dify App  -------------------------------------------
-        DIFY_API_KEY_2: str = Field(default="")
-        DIFY_APP_TYPE_2: int = Field(default=0)
-        OWU_MODEL_ID_2: str = Field(default="")
-        OWU_MODEL_NAME_2: str = Field(default="")
-
-        # settings for 3rd Dify App  -------------------------------------------
-        DIFY_API_KEY_3: str = Field(default="")
-        DIFY_APP_TYPE_3: int = Field(default=0)
-        OWU_MODEL_ID_3: str = Field(default="")
-        OWU_MODEL_NAME_3: str = Field(default="")
 
     def __init__(self):
         self.valves = self.Valves()
@@ -157,22 +144,22 @@ class Pipe:
 
     def pipes(self):
         keys = [
-            self.valves.DIFY_API_KEY_1,
+            self.valves.DIFY_API_KEY,
             self.valves.DIFY_API_KEY_2,
             self.valves.DIFY_API_KEY_3,
         ]
         app_types = [
-            self.valves.DIFY_APP_TYPE_1,
+            self.valves.DIFY_APP_TYPE,
             self.valves.DIFY_APP_TYPE_2,
             self.valves.DIFY_APP_TYPE_3,
         ]
         models = [
-            self.valves.OWU_MODEL_ID_1,
+            self.valves.OWU_MODEL_ID,
             self.valves.OWU_MODEL_ID_2,
             self.valves.OWU_MODEL_ID_3,
         ]
         names = [
-            self.valves.OWU_MODEL_NAME_1,
+            self.valves.OWU_MODEL_NAME,
             self.valves.OWU_MODEL_NAME_2,
             self.valves.OWU_MODEL_NAME_3,
         ]
@@ -181,7 +168,7 @@ class Pipe:
         # add models only when given: api key, app type, and model id
         for key, app_type, model, name in zip(keys, app_types, models, names):
             try:  # convert to enum
-                app_type_enum = DIFY_APP(app_type)
+                app_type_enum = DIFY_APP_TYPE_ENUM(app_type)
             except ValueError:
                 app_type_enum = None
 
@@ -198,7 +185,7 @@ class Pipe:
     # generate and build request  ##############################################
 
     def _gen_request_url(self, app_type):
-        if app_type == DIFY_APP.WORKFLOW:
+        if app_type == DIFY_APP_TYPE_ENUM.WORKFLOW:
             return "{}/workflows/run".format(self.base_url)
         else:  # Chatflow
             return "{}/chat-messages".format(self.base_url)
@@ -214,7 +201,7 @@ class Pipe:
     ):
         everything_for_debug = str(everything_for_debug)
 
-        if app_type == DIFY_APP.WORKFLOW:
+        if app_type == DIFY_APP_TYPE_ENUM.WORKFLOW:
             payload = self._build_payload_workflow(
                 message, everything_for_debug
             )
@@ -228,7 +215,7 @@ class Pipe:
     def _extract_output(
         self, model_id, response_json, app_type, conversation_id
     ):
-        if app_type == DIFY_APP.WORKFLOW:
+        if app_type == DIFY_APP_TYPE_ENUM.WORKFLOW:
             return self._extract_output_workflow(response_json)
         else:  # chatflow
             return self._extract_output_chatflow(

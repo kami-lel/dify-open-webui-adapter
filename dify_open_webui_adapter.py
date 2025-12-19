@@ -1,4 +1,4 @@
-# Todo docstring for this script
+# Todo docstring for this script, write version of openwebui & dify it uses
 # Bug chatflow not working, only 1st message is repeated sent
 
 from enum import Enum

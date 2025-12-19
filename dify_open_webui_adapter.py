@@ -1,4 +1,11 @@
-# Todo docstring for this script, write version of openwebui & dify it uses
+"""
+Integrate Open WebUI and Dify by exposing a Dify App
+(Workflow or Chatflow) as Open WebUI model using Open WebUI's Pipe Functions.
+
+Supported Open WebUI Version:   v0.6.30
+Supported Dify Version:         1.10.0
+"""
+
 # Bug chatflow not working, only 1st message is repeated sent
 
 from enum import Enum

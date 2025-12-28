@@ -20,6 +20,14 @@ hooks_utility_ensure_changelog_edited 'CHANGELOG.md'
 # make sure version is bumped when finish feature branch
 hooks_utility_ensure_version_updated
 
+# ensure supported Open WebUI Version is updated
+hooks_utility_ensure_version_updated "${PROJECT_VERSION_FILE}" \
+    '^Supported Open WebUI Version: *v[0-9.]+$'
+
+# ensure supported Dify Version is updated
+hooks_utility_ensure_version_updated "${PROJECT_VERSION_FILE}" \
+    '^Supported Dify Version: *[0-9.]+$'
+
 # perform branch protection  ---------------------------------------------------
 hooks_utility_protect_branch
 

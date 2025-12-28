@@ -21,7 +21,7 @@
 
 ### Added
 
-- use hooks-utility as Git Submodule
+- use **hooks-utility** for Git Hooks as Git Submodule
 
 ### Changed
 

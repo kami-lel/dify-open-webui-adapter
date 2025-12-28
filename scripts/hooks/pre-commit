@@ -3,6 +3,8 @@
 set -euo pipefail
 
 # shellcheck source=/dev/null
+source "$(dirname "${BASH_SOURCE[0]}")/set_environment_variables.sh"
+# shellcheck source=/dev/null
 source "$(dirname "${BASH_SOURCE[0]}")/../hooks_utility/hooks_utility.sh"
 
 echo "pre-commit" | hooks_utility_enter

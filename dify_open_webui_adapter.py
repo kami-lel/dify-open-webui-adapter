@@ -2,11 +2,12 @@
 Integrate Open WebUI and Dify by exposing a Dify App
 (Workflow or Chatflow) as Open WebUI model using Open WebUI's Pipe Functions.
 
-Supported Open WebUI Version:   v0.6.30
-Supported Dify Version:         1.10.0
+Supported Open WebUI Version:   v???
+Supported Dify Version:         ???
 """
 
 # Bug chatflow not working, only 1st message is repeated sent
+# BUG no longer work on current version
 
 from enum import Enum
 import json

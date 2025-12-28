@@ -20,14 +20,37 @@ __version__ = "1.1.1-alpha"
 __author__ = "kamiLeL"
 
 
+# config  ######################################################################
+REQUEST_TIMEOUT = 30
+USER_ROLE = "user"
+ENABLE_DEBUG = False
+
+
+# data & logic Container  ######################################################
 class DIFY_APP_TYPE_ENUM(Enum):  # pylint: disable=all
     WORKFLOW = 0
     CHATFLOW = 1  # multi-turn chats
 
 
-REQUEST_TIMEOUT = 30
-USER_ROLE = "user"
-ENABLE_DEBUG = False
+class BaseContainer:
+    """
+    TODO docstring for class BaseContainer
+    """
+
+
+class WorkflowContainer(BaseContainer):
+    """
+    TODO docstring for class WorkflowApp
+    """
+
+
+class ChatflowContainer(BaseContainer):
+    """
+    TODO docstring for class ChatflowApp
+    """
+
+
+# Pipe class required by OWU  ##################################################
 
 
 class Pipe:  # pylint: disable=missing-class-docstring
@@ -45,7 +68,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
         )
         DIFY_APP_TYPE: int = Field(
             default=0,
-            description="type of the Dify app, 0=Workflow, 1=Chatflow",
+            description="0=Workflow, 1=Chatflow (multi-round)",
         )
         OWU_MODEL_ID: str = Field(
             default="",
@@ -53,7 +76,9 @@ class Pipe:  # pylint: disable=missing-class-docstring
         )
         OWU_MODEL_NAME: str = Field(
             default="",
-            description="model name as it appears in Open WebUI, optional",
+            description=(
+                "model name as it is displayed in Open WebUI, optional"
+            ),
         )
 
     def __init__(self):
@@ -62,7 +87,17 @@ class Pipe:  # pylint: disable=missing-class-docstring
         self.model_data = {}  # locally saving model-related data
         self.debug_lines = []
 
-    def pipe(self, body):  # pylint: disable=missing-function-docstring
+    def pipe(self, body):
+        """
+        main pipe logic per round
+
+
+        :param body: HTML body
+        :type body: dict
+        :return: replied message by the model
+        :rtype: str
+        """
+        return  # HACK
         self.base_url = self.valves.DIFY_BACKEND_API_BASE_URL
 
         self.debug_lines = []
@@ -148,8 +183,19 @@ class Pipe:  # pylint: disable=missing-class-docstring
         else:
             return output
 
-    def pipes(self):  # pylint: disable=missing-function-docstring
-        # FIXME clean up, no need for arrays
+    def pipes(self):
+        """
+        :return: all models, e.g.::
+
+            [
+                {"id": "model_id_1", "name": "First Model"},
+                {"id": "model_id_2", "name": "Second Model"},
+                {"id": "model_id_3", "name": "Third Model"},
+            ]
+
+        :rtype: list(dict)
+        """
+        return  # HACK
         keys = [self.valves.DIFY_API_KEY]
         app_types = [self.valves.DIFY_APP_TYPE]
         models = [self.valves.OWU_MODEL_ID]
@@ -173,111 +219,111 @@ class Pipe:  # pylint: disable=missing-class-docstring
 
         return opt
 
+    # HACK cleanup
     # generate and build request  ##############################################
 
-    def _gen_request_url(self, app_type):
-        if app_type == DIFY_APP_TYPE_ENUM.WORKFLOW:
-            return "{}/workflows/run".format(self.base_url)
-        else:  # Chatflow
-            return "{}/chat-messages".format(self.base_url)
+    # def _gen_request_url(self, app_type):
+    #     if app_type == DIFY_APP_TYPE_ENUM.WORKFLOW:
+    #         return "{}/workflows/run".format(self.base_url)
+    #     else:  # Chatflow
+    #         return "{}/chat-messages".format(self.base_url)
 
-    def _gen_headers(self, api_secret_key, _):
-        return {
-            "Authorization": "Bearer {}".format(api_secret_key),
-            "Content-Type": "application/json",
-        }
+    # def _gen_headers(self, api_secret_key, _):
+    #     return {
+    #         "Authorization": "Bearer {}".format(api_secret_key),
+    #         "Content-Type": "application/json",
+    #     }
 
-    def _build_payload(
-        self, message, app_type, conversation_id, *, everything_for_debug
-    ):
-        everything_for_debug = str(everything_for_debug)
+    # def _build_payload(
+    #     self, message, app_type, conversation_id, *, everything_for_debug
+    # ):
+    #     everything_for_debug = str(everything_for_debug)
 
-        if app_type == DIFY_APP_TYPE_ENUM.WORKFLOW:
-            payload = self._build_payload_workflow(
-                message, everything_for_debug
-            )
-        else:  # Chatflow
-            payload = self._build_payload_chatflow(
-                message, conversation_id, everything_for_debug
-            )
+    #     if app_type == DIFY_APP_TYPE_ENUM.WORKFLOW:
+    #         payload = self._build_payload_workflow(
+    #             message, everything_for_debug
+    #         )
+    #     else:  # Chatflow
+    #         payload = self._build_payload_chatflow(
+    #             message, conversation_id, everything_for_debug
+    #         )
 
-        return json.dumps(payload)
+    #     return json.dumps(payload)
 
-    def _extract_output(
-        self, model_id, response_json, app_type, conversation_id
-    ):
-        if app_type == DIFY_APP_TYPE_ENUM.WORKFLOW:
-            return self._extract_output_workflow(response_json)
-        else:  # chatflow
-            return self._extract_output_chatflow(
-                model_id, response_json, conversation_id
-            )
+    # def _extract_output(
+    #     self, model_id, response_json, app_type, conversation_id
+    # ):
+    #     if app_type == DIFY_APP_TYPE_ENUM.WORKFLOW:
+    #         return self._extract_output_workflow(response_json)
+    #     else:  # chatflow
+    #         return self._extract_output_chatflow(
+    #             model_id, response_json, conversation_id
+    #         )
 
     # Workflow specific  #######################################################
 
-    def _build_payload_workflow(self, message, everything_for_debug):
-        inputs = {"input": message}
-        if ENABLE_DEBUG:
-            inputs["everything_for_debug"] = everything_for_debug
+    # def _build_payload_workflow(self, message, everything_for_debug):
+    #     inputs = {"input": message}
+    #     if ENABLE_DEBUG:
+    #         inputs["everything_for_debug"] = everything_for_debug
 
-        payload_dict = {
-            "inputs": inputs,
-            "response_mode": "blocking",
-            "user": USER_ROLE,
-        }
+    #     payload_dict = {
+    #         "inputs": inputs,
+    #         "response_mode": "blocking",
+    #         "user": USER_ROLE,
+    #     }
 
-        return payload_dict
+    #     return payload_dict
 
-    def _extract_output_workflow(self, response_json):
-        try:
-            output = response_json["data"]["outputs"]["output"]
-        except (KeyError, IndexError) as err:
-            raise ValueError(
-                "fail to parse response {}: {}".format(response_json, err)
-            ) from err
+    # def _extract_output_workflow(self, response_json):
+    #     try:
+    #         output = response_json["data"]["outputs"]["output"]
+    #     except (KeyError, IndexError) as err:
+    #         raise ValueError(
+    #             "fail to parse response {}: {}".format(response_json, err)
+    #         ) from err
 
-        return output
+    #     return output
 
     # Chatflow specific  #######################################################
+    # def _build_payload_chatflow(
+    #     self, message, conversation_id, everything_for_debug
+    # ):
+    #     inputs = {}
+    #     if ENABLE_DEBUG:
+    #         inputs["everything_for_debug"] = everything_for_debug
 
-    def _build_payload_chatflow(
-        self, message, conversation_id, everything_for_debug
-    ):
-        inputs = {}
-        if ENABLE_DEBUG:
-            inputs["everything_for_debug"] = everything_for_debug
+    #     return {
+    #         "inputs": inputs,
+    #         "query": message,
+    #         "response_mode": "blocking",
+    #         "conversation_id": conversation_id,
+    #         "user": USER_ROLE,
+    #         "auto_generate_name": False,
+    #     }
 
-        return {
-            "inputs": inputs,
-            "query": message,
-            "response_mode": "blocking",
-            "conversation_id": conversation_id,
-            "user": USER_ROLE,
-            "auto_generate_name": False,
-        }
+    # def _extract_output_chatflow(
+    #     self, model_id, response_json, saved_conversation_id
+    # ):
+    #     try:
+    #         output = response_json["answer"]
 
-    def _extract_output_chatflow(
-        self, model_id, response_json, saved_conversation_id
-    ):
-        try:
-            output = response_json["answer"]
+    #         # save returned conversation idea for future rounds
+    #         if not saved_conversation_id:
+    #             conversation_id = response_json["conversation_id"]
+    #             self.model_data[model_id][2] = conversation_id
 
-            # save returned conversation idea for future rounds
-            if not saved_conversation_id:
-                conversation_id = response_json["conversation_id"]
-                self.model_data[model_id][2] = conversation_id
+    #             if ENABLE_DEBUG:
+    #                 conversation_id = response_json["conversation_id"]
+    #                 self.model_data[model_id][2] = conversation_id
+    #                 self.debug_lines.append("## returned conversation id")
+    #                 self.debug_lines.append(conversation_id)
 
-                if ENABLE_DEBUG:
-                    conversation_id = response_json["conversation_id"]
-                    self.model_data[model_id][2] = conversation_id
-                    self.debug_lines.append("## returned conversation id")
-                    self.debug_lines.append(conversation_id)
+    #     except (KeyError, IndexError) as err:
+    #         raise ValueError(
+    #             "fail to parse chatflow response {}: {}".format(
+    #                 response_json, err
+    #             )
+    #         ) from err
 
-        except (KeyError, IndexError) as err:
-            raise ValueError(
-                "fail to parse chatflow response {}: {}".format(
-                    response_json, err
-                )
-            ) from err
-
-        return output
+    #     return output

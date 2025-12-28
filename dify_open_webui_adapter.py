@@ -149,7 +149,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
             return output
 
     def pipes(self):  # pylint: disable=missing-function-docstring
-        # Fixme clean up, no need for arrays
+        # FIXME clean up, no need for arrays
         keys = [self.valves.DIFY_API_KEY]
         app_types = [self.valves.DIFY_APP_TYPE]
         models = [self.valves.OWU_MODEL_ID]

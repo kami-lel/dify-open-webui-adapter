@@ -32,7 +32,7 @@ class DIFY_APP_TYPE_ENUM(Enum):
 #     "id": "model_id_1",       # model id as used in Open WebUI
 #     "name": "First Model",    # model Name as appeared in Open WebUI, optional
 # }
-APP_MODELS = []
+APP_MODEL_CONFIGS = []
 
 
 # config  ######################################################################
@@ -45,14 +45,20 @@ ENABLE_DEBUG = False  # HACK better handling
 
 
 class BaseContainer:
-    """
-    TODO docstring for class BaseContainer
-    """
 
-    def __init__(self, base_url):
-        self.base_url = base_url
+    @staticmethod
+    def test_app_model_configs(app_model_configs):
+        pass  # TODO
 
-    def get_model_id_and_display(self):
+    @staticmethod
+    def create_container(base_url, config):
+        pass  # TODO
+
+    def __init__(self, model_id, model_name):
+        self.model_id = model_id
+        self.model_name = model_name
+
+    def get_modeL_id_and_name(self):
         pass  # TODO
 
     def reply(self, body, user):
@@ -60,15 +66,11 @@ class BaseContainer:
 
 
 class WorkflowContainer(BaseContainer):
-    """
-    TODO docstring for class WorkflowApp
-    """
+    pass
 
 
 class ChatflowContainer(BaseContainer):
-    """
-    TODO docstring for class ChatflowApp
-    """
+    pass
 
 
 # Pipe class required by OWU  ##################################################
@@ -81,10 +83,52 @@ class Pipe:  # pylint: disable=missing-class-docstring
         )
 
     def __init__(self):
-        self.valves = self.Valves()
-        self.base_url = None
-        self.model_data = {}  # locally saving model-related data
-        self.debug_lines = []
+        self.app_models = {}
+        # populate app_models   ++++++++++++++++++++++++++++++++++++++++++++++++
+        BaseContainer.test_app_model_configs(APP_MODEL_CONFIGS)
+        base_url = self.Valves().DIFY_BACKEND_API_BASE_URL
+        for config in APP_MODEL_CONFIGS:
+            container = BaseContainer.create_container(base_url, config)
+            model_name = container.model_id
+            self.app_models[model_name] = container
+
+    def pipes(self):
+        """
+        :return: all models, e.g.::
+
+            [
+                {"id": "model_id_1", "name": "First Model"},
+                {"id": "model_id_2", "name": "Second Model"},
+                {"id": "model_id_3", "name": "Third Model"},
+            ]
+
+        :rtype: list(dict)
+        """
+        return [
+            container.get_modeL_id_and_name() for container in self.app_models
+        ]
+        keys = [self.valves.DIFY_API_KEY]
+        app_types = [self.valves.DIFY_APP_TYPE]
+        models = [self.valves.OWU_MODEL_ID]
+        names = [self.valves.OWU_MODEL_NAME]
+
+        opt = []
+        # add models only when given: api key, app type, and model id
+        for key, app_type, model, name in zip(keys, app_types, models, names):
+            try:  # convert to enum
+                app_type_enum = DIFY_APP_TYPE_ENUM(app_type)
+            except ValueError:
+                app_type_enum = None
+
+            if key and app_type_enum and model:
+                # use model id when model name is not given
+                opt_entry = {"id": model, "name": name or model}
+                opt.append(opt_entry)
+
+                # save model data
+                self.model_data[model] = [key, app_type_enum, ""]
+
+        return opt
 
     def pipe(self, body, __user__):
         """
@@ -183,42 +227,6 @@ class Pipe:  # pylint: disable=missing-class-docstring
             return "\n".join(self.debug_lines)
         else:
             return output
-
-    def pipes(self):
-        """
-        :return: all models, e.g.::
-
-            [
-                {"id": "model_id_1", "name": "First Model"},
-                {"id": "model_id_2", "name": "Second Model"},
-                {"id": "model_id_3", "name": "Third Model"},
-            ]
-
-        :rtype: list(dict)
-        """
-        return None  # HACK
-        keys = [self.valves.DIFY_API_KEY]
-        app_types = [self.valves.DIFY_APP_TYPE]
-        models = [self.valves.OWU_MODEL_ID]
-        names = [self.valves.OWU_MODEL_NAME]
-
-        opt = []
-        # add models only when given: api key, app type, and model id
-        for key, app_type, model, name in zip(keys, app_types, models, names):
-            try:  # convert to enum
-                app_type_enum = DIFY_APP_TYPE_ENUM(app_type)
-            except ValueError:
-                app_type_enum = None
-
-            if key and app_type_enum and model:
-                # use model id when model name is not given
-                opt_entry = {"id": model, "name": name or model}
-                opt.append(opt_entry)
-
-                # save model data
-                self.model_data[model] = [key, app_type_enum, ""]
-
-        return opt
 
     # HACK cleanup
     # generate and build request  ##############################################

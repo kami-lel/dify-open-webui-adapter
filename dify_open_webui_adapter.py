@@ -129,6 +129,16 @@ class BaseContainer:
         display_name = self.model_name or self.model_id
         return {"id": self.model_id, "name": display_name}
 
+    def _debug(self, line):
+        """
+        :param line:
+        :type line: str
+        """
+        if not ENABLE_DEBUGGING:
+            return
+
+        self._debug_lines.append(line)
+
     def reply(self, body, user):
         """
         main logic for fetching & creating a single-round response
@@ -141,6 +151,10 @@ class BaseContainer:
         :return: the response
         :rtype: str
         """
+
+        # empty debug lines
+        self._debug_lines = []
+
         raise NotImplementedError
 
         # return  # HACK

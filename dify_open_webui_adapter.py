@@ -75,6 +75,17 @@ def verify_app_model_configs(app_model_configs):
 
 
 def create_container(base_url, config):
+    """
+    create an instance of specific sub-types of BaseContainer
+
+
+    :param base_url:
+    :type base_url: str
+    :param config: an entry of APP_MODEL_CONFIGS
+    :type config: dict
+    :return: created container
+    :rtype: WorkflowContainer or ChatflowContainer
+    """
     model_type = config["type"]
     model_id = config["id"]
     model_name = None  # default
@@ -90,13 +101,29 @@ def create_container(base_url, config):
 
 
 class BaseContainer:
+    """
+    base class for WorkflowContainer and ChatflowContainer
+
+
+    :param base_url:
+    :type base_url: str
+    :param model_id:
+    :type model_id: str
+    :param model_name:
+    :type model_name: str or NoneType
+    """
 
     def __init__(self, base_url, model_id, model_name):
         self.base_url = base_url
         self.model_id = model_id
         self.model_name = model_name  # may be None
 
-    def get_modeL_id_and_name(self):
+    def get_model_id_and_name(self):
+        """
+        :return: an entry of this model,
+                such that it can be served to ``Pipe.pipes()``
+        :rtype: dict{str: str}
+        """
         display_name = self.model_name or self.model_id
         return {"id": self.model_id, "name": display_name}
 
@@ -340,7 +367,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
         :rtype: list(dict)
         """
         return [
-            container.get_modeL_id_and_name() for container in self.containers
+            container.get_model_id_and_name() for container in self.containers
         ]
 
     def pipe(self, body, __user__):

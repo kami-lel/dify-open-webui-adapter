@@ -6,7 +6,6 @@ Supported Open WebUI Version:   v???
 Supported Dify Version:         ???
 """
 
-# Bug chatflow not working, only 1st message is repeated sent
 # BUG no longer work on current version
 
 from enum import Enum
@@ -128,6 +127,17 @@ class BaseContainer:
         return {"id": self.model_id, "name": display_name}
 
     def reply(self, body, user):
+        """
+        main logic for fetching & creating a single-round response
+
+
+        :param body: `body` given by Pipe.pipes(body, __user__)
+        :type body: dict
+        :param user: `__user__` given by Pipe.pipes(body, __user__)
+        :type user: dict
+        :return: the response
+        :rtype: str
+        """
         raise NotImplementedError
 
         # return  # HACK
@@ -292,6 +302,7 @@ class ChatflowContainer(BaseContainer):
     def reply(self, body, user):
         return ""  # TODO
 
+    # Bug chatflow not working, only 1st message is repeated sent
     # def _build_payload_chatflow(
     #     self, message, conversation_id, everything_for_debug
     # ):

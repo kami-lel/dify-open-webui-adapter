@@ -44,16 +44,24 @@ ENABLE_DEBUG = False  # HACK better handling
 # data & logic Container  ######################################################
 
 
-def test_app_model_configs(app_model_configs):
+def verify_app_model_configs(app_model_configs):
     pass  # TODO
 
 
 def create_container(base_url, config):
-    pass  # TODO
+    model_type = config["type"]
+    model_id = config["id"]
+    model_name = config["name"]
+
+    if model_type == DIFY_APP_TYPE_ENUM.WORKFLOW:
+        return WorkflowContainer(model_id, model_name)
+    else:  # i.e. Chatflow
+        return ChatflowContainer(model_id, model_name)
 
 
 def extract_model_id_from_body(body):
-    pass  # TODO
+    model_id = body["model"][body["model"].find(".") + 1 :]
+    return model_id
 
 
 class BaseContainer:
@@ -63,177 +71,97 @@ class BaseContainer:
         self.model_name = model_name  # may be None
 
     def get_modeL_id_and_name(self):
-        pass  # TODO
-        # keys = [self.valves.DIFY_API_KEY]
-        # app_types = [self.valves.DIFY_APP_TYPE]
-        # models = [self.valves.OWU_MODEL_ID]
-        # names = [self.valves.OWU_MODEL_NAME]
-
-        # opt = []
-        # # add models only when given: api key, app type, and model id
-        # for key, app_type, model, name in zip(keys, app_types, models, names):
-        #     try:  # convert to enum
-        #         app_type_enum = DIFY_APP_TYPE_ENUM(app_type)
-        #     except ValueError:
-        #         app_type_enum = None
-
-        #     if key and app_type_enum and model:
-        #         # use model id when model name is not given
-        #         opt_entry = {"id": model, "name": name or model}
-        #         opt.append(opt_entry)
-
-        #         # save model data
-        #         self.model_data[model] = [key, app_type_enum, ""]
-
-        # return opt
+        display_name = self.model_name or self.model_id
+        return {"id": self.model_id, "name": display_name}
 
     def reply(self, body, user):
         raise NotImplementedError
 
+        # return  # HACK
+        # self.base_url = self.valves.DIFY_BACKEND_API_BASE_URL
 
-class WorkflowContainer(BaseContainer):
-    pass
+        # self.debug_lines = []
 
+        # # retrieve user input  -------------------------------------------------
+        # message = ""
+        # try:
+        #     for msg in body["messages"]:
+        #         if msg["role"] == "user":
+        #             message = msg["content"]
+        #             break
 
-class ChatflowContainer(BaseContainer):
-    pass
+        #     if not message:
+        #         raise ValueError(
+        #             "fail to find 'user' after exhausting 'messages'"
+        #         )
 
+        # except (KeyError, IndexError, ValueError) as err:
+        #     raise ValueError(
+        #         "fail to get user message from body {}: {}".format(body, err)
+        #     ) from err
 
-# Pipe class required by OWU  ##################################################
-class Pipe:  # pylint: disable=missing-class-docstring
+        # # Extract model id from the model name
+        # model_id = body["model"][body["model"].find(".") + 1 :]
+        # api_secret_key, app_type, conversation_id = self.model_data[model_id]
 
-    class Valves(BaseModel):
-        DIFY_BACKEND_API_BASE_URL: str = Field(
-            default="https://api.dify.ai/v1",
-            description="base URL to access Dify Backend Service API",
-        )
+        # if ENABLE_DEBUG:
+        #     self.debug_lines.append("## body")
+        #     self.debug_lines.append(repr(body))
+        #     self.debug_lines.append("## user message")
+        #     self.debug_lines.append(message)
+        #     self.debug_lines.append("## model id")
+        #     self.debug_lines.append(model_id)
+        #     self.debug_lines.append("## api secret key")
+        #     self.debug_lines.append(api_secret_key)
+        #     self.debug_lines.append("## conversation id")
+        #     self.debug_lines.append(conversation_id)
 
-    def __init__(self):
-        self.app_models = {}
-        # populate app_models   ++++++++++++++++++++++++++++++++++++++++++++++++
-        test_app_model_configs(APP_MODEL_CONFIGS)
-        base_url = self.Valves().DIFY_BACKEND_API_BASE_URL
-        for config in APP_MODEL_CONFIGS:
-            container = create_container(base_url, config)
-            model_name = container.model_id
-            self.app_models[model_name] = container
+        # # send request to Dify  ------------------------------------------------
+        # url = self._gen_request_url(app_type)
+        # headers = self._gen_headers(api_secret_key, app_type)
+        # payloads = self._build_payload(
+        #     message, app_type, conversation_id, everything_for_debug=body
+        # )
 
-    def pipes(self):
-        """
-        :return: all models, e.g.::
+        # try:
+        #     response_json = requests.post(
+        #         url,
+        #         headers=headers,
+        #         data=payloads,
+        #         timeout=REQUEST_TIMEOUT,
+        #     )
+        # except Exception as err:
+        #     raise ConnectionError(
+        #         "fail to request POST:{}".format(err)
+        #     ) from err
 
-            [
-                {"id": "model_id_1", "name": "First Model"},
-                {"id": "model_id_2", "name": "Second Model"},
-                {"id": "model_id_3", "name": "Third Model"},
-            ]
+        # if ENABLE_DEBUG:
+        #     self.debug_lines.append("## request url")
+        #     self.debug_lines.append(url)
+        #     self.debug_lines.append("## headers")
+        #     self.debug_lines.append(str(headers))
+        #     self.debug_lines.append("## payloads")
+        #     self.debug_lines.append(str(payloads))
 
-        :rtype: list(dict)
-        """
-        return [
-            container.get_modeL_id_and_name() for container in self.app_models
-        ]
+        # # output  --------------------------------------------------------------
+        # response_json = response_json.json()
 
-    def pipe(self, body, __user__):
-        """
-        main pipe logic per round
+        # if ENABLE_DEBUG:
+        #     self.debug_lines.append("## response content")
+        #     self.debug_lines.append(repr(response_json))
 
+        # output = self._extract_output(
+        #     model_id, response_json, app_type, conversation_id
+        # )
 
-        :param body: message body
-        :type body: dict
-        :param __user__: user information
-        :type __user__: dict
-        :return: replied message by the model
-        :rtype: str
-        """
-        model_id = extract_model_id_from_body(body)
-        return self.app_models[model_id].reply(body, __user__)
+        # if ENABLE_DEBUG:
+        #     self.debug_lines.append("\n\n----\n\n\n")
+        #     self.debug_lines.append(output)
 
-        return  # HACK
-        self.base_url = self.valves.DIFY_BACKEND_API_BASE_URL
-
-        self.debug_lines = []
-
-        # retrieve user input  -------------------------------------------------
-        message = ""
-        try:
-            for msg in body["messages"]:
-                if msg["role"] == "user":
-                    message = msg["content"]
-                    break
-
-            if not message:
-                raise ValueError(
-                    "fail to find 'user' after exhausting 'messages'"
-                )
-
-        except (KeyError, IndexError, ValueError) as err:
-            raise ValueError(
-                "fail to get user message from body {}: {}".format(body, err)
-            ) from err
-
-        # Extract model id from the model name
-        model_id = body["model"][body["model"].find(".") + 1 :]
-        api_secret_key, app_type, conversation_id = self.model_data[model_id]
-
-        if ENABLE_DEBUG:
-            self.debug_lines.append("## body")
-            self.debug_lines.append(repr(body))
-            self.debug_lines.append("## user message")
-            self.debug_lines.append(message)
-            self.debug_lines.append("## model id")
-            self.debug_lines.append(model_id)
-            self.debug_lines.append("## api secret key")
-            self.debug_lines.append(api_secret_key)
-            self.debug_lines.append("## conversation id")
-            self.debug_lines.append(conversation_id)
-
-        # send request to Dify  ------------------------------------------------
-        url = self._gen_request_url(app_type)
-        headers = self._gen_headers(api_secret_key, app_type)
-        payloads = self._build_payload(
-            message, app_type, conversation_id, everything_for_debug=body
-        )
-
-        try:
-            response_json = requests.post(
-                url,
-                headers=headers,
-                data=payloads,
-                timeout=REQUEST_TIMEOUT,
-            )
-        except Exception as err:
-            raise ConnectionError(
-                "fail to request POST:{}".format(err)
-            ) from err
-
-        if ENABLE_DEBUG:
-            self.debug_lines.append("## request url")
-            self.debug_lines.append(url)
-            self.debug_lines.append("## headers")
-            self.debug_lines.append(str(headers))
-            self.debug_lines.append("## payloads")
-            self.debug_lines.append(str(payloads))
-
-        # output  --------------------------------------------------------------
-        response_json = response_json.json()
-
-        if ENABLE_DEBUG:
-            self.debug_lines.append("## response content")
-            self.debug_lines.append(repr(response_json))
-
-        output = self._extract_output(
-            model_id, response_json, app_type, conversation_id
-        )
-
-        if ENABLE_DEBUG:
-            self.debug_lines.append("\n\n----\n\n\n")
-            self.debug_lines.append(output)
-
-        if ENABLE_DEBUG:
-            return "\n".join(self.debug_lines)
-        else:
-            return output
+        # if ENABLE_DEBUG:
+        #     return "\n".join(self.debug_lines)
+        # else:
+        #     return output
 
     # HACK cleanup
     # generate and build request  ##############################################
@@ -276,7 +204,11 @@ class Pipe:  # pylint: disable=missing-class-docstring
     #             model_id, response_json, conversation_id
     #         )
 
-    # Workflow specific  #######################################################
+
+class WorkflowContainer(BaseContainer):
+
+    def reply(self, body, user):
+        return ""  # TODO
 
     # def _build_payload_workflow(self, message, everything_for_debug):
     #     inputs = {"input": message}
@@ -301,7 +233,12 @@ class Pipe:  # pylint: disable=missing-class-docstring
 
     #     return output
 
-    # Chatflow specific  #######################################################
+
+class ChatflowContainer(BaseContainer):
+
+    def reply(self, body, user):
+        return ""  # TODO
+
     # def _build_payload_chatflow(
     #     self, message, conversation_id, everything_for_debug
     # ):
@@ -343,3 +280,54 @@ class Pipe:  # pylint: disable=missing-class-docstring
     #         ) from err
 
     #     return output
+
+
+# Pipe class required by OWU  ##################################################
+class Pipe:  # pylint: disable=missing-class-docstring
+
+    class Valves(BaseModel):
+        DIFY_BACKEND_API_BASE_URL: str = Field(
+            default="https://api.dify.ai/v1",
+            description="base URL to access Dify Backend Service API",
+        )
+
+    def __init__(self):
+        verify_app_model_configs(APP_MODEL_CONFIGS)
+        self.app_models = {}
+        # populate app_models   ++++++++++++++++++++++++++++++++++++++++++++++++
+        base_url = self.Valves().DIFY_BACKEND_API_BASE_URL
+        for config in APP_MODEL_CONFIGS:
+            container = create_container(base_url, config)
+            model_name = container.model_id
+            self.app_models[model_name] = container
+
+    def pipes(self):
+        """
+        :return: all models, e.g.::
+
+            [
+                {"id": "model_id_1", "name": "First Model"},
+                {"id": "model_id_2", "name": "Second Model"},
+                {"id": "model_id_3", "name": "Third Model"},
+            ]
+
+        :rtype: list(dict)
+        """
+        return [
+            container.get_modeL_id_and_name() for container in self.app_models
+        ]
+
+    def pipe(self, body, __user__):
+        """
+        main pipe logic per round
+
+
+        :param body: message body
+        :type body: dict
+        :param __user__: user information
+        :type __user__: dict
+        :return: replied message by the model
+        :rtype: str
+        """
+        model_id = extract_model_id_from_body(body)
+        return self.app_models[model_id].reply(body, __user__)

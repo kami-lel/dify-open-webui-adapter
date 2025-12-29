@@ -84,14 +84,15 @@ def create_container(base_url, config):
             model_name = model_name_value
 
     if model_type == DIFY_APP_TYPE_ENUM.WORKFLOW:
-        return WorkflowContainer(model_id, model_name)
+        return WorkflowContainer(base_url, model_id, model_name)
     else:  # i.e. Chatflow
-        return ChatflowContainer(model_id, model_name)
+        return ChatflowContainer(base_url, model_id, model_name)
 
 
 class BaseContainer:
 
-    def __init__(self, model_id, model_name):
+    def __init__(self, base_url, model_id, model_name):
+        self.base_url = base_url
         self.model_id = model_id
         self.model_name = model_name  # may be None
 
@@ -318,13 +319,13 @@ class Pipe:  # pylint: disable=missing-class-docstring
 
     def __init__(self):
         verify_app_model_configs(APP_MODEL_CONFIGS)
-        self.app_models = {}
+        self.containers = {}
         # populate app_models   ++++++++++++++++++++++++++++++++++++++++++++++++
         base_url = self.Valves().DIFY_BACKEND_API_BASE_URL
         for config in APP_MODEL_CONFIGS:
             container = create_container(base_url, config)
             model_name = container.model_id
-            self.app_models[model_name] = container
+            self.containers[model_name] = container
 
     def pipes(self):
         """
@@ -339,7 +340,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
         :rtype: list(dict)
         """
         return [
-            container.get_modeL_id_and_name() for container in self.app_models
+            container.get_modeL_id_and_name() for container in self.containers
         ]
 
     def pipe(self, body, __user__):
@@ -356,4 +357,4 @@ class Pipe:  # pylint: disable=missing-class-docstring
         """
         # extract model_id from body
         model_id = body["model"][body["model"].find(".") + 1 :]
-        return self.app_models[model_id].reply(body, __user__)
+        return self.containers[model_id].reply(body, __user__)

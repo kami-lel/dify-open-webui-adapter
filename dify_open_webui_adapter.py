@@ -44,19 +44,23 @@ ENABLE_DEBUG = False  # HACK better handling
 # data & logic Container  ######################################################
 
 
+def test_app_model_configs(app_model_configs):
+    pass  # TODO
+
+
+def create_container(base_url, config):
+    pass  # TODO
+
+
+def extract_model_id_from_body(body):
+    pass  # TODO
+
+
 class BaseContainer:
-
-    @staticmethod
-    def test_app_model_configs(app_model_configs):
-        pass  # TODO
-
-    @staticmethod
-    def create_container(base_url, config):
-        pass  # TODO
 
     def __init__(self, model_id, model_name):
         self.model_id = model_id
-        self.model_name = model_name
+        self.model_name = model_name  # may be None
 
     def get_modeL_id_and_name(self):
         pass  # TODO
@@ -107,10 +111,10 @@ class Pipe:  # pylint: disable=missing-class-docstring
     def __init__(self):
         self.app_models = {}
         # populate app_models   ++++++++++++++++++++++++++++++++++++++++++++++++
-        BaseContainer.test_app_model_configs(APP_MODEL_CONFIGS)
+        test_app_model_configs(APP_MODEL_CONFIGS)
         base_url = self.Valves().DIFY_BACKEND_API_BASE_URL
         for config in APP_MODEL_CONFIGS:
-            container = BaseContainer.create_container(base_url, config)
+            container = create_container(base_url, config)
             model_name = container.model_id
             self.app_models[model_name] = container
 
@@ -142,6 +146,9 @@ class Pipe:  # pylint: disable=missing-class-docstring
         :return: replied message by the model
         :rtype: str
         """
+        model_id = extract_model_id_from_body(body)
+        return self.app_models[model_id].reply(body, __user__)
+
         return  # HACK
         self.base_url = self.valves.DIFY_BACKEND_API_BASE_URL
 

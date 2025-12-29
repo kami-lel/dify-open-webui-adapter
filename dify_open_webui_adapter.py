@@ -6,8 +6,6 @@ Supported Open WebUI Version:   v???
 Supported Dify Version:         ???
 """
 
-# BUG no longer work on current version
-
 from enum import Enum
 import json
 
@@ -19,7 +17,11 @@ __version__ = "1.1.1-alpha"
 __author__ = "kamiLeL"
 
 
-class DIFY_APP_TYPE_ENUM(Enum):
+class DifyAppType(Enum):
+    """
+    type of Dify App, either Workflow or Chatflow (multi-round)
+    """
+
     WORKFLOW = 0
     CHATFLOW = 1  # multi-turn chats
 
@@ -27,7 +29,7 @@ class DIFY_APP_TYPE_ENUM(Enum):
 # app/model configs  ###########################################################
 # app/model per entry:
 # {
-#     "type": DIFY_APP_TYPE_ENUM.WORKFLOW,  # Dify App Type
+#     "type": DifyAppType.WORKFLOW,  # Dify App Type
 #     "id": "model_id_1",       # model id as used in Open WebUI
 #     "name": "First Model",    # model Name as appeared in Open WebUI, optional
 # }
@@ -35,9 +37,9 @@ APP_MODEL_CONFIGS = []
 
 
 # config  ######################################################################
+ENABLE_DEBUGGING = False
 USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
-ENABLE_DEBUG = False  # HACK better handling
 
 
 # data & logic Container  ######################################################
@@ -54,9 +56,9 @@ def verify_app_model_configs(app_model_configs):
         # test type  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         if "type" not in config:
             raise ValueError("APP_MODEL_CONFIGS missing 'type' entry")
-        if not isinstance(config["type"], DIFY_APP_TYPE_ENUM):
+        if not isinstance(config["type"], DifyAppType):
             raise TypeError(
-                "APP_MODEL_CONFIGS 'type' entry must be DIFY_APP_TYPE_ENUM"
+                "APP_MODEL_CONFIGS 'type' entry must be DifyAppType"
             )
         # test id  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         if "id" not in config:
@@ -93,7 +95,7 @@ def create_container(base_url, config):
         if isinstance(model_name_value, str):
             model_name = model_name_value
 
-    if model_type == DIFY_APP_TYPE_ENUM.WORKFLOW:
+    if model_type == DifyAppType.WORKFLOW:
         return WorkflowContainer(base_url, model_id, model_name)
     else:  # i.e. Chatflow
         return ChatflowContainer(base_url, model_id, model_name)
@@ -116,6 +118,7 @@ class BaseContainer:
         self.base_url = base_url
         self.model_id = model_id
         self.model_name = model_name  # may be None
+        self._debug_lines = []
 
     def get_model_id_and_name(self):
         """
@@ -230,7 +233,7 @@ class BaseContainer:
     # generate and build request  ##############################################
 
     # def _gen_request_url(self, app_type):
-    #     if app_type == DIFY_APP_TYPE_ENUM.WORKFLOW:
+    #     if app_type == DifyAppType.WORKFLOW:
     #         return "{}/workflows/run".format(self.base_url)
     #     else:  # Chatflow
     #         return "{}/chat-messages".format(self.base_url)
@@ -246,7 +249,7 @@ class BaseContainer:
     # ):
     #     everything_for_debug = str(everything_for_debug)
 
-    #     if app_type == DIFY_APP_TYPE_ENUM.WORKFLOW:
+    #     if app_type == DifyAppType.WORKFLOW:
     #         payload = self._build_payload_workflow(
     #             message, everything_for_debug
     #         )
@@ -260,7 +263,7 @@ class BaseContainer:
     # def _extract_output(
     #     self, model_id, response_json, app_type, conversation_id
     # ):
-    #     if app_type == DIFY_APP_TYPE_ENUM.WORKFLOW:
+    #     if app_type == DifyAppType.WORKFLOW:
     #         return self._extract_output_workflow(response_json)
     #     else:  # chatflow
     #         return self._extract_output_chatflow(

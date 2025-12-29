@@ -41,8 +41,6 @@ REQUEST_TIMEOUT = 30
 ENABLE_DEBUG = False  # HACK better handling
 
 
-# Valves Class  ################################################################
-
 # data & logic Container  ######################################################
 
 
@@ -51,8 +49,14 @@ class BaseContainer:
     TODO docstring for class BaseContainer
     """
 
+    def __init__(self, base_url):
+        self.base_url = base_url
+
     def get_model_id_and_display(self):
-        pass
+        pass  # TODO
+
+    def reply(self, body, user):
+        raise NotImplementedError
 
 
 class WorkflowContainer(BaseContainer):
@@ -68,8 +72,6 @@ class ChatflowContainer(BaseContainer):
 
 
 # Pipe class required by OWU  ##################################################
-
-
 class Pipe:  # pylint: disable=missing-class-docstring
 
     class Valves(BaseModel):

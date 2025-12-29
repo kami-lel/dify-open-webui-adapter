@@ -60,6 +60,28 @@ class BaseContainer:
 
     def get_modeL_id_and_name(self):
         pass  # TODO
+        # keys = [self.valves.DIFY_API_KEY]
+        # app_types = [self.valves.DIFY_APP_TYPE]
+        # models = [self.valves.OWU_MODEL_ID]
+        # names = [self.valves.OWU_MODEL_NAME]
+
+        # opt = []
+        # # add models only when given: api key, app type, and model id
+        # for key, app_type, model, name in zip(keys, app_types, models, names):
+        #     try:  # convert to enum
+        #         app_type_enum = DIFY_APP_TYPE_ENUM(app_type)
+        #     except ValueError:
+        #         app_type_enum = None
+
+        #     if key and app_type_enum and model:
+        #         # use model id when model name is not given
+        #         opt_entry = {"id": model, "name": name or model}
+        #         opt.append(opt_entry)
+
+        #         # save model data
+        #         self.model_data[model] = [key, app_type_enum, ""]
+
+        # return opt
 
     def reply(self, body, user):
         raise NotImplementedError
@@ -107,28 +129,6 @@ class Pipe:  # pylint: disable=missing-class-docstring
         return [
             container.get_modeL_id_and_name() for container in self.app_models
         ]
-        keys = [self.valves.DIFY_API_KEY]
-        app_types = [self.valves.DIFY_APP_TYPE]
-        models = [self.valves.OWU_MODEL_ID]
-        names = [self.valves.OWU_MODEL_NAME]
-
-        opt = []
-        # add models only when given: api key, app type, and model id
-        for key, app_type, model, name in zip(keys, app_types, models, names):
-            try:  # convert to enum
-                app_type_enum = DIFY_APP_TYPE_ENUM(app_type)
-            except ValueError:
-                app_type_enum = None
-
-            if key and app_type_enum and model:
-                # use model id when model name is not given
-                opt_entry = {"id": model, "name": name or model}
-                opt.append(opt_entry)
-
-                # save model data
-                self.model_data[model] = [key, app_type_enum, ""]
-
-        return opt
 
     def pipe(self, body, __user__):
         """

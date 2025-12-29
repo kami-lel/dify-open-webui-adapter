@@ -45,23 +45,48 @@ ENABLE_DEBUG = False  # HACK better handling
 
 
 def verify_app_model_configs(app_model_configs):
-    pass  # TODO
+    # FIXME maybe better way to do verification, w/ debug
+    if len(app_model_configs) == 0:
+        raise ValueError(
+            "APP_MODEL_CONFIGS must contains at least one App/Model"
+        )
+
+    for config in app_model_configs:
+        # test type  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        if "type" not in config:
+            raise ValueError("APP_MODEL_CONFIGS missing 'type' entry")
+        if not isinstance(config["type"], DIFY_APP_TYPE_ENUM):
+            raise TypeError(
+                "APP_MODEL_CONFIGS 'type' entry must be DIFY_APP_TYPE_ENUM"
+            )
+        # test id  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        if "id" not in config:
+            raise ValueError("APP_MODEL_CONFIGS missing 'id' entry")
+        if not isinstance(config["id"], str):
+            raise TypeError("APP_MODEL_CONFIGS 'id' entry must be str")
+        if len(config["id"]) == 0:
+            raise TypeError("APP_MODEL_CONFIGS 'id' must not be empty")
+        # test name  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        if "name" in config:
+            if not isinstance(config["name"], str):
+                raise TypeError("APP_MODEL_CONFIGS 'name' entry must be str")
+            if len(config["name"]) == 0:
+                raise TypeError("APP_MODEL_CONFIGS 'name' must not be empty")
 
 
 def create_container(base_url, config):
     model_type = config["type"]
     model_id = config["id"]
-    model_name = config["name"]
+    model_name = None  # default
+    if "name" in config["name"]:
+        model_name_value = config["name"]
+        if isinstance(model_name_value, str):
+            model_name = model_name_value
 
     if model_type == DIFY_APP_TYPE_ENUM.WORKFLOW:
         return WorkflowContainer(model_id, model_name)
     else:  # i.e. Chatflow
         return ChatflowContainer(model_id, model_name)
-
-
-def extract_model_id_from_body(body):
-    model_id = body["model"][body["model"].find(".") + 1 :]
-    return model_id
 
 
 class BaseContainer:
@@ -329,5 +354,6 @@ class Pipe:  # pylint: disable=missing-class-docstring
         :return: replied message by the model
         :rtype: str
         """
-        model_id = extract_model_id_from_body(body)
+        # extract model_id from body
+        model_id = body["model"][body["model"].find(".") + 1 :]
         return self.app_models[model_id].reply(body, __user__)

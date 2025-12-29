@@ -20,47 +20,39 @@ __version__ = "1.1.1-alpha"
 __author__ = "kamiLeL"
 
 
-# config  ######################################################################
-REQUEST_TIMEOUT = 30
-USER_ROLE = "user"
-ENABLE_DEBUG = False
-
-
-# Valves Class  ################################################################
-class Valves(BaseModel):
-    DIFY_BACKEND_API_BASE_URL: str = Field(
-        default="https://api.dify.ai/v1",
-        description="base URL to access Dify Backend Service API",
-    )
-    # settings for Dify App  -----------------------------------------------
-    DIFY_API_KEY: str = Field(
-        default="",
-        description="Dify Backend Service API secret key to access Dify app",
-    )
-    DIFY_APP_TYPE: int = Field(
-        default=0,
-        description="0=Workflow, 1=Chatflow (multi-round)",
-    )
-    OWU_MODEL_ID: str = Field(
-        default="",
-        description="model id as it is used in Open WebUI",
-    )
-    OWU_MODEL_NAME: str = Field(
-        default="",
-        description="model name as it is displayed in Open WebUI, optional",
-    )
-
-
-# data & logic Container  ######################################################
 class DIFY_APP_TYPE_ENUM(Enum):
     WORKFLOW = 0
     CHATFLOW = 1  # multi-turn chats
+
+
+# app/model configs  ###########################################################
+# app/model per entry:
+# {
+#     "type": DIFY_APP_TYPE_ENUM.WORKFLOW,  # Dify App Type
+#     "id": "model_id_1",       # model id as used in Open WebUI
+#     "name": "First Model",    # model Name as appeared in Open WebUI, optional
+# }
+APP_MODELS = []
+
+
+# config  ######################################################################
+USER_ROLE = "user"
+REQUEST_TIMEOUT = 30
+ENABLE_DEBUG = False  # HACK better handling
+
+
+# Valves Class  ################################################################
+
+# data & logic Container  ######################################################
 
 
 class BaseContainer:
     """
     TODO docstring for class BaseContainer
     """
+
+    def get_model_id_and_display(self):
+        pass
 
 
 class WorkflowContainer(BaseContainer):
@@ -79,19 +71,28 @@ class ChatflowContainer(BaseContainer):
 
 
 class Pipe:  # pylint: disable=missing-class-docstring
+
+    class Valves(BaseModel):
+        DIFY_BACKEND_API_BASE_URL: str = Field(
+            default="https://api.dify.ai/v1",
+            description="base URL to access Dify Backend Service API",
+        )
+
     def __init__(self):
         self.valves = self.Valves()
         self.base_url = None
         self.model_data = {}  # locally saving model-related data
         self.debug_lines = []
 
-    def pipe(self, body):
+    def pipe(self, body, __user__):
         """
         main pipe logic per round
 
 
-        :param body: HTML body
+        :param body: message body
         :type body: dict
+        :param __user__: user information
+        :type __user__: dict
         :return: replied message by the model
         :rtype: str
         """

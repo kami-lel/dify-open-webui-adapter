@@ -26,8 +26,33 @@ USER_ROLE = "user"
 ENABLE_DEBUG = False
 
 
+# Valves Class  ################################################################
+class Valves(BaseModel):
+    DIFY_BACKEND_API_BASE_URL: str = Field(
+        default="https://api.dify.ai/v1",
+        description="base URL to access Dify Backend Service API",
+    )
+    # settings for Dify App  -----------------------------------------------
+    DIFY_API_KEY: str = Field(
+        default="",
+        description="Dify Backend Service API secret key to access Dify app",
+    )
+    DIFY_APP_TYPE: int = Field(
+        default=0,
+        description="0=Workflow, 1=Chatflow (multi-round)",
+    )
+    OWU_MODEL_ID: str = Field(
+        default="",
+        description="model id as it is used in Open WebUI",
+    )
+    OWU_MODEL_NAME: str = Field(
+        default="",
+        description="model name as it is displayed in Open WebUI, optional",
+    )
+
+
 # data & logic Container  ######################################################
-class DIFY_APP_TYPE_ENUM(Enum):  # pylint: disable=all
+class DIFY_APP_TYPE_ENUM(Enum):
     WORKFLOW = 0
     CHATFLOW = 1  # multi-turn chats
 
@@ -54,33 +79,6 @@ class ChatflowContainer(BaseContainer):
 
 
 class Pipe:  # pylint: disable=missing-class-docstring
-    class Valves(BaseModel):  # pylint: disable=missing-class-docstring
-        DIFY_BACKEND_API_BASE_URL: str = Field(
-            default="https://api.dify.ai/v1",
-            description="base URL to access Dify Backend Service API",
-        )
-        # settings for Dify App  -----------------------------------------------
-        DIFY_API_KEY: str = Field(
-            default="",
-            description=(
-                "Dify Backend Service API secret key to access Dify app"
-            ),
-        )
-        DIFY_APP_TYPE: int = Field(
-            default=0,
-            description="0=Workflow, 1=Chatflow (multi-round)",
-        )
-        OWU_MODEL_ID: str = Field(
-            default="",
-            description="model id as it is used in Open WebUI",
-        )
-        OWU_MODEL_NAME: str = Field(
-            default="",
-            description=(
-                "model name as it is displayed in Open WebUI, optional"
-            ),
-        )
-
     def __init__(self):
         self.valves = self.Valves()
         self.base_url = None
@@ -195,7 +193,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
 
         :rtype: list(dict)
         """
-        return  # HACK
+        return None  # HACK
         keys = [self.valves.DIFY_API_KEY]
         app_types = [self.valves.DIFY_APP_TYPE]
         models = [self.valves.OWU_MODEL_ID]

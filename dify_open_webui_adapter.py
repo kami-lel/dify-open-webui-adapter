@@ -35,15 +35,6 @@ class DifyAppType(Enum):
 #     "name": "First Model",    # model Name as appeared in Open WebUI, optional
 # }
 APP_MODEL_CONFIGS = []
-# HACK rm example configs
-APP_MODEL_CONFIGS = [
-    {
-        "type": DifyAppType.WORKFLOW,
-        "key": "a",
-        "model_id": "aaa-example-workflow",
-        "name": "AAA Example Workflow App",
-    },
-]
 
 
 # config  ######################################################################

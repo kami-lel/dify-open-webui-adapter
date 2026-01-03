@@ -174,7 +174,49 @@ class TestModelId:
         assert msg == "APP_MODEL_CONFIGS 'model_id' must not be empty"
 
 
-# TODO test name
+class TestName:
+    CONFIG_KEY = "name"
+
+    def test_absent(self):  # no name entry present
+        config = EXAMPLE_CHATFLOW_CONFIG.copy()
+        del config[self.CONFIG_KEY]
+        ipt = [config]
+
+        verify_app_model_configs(ipt)
+
+    def test_none(self):  # name entry is None
+        config = EXAMPLE_CHATFLOW_CONFIG.copy()
+        config[self.CONFIG_KEY] = None
+        ipt = [config]
+
+        verify_app_model_configs(ipt)
+
+    def test_empty(self):
+        config = EXAMPLE_CHATFLOW_CONFIG.copy()
+        config[self.CONFIG_KEY] = ""
+        ipt = [config]
+
+        with pytest.raises(ValueError) as exec_info:
+            verify_app_model_configs(ipt)
+
+        msg = str(exec_info.value)
+        print(msg)
+
+        assert msg == "APP_MODEL_CONFIGS 'name' must not be empty"
+
+    def test_type(self):
+        config = EXAMPLE_CHATFLOW_CONFIG.copy()
+        config[self.CONFIG_KEY] = 123
+        ipt = [config]
+
+        with pytest.raises(TypeError) as exec_info:
+            verify_app_model_configs(ipt)
+
+        msg = str(exec_info.value)
+        print(msg)
+
+        assert msg == "APP_MODEL_CONFIGS 'name' entry must be str or None"
+
 
 # pass cases  ##################################################################
 

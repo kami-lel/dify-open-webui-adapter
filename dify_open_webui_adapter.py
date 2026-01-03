@@ -377,8 +377,11 @@ class Pipe:  # pylint: disable=missing-class-docstring
             description="base URL to access Dify Backend Service API",
         )
 
-    def __init__(self, app_model_configs=APP_MODEL_CONFIGS):
+    def __init__(self, app_model_configs=None):
+        if app_model_configs is None:
+            app_model_configs = APP_MODEL_CONFIGS
         verify_app_model_configs(app_model_configs)
+
         self.containers = {}
         # populate containers   ++++++++++++++++++++++++++++++++++++++++++++++++
         base_url = self.Valves().DIFY_BACKEND_API_BASE_URL

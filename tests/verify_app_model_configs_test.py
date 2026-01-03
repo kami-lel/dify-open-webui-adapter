@@ -12,7 +12,7 @@ import pytest
 
 from dify_open_webui_adapter import verify_app_model_configs, DifyAppType
 
-from tests import EXAMPLE_CHATFLOW_CONFIG
+from tests import EXAMPLE_CHATFLOW_CONFIG, EXAMPLE_CONFIGS
 
 # fail cases  ##################################################################
 
@@ -212,13 +212,4 @@ class TestName:
 class TestPass:
 
     def test1(_):
-        ipt = [
-            {
-                "type": DifyAppType.WORKFLOW,
-                "key": "eaJxetwzESWalG7LmfDEyiTOhCSAm6gf",
-                "model_id": "example-workflow-model",
-            },
-            EXAMPLE_CHATFLOW_CONFIG,
-        ]
-
-        verify_app_model_configs(ipt)
+        verify_app_model_configs(EXAMPLE_CONFIGS)

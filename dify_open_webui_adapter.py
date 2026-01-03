@@ -43,8 +43,6 @@ REQUEST_TIMEOUT = 30
 
 
 # data & logic Container  ######################################################
-
-
 def verify_app_model_configs(app_model_configs):
     """
     verify users' settings of APP_MODEL_CONFIGS
@@ -385,7 +383,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
         self.containers = {}
         # populate containers   ++++++++++++++++++++++++++++++++++++++++++++++++
         base_url = self.Valves().DIFY_BACKEND_API_BASE_URL
-        for config in APP_MODEL_CONFIGS:
+        for config in app_model_configs:
             container = create_container(base_url, config)
             model_id = container.model_id
             self.containers[model_id] = container

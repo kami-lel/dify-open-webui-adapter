@@ -30,7 +30,8 @@ class DifyAppType(Enum):
 # app/model per entry:
 # {
 #     "type": DifyAppType.WORKFLOW,  # Dify App Type
-#     "id": "model_id_1",       # model id as used in Open WebUI
+#     "key": "...",             # Backend Service API secret key of Dify App
+#     "model_id": "model_id1",  # model id as used in Open WebUI
 #     "name": "First Model",    # model Name as appeared in Open WebUI, optional
 # }
 APP_MODEL_CONFIGS = []
@@ -63,19 +64,32 @@ def verify_app_model_configs(app_model_configs):
             raise TypeError(
                 "APP_MODEL_CONFIGS 'type' entry must be DifyAppType"
             )
+        # test key  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        if "key" not in config:
+            raise ValueError("APP_MODEL_CONFIGS missing 'key' entry")
+        if not isinstance(config["key"], str):
+            raise TypeError("APP_MODEL_CONFIGS 'key' entry must be str")
+        if len(config["key"]) == 0:
+            raise ValueError("APP_MODEL_CONFIGS 'key' must not be empty")
         # test id  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        if "id" not in config:
-            raise ValueError("APP_MODEL_CONFIGS missing 'id' entry")
-        if not isinstance(config["id"], str):
-            raise TypeError("APP_MODEL_CONFIGS 'id' entry must be str")
-        if len(config["id"]) == 0:
-            raise TypeError("APP_MODEL_CONFIGS 'id' must not be empty")
+        if "model_id" not in config:
+            raise ValueError("APP_MODEL_CONFIGS missing 'model_id' entry")
+        if not isinstance(config["model_id"], str):
+            raise TypeError("APP_MODEL_CONFIGS 'model_id' entry must be str")
+        if len(config["model_id"]) == 0:
+            raise ValueError("APP_MODEL_CONFIGS 'model_id' must not be empty")
         # test name  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         if "name" in config:
-            if not isinstance(config["name"], str):
-                raise TypeError("APP_MODEL_CONFIGS 'name' entry must be str")
-            if len(config["name"]) == 0:
-                raise TypeError("APP_MODEL_CONFIGS 'name' must not be empty")
+            name = config["name"]
+            if isinstance(name, str):
+                if len(name) == 0:
+                    raise ValueError(
+                        "APP_MODEL_CONFIGS 'name' must not be empty"
+                    )
+            elif name is not None:
+                raise TypeError(
+                    "APP_MODEL_CONFIGS 'name' entry must be str or None"
+                )
 
 
 def create_container(base_url, app_model_config):
@@ -91,17 +105,18 @@ def create_container(base_url, app_model_config):
     :rtype: WorkflowContainer or ChatflowContainer
     """
     model_type = app_model_config["type"]
-    model_id = app_model_config["id"]
-    model_name = None  # default
+    key = app_model_config["key"]
+    model_id = app_model_config["model_id"]
+    name = None  # default
     if "name" in app_model_config:
         model_name_value = app_model_config["name"]
         if isinstance(model_name_value, str):
-            model_name = model_name_value
+            name = model_name_value
 
     if model_type == DifyAppType.WORKFLOW:
-        return WorkflowContainer(base_url, model_id, model_name)
+        return WorkflowContainer(base_url, key, model_id, name)
     else:  # i.e. Chatflow
-        return ChatflowContainer(base_url, model_id, model_name)
+        return ChatflowContainer(base_url, key, model_id, name)
 
 
 class BaseContainer:
@@ -111,17 +126,19 @@ class BaseContainer:
 
     :param base_url:
     :type base_url: str
+    :param key:
+    :type key: str
     :param model_id:
     :type model_id: str
-    :param model_name:
-    :type model_name: str or NoneType
+    :param name:
+    :type name: str or NoneType
     """
 
-    def __init__(self, base_url, model_id, model_name):
+    def __init__(self, base_url, key, model_id, name):
         self.base_url = base_url
+        self.key = key
         self.model_id = model_id
-        self.model_name = model_name  # may be None
-        self._debug_lines = []
+        self.name = name  # may be None
 
     def get_model_id_and_name(self):
         """
@@ -129,7 +146,7 @@ class BaseContainer:
                 such that it can be served to ``Pipe.pipes()``
         :rtype: dict{str: str}
         """
-        display_name = self.model_name or self.model_id
+        display_name = self.name or self.model_id
         return {"id": self.model_id, "name": display_name}
 
     def reply(self, body, user):
@@ -146,29 +163,30 @@ class BaseContainer:
         """
         raise NotImplementedError
 
+    def _retrieve_user_input(self, body):
+        message = ""
+        try:
+            for msg in body["messages"]:
+                if msg["role"] == "user":
+                    message = msg["content"]
+                    break
+
+            if not message:
+                raise ValueError(
+                    "fail to find 'user' after exhausting 'messages'"
+                )
+
+        except (KeyError, IndexError, ValueError) as err:
+            raise ValueError(
+                "fail to get user message from body {}: {}".format(body, err)
+            ) from err
+
         # return  # HACK
         # self.base_url = self.valves.DIFY_BACKEND_API_BASE_URL
 
         # self.debug_lines = []
 
         # # retrieve user input  -------------------------------------------------
-        # message = ""
-        # try:
-        #     for msg in body["messages"]:
-        #         if msg["role"] == "user":
-        #             message = msg["content"]
-        #             break
-
-        #     if not message:
-        #         raise ValueError(
-        #             "fail to find 'user' after exhausting 'messages'"
-        #         )
-
-        # except (KeyError, IndexError, ValueError) as err:
-        #     raise ValueError(
-        #         "fail to get user message from body {}: {}".format(body, err)
-        #     ) from err
-
         # # Extract model id from the model name
         # model_id = body["model"][body["model"].find(".") + 1 :]
         # api_secret_key, app_type, conversation_id = self.model_data[model_id]
@@ -375,8 +393,8 @@ class Pipe:  # pylint: disable=missing-class-docstring
         base_url = self.Valves().DIFY_BACKEND_API_BASE_URL
         for config in APP_MODEL_CONFIGS:
             container = create_container(base_url, config)
-            model_name = container.model_id
-            self.containers[model_name] = container
+            model_id = container.model_id
+            self.containers[model_id] = container
 
     def pipes(self):
         """

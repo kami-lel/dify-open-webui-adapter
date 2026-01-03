@@ -220,4 +220,17 @@ class TestName:
 
 # pass cases  ##################################################################
 
-# TODO
+
+class TestPass:
+
+    def test1(_):
+        ipt = [
+            {
+                "type": DifyAppType.WORKFLOW,
+                "key": "eaJxetwzESWalG7LmfDEyiTOhCSAm6gf",
+                "model_id": "example-workflow-model",
+            },
+            EXAMPLE_CHATFLOW_CONFIG,
+        ]
+
+        verify_app_model_configs(ipt)

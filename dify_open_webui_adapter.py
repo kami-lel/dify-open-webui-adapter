@@ -41,12 +41,7 @@ APP_MODEL_CONFIGS = [
         "type": DifyAppType.WORKFLOW,
         "key": "a",
         "model_id": "aaa-example-workflow",
-        "name": "Example Workflow App",
-    },
-    {
-        "type": DifyAppType.CHATFLOW,
-        "key": "a",
-        "model_id": "aaa-example-chatflow",
+        "name": "AAA Example Workflow App",
     },
 ]
 

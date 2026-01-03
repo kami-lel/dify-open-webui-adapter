@@ -37,7 +37,6 @@ APP_MODEL_CONFIGS = []
 
 
 # config  ######################################################################
-ENABLE_DEBUGGING = False  # HACK decide whether to use
 USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
 
@@ -79,7 +78,7 @@ def verify_app_model_configs(app_model_configs):
                 raise TypeError("APP_MODEL_CONFIGS 'name' must not be empty")
 
 
-def create_container(base_url, config):
+def create_container(base_url, app_model_config):
     """
     create an instance of specific sub-types of BaseContainer
 
@@ -91,11 +90,11 @@ def create_container(base_url, config):
     :return: created container
     :rtype: WorkflowContainer or ChatflowContainer
     """
-    model_type = config["type"]
-    model_id = config["id"]
+    model_type = app_model_config["type"]
+    model_id = app_model_config["id"]
     model_name = None  # default
-    if "name" in config["name"]:
-        model_name_value = config["name"]
+    if "name" in app_model_config["name"]:
+        model_name_value = app_model_config["name"]
         if isinstance(model_name_value, str):
             model_name = model_name_value
 
@@ -133,16 +132,6 @@ class BaseContainer:
         display_name = self.model_name or self.model_id
         return {"id": self.model_id, "name": display_name}
 
-    def _debug(self, line):
-        """
-        :param line:
-        :type line: str
-        """
-        if not ENABLE_DEBUGGING:
-            return
-
-        self._debug_lines.append(line)
-
     def reply(self, body, user):
         """
         main logic for fetching & creating a single-round response
@@ -155,10 +144,6 @@ class BaseContainer:
         :return: the response
         :rtype: str
         """
-
-        # empty debug lines
-        self._debug_lines = []
-
         raise NotImplementedError
 
         # return  # HACK
@@ -386,7 +371,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
     def __init__(self):
         verify_app_model_configs(APP_MODEL_CONFIGS)
         self.containers = {}
-        # populate app_models   ++++++++++++++++++++++++++++++++++++++++++++++++
+        # populate containers   ++++++++++++++++++++++++++++++++++++++++++++++++
         base_url = self.Valves().DIFY_BACKEND_API_BASE_URL
         for config in APP_MODEL_CONFIGS:
             container = create_container(base_url, config)

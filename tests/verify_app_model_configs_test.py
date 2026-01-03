@@ -6,11 +6,23 @@ Unit Tests (using pytest) for:
 - verify_app_model_configs()
 """
 
+import sys
+from pathlib import Path
+
+
 import pytest
-from dify_open_webui_adapter import verify_app_model_configs
+
+# import verify_app_model_configs  +++++++++++++++++++++++++++++++++++++++++++++
+project_root_path = str(Path(__file__).resolve().parents[1])
+if project_root_path not in sys.path:
+    sys.path.insert(0, project_root_path)
+
+from dify_open_webui_adapter import (
+    verify_app_model_configs,
+)
 
 
-def test_empty(_):  # when APP_MODEL_CONFIGS is empty
+def test_empty():  # when APP_MODEL_CONFIGS is empty
     ipt = []
     expected_msg = "APP_MODEL_CONFIGS must contains at least one App/Model"
     msg = None

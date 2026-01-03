@@ -35,6 +35,20 @@ class DifyAppType(Enum):
 #     "name": "First Model",    # model Name as appeared in Open WebUI, optional
 # }
 APP_MODEL_CONFIGS = []
+# HACK rm example configs
+APP_MODEL_CONFIGS = [
+    {
+        "type": DifyAppType.WORKFLOW,
+        "key": "a",
+        "model_id": "aaa-example-workflow",
+        "name": "Example Workflow App",
+    },
+    {
+        "type": DifyAppType.CHATFLOW,
+        "key": "a",
+        "model_id": "aaa-example-chatflow",
+    },
+]
 
 
 # config  ######################################################################
@@ -161,94 +175,89 @@ class BaseContainer:
         :return: the response
         :rtype: str
         """
-        raise NotImplementedError
 
-    def _retrieve_user_input(self, body):
-        message = ""
+        newest_user_message = self._retrieve_newest_user_message(body)
+        return newest_user_message  # HACK
+
+    def _retrieve_newest_user_message(self, body):
         try:
-            for msg in body["messages"]:
-                if msg["role"] == "user":
-                    message = msg["content"]
-                    break
+            for msg in body["messages"][-1]:
+                if msg["role"] == USER_ROLE:
+                    return msg["content"]
 
-            if not message:
-                raise ValueError(
-                    "fail to find 'user' after exhausting 'messages'"
-                )
+            # TODO change language
+            raise ValueError("fail to find 'user' after exhausting 'messages'")
 
         except (KeyError, IndexError, ValueError) as err:
-            raise ValueError(
-                "fail to get user message from body {}: {}".format(body, err)
-            ) from err
+            raise ValueError("bad retrieve") from err  # TODO improve
 
-        # return  # HACK
-        # self.base_url = self.valves.DIFY_BACKEND_API_BASE_URL
+    # self.base_url = self.valves.DIFY_BACKEND_API_BASE_URL
 
-        # self.debug_lines = []
+    # self.debug_lines = []
 
-        # # retrieve user input  -------------------------------------------------
-        # # Extract model id from the model name
-        # model_id = body["model"][body["model"].find(".") + 1 :]
-        # api_secret_key, app_type, conversation_id = self.model_data[model_id]
+    # # retrieve user input  -------------------------------------------------
+    # # Extract model id from the model name
+    # model_id = body["model"][body["model"].find(".") + 1 :]
+    # api_secret_key, app_type, conversation_id = self.model_data[model_id]
 
-        # if ENABLE_DEBUG:
-        #     self.debug_lines.append("## body")
-        #     self.debug_lines.append(repr(body))
-        #     self.debug_lines.append("## user message")
-        #     self.debug_lines.append(message)
-        #     self.debug_lines.append("## model id")
-        #     self.debug_lines.append(model_id)
-        #     self.debug_lines.append("## api secret key")
-        #     self.debug_lines.append(api_secret_key)
-        #     self.debug_lines.append("## conversation id")
-        #     self.debug_lines.append(conversation_id)
+    # if ENABLE_DEBUG:
+    #     self.debug_lines.append("## body")
+    #     self.debug_lines.append(repr(body))
+    #     self.debug_lines.append("## user message")
+    #     self.debug_lines.append(message)
+    #     self.debug_lines.append("## model id")
+    #     self.debug_lines.append(model_id)
+    #     self.debug_lines.append("## api secret key")
+    #     self.debug_lines.append(api_secret_key)
+    #     self.debug_lines.append("## conversation id")
+    #     self.debug_lines.append(conversation_id)
 
-        # # send request to Dify  ------------------------------------------------
-        # url = self._gen_request_url(app_type)
-        # headers = self._gen_headers(api_secret_key, app_type)
-        # payloads = self._build_payload(
-        #     message, app_type, conversation_id, everything_for_debug=body
-        # )
+    # # send request to Dify  ------------------------------------------------
+    # url = self._gen_request_url(app_type)
+    # headers = self._gen_headers(api_secret_key, app_type)
+    # payloads = self._build_payload(
+    #     message, app_type, conversation_id, everything_for_debug=body
+    # )
 
-        # try:
-        #     response_json = requests.post(
-        #         url,
-        #         headers=headers,
-        #         data=payloads,
-        #         timeout=REQUEST_TIMEOUT,
-        #     )
-        # except Exception as err:
-        #     raise ConnectionError(
-        #         "fail to request POST:{}".format(err)
-        #     ) from err
+    # try:
+    #     response_json = requests.post(
+    #         url,
+    #         headers=headers,
+    #         data=payloads,
+    #         timeout=REQUEST_TIMEOUT,
+    #     )
+    # except Exception as err:
+    #     raise ConnectionError(
+    #         "fail to request POST:{}".format(err)
+    #     ) from err
 
-        # if ENABLE_DEBUG:
-        #     self.debug_lines.append("## request url")
-        #     self.debug_lines.append(url)
-        #     self.debug_lines.append("## headers")
-        #     self.debug_lines.append(str(headers))
-        #     self.debug_lines.append("## payloads")
-        #     self.debug_lines.append(str(payloads))
+    # if ENABLE_DEBUG:
+    #     self.debug_lines.append("## request url")
+    #     self.debug_lines.append(url)
+    #     self.debug_lines.append("## headers")
+    #     self.debug_lines.append(str(headers))
+    #     self.debug_lines.append("## payloads")
+    #     self.debug_lines.append(str(payloads))
 
-        # # output  --------------------------------------------------------------
-        # response_json = response_json.json()
+    # # output  --------------------------------------------------------------
+    # response_json = response_json.json()
 
-        # if ENABLE_DEBUG:
-        #     self.debug_lines.append("## response content")
-        #     self.debug_lines.append(repr(response_json))
+    # if ENABLE_DEBUG:
+    #     self.debug_lines.append("## response content")
+    #     self.debug_lines.append(repr(response_json))
 
-        # output = self._extract_output(
-        #     model_id, response_json, app_type, conversation_id
-        # )
+    # output = self._extract_output(
+    #     model_id, response_json, app_type, conversation_id
+    # )
 
-        # if ENABLE_DEBUG:
-        #     self.debug_lines.append("\n\n----\n\n\n")
-        #     self.debug_lines.append(output)
+    # if ENABLE_DEBUG:
+    #     self.debug_lines.append("\n\n----\n\n\n")
+    #     self.debug_lines.append(output)
 
-        # if ENABLE_DEBUG:
-        #     return "\n".join(self.debug_lines)
-        # else:
-        #     return output
+    # if ENABLE_DEBUG:
+    #     return "\n".join(self.debug_lines)
+    # else:
+    #     return output
 
     # HACK cleanup
     # generate and build request  ##############################################
@@ -292,14 +301,13 @@ class BaseContainer:
     #         )
 
 
+count = 0  # HACK
+
+
 class WorkflowContainer(BaseContainer):
     """
     data & logic container for handling Dify Workflow App
     """
-
-    def reply(self, body, user):
-
-        return ""  # TODO
 
     # def _build_payload_workflow(self, message, everything_for_debug):
     #     inputs = {"input": message}
@@ -329,9 +337,6 @@ class ChatflowContainer(BaseContainer):
     """
     data & logic container for handling Dify Chatflow App (multi-round)
     """
-
-    def reply(self, body, user):
-        return ""  # TODO
 
     # Bug chatflow not working, only 1st message is repeated sent
     # def _build_payload_chatflow(
@@ -409,7 +414,8 @@ class Pipe:  # pylint: disable=missing-class-docstring
         :rtype: list(dict)
         """
         return [
-            container.get_model_id_and_name() for container in self.containers
+            container.get_model_id_and_name()
+            for container in self.containers.values()
         ]
 
     def pipe(self, body, __user__):

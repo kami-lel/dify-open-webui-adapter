@@ -93,7 +93,7 @@ def create_container(base_url, app_model_config):
     model_type = app_model_config["type"]
     model_id = app_model_config["id"]
     model_name = None  # default
-    if "name" in app_model_config["name"]:
+    if "name" in app_model_config:
         model_name_value = app_model_config["name"]
         if isinstance(model_name_value, str):
             model_name = model_name_value

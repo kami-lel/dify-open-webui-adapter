@@ -37,7 +37,7 @@ APP_MODEL_CONFIGS = []
 
 
 # config  ######################################################################
-ENABLE_DEBUGGING = False
+ENABLE_DEBUGGING = False  # HACK decide whether to use
 USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
 
@@ -46,7 +46,11 @@ REQUEST_TIMEOUT = 30
 
 
 def verify_app_model_configs(app_model_configs):
-    # FIXME maybe better way to do verification, w/ debug
+    """
+    verify users' settings of APP_MODEL_CONFIGS
+
+    :raises ValueError: APP_MODEL_CONFIGS is invalid
+    """
     if len(app_model_configs) == 0:
         raise ValueError(
             "APP_MODEL_CONFIGS must contains at least one App/Model"
@@ -286,8 +290,12 @@ class BaseContainer:
 
 
 class WorkflowContainer(BaseContainer):
+    """
+    data & logic container for handling Dify Workflow App
+    """
 
     def reply(self, body, user):
+
         return ""  # TODO
 
     # def _build_payload_workflow(self, message, everything_for_debug):
@@ -315,6 +323,9 @@ class WorkflowContainer(BaseContainer):
 
 
 class ChatflowContainer(BaseContainer):
+    """
+    data & logic container for handling Dify Chatflow App (multi-round)
+    """
 
     def reply(self, body, user):
         return ""  # TODO

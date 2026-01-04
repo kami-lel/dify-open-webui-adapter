@@ -260,12 +260,6 @@ class BaseContainer:
     #             model_id, response_json, conversation_id
     #         )
 
-
-class WorkflowContainer(BaseContainer):
-    """
-    data & logic container for handling Dify Workflow App
-    """
-
     # def _build_payload_workflow(self, message, everything_for_debug):
     #     inputs = {"input": message}
     #     if ENABLE_DEBUG:
@@ -288,6 +282,12 @@ class WorkflowContainer(BaseContainer):
     #         ) from err
 
     #     return output
+
+
+class WorkflowContainer(BaseContainer):
+    """
+    data & logic container for handling Dify Workflow App
+    """
 
 
 class ChatflowContainer(BaseContainer):
@@ -387,10 +387,13 @@ class Pipe:  # pylint: disable=missing-class-docstring
         :type body: dict
         :param __user__: user information
         :type __user__: dict
+        :raises KeyError: missing `"model"` in `body`
         :return: replied message by the model
         :rtype: str
         """
-        # TODO error handling if no model in body
+        if "model" not in body:
+            raise IndexError("missing entry 'model' in body")
+
         # extract model_id from body
         model_id = body["model"][body["model"].find(".") + 1 :]
         return self.containers[model_id].reply(body, __user__)

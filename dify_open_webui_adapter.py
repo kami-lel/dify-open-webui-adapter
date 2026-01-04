@@ -240,11 +240,9 @@ class WorkflowContainer(BaseContainer):
     """
 
     def _gen_request_url(self):
-        # BUG need test
         return "{}/workflows/run".format(self.base_url)
 
     def _build_html_payloads(self, newest_user_message):
-        # BUG need test
         inputs = {"input": newest_user_message}
 
         payload_dict = {
@@ -256,7 +254,6 @@ class WorkflowContainer(BaseContainer):
         return payload_dict
 
     def _extract_dify_response(self, response_json):
-        # BUG need test
         try:
             output = response_json["data"]["outputs"]["output"]
         except (KeyError, IndexError) as err:
@@ -332,14 +329,14 @@ class Pipe:  # pylint: disable=missing-class-docstring
             description="base URL to access Dify Backend Service API",
         )
 
-    def __init__(self, app_model_configs=None):
+    def __init__(self, app_model_configs=None, base_url_override=None):
         if app_model_configs is None:
             app_model_configs = APP_MODEL_CONFIGS
         verify_app_model_configs(app_model_configs)
 
         self.containers = {}
         # populate containers   ++++++++++++++++++++++++++++++++++++++++++++++++
-        base_url = self.Valves().DIFY_BACKEND_API_BASE_URL
+        base_url = base_url_override or self.Valves().DIFY_BACKEND_API_BASE_URL
         for config in app_model_configs:
             container = create_container(base_url, config)
             model_id = container.model_id

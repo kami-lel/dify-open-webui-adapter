@@ -228,7 +228,9 @@ class BaseContainer:
         extract bot's response message out of response from Dify
 
 
-        :return: extracted per-round message
+        :param response_json:
+        :type response_json:
+        :return: per-round message content extracted from Dify's response
         :rtype: str
         """
         raise NotImplementedError
@@ -254,14 +256,17 @@ class WorkflowContainer(BaseContainer):
         return payload_dict
 
     def _extract_dify_response(self, response_json):
+        """
+        :raises KeyError: malformed `response_json`
+        """
         try:
-            output = response_json["data"]["outputs"]["output"]
-        except (KeyError, IndexError) as err:
-            raise ValueError(
-                "fail to parse response {}: {}".format(response_json, err)
+            return response_json["data"]["outputs"]["output"]
+        except KeyError as err:
+            raise KeyError(
+                "fail to parse Dify response, missing key: {}".format(
+                    err.args[0]
+                )
             ) from err
-
-        return output
 
 
 class ChatflowContainer(BaseContainer):

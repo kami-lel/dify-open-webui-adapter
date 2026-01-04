@@ -40,7 +40,7 @@ class TestRetrieve:
         assert opt == "THIRD USER MESSAGE"
 
 
-# err handle  ################################################################## TODO
+# err handle  ##################################################################
 
 
 class TestBadBody:
@@ -54,10 +54,30 @@ class TestBadBody:
             "model": "dify_open_webui_adapter.example-chatflow-model",
         }
 
+        with pytest.raises(KeyError) as exec_info:
+            chatflow._retrieve_newest_user_message(bad_body)
+
+        opt = str(exec_info.value)
+        print(opt)
+
+        assert opt == "'messages'"
+
+    def test_no_user_msg(_):
+        pipe = Pipe(app_model_configs=EXAMPLE_CONFIGS)
+        chatflow = pipe.containers["example-chatflow-model"]
+
+        bad_body = {
+            "stream": True,
+            "model": "dify_open_webui_adapter.example-chatflow-model",
+            "messages": [
+                {"role": "assistant", "content": "FIRST BOT REPLY"},
+            ],
+        }
+
         with pytest.raises(ValueError) as exec_info:
             chatflow._retrieve_newest_user_message(bad_body)
 
         opt = str(exec_info.value)
         print(opt)
 
-        assert opt == ""
+        assert opt == "fail to find any 'user' messages"

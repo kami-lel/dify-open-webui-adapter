@@ -159,8 +159,29 @@ class BaseContainer:
         :return: the response
         :rtype: str
         """
+        # extract from OWU  ++++++++++++++++++++++++++++++++++++++++++++++++++++
         newest_user_message = self._retrieve_newest_user_message(body)
-        return newest_user_message  # HACK
+        url = self._gen_request_url()
+        html_headers = self._gen_html_header()
+        payload = json.dumps(self._build_html_payloads(newest_user_message))
+
+        # POST Dify  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        try:
+            html_response = requests.post(
+                url,
+                headers=html_headers,
+                data=payload,
+                timeout=REQUEST_TIMEOUT,
+            )
+        except Exception as err:
+            # BUG need test
+            raise ConnectionError(
+                "fail to request POST:{}".format(err)
+            ) from err
+
+        # extract response  ++++++++++++++++++++++++++++++++++++++++++++++++++++
+        response_json = html_response.json()
+        return self._extract_dify_response(response_json)
 
     def _retrieve_newest_user_message(self, body):
         """
@@ -178,110 +199,39 @@ class BaseContainer:
 
         raise ValueError("fail to find any 'user' messages")
 
-    # self.base_url = self.valves.DIFY_BACKEND_API_BASE_URL
+    def _gen_request_url(self):
+        """
+        :return: url to access Dify Backend API
+        :rtype: str
+        """
+        raise NotImplementedError
 
-    # # send request to Dify  ------------------------------------------------
-    # url = self._gen_request_url(app_type)
-    # headers = self._gen_headers(api_secret_key, app_type)
-    # payloads = self._build_payload(
-    #     message, app_type, conversation_id, everything_for_debug=body
-    # )
+    def _gen_html_header(self):
+        """
+        :return: header (including authorization info) sent to Dify Backend API
+        :rtype: dict
+        """
+        return {
+            "Authorization": "Bearer {}".format(self.key),
+            "Content-Type": "application/json",
+        }
 
-    # try:
-    #     response_json = requests.post(
-    #         url,
-    #         headers=headers,
-    #         data=payloads,
-    #         timeout=REQUEST_TIMEOUT,
-    #     )
-    # except Exception as err:
-    #     raise ConnectionError(
-    #         "fail to request POST:{}".format(err)
-    #     ) from err
+    def _build_html_payloads(self, newest_user_message):
+        """
+        :return: payload data sent to Dify Backend API
+        :rtype: dict
+        """
+        raise NotImplementedError
 
-    # # output  --------------------------------------------------------------
-    # response_json = response_json.json()
+    def _extract_dify_response(self, response_json):
+        """
+        extract bot's response message out of response from Dify
 
-    # if ENABLE_DEBUG:
-    #     self.debug_lines.append("## response content")
-    #     self.debug_lines.append(repr(response_json))
 
-    # output = self._extract_output(
-    #     model_id, response_json, app_type, conversation_id
-    # )
-
-    # if ENABLE_DEBUG:
-    #     self.debug_lines.append("\n\n----\n\n\n")
-    #     self.debug_lines.append(output)
-
-    # if ENABLE_DEBUG:
-    #     return "\n".join(self.debug_lines)
-    # else:
-    #     return output
-
-    # HACK cleanup
-    # generate and build request  ##############################################
-
-    # def _gen_request_url(self, app_type):
-    #     if app_type == DifyAppType.WORKFLOW:
-    #         return "{}/workflows/run".format(self.base_url)
-    #     else:  # Chatflow
-    #         return "{}/chat-messages".format(self.base_url)
-
-    # def _gen_headers(self, api_secret_key, _):
-    #     return {
-    #         "Authorization": "Bearer {}".format(api_secret_key),
-    #         "Content-Type": "application/json",
-    #     }
-
-    # def _build_payload(
-    #     self, message, app_type, conversation_id, *, everything_for_debug
-    # ):
-    #     everything_for_debug = str(everything_for_debug)
-
-    #     if app_type == DifyAppType.WORKFLOW:
-    #         payload = self._build_payload_workflow(
-    #             message, everything_for_debug
-    #         )
-    #     else:  # Chatflow
-    #         payload = self._build_payload_chatflow(
-    #             message, conversation_id, everything_for_debug
-    #         )
-
-    #     return json.dumps(payload)
-
-    # def _extract_output(
-    #     self, model_id, response_json, app_type, conversation_id
-    # ):
-    #     if app_type == DifyAppType.WORKFLOW:
-    #         return self._extract_output_workflow(response_json)
-    #     else:  # chatflow
-    #         return self._extract_output_chatflow(
-    #             model_id, response_json, conversation_id
-    #         )
-
-    # def _build_payload_workflow(self, message, everything_for_debug):
-    #     inputs = {"input": message}
-    #     if ENABLE_DEBUG:
-    #         inputs["everything_for_debug"] = everything_for_debug
-
-    #     payload_dict = {
-    #         "inputs": inputs,
-    #         "response_mode": "blocking",
-    #         "user": USER_ROLE,
-    #     }
-
-    #     return payload_dict
-
-    # def _extract_output_workflow(self, response_json):
-    #     try:
-    #         output = response_json["data"]["outputs"]["output"]
-    #     except (KeyError, IndexError) as err:
-    #         raise ValueError(
-    #             "fail to parse response {}: {}".format(response_json, err)
-    #         ) from err
-
-    #     return output
+        :return: extracted per-round message
+        :rtype: str
+        """
+        raise NotImplementedError
 
 
 class WorkflowContainer(BaseContainer):
@@ -289,54 +239,88 @@ class WorkflowContainer(BaseContainer):
     data & logic container for handling Dify Workflow App
     """
 
+    def _gen_request_url(self):
+        # BUG need test
+        return "{}/workflows/run".format(self.base_url)
+
+    def _build_html_payloads(self, newest_user_message):
+        # BUG need test
+        inputs = {"input": newest_user_message}
+
+        payload_dict = {
+            "inputs": inputs,
+            "response_mode": "blocking",
+            "user": USER_ROLE,
+        }
+
+        return payload_dict
+
+    def _extract_dify_response(self, response_json):
+        # BUG need test
+        try:
+            output = response_json["data"]["outputs"]["output"]
+        except (KeyError, IndexError) as err:
+            raise ValueError(
+                "fail to parse response {}: {}".format(response_json, err)
+            ) from err
+
+        return output
+
 
 class ChatflowContainer(BaseContainer):
     """
     data & logic container for handling Dify Chatflow App (multi-round)
     """
 
-    # Bug chatflow not working, only 1st message is repeated sent
-    # def _build_payload_chatflow(
-    #     self, message, conversation_id, everything_for_debug
-    # ):
-    #     inputs = {}
-    #     if ENABLE_DEBUG:
-    #         inputs["everything_for_debug"] = everything_for_debug
+    def _gen_request_url(self):
+        # Bug need test
+        return "{}/chat-messages".format(self.base_url)
 
-    #     return {
-    #         "inputs": inputs,
-    #         "query": message,
-    #         "response_mode": "blocking",
-    #         "conversation_id": conversation_id,
-    #         "user": USER_ROLE,
-    #         "auto_generate_name": False,
-    #     }
+    def _build_html_payloads(self, newest_user_message):
+        # def _build_payload_chatflow(
+        #     self, message, conversation_id, everything_for_debug
+        # ):
+        #     inputs = {}
+        #     if ENABLE_DEBUG:
+        #         inputs["everything_for_debug"] = everything_for_debug
 
-    # def _extract_output_chatflow(
-    #     self, model_id, response_json, saved_conversation_id
-    # ):
-    #     try:
-    #         output = response_json["answer"]
+        #     return {
+        #         "inputs": inputs,
+        #         "query": message,
+        #         "response_mode": "blocking",
+        #         "conversation_id": conversation_id,
+        #         "user": USER_ROLE,
+        #         "auto_generate_name": False,
+        #     }
+        raise NotImplementedError  # Hack
 
-    #         # save returned conversation idea for future rounds
-    #         if not saved_conversation_id:
-    #             conversation_id = response_json["conversation_id"]
-    #             self.model_data[model_id][2] = conversation_id
+    def _extract_dify_response(self, response_json):
+        # def _extract_output_chatflow(
+        #     self, model_id, response_json, saved_conversation_id
+        # ):
+        #     try:
+        #         output = response_json["answer"]
 
-    #             if ENABLE_DEBUG:
-    #                 conversation_id = response_json["conversation_id"]
-    #                 self.model_data[model_id][2] = conversation_id
-    #                 self.debug_lines.append("## returned conversation id")
-    #                 self.debug_lines.append(conversation_id)
+        #         # save returned conversation idea for future rounds
+        #         if not saved_conversation_id:
+        #             conversation_id = response_json["conversation_id"]
+        #             self.model_data[model_id][2] = conversation_id
 
-    #     except (KeyError, IndexError) as err:
-    #         raise ValueError(
-    #             "fail to parse chatflow response {}: {}".format(
-    #                 response_json, err
-    #             )
-    #         ) from err
+        #             if ENABLE_DEBUG:
+        #                 conversation_id = response_json["conversation_id"]
+        #                 self.model_data[model_id][2] = conversation_id
+        #                 self.debug_lines.append("## returned conversation id")
+        #                 self.debug_lines.append(conversation_id)
 
-    #     return output
+        #     except (KeyError, IndexError) as err:
+        #         raise ValueError(
+        #             "fail to parse chatflow response {}: {}".format(
+        #                 response_json, err
+        #             )
+        #         ) from err
+
+        #     return output
+        raise NotImplementedError  # Hack
 
 
 # Pipe class required by OWU  ##################################################

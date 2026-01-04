@@ -1,9 +1,7 @@
 """
-container_retrieve_msg_test.py
+base_container_test.py
 
-Unit Tests (using pytest) for:
-
-- BaseContainer._retrieve_newest_user_message()
+Unit Tests (using pytest) for: BaseContainer
 """
 
 import pytest
@@ -13,7 +11,7 @@ from tests import EXAMPLE_CONFIGS, EXAMPLE_BODY1, EXAMPLE_BODY2
 from dify_open_webui_adapter import Pipe
 
 
-class TestRetrieve:
+class TestRetrieve:  # test ._retrieve_newest_user_message()  ##################
 
     def test1(_):
         pipe = Pipe(app_model_configs=EXAMPLE_CONFIGS)
@@ -39,11 +37,7 @@ class TestRetrieve:
         assert isinstance(opt, str)
         assert opt == "THIRD USER MESSAGE"
 
-
-# err handle  ##################################################################
-
-
-class TestBadBody:
+    # err handle  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     def test_no_msg(_):
         pipe = Pipe(app_model_configs=EXAMPLE_CONFIGS)
@@ -81,3 +75,48 @@ class TestBadBody:
         print(opt)
 
         assert opt == "fail to find any 'user' messages"
+
+
+class TestGenHeader:  # test ._gen_html_headers()  #############################
+
+    def test1(_):
+        pipe = Pipe(app_model_configs=EXAMPLE_CONFIGS)
+        chatflow = pipe.containers["example-chatflow-model"]
+
+        opt = chatflow._gen_html_header()
+
+        print(opt)
+
+        assert isinstance(opt, dict)
+        assert opt == {
+            "Authorization": "Bearer u0caCsmD",
+            "Content-Type": "application/json",
+        }
+
+    def test2(_):
+        pipe = Pipe(app_model_configs=EXAMPLE_CONFIGS)
+        chatflow = pipe.containers["example-workflow-model"]
+
+        opt = chatflow._gen_html_header()
+
+        print(opt)
+
+        assert isinstance(opt, dict)
+        assert opt == {
+            "Authorization": "Bearer eaJxetwz",
+            "Content-Type": "application/json",
+        }
+
+    def test3(_):
+        pipe = Pipe(app_model_configs=EXAMPLE_CONFIGS)
+        chatflow = pipe.containers["example-chatflow-model-2"]
+
+        opt = chatflow._gen_html_header()
+
+        print(opt)
+
+        assert isinstance(opt, dict)
+        assert opt == {
+            "Authorization": "Bearer YIFpPns6",
+            "Content-Type": "application/json",
+        }

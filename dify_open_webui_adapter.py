@@ -278,7 +278,7 @@ class ChatflowContainer(BaseContainer):
     """
 
     def _gen_request_url(self):
-        # Bug need test
+        # bug need test
         return "{}/chat-messages".format(self.base_url)
 
     def _build_html_payloads(self, newest_user_message):
@@ -297,7 +297,7 @@ class ChatflowContainer(BaseContainer):
         #         "user": USER_ROLE,
         #         "auto_generate_name": False,
         #     }
-        raise NotImplementedError  # Hack
+        raise NotImplementedError  # hack
 
     def _extract_dify_response(self, response_json):
         # def _extract_output_chatflow(
@@ -325,7 +325,7 @@ class ChatflowContainer(BaseContainer):
         #         ) from err
 
         #     return output
-        raise NotImplementedError  # Hack
+        raise NotImplementedError  # hack
 
 
 # Pipe class required by OWU  ##################################################

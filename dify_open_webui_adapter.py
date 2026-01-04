@@ -156,6 +156,7 @@ class BaseContainer:
         :type body: dict
         :param user: `__user__` given by Pipe.pipes(body, __user__)
         :type user: dict
+        :raises ConnectionError: fail Dify request
         :return: the response
         :rtype: str
         """
@@ -173,10 +174,12 @@ class BaseContainer:
                 data=payload,
                 timeout=REQUEST_TIMEOUT,
             )
-        except Exception as err:
-            # BUG need test
+            html_response.raise_for_status()
+
+        # handle network errors
+        except requests.exceptions.RequestException as err:
             raise ConnectionError(
-                "fail to request POST:{}".format(err)
+                "fail Dify request: {}".format(err.args[0])
             ) from err
 
         # extract response  ++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -329,6 +332,7 @@ class ChatflowContainer(BaseContainer):
 class Pipe:  # pylint: disable=missing-class-docstring
 
     class Valves(BaseModel):
+        # Bug can not set aside from default
         DIFY_BACKEND_API_BASE_URL: str = Field(
             default="https://api.dify.ai/v1",
             description="base URL to access Dify Backend Service API",

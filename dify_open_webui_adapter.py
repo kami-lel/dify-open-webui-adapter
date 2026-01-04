@@ -26,17 +26,6 @@ class DifyAppType(Enum):
     CHATFLOW = 1  # multi-turn chats
 
 
-# app/model configs  ###########################################################
-# app/model per entry:
-# {
-#     "type": DifyAppType.WORKFLOW,  # Dify App Type
-#     "key": "...",             # Backend Service API secret key of Dify App
-#     "model_id": "model_id1",  # model id as used in Open WebUI
-#     "name": "First Model",    # model Name as appeared in Open WebUI, optional
-# }
-APP_MODEL_CONFIGS = []
-
-
 # config  ######################################################################
 USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
@@ -329,23 +318,46 @@ class ChatflowContainer(BaseContainer):
 
 
 # Pipe class required by OWU  ##################################################
+APP_MODEL_CONFIGS_DESCRIPTION = (
+    """a list of model/app config (each as dict):
+app/model per entry:
+{
+    "type": DifyAppType.WORKFLOW,  # Dify App Type
+    "key": "...",             # Backend Service API secret key of Dify App
+    "model_id": "model_id1",  # model id as used in Open WebUI
+    "name": "First Model",    # model Name as appeared in Open WebUI, optional
+}""",
+)
+# BUG must be single line
+
+
 class Pipe:  # pylint: disable=missing-class-docstring
 
     class Valves(BaseModel):
-        # Bug can not set aside from default
         DIFY_BACKEND_API_BASE_URL: str = Field(
             default="https://api.dify.ai/v1",
             description="base URL to access Dify Backend Service API",
         )
+        APP_MODEL_CONFIGS: list = Field(
+            default=[], description=APP_MODEL_CONFIGS_DESCRIPTION
+        )
 
-    def __init__(self, app_model_configs=None, base_url_override=None):
-        if app_model_configs is None:
-            app_model_configs = APP_MODEL_CONFIGS
-        verify_app_model_configs(app_model_configs)
+    def __init__(
+        self, app_model_configs_override=None, base_url_override=None
+    ):
+        # BUG bad processing
+        # process app_model_configs  +++++++++++++++++++++++++++++++++++++++++++
+        if app_model_configs_override is None:
+            app_model_configs = self.Valves().APP_MODEL_CONFIGS
+            verify_app_model_configs(app_model_configs)
+        else:
+            app_model_configs = app_model_configs_override
 
-        self.containers = {}
-        # populate containers   ++++++++++++++++++++++++++++++++++++++++++++++++
+        # process base url  ++++++++++++++++++++++++++++++++++++++++++++++++++++
         base_url = base_url_override or self.Valves().DIFY_BACKEND_API_BASE_URL
+
+        # populate containers   ++++++++++++++++++++++++++++++++++++++++++++++++
+        self.containers = {}
         for config in app_model_configs:
             container = create_container(base_url, config)
             model_id = container.model_id

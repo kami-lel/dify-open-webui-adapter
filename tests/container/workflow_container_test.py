@@ -17,7 +17,8 @@ class TestGenRequestURL:  ######################################################
     def test1(_):
         base_url = "https://api.dify.ai/v1"
         pipe = Pipe(
-            app_model_configs=EXAMPLE_CONFIGS, base_url_override=base_url
+            app_model_configs_override=EXAMPLE_CONFIGS,
+            base_url_override=base_url,
         )
         chatflow = pipe.containers["example-workflow-model"]
 
@@ -30,7 +31,8 @@ class TestGenRequestURL:  ######################################################
     def test2(_):
         base_url = "http://11.22.33.44:1234/v1"
         pipe = Pipe(
-            app_model_configs=EXAMPLE_CONFIGS, base_url_override=base_url
+            app_model_configs_override=EXAMPLE_CONFIGS,
+            base_url_override=base_url,
         )
         chatflow = pipe.containers["example-workflow-model"]
 
@@ -45,7 +47,7 @@ class TestPayload:  ############################################################
     # test ._build_html_payloads()
 
     def test1(_):
-        pipe = Pipe(app_model_configs=EXAMPLE_CONFIGS)
+        pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
         chatflow = pipe.containers["example-workflow-model"]
         newest_user_message = "FIRST USER MESSAGE"
 
@@ -66,7 +68,7 @@ class TestExtractResponse:  ####################################################
     # test ._extract_dify_response()
 
     def test1(_):
-        pipe = Pipe(app_model_configs=EXAMPLE_CONFIGS)
+        pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
         chatflow = pipe.containers["example-workflow-model"]
         response_json = {
             "data": {"outputs": {"output": "BOT RESPONSE CONTENT"}}
@@ -79,7 +81,7 @@ class TestExtractResponse:  ####################################################
         assert opt == "BOT RESPONSE CONTENT"
 
     def test_bad_response1(_):
-        pipe = Pipe(app_model_configs=EXAMPLE_CONFIGS)
+        pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
         chatflow = pipe.containers["example-workflow-model"]
         response_json = {"data": {"outputs": {}}}
 

@@ -14,7 +14,7 @@ from dify_open_webui_adapter import Pipe
 class TestRetrieve:  # test ._retrieve_newest_user_message()  ##################
 
     def test1(_):
-        pipe = Pipe(app_model_configs=EXAMPLE_CONFIGS)
+        pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
         chatflow = pipe.containers["example-chatflow-model"]
         body = EXAMPLE_BODY1
 
@@ -26,7 +26,7 @@ class TestRetrieve:  # test ._retrieve_newest_user_message()  ##################
         assert opt == "FIRST USER MESSAGE"
 
     def test2(_):
-        pipe = Pipe(app_model_configs=EXAMPLE_CONFIGS)
+        pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
         chatflow = pipe.containers["example-chatflow-model"]
         body = EXAMPLE_BODY2
 
@@ -40,7 +40,7 @@ class TestRetrieve:  # test ._retrieve_newest_user_message()  ##################
     # err handle  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     def test_no_msg(_):
-        pipe = Pipe(app_model_configs=EXAMPLE_CONFIGS)
+        pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
         chatflow = pipe.containers["example-chatflow-model"]
 
         bad_body = {
@@ -57,7 +57,7 @@ class TestRetrieve:  # test ._retrieve_newest_user_message()  ##################
         assert opt == "'messages'"
 
     def test_no_user_msg(_):
-        pipe = Pipe(app_model_configs=EXAMPLE_CONFIGS)
+        pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
         chatflow = pipe.containers["example-chatflow-model"]
 
         bad_body = {
@@ -80,7 +80,7 @@ class TestRetrieve:  # test ._retrieve_newest_user_message()  ##################
 class TestGenHeader:  # test ._gen_html_headers()  #############################
 
     def test1(_):
-        pipe = Pipe(app_model_configs=EXAMPLE_CONFIGS)
+        pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
         chatflow = pipe.containers["example-chatflow-model"]
 
         opt = chatflow._gen_html_header()
@@ -94,7 +94,7 @@ class TestGenHeader:  # test ._gen_html_headers()  #############################
         }
 
     def test2(_):
-        pipe = Pipe(app_model_configs=EXAMPLE_CONFIGS)
+        pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
         chatflow = pipe.containers["example-workflow-model"]
 
         opt = chatflow._gen_html_header()
@@ -108,7 +108,7 @@ class TestGenHeader:  # test ._gen_html_headers()  #############################
         }
 
     def test3(_):
-        pipe = Pipe(app_model_configs=EXAMPLE_CONFIGS)
+        pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
         chatflow = pipe.containers["example-chatflow-model-2"]
 
         opt = chatflow._gen_html_header()

@@ -16,7 +16,7 @@ from dify_open_webui_adapter import Pipe
 class TestBadBody:
 
     def test_no_msg(_):
-        pipe = Pipe(app_model_configs=EXAMPLE_CONFIGS)
+        pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
 
         bad_body = {
             "stream": True,

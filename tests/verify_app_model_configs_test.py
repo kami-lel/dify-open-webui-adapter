@@ -10,7 +10,7 @@ import pytest
 
 # import verify_app_model_configs  +++++++++++++++++++++++++++++++++++++++++++++
 
-from dify_open_webui_adapter import verify_app_model_configs, DifyAppType
+from dify_open_webui_adapter import verify_app_model_configs
 
 from tests import EXAMPLE_CHATFLOW_CONFIG, EXAMPLE_CONFIGS
 

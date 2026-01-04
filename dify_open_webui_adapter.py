@@ -152,49 +152,33 @@ class BaseContainer:
         main logic for fetching & creating a single-round response
 
 
-        :param body: `body` given by Pipe.pipes(body, __user__)
+        :param body: `body` given by OWU Pipe.pipes(body, __user__)
         :type body: dict
         :param user: `__user__` given by Pipe.pipes(body, __user__)
         :type user: dict
         :return: the response
         :rtype: str
         """
-
         newest_user_message = self._retrieve_newest_user_message(body)
         return newest_user_message  # HACK
 
     def _retrieve_newest_user_message(self, body):
-        try:
-            for msg in body["messages"][-1]:
-                if msg["role"] == USER_ROLE:
-                    return msg["content"]
+        """
+        :param body: `body` given by OWU Pipe.pipes(body, __user__)
+        :type body: dict
+        :raises KeyError: `body` is malformed
+        :raises ValueError: no `user` message in `body
+        :return: retrieved newest user's message
+        :rtype: str
+        """
 
-            # TODO change language
-            raise ValueError("fail to find 'user' after exhausting 'messages'")
+        for msg in reversed(body["messages"]):
+            if msg["role"] == USER_ROLE:
+                return msg["content"]
 
-        except (KeyError, IndexError, ValueError) as err:
-            raise ValueError("bad retrieve") from err  # TODO improve
+        raise ValueError("fail to find any 'user' messages")
 
     # self.base_url = self.valves.DIFY_BACKEND_API_BASE_URL
-
-    # self.debug_lines = []
-
-    # # retrieve user input  -------------------------------------------------
-    # # Extract model id from the model name
-    # model_id = body["model"][body["model"].find(".") + 1 :]
-    # api_secret_key, app_type, conversation_id = self.model_data[model_id]
-
-    # if ENABLE_DEBUG:
-    #     self.debug_lines.append("## body")
-    #     self.debug_lines.append(repr(body))
-    #     self.debug_lines.append("## user message")
-    #     self.debug_lines.append(message)
-    #     self.debug_lines.append("## model id")
-    #     self.debug_lines.append(model_id)
-    #     self.debug_lines.append("## api secret key")
-    #     self.debug_lines.append(api_secret_key)
-    #     self.debug_lines.append("## conversation id")
-    #     self.debug_lines.append(conversation_id)
 
     # # send request to Dify  ------------------------------------------------
     # url = self._gen_request_url(app_type)
@@ -214,14 +198,6 @@ class BaseContainer:
     #     raise ConnectionError(
     #         "fail to request POST:{}".format(err)
     #     ) from err
-
-    # if ENABLE_DEBUG:
-    #     self.debug_lines.append("## request url")
-    #     self.debug_lines.append(url)
-    #     self.debug_lines.append("## headers")
-    #     self.debug_lines.append(str(headers))
-    #     self.debug_lines.append("## payloads")
-    #     self.debug_lines.append(str(payloads))
 
     # # output  --------------------------------------------------------------
     # response_json = response_json.json()
@@ -283,9 +259,6 @@ class BaseContainer:
     #         return self._extract_output_chatflow(
     #             model_id, response_json, conversation_id
     #         )
-
-
-count = 0  # HACK
 
 
 class WorkflowContainer(BaseContainer):
@@ -417,6 +390,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
         :return: replied message by the model
         :rtype: str
         """
+        # TODO error handling if no model in body
         # extract model_id from body
         model_id = body["model"][body["model"].find(".") + 1 :]
         return self.containers[model_id].reply(body, __user__)

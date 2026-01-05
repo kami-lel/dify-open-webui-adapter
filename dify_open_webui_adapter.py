@@ -18,7 +18,7 @@ app/model per entry:
 }
 """
 
-# TODO explain configs
+# Todo explain configs
 
 
 from enum import Enum
@@ -124,7 +124,9 @@ def create_container(base_url, app_model_config):
     if model_type == DifyAppType.WORKFLOW:
         return WorkflowContainer(base_url, key, model_id, name)
     else:  # i.e. Chatflow
-        return ChatflowContainer(base_url, key, model_id, name)
+        raise TypeError("Chatflow not implemented in this version")
+        # todo
+        # return ChatflowContainer(base_url, key, model_id, name)
 
 
 class BaseContainer:

@@ -138,7 +138,7 @@ def create_container(base_url, app_model_config):
         return WorkflowContainer(base_url, key, model_id, name)
     else:  # i.e. Chatflow
         raise TypeError("Chatflow not implemented in this version")
-        # todo
+        # Todo
         # return ChatflowContainer(base_url, key, model_id, name)
 
 
@@ -158,6 +158,7 @@ class BaseContainer:
     """
 
     def __init__(self, base_url, key, model_id, name):
+        # Todo validate key
         self.base_url = base_url
         self.key = key
         self.model_id = model_id
@@ -313,7 +314,7 @@ class ChatflowContainer(BaseContainer):
     """
 
     def _gen_request_url(self):
-        # bug need test
+        # Bug need test
         return "{}/chat-messages".format(self.base_url)
 
     def _build_html_payloads(self, newest_user_message):
@@ -332,7 +333,7 @@ class ChatflowContainer(BaseContainer):
         #         "user": USER_ROLE,
         #         "auto_generate_name": False,
         #     }
-        raise NotImplementedError  # hack
+        raise NotImplementedError  # Hack
 
     def _extract_dify_response(self, response_json):
         # def _extract_output_chatflow(
@@ -360,7 +361,7 @@ class ChatflowContainer(BaseContainer):
         #         ) from err
 
         #     return output
-        raise NotImplementedError  # hack
+        raise NotImplementedError  # Hack
 
 
 # Pipe class required by OWU  ##################################################

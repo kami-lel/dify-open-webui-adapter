@@ -158,7 +158,7 @@ class BaseContainer:
     """
 
     def __init__(self, base_url, key, model_id, name):
-        # Todo validate key
+        # TODO validate key
         self.base_url = base_url
         self.key = key
         self.model_id = model_id

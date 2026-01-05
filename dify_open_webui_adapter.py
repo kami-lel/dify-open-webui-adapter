@@ -65,6 +65,32 @@ OWU_USER_ROLE = DIFY_USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
 
 
+# OpenWeb UI model container  ##################################################
+class OWUModel:
+    """
+    TODO docstring for class OWUModel
+    """
+
+
+# Dify App container  ##########################################################
+class BaseDifyApp:
+    """
+    TODO docstring for class BaseDifyApp
+    """
+
+
+class WorkflowDifyApp(BaseDifyApp):
+    """
+    TODO docstring for class WorkflowDifyApp
+    """
+
+
+class ChatflowDifyApp(BaseDifyApp):
+    """
+    TODO docstring for class ChatflowDifyApp
+    """
+
+
 # data & logic Container  ######################################################
 def verify_app_model_configs(app_model_configs):
     """

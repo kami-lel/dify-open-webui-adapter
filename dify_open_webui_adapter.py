@@ -115,16 +115,18 @@ class OWUModel:
                 "entry in APP_MODEL_CONFIGS must have non-empty 'key'"
             )
 
-        return key, None, None  # HACK
-
         # id  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         if "model_id" not in config:
-            raise ValueError("APP_MODEL_CONFIGS missing 'model_id' entry")
+            raise ValueError("entry in APP_MODEL_CONFIGS missing 'model_id'")
         model_id = config["model_id"]
         if not isinstance(model_id, str):
-            raise TypeError("APP_MODEL_CONFIGS 'model_id' entry must be str")
+            raise TypeError(
+                "entry in APP_MODEL_CONFIGS must have str 'model_id'"
+            )
         if len(model_id) == 0:
-            raise ValueError("APP_MODEL_CONFIGS 'model_id' must not be empty")
+            raise ValueError(
+                "entry in APP_MODEL_CONFIGS must have non-empty 'model_id'"
+            )
 
         # name  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         name = None
@@ -133,11 +135,12 @@ class OWUModel:
             if isinstance(name, str):
                 if len(name) == 0:
                     raise ValueError(
-                        "APP_MODEL_CONFIGS 'name' must not be empty"
+                        "entry in APP_MODEL_CONFIGS must have non-empty 'name'"
                     )
             elif name is not None:
                 raise TypeError(
-                    "APP_MODEL_CONFIGS 'name' entry must be str or None"
+                    "entry in APP_MODEL_CONFIGS, "
+                    + "value of 'name' must be str or None"
                 )
 
         return key, model_id, name

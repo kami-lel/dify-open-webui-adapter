@@ -20,10 +20,9 @@ class TestKey:
     def test_missing(self):
         config = EXAMPLE_CHATFLOW_CONFIG.copy()
         del config[self.CONFIG_KEY]
-        ipt = [config]
 
         with pytest.raises(ValueError) as exec_info:
-            OWUModel(EXAMPLE_BASE_URL, ipt)
+            OWUModel(EXAMPLE_BASE_URL, config)
 
         opt = str(exec_info.value)
         print(opt)
@@ -33,10 +32,9 @@ class TestKey:
     def test_type(self):
         config = EXAMPLE_CHATFLOW_CONFIG.copy()
         config[self.CONFIG_KEY] = 123
-        ipt = [config]
 
         with pytest.raises(TypeError) as exec_info:
-            OWUModel(EXAMPLE_BASE_URL, ipt)
+            OWUModel(EXAMPLE_BASE_URL, config)
 
         opt = str(exec_info.value)
         print(opt)
@@ -46,10 +44,9 @@ class TestKey:
     def test_empty(self):
         config = EXAMPLE_CHATFLOW_CONFIG.copy()
         config[self.CONFIG_KEY] = ""
-        ipt = [config]
 
         with pytest.raises(ValueError) as exec_info:
-            OWUModel(EXAMPLE_BASE_URL, ipt)
+            OWUModel(EXAMPLE_BASE_URL, config)
 
         opt = str(exec_info.value)
         print(opt)
@@ -64,41 +61,40 @@ class TestModelId:
     def test_missing(self):
         config = EXAMPLE_CHATFLOW_CONFIG.copy()
         del config[self.CONFIG_KEY]
-        ipt = [config]
 
         with pytest.raises(ValueError) as exec_info:
-            OWUModel(EXAMPLE_BASE_URL, ipt)
+            OWUModel(EXAMPLE_BASE_URL, config)
 
         opt = str(exec_info.value)
         print(opt)
 
-        assert opt == "APP_MODEL_CONFIGS missing 'model_id' entry"
+        assert opt == "entry in APP_MODEL_CONFIGS missing 'model_id'"
 
     def test_type(self):
         config = EXAMPLE_CHATFLOW_CONFIG.copy()
         config[self.CONFIG_KEY] = 123
-        ipt = [config]
 
         with pytest.raises(TypeError) as exec_info:
-            OWUModel(EXAMPLE_BASE_URL, ipt)
+            OWUModel(EXAMPLE_BASE_URL, config)
 
         opt = str(exec_info.value)
         print(opt)
 
-        assert opt == "APP_MODEL_CONFIGS 'model_id' entry must be str"
+        assert opt == "entry in APP_MODEL_CONFIGS must have str 'model_id'"
 
     def test_empty(self):
         config = EXAMPLE_CHATFLOW_CONFIG.copy()
         config[self.CONFIG_KEY] = ""
-        ipt = [config]
 
         with pytest.raises(ValueError) as exec_info:
-            OWUModel(EXAMPLE_BASE_URL, ipt)
+            OWUModel(EXAMPLE_BASE_URL, config)
 
         opt = str(exec_info.value)
         print(opt)
 
-        assert opt == "APP_MODEL_CONFIGS 'model_id' must not be empty"
+        assert (
+            opt == "entry in APP_MODEL_CONFIGS must have non-empty 'model_id'"
+        )
 
 
 class TestName:
@@ -107,39 +103,38 @@ class TestName:
     def test_absent(self):  # no name entry present
         config = EXAMPLE_CHATFLOW_CONFIG.copy()
         del config[self.CONFIG_KEY]
-        ipt = [config]
 
-        OWUModel(EXAMPLE_BASE_URL, ipt)
+        OWUModel(EXAMPLE_BASE_URL, config)
 
     def test_none(self):  # name entry is None
         config = EXAMPLE_CHATFLOW_CONFIG.copy()
         config[self.CONFIG_KEY] = None
-        ipt = [config]
 
-        OWUModel(EXAMPLE_BASE_URL, ipt)
+        OWUModel(EXAMPLE_BASE_URL, config)
 
     def test_empty(self):
         config = EXAMPLE_CHATFLOW_CONFIG.copy()
         config[self.CONFIG_KEY] = ""
-        ipt = [config]
 
         with pytest.raises(ValueError) as exec_info:
-            OWUModel(EXAMPLE_BASE_URL, ipt)
+            OWUModel(EXAMPLE_BASE_URL, config)
 
         opt = str(exec_info.value)
         print(opt)
 
-        assert opt == "APP_MODEL_CONFIGS 'name' must not be empty"
+        assert opt == "entry in APP_MODEL_CONFIGS must have non-empty 'name'"
 
     def test_type(self):
         config = EXAMPLE_CHATFLOW_CONFIG.copy()
         config[self.CONFIG_KEY] = 123
-        ipt = [config]
 
         with pytest.raises(TypeError) as exec_info:
-            OWUModel(EXAMPLE_BASE_URL, ipt)
+            OWUModel(EXAMPLE_BASE_URL, config)
 
         opt = str(exec_info.value)
         print(opt)
 
-        assert opt == "APP_MODEL_CONFIGS 'name' entry must be str or None"
+        assert opt == (
+            "entry in APP_MODEL_CONFIGS, "
+            + "value of 'name' must be str or None"
+        )

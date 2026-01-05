@@ -278,25 +278,24 @@ class BaseDifyApp:
     def __init__(self, model):
         self.model = model
 
+    # pylint: disable=missing-function-docstring
     @property
-    # pylint: disable-next=missing-function-docstring
     def base_url(self):
         return self.model.base_url
 
     @property
-    # pylint: disable-next=missing-function-docstring
     def model_id(self):
         return self.model.model_id
 
     @property
-    # pylint: disable-next=missing-function-docstring
     def name(self):
         return self.model.name
 
     @property
-    # pylint: disable-next=missing-function-docstring
     def http_header(self):
         return self.model.http_header
+
+    # pylint: enable=missing-function-docstring
 
     def reply(self, newest_msg, enable_stream):
         """
@@ -326,7 +325,7 @@ class WorkflowDifyApp(BaseDifyApp):
             response_object = requests.post(
                 self._workflow_run_url,
                 headers=self.http_header,
-                data=self._create_payload(newest_msg, False),
+                data=self._create_request_payload(newest_msg, False),
                 timeout=REQUEST_TIMEOUT,
             )
             response_object.raise_for_status()
@@ -337,6 +336,7 @@ class WorkflowDifyApp(BaseDifyApp):
                 "fail Dify request: {}".format(err.args[0])
             ) from err
 
+        # parse response  ------------------------------------------------------
         response = response_object.json()
         try:
             return response["data"]["outputs"][DIFY_OUTPUT_VARIABLE_NAME]
@@ -351,7 +351,7 @@ class WorkflowDifyApp(BaseDifyApp):
     def _workflow_run_url(self):
         return "{}/workflows/run".format(self.base_url)
 
-    def _create_payload(self, newest_msg, enable_stream):
+    def _create_request_payload(self, newest_msg, enable_stream):
         payload_dict = {
             "inputs": {DIFY_INPUT_VARIABLE_NAME: newest_msg},
             "response_mode": "streaming" if enable_stream else "blocking",
@@ -364,6 +364,10 @@ class ChatflowDifyApp(BaseDifyApp):
     """
     representing a Chatflow App in Dify
     """
+
+    def __init__(self, model):
+        super().__init__(model)
+        self.conversation_id = ""
 
     def reply(self, newest_msg, enable_stream):
         return (
@@ -398,7 +402,43 @@ class ChatflowDifyApp(BaseDifyApp):
         return self._ChatMessageTask()  # Hack
 
     def _reply_blocking(self, newest_msg):
-        return ""  # TODO
+        try:
+            response_object = requests.post(
+                self._chat_message_url,
+                headers=self.http_header,
+                data=self._create_request_payload(newest_msg, False),
+                timeout=REQUEST_TIMEOUT,
+            )
+            response_object.raise_for_status()
+
+        # handle network errors
+        except requests.exceptions.RequestException as err:
+            raise ConnectionError(
+                "fail Dify request: {}".format(err.args[0])
+            ) from err
+
+        # parse response  ------------------------------------------------------
+        response = response_object.json()
+        try:
+            return response["answer"]
+        except KeyError as err:
+            raise ValueError(
+                "fail to find 'answer': {}".format(err.args[0])
+            ) from err
+
+    @property
+    def _chat_message_url(self):
+        return "{}/chat-message".format(self.base_url)
+
+    def _create_request_payload(self, newest_msg, enable_stream):
+        payload_dict = {
+            "query": newest_msg,
+            "response_mode": "streaming" if enable_stream else "blocking",
+            "user": DIFY_USER_ROLE,
+            "conversation_id": self.conversation_id,
+            "inputs": {},
+        }
+        return json.dumps(payload_dict)
 
 
 class ChatflowContainer:  # HACK deprecation

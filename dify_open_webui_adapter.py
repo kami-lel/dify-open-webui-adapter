@@ -121,22 +121,31 @@ class OWUModel:
         :param body: `body` given by OWU Pipe.pipes(body, __user__)
         :type body: dict
         :param user: `__user__` given by Pipe.pipes(body, __user__)
+        :raises ValueError:
+        :raises ConnectionError:
         :return: the response
         :rtype: str
         """
 
-        # extract newest message from OWU  -------------------------------------
-        msg = None
+        # extract info from OWU's body  ----------------------------------------
+        # extract newest message
+        newest_msg = None
         for section in reversed(body["messages"]):
             if section["role"] == OWU_USER_ROLE:
-                msg = section["content"]
-        if msg is None:
+                newest_msg = section["content"]
+        if newest_msg is None:
             raise ValueError(
                 "fail to find any '{}' messages".format(OWU_USER_ROLE)
             )
 
+        # extract if stream is enabled
+        try:
+            enable_stream = body['stream']
+        except KeyError as err:
+            raise ValueError() from err
+
         # call DifyApp  --------------------------------------------------------
-        opt = self.app.reply(msg)
+        opt = self.app.reply(newest_msg, enable_stream)
 
         return opt
 
@@ -288,7 +297,7 @@ class BaseDifyApp:
     def html_header(self):
         return self.model.html_header
 
-    def reply(self, msg):
+    def reply(self, , newest_msg, enable_stream):
         """
         handle Dify side of processing per-round response of conversation,
         by requesting Dify Backend API
@@ -307,12 +316,12 @@ class WorkflowDifyApp(BaseDifyApp):
     representing a Workflow App in Dify
     """
 
-    def reply(self, msg):
+    def reply(self, newest_msg, enable_stream):
         url = "{}/workflows/run".format(self.base_url)
 
         # build HTML payload  --------------------------------------------------
         payload_dict = {
-            "inputs": {"input": msg},
+            "inputs": {"input": newest_msg},
             "response_mode": "blocking",
             "user": DIFY_USER_ROLE,
         }
@@ -337,6 +346,8 @@ class WorkflowDifyApp(BaseDifyApp):
 
         # extract response  ----------------------------------------------------
         try:
+            # fixme "output" shall be changeable,
+            # as it's name of *OUTPUT VARIABLE* in Dify
             return response["data"]["outputs"]["output"]
         except KeyError as err:
             raise KeyError(

@@ -365,10 +365,40 @@ class ChatflowDifyApp(BaseDifyApp):
     representing a Chatflow App in Dify
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(self, *args, **kwargs)
-        # TODO
-        raise NotImplementedError("Chatflow unavailable in this version")
+    def reply(self, newest_msg, enable_stream):
+        return (
+            self._reply_streaming(newest_msg)
+            if enable_stream
+            else self._reply_blocking(newest_msg)
+        )
+
+    class _ChatMessageTask:
+        """
+        Hack fake streaming
+        """
+
+        def __init__(self):
+            self._current = ord("a")
+            self._end = ord("z")
+
+        def __iter__(self):
+            return self
+
+        def __next__(self):
+            import time
+
+            if self._current > self._end:
+                raise StopIteration
+            ch = chr(self._current)
+            self._current += 1
+            time.sleep(1)
+            return "{}\n\n".format(ch)
+
+    def _reply_streaming(self, newest_msg):
+        return self._ChatMessageTask()  # Hack
+
+    def _reply_blocking(self, newest_msg):
+        return ""  # TODO
 
 
 class ChatflowContainer:  # HACK deprecation

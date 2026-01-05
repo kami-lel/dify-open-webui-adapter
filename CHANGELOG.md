@@ -2,6 +2,8 @@
 
 [^format]
 
+<!-- Bug tests for non-functional -->
+
 
 
 
@@ -21,6 +23,9 @@
 
 ### Added
 ### Changed
+
+- split up functionalities of OWU & Dify sides into different classes
+
 ### Deprecated
 ### Removed
 ### Fixed

@@ -32,17 +32,32 @@ example for ``APP_MODEL_CONFIGS``::
     ]
 """
 
+# adapter version
+__version__ = "2.0.1-alpha"
+__author__ = "kamiLeL"
+
+
+# config  ######################################################################
+DIFY_BACKEND_API_BASE_URL = "https://api.dify.ai/v1"
+
+APP_MODEL_CONFIGS = []
+
+
+# end of config  ###############################################################
+
+# pylint: disable=wrong-import-position
 from enum import Enum
 import json
 
 from pydantic import BaseModel
 import requests
 
-# adapter version
-__version__ = "2.0.1-alpha"
-__author__ = "kamiLeL"
+# constants  ###################################################################
+OWU_USER_ROLE = DIFY_USER_ROLE = "user"
+REQUEST_TIMEOUT = 30
 
 
+# helper Enum  #################################################################
 class DifyAppType(Enum):
     """
     type of Dify App, either Workflow or Chatflow (multi-round)
@@ -52,17 +67,6 @@ class DifyAppType(Enum):
     # in Dify Backend API's /info response
     WORKFLOW = "workflow"
     CHATFLOW = "advanced-chat"  # multi-turn chats
-
-
-# config  ######################################################################
-DIFY_BACKEND_API_BASE_URL = "https://api.dify.ai/v1"
-
-APP_MODEL_CONFIGS = []
-
-
-# constant  ####################################################################
-OWU_USER_ROLE = DIFY_USER_ROLE = "user"
-REQUEST_TIMEOUT = 30
 
 
 # OpenWeb UI model container  ##################################################
@@ -86,7 +90,7 @@ class OWUModel:
             self._parse_app_model_config_arg(app_model_config)
         )
 
-        app_type, response_name = self._get_name_mode_by_dify_get_info()
+        response_name, app_type = self._get_name_mode_by_dify_get_info()
 
         # set self.name
         self.name = provided_name or response_name or self.model_id
@@ -169,31 +173,30 @@ class OWUModel:
 
         # GET /info  -----------------------------------------------------------
         try:
-            response = requests.get(
+            response_object = requests.get(
                 info_url,
                 headers=self._create_html_authorization_header(),
                 timeout=REQUEST_TIMEOUT,
-            ).json()
+            )
+            response_object.raise_for_status()
+            response = response_object.json()
 
         except requests.exceptions.RequestException as err:
             raise ConnectionError(
                 "fail Dify request: {}".format(err.args[0])
             ) from err
 
-        # parse name  ----------------------------------------------------------
-        if "name" not in response:
-            raise ValueError("")  # TODO
-        response_name = response["name"]
-
         # parse App type  ------------------------------------------------------
         try:
             app_type = DifyAppType(response["mode"])
         except (KeyError, ValueError) as err:
             raise ValueError(
-                "bad: {}".format(err.args[0])
+                "fail to parse Dify App Type: {}".format(err.args[0])
             ) from err  # HACK better wording
 
-        return response_name, app_type
+        response_name = response["name"] if "name" in response else None
+
+        return app_type, response_name
 
     def _create_html_authorization_header(self):
         """

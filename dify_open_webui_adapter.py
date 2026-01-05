@@ -34,6 +34,8 @@ example for ``APP_MODEL_CONFIGS``::
     ]
 """
 
+# todo implement stream mode
+
 from enum import Enum
 import json
 

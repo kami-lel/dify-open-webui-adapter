@@ -367,17 +367,17 @@ class ChatflowDifyApp(BaseDifyApp):
 
     def __init__(self, *args, **kwargs):
         super().__init__(self, *args, **kwargs)
-        # Todo
+        # TODO
         raise NotImplementedError("Chatflow unavailable in this version")
 
 
-class ChatflowContainer:  # Hack deprecation
+class ChatflowContainer:  # HACK deprecation
     """
     data & logic container for handling Dify Chatflow App (multi-round)
     """
 
     def _gen_request_url(self):
-        # Bug need test
+        # BUG need test
         return "{}/chat-messages".format(self.base_url)
 
     def _build_http_payloads(self, newest_user_message):
@@ -396,7 +396,7 @@ class ChatflowContainer:  # Hack deprecation
         #         "user": USER_ROLE,
         #         "auto_generate_name": False,
         #     }
-        raise NotImplementedError  # Hack
+        raise NotImplementedError  # HACK
 
     def _extract_dify_response(self, response_json):
         # def _extract_output_chatflow(
@@ -424,7 +424,7 @@ class ChatflowContainer:  # Hack deprecation
         #         ) from err
 
         #     return output
-        raise NotImplementedError  # Hack
+        raise NotImplementedError  # HACK
 
 
 # helper methods  ##############################################################

@@ -370,6 +370,7 @@ class ChatflowDifyApp(BaseDifyApp):
         self.conversation_id = ""
 
     def reply(self, newest_msg, enable_stream):
+        enable_stream = False  # HACK
         return (
             self._reply_streaming(newest_msg)
             if enable_stream
@@ -420,10 +421,14 @@ class ChatflowDifyApp(BaseDifyApp):
         # parse response  ------------------------------------------------------
         response = response_object.json()
         try:
+            if not self.conversation_id:  # 1st round of this conversation
+                self.conversation_id = response["conversation_id"]
+
             return response["answer"]
+
         except KeyError as err:
             raise ValueError(
-                "fail to find 'answer': {}".format(err.args[0])
+                "fail to parse response body: {}".format(err.args[0])
             ) from err
 
     @property
@@ -436,65 +441,10 @@ class ChatflowDifyApp(BaseDifyApp):
             "response_mode": "streaming" if enable_stream else "blocking",
             "user": DIFY_USER_ROLE,
             "conversation_id": self.conversation_id,
+            "auto_generate_name": False,
             "inputs": {},
         }
         return json.dumps(payload_dict)
-
-
-class ChatflowContainer:  # HACK deprecation
-    """
-    data & logic container for handling Dify Chatflow App (multi-round)
-    """
-
-    def _gen_request_url(self):
-        # BUG need test
-        return "{}/chat-messages".format(self.base_url)
-
-    def _build_http_payloads(self, newest_user_message):
-        # def _build_payload_chatflow(
-        #     self, message, conversation_id, everything_for_debug
-        # ):
-        #     inputs = {}
-        #     if ENABLE_DEBUG:
-        #         inputs["everything_for_debug"] = everything_for_debug
-
-        #     return {
-        #         "inputs": inputs,
-        #         "query": message,
-        #         "response_mode": "blocking",
-        #         "conversation_id": conversation_id,
-        #         "user": USER_ROLE,
-        #         "auto_generate_name": False,
-        #     }
-        raise NotImplementedError  # HACK
-
-    def _extract_dify_response(self, response_json):
-        # def _extract_output_chatflow(
-        #     self, model_id, response_json, saved_conversation_id
-        # ):
-        #     try:
-        #         output = response_json["answer"]
-
-        #         # save returned conversation idea for future rounds
-        #         if not saved_conversation_id:
-        #             conversation_id = response_json["conversation_id"]
-        #             self.model_data[model_id][2] = conversation_id
-
-        #             if ENABLE_DEBUG:
-        #                 conversation_id = response_json["conversation_id"]
-        #                 self.model_data[model_id][2] = conversation_id
-        #                 self.debug_lines.append("## returned conversation id")
-        #                 self.debug_lines.append(conversation_id)
-
-        #     except (KeyError, IndexError) as err:
-        #         raise ValueError(
-        #             "fail to parse chatflow response {}: {}".format(
-        #                 response_json, err
-        #             )
-        #         ) from err
-
-        #     return output
-        raise NotImplementedError  # HACK
 
 
 # helper methods  ##############################################################

@@ -307,6 +307,53 @@ class BaseDifyApp:
         """
         raise NotImplementedError
 
+    def _create_http_response(self, newest_msg, enable_stream):
+        """
+        :param newest_msg:
+        :type newest_msg: str
+        :param enable_stream:
+        :type enable_stream: bool
+        :return: a response object
+        :rtype: requests.Response
+        """
+        try:
+            response_object = requests.post(
+                self._endpoint_url,
+                headers=self.http_header,
+                data=json.dumps(
+                    self._build_request_payload(newest_msg, False)
+                ),
+                stream=enable_stream,
+                timeout=REQUEST_TIMEOUT,
+            )
+            response_object.raise_for_status()
+            return response_object
+
+        # handle network errors
+        except requests.exceptions.RequestException as err:
+            raise ConnectionError(
+                "fail Dify request: {}".format(err.args[0])
+            ) from err
+
+    @property
+    def _endpoint_url(self):
+        """
+        :rtype: str
+        """
+        raise NotImplementedError
+
+    @property
+    def _build_request_payload(self, newest_msg, enable_stream):
+        """
+        :param newest_msg:
+        :type newest_msg: str
+        :param enable_stream:
+        :type enable_stream: bool
+        :return:
+        :rtype: dict
+        """
+        raise NotImplementedError
+
     def __repr__(self):
         return "{}({})".format(type(self).__name__, self.name)
 
@@ -348,6 +395,14 @@ class WorkflowDifyApp(BaseDifyApp):
             ) from err
 
     @property
+    def _endpoint_url(self):
+        raise NotImplementedError
+
+    @property
+    def _build_request_payload(self, newest_msg, enable_stream):
+        raise NotImplementedError
+
+    @property
     def _workflow_run_url(self):
         return "{}/workflows/run".format(self.base_url)
 
@@ -382,7 +437,13 @@ class ChatflowDifyApp(BaseDifyApp):
         HACK fake streaming
         """
 
-        def __init__(self):
+        def __init__(self, app, newest_msg):
+            self.app = app
+
+            self.response = self.app._create_http_response(newest_msg, True)
+
+            # TODO
+
             self._current = ord("a")
             self._end = ord("z")
 
@@ -390,9 +451,11 @@ class ChatflowDifyApp(BaseDifyApp):
             return self
 
         def __next__(self):
+            # TODO
             import time
 
             if self._current > self._end:
+                self.response.close()
                 raise StopIteration
             ch = chr(self._current)
             self._current += 1
@@ -400,26 +463,11 @@ class ChatflowDifyApp(BaseDifyApp):
             return "{}\n\n".format(ch)
 
     def _reply_streaming(self, newest_msg):
-        return self._ChatMessageTask()  # HACK
+        return self._ChatMessageTask(self, newest_msg)
 
     def _reply_blocking(self, newest_msg):
-        try:
-            response_object = requests.post(
-                self._chat_message_url,
-                headers=self.http_header,
-                data=self._create_request_payload(newest_msg, False),
-                timeout=REQUEST_TIMEOUT,
-            )
-            response_object.raise_for_status()
-
-        # handle network errors
-        except requests.exceptions.RequestException as err:
-            raise ConnectionError(
-                "fail Dify request: {}".format(err.args[0])
-            ) from err
-
         # parse response  ------------------------------------------------------
-        response = response_object.json()
+        response = self._create_http_response(newest_msg, False).json()
         try:
             if not self.conversation_id:  # 1st round of this conversation
                 self.conversation_id = response["conversation_id"]
@@ -432,11 +480,15 @@ class ChatflowDifyApp(BaseDifyApp):
             ) from err
 
     @property
-    def _chat_message_url(self):
+    def _endpoint_url(self):
         return "{}/chat-messages".format(self.base_url)
 
+    @property
+    def _build_request_payload(self, newest_msg, enable_stream):
+        raise NotImplementedError
+
     def _create_request_payload(self, newest_msg, enable_stream):
-        payload_dict = {
+        return {
             "query": newest_msg,
             "response_mode": "streaming" if enable_stream else "blocking",
             "user": DIFY_USER_ROLE,
@@ -444,7 +496,6 @@ class ChatflowDifyApp(BaseDifyApp):
             "auto_generate_name": False,
             "inputs": {},
         }
-        return json.dumps(payload_dict)
 
 
 # helper methods  ##############################################################

@@ -146,7 +146,7 @@ class BaseContainer:
         self.base_url = base_url
         self.key = key
         self.model_id = model_id
-        self.name = name  # may be None
+        self._name = name  # may be None
 
     def get_model_id_and_name(self):
         """
@@ -154,8 +154,7 @@ class BaseContainer:
                 such that it can be served to ``Pipe.pipes()``
         :rtype: dict{str: str}
         """
-        display_name = self.name or self.model_id
-        return {"id": self.model_id, "name": display_name}
+        return {"id": self.model_id, "name": self.name}
 
     def reply(self, body, user):
         """
@@ -195,6 +194,14 @@ class BaseContainer:
         # extract response  ++++++++++++++++++++++++++++++++++++++++++++++++++++
         response_json = html_response.json()
         return self._extract_dify_response(response_json)
+
+    @property
+    def name(self):
+        """
+        :return: display name of this app/model; model id if no name is given
+        :rtype: str
+        """
+        return self._name or self.model_id
 
     def _retrieve_newest_user_message(self, body):
         """
@@ -247,6 +254,9 @@ class BaseContainer:
         :rtype: str
         """
         raise NotImplementedError
+
+    def __repr__(self):
+        return "{}({})".format(type(self).__name__, self.name)
 
 
 class WorkflowContainer(BaseContainer):

@@ -17,19 +17,6 @@ from tests import EXAMPLE_CHATFLOW_CONFIG, EXAMPLE_CONFIGS
 # fail cases  ##################################################################
 
 
-def test_empty():  # when APP_MODEL_CONFIGS is empty
-    ipt = []
-    msg = None
-
-    with pytest.raises(ValueError) as exec_info:
-        verify_app_model_configs(ipt)
-
-    msg = str(exec_info.value)
-    print(msg)
-
-    assert msg == "APP_MODEL_CONFIGS must contains at least one App/Model"
-
-
 class TestType:
 
     CONFIG_KEY = "type"

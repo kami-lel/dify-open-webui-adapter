@@ -69,7 +69,16 @@ REQUEST_TIMEOUT = 30
 class OWUModel:
     """
     TODO docstring for class OWUModel
+
+
+    :param base_url:
+    :type base_url: str
+    :param config: an entry of APP_MODEL_CONFIGS
+    :type config: dict
     """
+
+    def __init__(self, base_url, app_model_config):
+        pass
 
 
 # Dify App container  ##########################################################
@@ -98,10 +107,6 @@ def verify_app_model_configs(app_model_configs):
 
     :raises ValueError: APP_MODEL_CONFIGS is invalid
     """
-    if len(app_model_configs) == 0:
-        raise ValueError(
-            "APP_MODEL_CONFIGS must contains at least one App/Model"
-        )
 
     for config in app_model_configs:
         # test type  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -142,14 +147,6 @@ def verify_app_model_configs(app_model_configs):
 def create_container(base_url, app_model_config):
     """
     create an instance of specific sub-types of BaseContainer
-
-
-    :param base_url:
-    :type base_url: str
-    :param config: an entry of APP_MODEL_CONFIGS
-    :type config: dict
-    :return: created container
-    :rtype: WorkflowContainer or ChatflowContainer
     """
     model_type = app_model_config["type"]
     key = app_model_config["key"]
@@ -390,6 +387,14 @@ class ChatflowContainer(BaseContainer):
         raise NotImplementedError  # Hack
 
 
+# helper methods  ##############################################################
+def _check_non_empty_app_model_configs(app_model_configs):
+    if len(app_model_configs) == 0:
+        raise ValueError(
+            "APP_MODEL_CONFIGS must contains at least one App/Model"
+        )
+
+
 # Pipe class required by OWU  ##################################################
 class Pipe:  # pylint: disable=missing-class-docstring
 
@@ -400,9 +405,9 @@ class Pipe:  # pylint: disable=missing-class-docstring
         self, app_model_configs_override=None, base_url_override=None
     ):
         base_url = base_url_override or DIFY_BACKEND_API_BASE_URL
-
         app_model_configs = app_model_configs_override or APP_MODEL_CONFIGS
-        verify_app_model_configs(app_model_configs)
+
+        _check_non_empty_app_model_configs(app_model_configs)
 
         # populate containers   ++++++++++++++++++++++++++++++++++++++++++++++++
         self.containers = {}

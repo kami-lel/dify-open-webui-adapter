@@ -138,3 +138,10 @@ class TestName:
             "entry in APP_MODEL_CONFIGS, "
             + "value of 'name' must be str or None"
         )
+
+
+# pass cases  ##################################################################
+class TestPass:
+
+    def test1(_):
+        OWUModel(EXAMPLE_BASE_URL, EXAMPLE_CONFIGS)

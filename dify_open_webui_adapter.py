@@ -80,17 +80,11 @@ class OWUModel:
     def __init__(self, base_url, app_model_config):
         self.base_url = base_url
 
-        self.key, self.model_id, self._name = self._parse_app_model_config_arg(
-            app_model_config
+        self.key, self.model_id, provided_name = (
+            self._parse_app_model_config_arg(app_model_config)
         )
 
-    @property
-    def name(self):
-        """
-        :return: display name of this app/model; model id if no name is given
-        :rtype: str
-        """
-        return self._name or self.model_id
+        self.name = ""  # TODO
 
     def _parse_app_model_config_arg(self, config):
         """
@@ -102,7 +96,7 @@ class OWUModel:
         :raises ValueError:
         :raises TypeError:
         """
-        # key  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # key  -----------------------------------------------------------------
         if "key" not in config:
             raise ValueError("entry in APP_MODEL_CONFIGS missing 'key'")
         key = config["key"]
@@ -115,7 +109,7 @@ class OWUModel:
                 "entry in APP_MODEL_CONFIGS must have non-empty 'key'"
             )
 
-        # id  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # id  ------------------------------------------------------------------
         if "model_id" not in config:
             raise ValueError("entry in APP_MODEL_CONFIGS missing 'model_id'")
         model_id = config["model_id"]
@@ -128,7 +122,7 @@ class OWUModel:
                 "entry in APP_MODEL_CONFIGS must have non-empty 'model_id'"
             )
 
-        # name  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # name  ----------------------------------------------------------------
         name = None
         if "name" in config:
             name = config["name"]
@@ -228,13 +222,13 @@ class BaseContainer:
         :return: the response
         :rtype: str
         """
-        # extract from OWU  ++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # extract from OWU  ----------------------------------------------------
         newest_user_message = self._retrieve_newest_user_message(body)
         url = self._gen_request_url()
         html_headers = self._gen_html_header()
         payload = json.dumps(self._build_html_payloads(newest_user_message))
 
-        # POST Dify  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # POST Dify  -----------------------------------------------------------
         try:
             html_response = requests.post(
                 url,
@@ -250,7 +244,7 @@ class BaseContainer:
                 "fail Dify request: {}".format(err.args[0])
             ) from err
 
-        # extract response  ++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # extract response  ----------------------------------------------------
         response_json = html_response.json()
         return self._extract_dify_response(response_json)
 
@@ -424,7 +418,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
 
         _check_app_model_configs_structure(app_model_configs)
 
-        # populate containers   ++++++++++++++++++++++++++++++++++++++++++++++++
+        # populate containers   ------------------------------------------------
         self.model_containers = {}
         for config in app_model_configs:
             model = OWUModel(base_url, config)

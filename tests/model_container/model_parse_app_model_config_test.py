@@ -10,7 +10,7 @@ import pytest
 
 from dify_open_webui_adapter import OWUModel
 
-from tests import EXAMPLE_BASE_URL, EXAMPLE_CHATFLOW_CONFIG, EXAMPLE_CONFIGS
+from tests import EXAMPLE_BASE_URL, EXAMPLE_CHATFLOW_CONFIG
 
 
 class TestKey:
@@ -144,4 +144,4 @@ class TestName:
 class TestPass:
 
     def test1(_):
-        OWUModel(EXAMPLE_BASE_URL, EXAMPLE_CONFIGS)
+        OWUModel(EXAMPLE_BASE_URL, EXAMPLE_CHATFLOW_CONFIG)

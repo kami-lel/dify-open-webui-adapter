@@ -318,14 +318,8 @@ class WorkflowDifyApp(BaseDifyApp):
     """
 
     def reply(self, newest_msg, enable_stream):
-        return (
-            self._reply_streaming(newest_msg)
-            if enable_stream
-            else self._reply_blocking(newest_msg)
-        )
-
-    def _reply_streaming(self, newest_arg):
-        return ""  # TODO
+        # fixme not implementing streaming
+        return self._reply_blocking(newest_msg)
 
     def _reply_blocking(self, newest_msg):
         try:

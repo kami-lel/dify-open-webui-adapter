@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# shellcheck source=/dev/null
+source "$(dirname "${BASH_SOURCE[0]}")/set_environment_variables.sh"
+# shellcheck source=/dev/null
+source "$(dirname "${BASH_SOURCE[0]}")/../hooks_utility/hooks_utility.sh"
+
+# start prepare-commit-msg  ####################################################
+echo "prepare-commit-msg" | hooks_utility_enter
+
+# improve auto-generated commit message
+hooks_utility_improve_commit_message "${1}"
+
+# finish prepare-commit-msg  ###################################################
+echo "prepare-commit-msg" | hooks_utility_pass
+
+exit 0

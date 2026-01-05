@@ -317,7 +317,7 @@ class WorkflowDifyApp(BaseDifyApp):
     """
 
     def reply(self, newest_msg, enable_stream):
-        # fixme not implementing streaming
+        # FIXME not implementing streaming
         return self._reply_blocking(newest_msg)
 
     def _reply_blocking(self, newest_msg):
@@ -370,7 +370,7 @@ class ChatflowDifyApp(BaseDifyApp):
         self.conversation_id = ""
 
     def reply(self, newest_msg, enable_stream):
-        enable_stream = False  # Hack
+        enable_stream = False  # HACK
         return (
             self._reply_streaming(newest_msg)
             if enable_stream
@@ -379,7 +379,7 @@ class ChatflowDifyApp(BaseDifyApp):
 
     class _ChatMessageTask:
         """
-        Hack fake streaming
+        HACK fake streaming
         """
 
         def __init__(self):
@@ -400,7 +400,7 @@ class ChatflowDifyApp(BaseDifyApp):
             return "{}\n\n".format(ch)
 
     def _reply_streaming(self, newest_msg):
-        return self._ChatMessageTask()  # Hack
+        return self._ChatMessageTask()  # HACK
 
     def _reply_blocking(self, newest_msg):
         try:

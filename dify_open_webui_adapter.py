@@ -318,22 +318,21 @@ class WorkflowDifyApp(BaseDifyApp):
     """
 
     def reply(self, newest_msg, enable_stream):
-        url = "{}/workflows/run".format(self.base_url)
+        return (
+            self._reply_streaming(newest_msg)
+            if enable_stream
+            else self._reply_blocking(newest_msg)
+        )
 
-        # build HTTP payload  --------------------------------------------------
-        payload_dict = {
-            "inputs": {DIFY_INPUT_VARIABLE_NAME: newest_msg},
-            "response_mode": "streaming" if enable_stream else "blocking",
-            "user": DIFY_USER_ROLE,
-        }
-        payload = json.dumps(payload_dict)
+    def _reply_streaming(self, newest_arg):
+        return ""  # TODO
 
-        # POST Dify  -----------------------------------------------------------
+    def _reply_blocking(self, newest_msg):
         try:
             response_object = requests.post(
-                url,
+                self._workflow_run_url,
                 headers=self.http_header,
-                data=payload,
+                data=self._create_payload(newest_msg, False),
                 timeout=REQUEST_TIMEOUT,
             )
             response_object.raise_for_status()
@@ -344,8 +343,6 @@ class WorkflowDifyApp(BaseDifyApp):
                 "fail Dify request: {}".format(err.args[0])
             ) from err
 
-        # extract response  ----------------------------------------------------
-        # TODO allow stream
         response = response_object.json()
         try:
             return response["data"]["outputs"][DIFY_OUTPUT_VARIABLE_NAME]
@@ -355,6 +352,18 @@ class WorkflowDifyApp(BaseDifyApp):
                     err.args[0]
                 )
             ) from err
+
+    @property
+    def _workflow_run_url(self):
+        return "{}/workflows/run".format(self.base_url)
+
+    def _create_payload(self, newest_msg, enable_stream):
+        payload_dict = {
+            "inputs": {DIFY_INPUT_VARIABLE_NAME: newest_msg},
+            "response_mode": "streaming" if enable_stream else "blocking",
+            "user": DIFY_USER_ROLE,
+        }
+        return json.dumps(payload_dict)
 
 
 class ChatflowDifyApp(BaseDifyApp):

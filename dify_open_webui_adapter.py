@@ -388,11 +388,14 @@ class ChatflowContainer(BaseContainer):
 
 
 # helper methods  ##############################################################
-def _check_non_empty_app_model_configs(app_model_configs):
+def _check_app_model_configs_structure(app_model_configs):
     if len(app_model_configs) == 0:
         raise ValueError(
             "APP_MODEL_CONFIGS must contains at least one App/Model"
         )
+
+    if any(not isinstance(config, dict) for config in app_model_configs):
+        raise ValueError("APP_MODEL_CONFIGS must contains only dicts")
 
 
 # Pipe class required by OWU  ##################################################
@@ -407,7 +410,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
         base_url = base_url_override or DIFY_BACKEND_API_BASE_URL
         app_model_configs = app_model_configs_override or APP_MODEL_CONFIGS
 
-        _check_non_empty_app_model_configs(app_model_configs)
+        _check_app_model_configs_structure(app_model_configs)
 
         # populate containers   ++++++++++++++++++++++++++++++++++++++++++++++++
         self.containers = {}

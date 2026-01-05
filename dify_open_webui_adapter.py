@@ -4,12 +4,27 @@ Integrate Open WebUI and Dify by exposing a Dify App
 
 Supported Open WebUI Version:   v???
 Supported Dify Version:         ???
+
+base URL to access Dify Backend Service API
+
+
+a list of model/app config (each as dict):
+app/model per entry:
+{
+    "type": DifyAppType.WORKFLOW,  # Dify App Type
+    "key": "...",             # Backend Service API secret key of Dify App
+    "model_id": "model_id1",  # model id as used in Open WebUI
+    "name": "First Model",    # model Name as appeared in Open WebUI, optional
+}
 """
+
+# TODO explain configs
+
 
 from enum import Enum
 import json
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 import requests
 
 # adapter version
@@ -27,7 +42,13 @@ class DifyAppType(Enum):
 
 
 # config  ######################################################################
-USER_ROLE = "user"
+DIFY_BACKEND_API_BASE_URL = "https://api.dify.ai/v1"
+
+APP_MODEL_CONFIGS = []
+
+
+# constant  ####################################################################
+OWU_USER_ROLE = DIFY_USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
 
 
@@ -186,7 +207,7 @@ class BaseContainer:
         """
 
         for msg in reversed(body["messages"]):
-            if msg["role"] == USER_ROLE:
+            if msg["role"] == OWU_USER_ROLE:
                 return msg["content"]
 
         raise ValueError("fail to find any 'user' messages")
@@ -242,7 +263,7 @@ class WorkflowContainer(BaseContainer):
         payload_dict = {
             "inputs": inputs,
             "response_mode": "blocking",
-            "user": USER_ROLE,
+            "user": DIFY_USER_ROLE,
         }
 
         return payload_dict
@@ -318,29 +339,10 @@ class ChatflowContainer(BaseContainer):
 
 
 # Pipe class required by OWU  ##################################################
-APP_MODEL_CONFIGS_DESCRIPTION = (
-    """a list of model/app config (each as dict):
-app/model per entry:
-{
-    "type": DifyAppType.WORKFLOW,  # Dify App Type
-    "key": "...",             # Backend Service API secret key of Dify App
-    "model_id": "model_id1",  # model id as used in Open WebUI
-    "name": "First Model",    # model Name as appeared in Open WebUI, optional
-}""",
-)
-# BUG must be single line
-
-
 class Pipe:  # pylint: disable=missing-class-docstring
 
     class Valves(BaseModel):
-        DIFY_BACKEND_API_BASE_URL: str = Field(
-            default="https://api.dify.ai/v1",
-            description="base URL to access Dify Backend Service API",
-        )
-        APP_MODEL_CONFIGS: list = Field(
-            default=[], description=APP_MODEL_CONFIGS_DESCRIPTION
-        )
+        pass  # configuration via Python constants
 
     def __init__(
         self, app_model_configs_override=None, base_url_override=None

@@ -23,7 +23,7 @@ class TestContainers:  # test populating self.containers
 
     def test1(_):
         configs = [EXAMPLE_CHATFLOW_CONFIG]
-        pipe = Pipe(app_model_configs=configs)
+        pipe = Pipe(app_model_configs_override=configs)
         containers = pipe.containers
 
         print(containers)
@@ -37,7 +37,7 @@ class TestContainers:  # test populating self.containers
         assert chatflow.name == "Example Chatflow Model/App"
 
     def test2(_):
-        pipe = Pipe(app_model_configs=EXAMPLE_CONFIGS)
+        pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
         containers = pipe.containers
 
         print(containers)

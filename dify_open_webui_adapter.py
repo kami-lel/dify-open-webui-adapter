@@ -4,12 +4,27 @@ Integrate Open WebUI and Dify by exposing a Dify App
 
 Supported Open WebUI Version:   v???
 Supported Dify Version:         ???
+
+base URL to access Dify Backend Service API
+
+
+a list of model/app config (each as dict):
+app/model per entry:
+{
+    "type": DifyAppType.WORKFLOW,  # Dify App Type
+    "key": "...",             # Backend Service API secret key of Dify App
+    "model_id": "model_id1",  # model id as used in Open WebUI
+    "name": "First Model",    # model Name as appeared in Open WebUI, optional
+}
 """
+
+# Todo explain configs
+
 
 from enum import Enum
 import json
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 import requests
 
 # adapter version
@@ -26,19 +41,14 @@ class DifyAppType(Enum):
     CHATFLOW = 1  # multi-turn chats
 
 
-# app/model configs  ###########################################################
-# app/model per entry:
-# {
-#     "type": DifyAppType.WORKFLOW,  # Dify App Type
-#     "key": "...",             # Backend Service API secret key of Dify App
-#     "model_id": "model_id1",  # model id as used in Open WebUI
-#     "name": "First Model",    # model Name as appeared in Open WebUI, optional
-# }
+# config  ######################################################################
+DIFY_BACKEND_API_BASE_URL = "https://api.dify.ai/v1"
+
 APP_MODEL_CONFIGS = []
 
 
-# config  ######################################################################
-USER_ROLE = "user"
+# constant  ####################################################################
+OWU_USER_ROLE = DIFY_USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
 
 
@@ -114,7 +124,9 @@ def create_container(base_url, app_model_config):
     if model_type == DifyAppType.WORKFLOW:
         return WorkflowContainer(base_url, key, model_id, name)
     else:  # i.e. Chatflow
-        return ChatflowContainer(base_url, key, model_id, name)
+        raise TypeError("Chatflow not implemented in this version")
+        # todo
+        # return ChatflowContainer(base_url, key, model_id, name)
 
 
 class BaseContainer:
@@ -136,7 +148,7 @@ class BaseContainer:
         self.base_url = base_url
         self.key = key
         self.model_id = model_id
-        self.name = name  # may be None
+        self._name = name  # may be None
 
     def get_model_id_and_name(self):
         """
@@ -144,8 +156,7 @@ class BaseContainer:
                 such that it can be served to ``Pipe.pipes()``
         :rtype: dict{str: str}
         """
-        display_name = self.name or self.model_id
-        return {"id": self.model_id, "name": display_name}
+        return {"id": self.model_id, "name": self.name}
 
     def reply(self, body, user):
         """
@@ -186,6 +197,14 @@ class BaseContainer:
         response_json = html_response.json()
         return self._extract_dify_response(response_json)
 
+    @property
+    def name(self):
+        """
+        :return: display name of this app/model; model id if no name is given
+        :rtype: str
+        """
+        return self._name or self.model_id
+
     def _retrieve_newest_user_message(self, body):
         """
         :param body: `body` given by OWU Pipe.pipes(body, __user__)
@@ -197,7 +216,7 @@ class BaseContainer:
         """
 
         for msg in reversed(body["messages"]):
-            if msg["role"] == USER_ROLE:
+            if msg["role"] == OWU_USER_ROLE:
                 return msg["content"]
 
         raise ValueError("fail to find any 'user' messages")
@@ -238,6 +257,9 @@ class BaseContainer:
         """
         raise NotImplementedError
 
+    def __repr__(self):
+        return "{}({})".format(type(self).__name__, self.name)
+
 
 class WorkflowContainer(BaseContainer):
     """
@@ -253,7 +275,7 @@ class WorkflowContainer(BaseContainer):
         payload_dict = {
             "inputs": inputs,
             "response_mode": "blocking",
-            "user": USER_ROLE,
+            "user": DIFY_USER_ROLE,
         }
 
         return payload_dict
@@ -332,20 +354,18 @@ class ChatflowContainer(BaseContainer):
 class Pipe:  # pylint: disable=missing-class-docstring
 
     class Valves(BaseModel):
-        # Bug can not set aside from default
-        DIFY_BACKEND_API_BASE_URL: str = Field(
-            default="https://api.dify.ai/v1",
-            description="base URL to access Dify Backend Service API",
-        )
+        pass  # configuration via Python constants
 
-    def __init__(self, app_model_configs=None, base_url_override=None):
-        if app_model_configs is None:
-            app_model_configs = APP_MODEL_CONFIGS
+    def __init__(
+        self, app_model_configs_override=None, base_url_override=None
+    ):
+        base_url = base_url_override or DIFY_BACKEND_API_BASE_URL
+
+        app_model_configs = app_model_configs_override or APP_MODEL_CONFIGS
         verify_app_model_configs(app_model_configs)
 
-        self.containers = {}
         # populate containers   ++++++++++++++++++++++++++++++++++++++++++++++++
-        base_url = base_url_override or self.Valves().DIFY_BACKEND_API_BASE_URL
+        self.containers = {}
         for config in app_model_configs:
             container = create_container(base_url, config)
             model_id = container.model_id

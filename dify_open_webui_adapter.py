@@ -90,7 +90,7 @@ class OWUModel:
             self._parse_app_model_config_arg(app_model_config)
         )
 
-        response_name, app_type = self._get_name_mode_by_dify_get_info()
+        app_type, response_name = self._get_name_mode_by_dify_get_info()
 
         # set self.name
         self.name = provided_name or response_name or self.model_id
@@ -100,6 +100,32 @@ class OWUModel:
             self.app = WorkflowDifyApp(self)
         else:
             self.app = ChatflowDifyApp(self)
+
+    def get_model_id_and_name(self):
+        """
+        :return: an entry of this model,
+                such that it can be served to ``Pipe.pipes()``
+        :rtype: dict{str: str}
+        """
+        return {"id": self.model_id, "name": self.name}
+
+    def reply(self, body, user):
+        """
+        TODO error & write docs
+
+        :param body: `body` given by OWU Pipe.pipes(body, __user__)
+        :type body: dict
+        :param user: `__user__` given by Pipe.pipes(body, __user__)
+        :return: the response
+        :rtype: str
+        """
+        # extract from OWU  ----------------------------------------------------
+        newest_user_message = self._retrieve_newest_user_message(body)
+        url = self._gen_request_url()
+        html_headers = self._gen_html_header()
+        payload = json.dumps(self._build_html_payloads(newest_user_message))
+
+        return self.app.reply(body, user)
 
     def _parse_app_model_config_arg(self, config):
         """
@@ -175,7 +201,7 @@ class OWUModel:
         try:
             response_object = requests.get(
                 info_url,
-                headers=self._create_html_authorization_header(),
+                headers=self.html_header,
                 timeout=REQUEST_TIMEOUT,
             )
             response_object.raise_for_status()
@@ -191,14 +217,15 @@ class OWUModel:
             app_type = DifyAppType(response["mode"])
         except (KeyError, ValueError) as err:
             raise ValueError(
-                "fail to parse Dify App Type: {}".format(err.args[0])
-            ) from err  # HACK better wording
+                "fail to get App type from Dify: {}".format(err.args[0])
+            ) from err
 
         response_name = response["name"] if "name" in response else None
 
         return app_type, response_name
 
-    def _create_html_authorization_header(self):
+    @property
+    def html_header(self):
         """
         :return: HTML header (including authorization info)
                 to access Dify Backend API
@@ -208,6 +235,9 @@ class OWUModel:
             "Authorization": "Bearer {}".format(self.key),
             "Content-Type": "application/json",
         }
+
+    def __repr__(self):
+        return "OWUModel({}:{})".format(self.name, repr(self.app))
 
 
 # Dify App container  ##########################################################
@@ -219,67 +249,26 @@ class BaseDifyApp:
     def __init__(self, model):
         self.model = model
 
+    @property
+    # pylint: disable-next=missing-function-docstring
+    def model_id(self):
+        return self.model.model_id
 
-class WorkflowDifyApp(BaseDifyApp):
-    """
-    TODO docstring for class WorkflowDifyApp
-    """
+    @property
+    # pylint: disable-next=missing-function-docstring
+    def name(self):
+        return self.model.name
 
-
-class ChatflowDifyApp(BaseDifyApp):
-    """
-    TODO docstring for class ChatflowDifyApp
-    """
-
-
-class BaseContainer:
-    """
-    base class for WorkflowContainer and ChatflowContainer
-
-
-    :param base_url:
-    :type base_url: str
-    :param key:
-    :type key: str
-    :param model_id:
-    :type model_id: str
-    :param name:
-    :type name: str or NoneType
-    """
-
-    def __init__(self, base_url, key, model_id, name):
-        # TODO validate key
-        self.base_url = base_url
-        self.key = key
-        self.model_id = model_id
-        self._name = name  # may be None
-
-    def get_model_id_and_name(self):
-        """
-        :return: an entry of this model,
-                such that it can be served to ``Pipe.pipes()``
-        :rtype: dict{str: str}
-        """
-        return {"id": self.model_id, "name": self.name}
+    @property
+    # pylint: disable-next=missing-function-docstring
+    def html_header(self):
+        return self.model.html_header
 
     def reply(self, body, user):
         """
-        main logic for fetching & creating a single-round response
-
-
-        :param body: `body` given by OWU Pipe.pipes(body, __user__)
-        :type body: dict
-        :param user: `__user__` given by Pipe.pipes(body, __user__)
-        :type user: dict
+        # TODO
         :raises ConnectionError: fail Dify request
-        :return: the response
-        :rtype: str
         """
-        # extract from OWU  ----------------------------------------------------
-        newest_user_message = self._retrieve_newest_user_message(body)
-        url = self._gen_request_url()
-        html_headers = self._gen_html_header()
-        payload = json.dumps(self._build_html_payloads(newest_user_message))
 
         # POST Dify  -----------------------------------------------------------
         try:
@@ -300,57 +289,6 @@ class BaseContainer:
         # extract response  ----------------------------------------------------
         response_json = html_response.json()
         return self._extract_dify_response(response_json)
-
-    def _retrieve_newest_user_message(self, body):
-        """
-        :param body: `body` given by OWU Pipe.pipes(body, __user__)
-        :type body: dict
-        :raises KeyError: `body` is malformed
-        :raises ValueError: no `user` message in `body
-        :return: retrieved newest user's message
-        :rtype: str
-        """
-
-        for msg in reversed(body["messages"]):
-            if msg["role"] == OWU_USER_ROLE:
-                return msg["content"]
-
-        raise ValueError("fail to find any 'user' messages")
-
-    def _gen_request_url(self):
-        """
-        :return: url to access Dify Backend API
-        :rtype: str
-        """
-        raise NotImplementedError
-
-    def _build_html_payloads(self, newest_user_message):
-        """
-        :return: payload data sent to Dify Backend API
-        :rtype: dict
-        """
-        raise NotImplementedError
-
-    def _extract_dify_response(self, response_json):
-        """
-        extract bot's response message out of response from Dify
-
-
-        :param response_json:
-        :type response_json:
-        :return: per-round message content extracted from Dify's response
-        :rtype: str
-        """
-        raise NotImplementedError
-
-    def __repr__(self):
-        return "{}({})".format(type(self).__name__, self.name)
-
-
-class WorkflowContainer(BaseContainer):
-    """
-    data & logic container for handling Dify Workflow App
-    """
 
     def _gen_request_url(self):
         return "{}/workflows/run".format(self.base_url)
@@ -379,8 +317,23 @@ class WorkflowContainer(BaseContainer):
                 )
             ) from err
 
+    def __repr__(self):
+        return "{}({})".format(type(self).__name__, self.name)
 
-class ChatflowContainer(BaseContainer):
+
+class WorkflowDifyApp(BaseDifyApp):
+    """
+    Todo docstring for class WorkflowDifyApp
+    """
+
+
+class ChatflowDifyApp(BaseDifyApp):
+    """
+    Todo docstring for class ChatflowDifyApp
+    """
+
+
+class ChatflowContainer:  # Hack deprecation
     """
     data & logic container for handling Dify Chatflow App (multi-round)
     """
@@ -481,8 +434,8 @@ class Pipe:  # pylint: disable=missing-class-docstring
         :rtype: list(dict)
         """
         return [
-            container.get_model_id_and_name()
-            for container in self.model_containers.values()
+            model.get_model_id_and_name()
+            for model in self.model_containers.values()
         ]
 
     def pipe(self, body, __user__):

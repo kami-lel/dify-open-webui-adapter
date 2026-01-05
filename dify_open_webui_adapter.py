@@ -2,8 +2,8 @@
 Integrate Open WebUI and Dify by exposing a Dify App
 (Workflow or Chatflow) as Open WebUI model using Open WebUI's Pipe Functions.
 
-Supported Open WebUI Version:   v???
-Supported Dify Version:         ???
+Supported Open WebUI Version:   v0.6.30
+Supported Dify Version:         1.10.0
 
 User must configure these 2 constant in Python script before use:
 
@@ -41,7 +41,7 @@ from pydantic import BaseModel
 import requests
 
 # adapter version
-__version__ = "1.1.1-alpha"
+__version__ = "2.0.0"
 __author__ = "kamiLeL"
 
 

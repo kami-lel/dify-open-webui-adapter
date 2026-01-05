@@ -20,18 +20,41 @@
 ## [Unreleased]
 
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## [2.0.0] - 2026-01-04
+
+### Added
 
 - use **hooks-utility** for Git Hooks as Git Submodule
 
 ### Changed
 
 - each adapter instance only supports single App now
+- use constant in Python script for configuration, better config validation
 
-### Deprecated
-### Removed
 ### Fixed
 
 - update format to fit updated Dify and Open WebUI
+
 
 
 
@@ -92,7 +115,8 @@
 
 
 
-[unreleased]: https://github.com/kami-lel/kami-log-py/compare/v1.1.0...dev
+[unreleased]: https://github.com/kami-lel/kami-log-py/compare/v2.0.0...dev
+[2.0.0]: https://github.com/kami-lel/kami-log-py/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/kami-lel/kami-log-py/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/kami-lel/kami-log-py/releases/tag/v1.0.0
 

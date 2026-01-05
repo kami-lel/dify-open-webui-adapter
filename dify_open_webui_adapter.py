@@ -50,8 +50,10 @@ class DifyAppType(Enum):
     type of Dify App, either Workflow or Chatflow (multi-round)
     """
 
-    WORKFLOW = 0
-    CHATFLOW = 1  # multi-turn chats
+    # value of enums are identical to them appearing
+    # in Dify Backend API's /info response
+    WORKFLOW = "workflow"
+    CHATFLOW = "advanced-chat"  # multi-turn chats
 
 
 # config  ######################################################################
@@ -75,6 +77,8 @@ class OWUModel:
     :type base_url: str
     :param config: an entry of APP_MODEL_CONFIGS
     :type config: dict
+    :raises ValueError:
+    :raises TypeError:
     """
 
     def __init__(self, base_url, app_model_config):
@@ -84,11 +88,22 @@ class OWUModel:
             self._parse_app_model_config_arg(app_model_config)
         )
 
-        self.name = ""  # TODO
+        app_type, response_name = self._get_name_mode_by_dify_get_info()
+
+        # set self.name
+        self.name = provided_name or response_name or self.model_id
+
+        # create app
+        if app_type == DifyAppType.WORKFLOW:
+            self.app = WorkflowDifyApp(self)
+        else:
+            self.app = ChatflowDifyApp(self)
 
     def _parse_app_model_config_arg(self, config):
         """
         test & parse ``app_model_config`` arg, then set:
+
+        helper method used in __init__()
 
 
         :param config: app_model_config arg
@@ -139,12 +154,69 @@ class OWUModel:
 
         return key, model_id, name
 
+    def _get_name_mode_by_dify_get_info(self):
+        """
+        by GET /info endpoint of Dify Backend API,
+        get Dify app type and its name
+
+        helper method used in __init__()
+
+
+        :raises ConnectionError:
+        :raises ValueError:
+        :return: App name & type responded from Dify
+        :rtype: tuple(str, DifyAppType)
+        """
+        info_url = "{}/info".format(self.base_url)
+
+        # GET /info  -----------------------------------------------------------
+        try:
+            response = requests.get(
+                info_url,
+                headers=self._create_html_authorization_header(),
+                timeout=REQUEST_TIMEOUT,
+            ).json()
+
+        except requests.exceptions.RequestException as err:
+            raise ConnectionError(
+                "fail Dify request: {}".format(err.args[0])
+            ) from err
+
+        # parse name  ----------------------------------------------------------
+        if "name" not in response:
+            raise ValueError("")  # TODO
+        response_name = response["name"]
+
+        # parse App type  ------------------------------------------------------
+        try:
+            app_type = DifyAppType(response["mode"])
+        except (KeyError, ValueError) as err:
+            raise ValueError(
+                "bad: {}".format(err.args[0])
+            ) from err  # HACK better wording
+
+        return response_name, app_type
+
+    def _create_html_authorization_header(self):
+        """
+        :return: HTML header (including authorization info)
+                to access Dify Backend API
+        :rtype: dict
+        """
+        return {
+            "Authorization": "Bearer {}".format(self.key),
+            "Content-Type": "application/json",
+        }
+
 
 # Dify App container  ##########################################################
 class BaseDifyApp:
     """
     TODO docstring for class BaseDifyApp
     """
+
+    def __init__(self, model):
+        self.model = model
 
 
 class WorkflowDifyApp(BaseDifyApp):
@@ -157,26 +229,6 @@ class ChatflowDifyApp(BaseDifyApp):
     """
     TODO docstring for class ChatflowDifyApp
     """
-
-
-def create_container(base_url, app_model_config):  # HACK deprecation
-    """
-    create an instance of specific sub-types of BaseContainer
-    """
-    key = app_model_config["key"]
-    model_id = app_model_config["model_id"]
-    name = None  # default
-    if "name" in app_model_config:
-        model_name_value = app_model_config["name"]
-        if isinstance(model_name_value, str):
-            name = model_name_value
-
-    if model_type == DifyAppType.WORKFLOW:
-        return WorkflowContainer(base_url, key, model_id, name)
-    else:  # i.e. Chatflow
-        raise TypeError("Chatflow not implemented in this version")
-        # Todo
-        # return ChatflowContainer(base_url, key, model_id, name)
 
 
 class BaseContainer:
@@ -270,16 +322,6 @@ class BaseContainer:
         :rtype: str
         """
         raise NotImplementedError
-
-    def _gen_html_header(self):
-        """
-        :return: header (including authorization info) sent to Dify Backend API
-        :rtype: dict
-        """
-        return {
-            "Authorization": "Bearer {}".format(self.key),
-            "Content-Type": "application/json",
-        }
 
     def _build_html_payloads(self, newest_user_message):
         """

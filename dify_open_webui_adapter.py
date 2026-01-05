@@ -324,7 +324,7 @@ class BaseDifyApp:
                     self._build_request_payload(newest_msg, False)
                 ),
                 stream=enable_stream,
-                timeout=REQUEST_TIMEOUT,
+                timeout=None if enable_stream else REQUEST_TIMEOUT,
             )
             response_object.raise_for_status()
             return response_object

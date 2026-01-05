@@ -347,16 +347,10 @@ class Pipe:  # pylint: disable=missing-class-docstring
     def __init__(
         self, app_model_configs_override=None, base_url_override=None
     ):
-        # BUG bad processing
-        # process app_model_configs  +++++++++++++++++++++++++++++++++++++++++++
-        if app_model_configs_override is None:
-            app_model_configs = self.Valves().APP_MODEL_CONFIGS
-            verify_app_model_configs(app_model_configs)
-        else:
-            app_model_configs = app_model_configs_override
+        base_url = base_url_override or DIFY_BACKEND_API_BASE_URL
 
-        # process base url  ++++++++++++++++++++++++++++++++++++++++++++++++++++
-        base_url = base_url_override or self.Valves().DIFY_BACKEND_API_BASE_URL
+        app_model_configs = app_model_configs_override or APP_MODEL_CONFIGS
+        verify_app_model_configs(app_model_configs)
 
         # populate containers   ++++++++++++++++++++++++++++++++++++++++++++++++
         self.containers = {}

@@ -224,7 +224,7 @@ class OWUModel:
         try:
             response_object = requests.get(
                 info_url,
-                headers=self.html_header,
+                headers=self.http_header,
                 timeout=REQUEST_TIMEOUT,
             )
             response_object.raise_for_status()
@@ -248,9 +248,9 @@ class OWUModel:
         return app_type, response_name
 
     @property
-    def html_header(self):
+    def http_header(self):
         """
-        :return: HTML header (including authorization info)
+        :return: HTTP header (including authorization info)
                 to access Dify Backend API
         :rtype: dict
         """
@@ -295,8 +295,8 @@ class BaseDifyApp:
 
     @property
     # pylint: disable-next=missing-function-docstring
-    def html_header(self):
-        return self.model.html_header
+    def http_header(self):
+        return self.model.http_header
 
     def reply(self, newest_msg, enable_stream):
         """
@@ -320,10 +320,10 @@ class WorkflowDifyApp(BaseDifyApp):
     def reply(self, newest_msg, enable_stream):
         url = "{}/workflows/run".format(self.base_url)
 
-        # build HTML payload  --------------------------------------------------
+        # build HTTP payload  --------------------------------------------------
         payload_dict = {
             "inputs": {DIFY_INPUT_VARIABLE_NAME: newest_msg},
-            "response_mode": "blocking",
+            "response_mode": "streaming" if enable_stream else "blocking",
             "user": DIFY_USER_ROLE,
         }
         payload = json.dumps(payload_dict)
@@ -332,7 +332,7 @@ class WorkflowDifyApp(BaseDifyApp):
         try:
             response_object = requests.post(
                 url,
-                headers=self.html_header,
+                headers=self.http_header,
                 data=payload,
                 timeout=REQUEST_TIMEOUT,
             )
@@ -377,7 +377,7 @@ class ChatflowContainer:  # Hack deprecation
         # Bug need test
         return "{}/chat-messages".format(self.base_url)
 
-    def _build_html_payloads(self, newest_user_message):
+    def _build_http_payloads(self, newest_user_message):
         # def _build_payload_chatflow(
         #     self, message, conversation_id, everything_for_debug
         # ):

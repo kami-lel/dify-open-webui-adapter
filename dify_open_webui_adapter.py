@@ -14,17 +14,15 @@ User must configure these 2 constant in Python script before use:
 example for a single model/app::
 
     {
-        "type": DifyAppType.WORKFLOW,  # Dify App Type
         "key": "...",             # Backend Service API secret key of Dify App
         "model_id": "model_id1",  # model id as used in Open WebUI
-        "name": "First Model",    # model Name as appeared in Open WebUI, optional
+        "name": "First Model",    # model Name as appeared in Open WebUI
     }
 
 example for ``APP_MODEL_CONFIGS``::
 
     APP_MODEL_CONFIGS = [
         {
-            "type": DifyAppType.WORKFLOW,
             "key": "...",
             "model_id": "model_id1",
         },

@@ -20,7 +20,7 @@ class TestGenRequestURL:  ######################################################
             app_model_configs_override=EXAMPLE_CONFIGS,
             base_url_override=base_url,
         )
-        chatflow = pipe.containers["example-workflow-model"]
+        chatflow = pipe.model_containers["example-workflow-model"]
 
         opt = chatflow._gen_request_url()
 
@@ -34,7 +34,7 @@ class TestGenRequestURL:  ######################################################
             app_model_configs_override=EXAMPLE_CONFIGS,
             base_url_override=base_url,
         )
-        chatflow = pipe.containers["example-workflow-model"]
+        chatflow = pipe.model_containers["example-workflow-model"]
 
         opt = chatflow._gen_request_url()
 
@@ -48,7 +48,7 @@ class TestPayload:  ############################################################
 
     def test1(_):
         pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
-        chatflow = pipe.containers["example-workflow-model"]
+        chatflow = pipe.model_containers["example-workflow-model"]
         newest_user_message = "FIRST USER MESSAGE"
 
         opt = chatflow._build_html_payloads(
@@ -69,7 +69,7 @@ class TestExtractResponse:  ####################################################
 
     def test1(_):
         pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
-        chatflow = pipe.containers["example-workflow-model"]
+        chatflow = pipe.model_containers["example-workflow-model"]
         response_json = {
             "data": {"outputs": {"output": "BOT RESPONSE CONTENT"}}
         }
@@ -82,7 +82,7 @@ class TestExtractResponse:  ####################################################
 
     def test_bad_response1(_):
         pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
-        chatflow = pipe.containers["example-workflow-model"]
+        chatflow = pipe.model_containers["example-workflow-model"]
         response_json = {"data": {"outputs": {}}}
 
         with pytest.raises(KeyError) as exec_info:

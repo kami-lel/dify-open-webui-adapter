@@ -78,7 +78,69 @@ class OWUModel:
     """
 
     def __init__(self, base_url, app_model_config):
-        pass
+        self.base_url = base_url
+
+        self.key, self.model_id, self._name = self._parse_app_model_config_arg(
+            app_model_config
+        )
+
+    @property
+    def name(self):
+        """
+        :return: display name of this app/model; model id if no name is given
+        :rtype: str
+        """
+        return self._name or self.model_id
+
+    def _parse_app_model_config_arg(self, config):
+        """
+        test & parse ``app_model_config`` arg, then set:
+
+
+        :param config: app_model_config arg
+        :type config: dict
+        :raises ValueError:
+        :raises TypeError:
+        """
+        # key  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        if "key" not in config:
+            raise ValueError("entry in APP_MODEL_CONFIGS missing 'key'")
+        key = config["key"]
+
+        if not isinstance(key, str):
+            raise TypeError("entry in APP_MODEL_CONFIGS must have str 'key'")
+
+        if len(key) == 0:
+            raise ValueError(
+                "entry in APP_MODEL_CONFIGS must have non-empty 'key'"
+            )
+
+        return key, None, None  # HACK
+
+        # id  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        if "model_id" not in config:
+            raise ValueError("APP_MODEL_CONFIGS missing 'model_id' entry")
+        model_id = config["model_id"]
+        if not isinstance(model_id, str):
+            raise TypeError("APP_MODEL_CONFIGS 'model_id' entry must be str")
+        if len(model_id) == 0:
+            raise ValueError("APP_MODEL_CONFIGS 'model_id' must not be empty")
+
+        # name  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        name = None
+        if "name" in config:
+            name = config["name"]
+            if isinstance(name, str):
+                if len(name) == 0:
+                    raise ValueError(
+                        "APP_MODEL_CONFIGS 'name' must not be empty"
+                    )
+            elif name is not None:
+                raise TypeError(
+                    "APP_MODEL_CONFIGS 'name' entry must be str or None"
+                )
+
+        return key, model_id, name
 
 
 # Dify App container  ##########################################################
@@ -100,55 +162,10 @@ class ChatflowDifyApp(BaseDifyApp):
     """
 
 
-# data & logic Container  ######################################################
-def verify_app_model_configs(app_model_configs):
-    """
-    verify users' settings of APP_MODEL_CONFIGS
-
-    :raises ValueError: APP_MODEL_CONFIGS is invalid
-    """
-
-    for config in app_model_configs:
-        # test type  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        if "type" not in config:
-            raise ValueError("APP_MODEL_CONFIGS missing 'type' entry")
-        if not isinstance(config["type"], DifyAppType):
-            raise TypeError(
-                "APP_MODEL_CONFIGS 'type' entry must be DifyAppType"
-            )
-        # test key  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        if "key" not in config:
-            raise ValueError("APP_MODEL_CONFIGS missing 'key' entry")
-        if not isinstance(config["key"], str):
-            raise TypeError("APP_MODEL_CONFIGS 'key' entry must be str")
-        if len(config["key"]) == 0:
-            raise ValueError("APP_MODEL_CONFIGS 'key' must not be empty")
-        # test id  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        if "model_id" not in config:
-            raise ValueError("APP_MODEL_CONFIGS missing 'model_id' entry")
-        if not isinstance(config["model_id"], str):
-            raise TypeError("APP_MODEL_CONFIGS 'model_id' entry must be str")
-        if len(config["model_id"]) == 0:
-            raise ValueError("APP_MODEL_CONFIGS 'model_id' must not be empty")
-        # test name  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        if "name" in config:
-            name = config["name"]
-            if isinstance(name, str):
-                if len(name) == 0:
-                    raise ValueError(
-                        "APP_MODEL_CONFIGS 'name' must not be empty"
-                    )
-            elif name is not None:
-                raise TypeError(
-                    "APP_MODEL_CONFIGS 'name' entry must be str or None"
-                )
-
-
-def create_container(base_url, app_model_config):
+def create_container(base_url, app_model_config):  # HACK deprecation
     """
     create an instance of specific sub-types of BaseContainer
     """
-    model_type = app_model_config["type"]
     key = app_model_config["key"]
     model_id = app_model_config["model_id"]
     name = None  # default
@@ -233,14 +250,6 @@ class BaseContainer:
         # extract response  ++++++++++++++++++++++++++++++++++++++++++++++++++++
         response_json = html_response.json()
         return self._extract_dify_response(response_json)
-
-    @property
-    def name(self):
-        """
-        :return: display name of this app/model; model id if no name is given
-        :rtype: str
-        """
-        return self._name or self.model_id
 
     def _retrieve_newest_user_message(self, body):
         """
@@ -413,11 +422,11 @@ class Pipe:  # pylint: disable=missing-class-docstring
         _check_app_model_configs_structure(app_model_configs)
 
         # populate containers   ++++++++++++++++++++++++++++++++++++++++++++++++
-        self.containers = {}
+        self.model_containers = {}
         for config in app_model_configs:
-            container = create_container(base_url, config)
-            model_id = container.model_id
-            self.containers[model_id] = container
+            model = OWUModel(base_url, config)
+            model_id = model.model_id
+            self.model_containers[model_id] = model
 
     def pipes(self):
         """
@@ -433,7 +442,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
         """
         return [
             container.get_model_id_and_name()
-            for container in self.containers.values()
+            for container in self.model_containers.values()
         ]
 
     def pipe(self, body, __user__):
@@ -454,4 +463,4 @@ class Pipe:  # pylint: disable=missing-class-docstring
 
         # extract model_id from body
         model_id = body["model"][body["model"].find(".") + 1 :]
-        return self.containers[model_id].reply(body, __user__)
+        return self.model_containers[model_id].reply(body, __user__)

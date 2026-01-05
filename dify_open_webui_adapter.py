@@ -301,11 +301,12 @@ class WorkflowDifyApp(BaseDifyApp):
         url = "{}/workflows/run".format(self.base_url)
 
         # build HTML payload  --------------------------------------------------
-        payload = {
+        payload_dict = {
             "inputs": {"input": msg},
             "response_mode": "blocking",
             "user": DIFY_USER_ROLE,
         }
+        payload = json.dumps(payload_dict)
 
         # POST Dify  -----------------------------------------------------------
         try:

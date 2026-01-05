@@ -111,7 +111,8 @@ class OWUModel:
 
     def reply(self, body, user):
         """
-        TODO error & write docs
+        handle OWU side of processing per-round response of conversation
+
 
         :param body: `body` given by OWU Pipe.pipes(body, __user__)
         :type body: dict
@@ -119,13 +120,21 @@ class OWUModel:
         :return: the response
         :rtype: str
         """
-        # extract from OWU  ----------------------------------------------------
-        newest_user_message = self._retrieve_newest_user_message(body)
-        url = self._gen_request_url()
-        html_headers = self._gen_html_header()
-        payload = json.dumps(self._build_html_payloads(newest_user_message))
 
-        return self.app.reply(body, user)
+        # extract newest message from OWU  -------------------------------------
+        msg = None
+        for section in reversed(body["messages"]):
+            if section["role"] == OWU_USER_ROLE:
+                msg = section["content"]
+        if msg is None:
+            raise ValueError(
+                "fail to find any '{}' messages".format(OWU_USER_ROLE)
+            )
+
+        # call DifyApp  --------------------------------------------------------
+        opt = self.app.reply(msg)
+
+        return opt
 
     def _parse_app_model_config_arg(self, config):
         """
@@ -251,6 +260,11 @@ class BaseDifyApp:
 
     @property
     # pylint: disable-next=missing-function-docstring
+    def base_url(self):
+        return self.model.base_url
+
+    @property
+    # pylint: disable-next=missing-function-docstring
     def model_id(self):
         return self.model.model_id
 
@@ -264,58 +278,15 @@ class BaseDifyApp:
     def html_header(self):
         return self.model.html_header
 
-    def reply(self, body, user):
+    def reply(self, msg):
         """
-        # TODO
+        handle Dify side of processing per-round response of conversation,
+        by requesting Dify Backend API
+
+
         :raises ConnectionError: fail Dify request
         """
-
-        # POST Dify  -----------------------------------------------------------
-        try:
-            html_response = requests.post(
-                url,
-                headers=html_headers,
-                data=payload,
-                timeout=REQUEST_TIMEOUT,
-            )
-            html_response.raise_for_status()
-
-        # handle network errors
-        except requests.exceptions.RequestException as err:
-            raise ConnectionError(
-                "fail Dify request: {}".format(err.args[0])
-            ) from err
-
-        # extract response  ----------------------------------------------------
-        response_json = html_response.json()
-        return self._extract_dify_response(response_json)
-
-    def _gen_request_url(self):
-        return "{}/workflows/run".format(self.base_url)
-
-    def _build_html_payloads(self, newest_user_message):
-        inputs = {"input": newest_user_message}
-
-        payload_dict = {
-            "inputs": inputs,
-            "response_mode": "blocking",
-            "user": DIFY_USER_ROLE,
-        }
-
-        return payload_dict
-
-    def _extract_dify_response(self, response_json):
-        """
-        :raises KeyError: malformed `response_json`
-        """
-        try:
-            return response_json["data"]["outputs"]["output"]
-        except KeyError as err:
-            raise KeyError(
-                "fail to parse Dify response, missing key: {}".format(
-                    err.args[0]
-                )
-            ) from err
+        raise NotImplementedError
 
     def __repr__(self):
         return "{}({})".format(type(self).__name__, self.name)
@@ -326,11 +297,53 @@ class WorkflowDifyApp(BaseDifyApp):
     Todo docstring for class WorkflowDifyApp
     """
 
+    def reply(self, msg):
+        url = "{}/workflows/run".format(self.base_url)
+
+        # build HTML payload  --------------------------------------------------
+        payload = {
+            "inputs": {"input": msg},
+            "response_mode": "blocking",
+            "user": DIFY_USER_ROLE,
+        }
+
+        # POST Dify  -----------------------------------------------------------
+        try:
+            html_response = requests.post(
+                url,
+                headers=self.html_header,
+                data=payload,
+                timeout=REQUEST_TIMEOUT,
+            )
+            html_response.raise_for_status()
+            response = html_response.json()
+
+        # handle network errors
+        except requests.exceptions.RequestException as err:
+            raise ConnectionError(
+                "fail Dify request: {}".format(err.args[0])
+            ) from err
+
+        # extract response  ----------------------------------------------------
+        try:
+            return response["data"]["outputs"]["output"]
+        except KeyError as err:
+            raise KeyError(
+                "fail to parse Dify response, missing key: {}".format(
+                    err.args[0]
+                )
+            ) from err
+
 
 class ChatflowDifyApp(BaseDifyApp):
     """
     Todo docstring for class ChatflowDifyApp
     """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(self, *args, **kwargs)
+        # Todo
+        raise NotImplementedError("Chatflow unavailable in this version")
 
 
 class ChatflowContainer:  # Hack deprecation

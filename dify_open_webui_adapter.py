@@ -37,9 +37,6 @@ __version__ = "2.0.1-alpha"
 __author__ = "kamiLeL"
 
 
-# Todo implement stream mode
-
-
 # config  ######################################################################
 DIFY_BACKEND_API_BASE_URL = "https://api.dify.ai/v1"
 
@@ -57,6 +54,8 @@ import requests
 
 # constants  ###################################################################
 OWU_USER_ROLE = DIFY_USER_ROLE = "user"
+DIFY_INPUT_VARIABLE_NAME = "input"
+DIFY_OUTPUT_VARIABLE_NAME = "output"
 REQUEST_TIMEOUT = 30
 
 
@@ -133,6 +132,8 @@ class OWUModel:
         for section in reversed(body["messages"]):
             if section["role"] == OWU_USER_ROLE:
                 newest_msg = section["content"]
+                break
+
         if newest_msg is None:
             raise ValueError(
                 "fail to find any '{}' messages".format(OWU_USER_ROLE)
@@ -140,7 +141,7 @@ class OWUModel:
 
         # extract if stream is enabled
         try:
-            enable_stream = body['stream']
+            enable_stream = bool(body["stream"])
         except KeyError as err:
             raise ValueError() from err
 
@@ -297,7 +298,7 @@ class BaseDifyApp:
     def html_header(self):
         return self.model.html_header
 
-    def reply(self, , newest_msg, enable_stream):
+    def reply(self, newest_msg, enable_stream):
         """
         handle Dify side of processing per-round response of conversation,
         by requesting Dify Backend API
@@ -321,7 +322,7 @@ class WorkflowDifyApp(BaseDifyApp):
 
         # build HTML payload  --------------------------------------------------
         payload_dict = {
-            "inputs": {"input": newest_msg},
+            "inputs": {DIFY_INPUT_VARIABLE_NAME: newest_msg},
             "response_mode": "blocking",
             "user": DIFY_USER_ROLE,
         }
@@ -329,14 +330,13 @@ class WorkflowDifyApp(BaseDifyApp):
 
         # POST Dify  -----------------------------------------------------------
         try:
-            html_response = requests.post(
+            response_object = requests.post(
                 url,
                 headers=self.html_header,
                 data=payload,
                 timeout=REQUEST_TIMEOUT,
             )
-            html_response.raise_for_status()
-            response = html_response.json()
+            response_object.raise_for_status()
 
         # handle network errors
         except requests.exceptions.RequestException as err:
@@ -345,10 +345,10 @@ class WorkflowDifyApp(BaseDifyApp):
             ) from err
 
         # extract response  ----------------------------------------------------
+        # TODO allow stream
+        response = response_object.json()
         try:
-            # fixme "output" shall be changeable,
-            # as it's name of *OUTPUT VARIABLE* in Dify
-            return response["data"]["outputs"]["output"]
+            return response["data"]["outputs"][DIFY_OUTPUT_VARIABLE_NAME]
         except KeyError as err:
             raise KeyError(
                 "fail to parse Dify response, missing key: {}".format(

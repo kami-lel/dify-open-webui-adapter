@@ -224,7 +224,7 @@ class OWUModel:
         try:
             response_object = requests.get(
                 info_url,
-                headers=self.http_header,
+                headers=self.http_header(False),
                 timeout=REQUEST_TIMEOUT,
             )
             response_object.raise_for_status()
@@ -247,8 +247,7 @@ class OWUModel:
 
         return app_type, response_name
 
-    @property
-    def http_header(self):
+    def http_header(self, enable_stream):
         """
         :return: HTTP header (including authorization info)
                 to access Dify Backend API
@@ -256,7 +255,9 @@ class OWUModel:
         """
         return {
             "Authorization": "Bearer {}".format(self.key),
-            "Content-Type": "application/json",
+            "Content-Type": (
+                "text/event-stream" if enable_stream else "application/json"
+            ),
         }
 
     def __repr__(self):
@@ -291,9 +292,8 @@ class BaseDifyApp:
     def name(self):
         return self.model.name
 
-    @property
-    def http_header(self):
-        return self.model.http_header
+    def http_header(self, enable_stream):
+        return self.model.http_header(enable_stream)
 
     # pylint: enable=missing-function-docstring
 
@@ -319,7 +319,7 @@ class BaseDifyApp:
         try:
             response_object = requests.post(
                 self._endpoint_url,
-                headers=self.http_header,
+                headers=self.http_header(False),
                 data=json.dumps(
                     self._build_request_payload(newest_msg, False)
                 ),
@@ -371,7 +371,7 @@ class WorkflowDifyApp(BaseDifyApp):
         try:
             response_object = requests.post(
                 self._workflow_run_url,
-                headers=self.http_header,
+                headers=self.http_header(False),
                 data=self._create_request_payload(newest_msg, False),
                 timeout=REQUEST_TIMEOUT,
             )

@@ -3,6 +3,7 @@
 [^format]
 
 <!-- Bug tests for non-functional -->
+<!-- todo support file uploads -->
 
 
 
@@ -22,6 +23,9 @@
 ## [Unreleased]
 
 ### Added
+
+- support for Chatflow in blocking mode
+
 ### Changed
 
 - split up functionalities of OWU & Dify sides into different classes

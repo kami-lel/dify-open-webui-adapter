@@ -278,25 +278,24 @@ class BaseDifyApp:
     def __init__(self, model):
         self.model = model
 
+    # pylint: disable=missing-function-docstring
     @property
-    # pylint: disable-next=missing-function-docstring
     def base_url(self):
         return self.model.base_url
 
     @property
-    # pylint: disable-next=missing-function-docstring
     def model_id(self):
         return self.model.model_id
 
     @property
-    # pylint: disable-next=missing-function-docstring
     def name(self):
         return self.model.name
 
     @property
-    # pylint: disable-next=missing-function-docstring
     def http_header(self):
         return self.model.http_header
+
+    # pylint: enable=missing-function-docstring
 
     def reply(self, newest_msg, enable_stream):
         """
@@ -326,7 +325,7 @@ class WorkflowDifyApp(BaseDifyApp):
             response_object = requests.post(
                 self._workflow_run_url,
                 headers=self.http_header,
-                data=self._create_payload(newest_msg, False),
+                data=self._create_request_payload(newest_msg, False),
                 timeout=REQUEST_TIMEOUT,
             )
             response_object.raise_for_status()
@@ -337,6 +336,7 @@ class WorkflowDifyApp(BaseDifyApp):
                 "fail Dify request: {}".format(err.args[0])
             ) from err
 
+        # parse response  ------------------------------------------------------
         response = response_object.json()
         try:
             return response["data"]["outputs"][DIFY_OUTPUT_VARIABLE_NAME]
@@ -351,7 +351,7 @@ class WorkflowDifyApp(BaseDifyApp):
     def _workflow_run_url(self):
         return "{}/workflows/run".format(self.base_url)
 
-    def _create_payload(self, newest_msg, enable_stream):
+    def _create_request_payload(self, newest_msg, enable_stream):
         payload_dict = {
             "inputs": {DIFY_INPUT_VARIABLE_NAME: newest_msg},
             "response_mode": "streaming" if enable_stream else "blocking",
@@ -365,66 +365,86 @@ class ChatflowDifyApp(BaseDifyApp):
     representing a Chatflow App in Dify
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(self, *args, **kwargs)
-        # Todo
-        raise NotImplementedError("Chatflow unavailable in this version")
+    def __init__(self, model):
+        super().__init__(model)
+        self.conversation_id = ""
 
+    def reply(self, newest_msg, enable_stream):
+        enable_stream = False  # Hack
+        return (
+            self._reply_streaming(newest_msg)
+            if enable_stream
+            else self._reply_blocking(newest_msg)
+        )
 
-class ChatflowContainer:  # Hack deprecation
-    """
-    data & logic container for handling Dify Chatflow App (multi-round)
-    """
+    class _ChatMessageTask:
+        """
+        Hack fake streaming
+        """
 
-    def _gen_request_url(self):
-        # Bug need test
+        def __init__(self):
+            self._current = ord("a")
+            self._end = ord("z")
+
+        def __iter__(self):
+            return self
+
+        def __next__(self):
+            import time
+
+            if self._current > self._end:
+                raise StopIteration
+            ch = chr(self._current)
+            self._current += 1
+            time.sleep(1)
+            return "{}\n\n".format(ch)
+
+    def _reply_streaming(self, newest_msg):
+        return self._ChatMessageTask()  # Hack
+
+    def _reply_blocking(self, newest_msg):
+        try:
+            response_object = requests.post(
+                self._chat_message_url,
+                headers=self.http_header,
+                data=self._create_request_payload(newest_msg, False),
+                timeout=REQUEST_TIMEOUT,
+            )
+            response_object.raise_for_status()
+
+        # handle network errors
+        except requests.exceptions.RequestException as err:
+            raise ConnectionError(
+                "fail Dify request: {}".format(err.args[0])
+            ) from err
+
+        # parse response  ------------------------------------------------------
+        response = response_object.json()
+        try:
+            if not self.conversation_id:  # 1st round of this conversation
+                self.conversation_id = response["conversation_id"]
+
+            return response["answer"]
+
+        except KeyError as err:
+            raise ValueError(
+                "fail to parse response body: {}".format(err.args[0])
+            ) from err
+
+    @property
+    def _chat_message_url(self):
         return "{}/chat-messages".format(self.base_url)
 
-    def _build_http_payloads(self, newest_user_message):
-        # def _build_payload_chatflow(
-        #     self, message, conversation_id, everything_for_debug
-        # ):
-        #     inputs = {}
-        #     if ENABLE_DEBUG:
-        #         inputs["everything_for_debug"] = everything_for_debug
-
-        #     return {
-        #         "inputs": inputs,
-        #         "query": message,
-        #         "response_mode": "blocking",
-        #         "conversation_id": conversation_id,
-        #         "user": USER_ROLE,
-        #         "auto_generate_name": False,
-        #     }
-        raise NotImplementedError  # Hack
-
-    def _extract_dify_response(self, response_json):
-        # def _extract_output_chatflow(
-        #     self, model_id, response_json, saved_conversation_id
-        # ):
-        #     try:
-        #         output = response_json["answer"]
-
-        #         # save returned conversation idea for future rounds
-        #         if not saved_conversation_id:
-        #             conversation_id = response_json["conversation_id"]
-        #             self.model_data[model_id][2] = conversation_id
-
-        #             if ENABLE_DEBUG:
-        #                 conversation_id = response_json["conversation_id"]
-        #                 self.model_data[model_id][2] = conversation_id
-        #                 self.debug_lines.append("## returned conversation id")
-        #                 self.debug_lines.append(conversation_id)
-
-        #     except (KeyError, IndexError) as err:
-        #         raise ValueError(
-        #             "fail to parse chatflow response {}: {}".format(
-        #                 response_json, err
-        #             )
-        #         ) from err
-
-        #     return output
-        raise NotImplementedError  # Hack
+    def _create_request_payload(self, newest_msg, enable_stream):
+        payload_dict = {
+            "query": newest_msg,
+            "response_mode": "streaming" if enable_stream else "blocking",
+            "user": DIFY_USER_ROLE,
+            "conversation_id": self.conversation_id,
+            "auto_generate_name": False,
+            "inputs": {},
+        }
+        return json.dumps(payload_dict)
 
 
 # helper methods  ##############################################################
@@ -494,4 +514,6 @@ class Pipe:  # pylint: disable=missing-class-docstring
 
         # extract model_id from body
         model_id = body["model"][body["model"].find(".") + 1 :]
-        return self.model_containers[model_id].reply(body, __user__)
+        opt = self.model_containers[model_id].reply(body, __user__)
+
+        return opt

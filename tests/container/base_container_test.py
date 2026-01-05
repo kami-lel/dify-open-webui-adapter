@@ -15,7 +15,7 @@ class TestRetrieve:  # test ._retrieve_newest_user_message()  ##################
 
     def test1(_):
         pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
-        chatflow = pipe.containers["example-chatflow-model"]
+        chatflow = pipe.model_containers["example-chatflow-model"]
         body = EXAMPLE_BODY1
 
         opt = chatflow._retrieve_newest_user_message(body)
@@ -27,7 +27,7 @@ class TestRetrieve:  # test ._retrieve_newest_user_message()  ##################
 
     def test2(_):
         pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
-        chatflow = pipe.containers["example-chatflow-model"]
+        chatflow = pipe.model_containers["example-chatflow-model"]
         body = EXAMPLE_BODY2
 
         opt = chatflow._retrieve_newest_user_message(body)
@@ -41,7 +41,7 @@ class TestRetrieve:  # test ._retrieve_newest_user_message()  ##################
 
     def test_no_msg(_):
         pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
-        chatflow = pipe.containers["example-chatflow-model"]
+        chatflow = pipe.model_containers["example-chatflow-model"]
 
         bad_body = {
             "stream": True,
@@ -58,7 +58,7 @@ class TestRetrieve:  # test ._retrieve_newest_user_message()  ##################
 
     def test_no_user_msg(_):
         pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
-        chatflow = pipe.containers["example-chatflow-model"]
+        chatflow = pipe.model_containers["example-chatflow-model"]
 
         bad_body = {
             "stream": True,
@@ -81,7 +81,7 @@ class TestGenHeader:  # test ._gen_html_headers()  #############################
 
     def test1(_):
         pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
-        chatflow = pipe.containers["example-chatflow-model"]
+        chatflow = pipe.model_containers["example-chatflow-model"]
 
         opt = chatflow._gen_html_header()
 
@@ -95,7 +95,7 @@ class TestGenHeader:  # test ._gen_html_headers()  #############################
 
     def test2(_):
         pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
-        chatflow = pipe.containers["example-workflow-model"]
+        chatflow = pipe.model_containers["example-workflow-model"]
 
         opt = chatflow._gen_html_header()
 
@@ -109,7 +109,7 @@ class TestGenHeader:  # test ._gen_html_headers()  #############################
 
     def test3(_):
         pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
-        chatflow = pipe.containers["example-chatflow-model-2"]
+        chatflow = pipe.model_containers["example-chatflow-model-2"]
 
         opt = chatflow._gen_html_header()
 

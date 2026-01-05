@@ -24,7 +24,7 @@ class TestContainers:  # test populating self.containers
     def test1(_):
         configs = [EXAMPLE_CHATFLOW_CONFIG]
         pipe = Pipe(app_model_configs_override=configs)
-        containers = pipe.containers
+        containers = pipe.model_containers
 
         print(containers)
 
@@ -38,7 +38,7 @@ class TestContainers:  # test populating self.containers
 
     def test2(_):
         pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
-        containers = pipe.containers
+        containers = pipe.model_containers
 
         print(containers)
 

@@ -433,7 +433,7 @@ class ChatflowDifyApp(BaseDifyApp):
 
     @property
     def _chat_message_url(self):
-        return "{}/chat-message".format(self.base_url)
+        return "{}/chat-messages".format(self.base_url)
 
     def _create_request_payload(self, newest_msg, enable_stream):
         payload_dict = {
@@ -514,4 +514,6 @@ class Pipe:  # pylint: disable=missing-class-docstring
 
         # extract model_id from body
         model_id = body["model"][body["model"].find(".") + 1 :]
-        return self.model_containers[model_id].reply(body, __user__)
+        opt = self.model_containers[model_id].reply(body, __user__)
+
+        return opt

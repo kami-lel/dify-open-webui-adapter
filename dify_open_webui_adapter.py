@@ -72,7 +72,8 @@ class DifyAppType(Enum):
 # OpenWeb UI model container  ##################################################
 class OWUModel:
     """
-    TODO docstring for class OWUModel
+    logic & data container representing a single pipe **model** in Open WebUI,
+    handling OWU side's logic (parse `body`, etc.)
 
 
     :param base_url:
@@ -252,7 +253,13 @@ class OWUModel:
 # Dify App container  ##########################################################
 class BaseDifyApp:
     """
-    TODO docstring for class BaseDifyApp
+    logic container representing an **App** in Dify,
+    handling Dify Backend API side's logic
+    (create payload satisfying Dify's syntax, etc.)
+
+
+    :param model:
+    :type model: OWUModel
     """
 
     def __init__(self, model):
@@ -294,7 +301,7 @@ class BaseDifyApp:
 
 class WorkflowDifyApp(BaseDifyApp):
     """
-    Todo docstring for class WorkflowDifyApp
+    representing a Workflow App in Dify
     """
 
     def reply(self, msg):
@@ -338,7 +345,7 @@ class WorkflowDifyApp(BaseDifyApp):
 
 class ChatflowDifyApp(BaseDifyApp):
     """
-    Todo docstring for class ChatflowDifyApp
+    representing a Chatflow App in Dify
     """
 
     def __init__(self, *args, **kwargs):

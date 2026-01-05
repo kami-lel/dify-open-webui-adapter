@@ -370,7 +370,7 @@ class ChatflowDifyApp(BaseDifyApp):
         self.conversation_id = ""
 
     def reply(self, newest_msg, enable_stream):
-        enable_stream = False  # HACK
+        enable_stream = False  # Hack
         return (
             self._reply_streaming(newest_msg)
             if enable_stream

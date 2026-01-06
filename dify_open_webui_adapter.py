@@ -342,7 +342,6 @@ class BaseDifyApp:
         """
         raise NotImplementedError
 
-    @property
     def _build_request_payload(self, newest_msg, enable_stream):
         """
         :param newest_msg:
@@ -370,9 +369,9 @@ class WorkflowDifyApp(BaseDifyApp):
     def _reply_blocking(self, newest_msg):
         try:
             response_object = requests.post(
-                self._workflow_run_url,
+                self._endpoint_url,
                 headers=self.http_header(False),
-                data=self._create_request_payload(newest_msg, False),
+                data=self._build_request_payload(newest_msg, False),
                 timeout=REQUEST_TIMEOUT,
             )
             response_object.raise_for_status()
@@ -396,17 +395,9 @@ class WorkflowDifyApp(BaseDifyApp):
 
     @property
     def _endpoint_url(self):
-        raise NotImplementedError
-
-    @property
-    def _build_request_payload(self, newest_msg, enable_stream):
-        raise NotImplementedError
-
-    @property
-    def _workflow_run_url(self):
         return "{}/workflows/run".format(self.base_url)
 
-    def _create_request_payload(self, newest_msg, enable_stream):
+    def _build_request_payload(self, newest_msg, enable_stream):
         payload_dict = {
             "inputs": {DIFY_INPUT_VARIABLE_NAME: newest_msg},
             "response_mode": "streaming" if enable_stream else "blocking",
@@ -425,7 +416,6 @@ class ChatflowDifyApp(BaseDifyApp):
         self.conversation_id = ""
 
     def reply(self, newest_msg, enable_stream):
-        enable_stream = False  # HACK
         return (
             self._reply_streaming(newest_msg)
             if enable_stream
@@ -438,29 +428,24 @@ class ChatflowDifyApp(BaseDifyApp):
         """
 
         def __init__(self, app, newest_msg):
-            self.app = app
+            self._app = app
 
-            self.response = self.app._create_http_response(newest_msg, True)
+            self._response = self._app._create_http_response(newest_msg, True)
+            self._iter_lines = self._response.iter_lines(decode_unicode=True)
 
-            # TODO
-
-            self._current = ord("a")
-            self._end = ord("z")
+        def _close(self):
+            self._response.close()
 
         def __iter__(self):
             return self
 
         def __next__(self):
-            # TODO
-            import time
-
-            if self._current > self._end:
-                self.response.close()
+            # BUG
+            try:
+                return "{}\n\n----\n\n".format(next(self._iter_lines))
+            except StopIteration:
+                self._close()
                 raise StopIteration
-            ch = chr(self._current)
-            self._current += 1
-            time.sleep(1)
-            return "{}\n\n".format(ch)
 
     def _reply_streaming(self, newest_msg):
         return self._ChatMessageTask(self, newest_msg)
@@ -483,11 +468,7 @@ class ChatflowDifyApp(BaseDifyApp):
     def _endpoint_url(self):
         return "{}/chat-messages".format(self.base_url)
 
-    @property
     def _build_request_payload(self, newest_msg, enable_stream):
-        raise NotImplementedError
-
-    def _create_request_payload(self, newest_msg, enable_stream):
         return {
             "query": newest_msg,
             "response_mode": "streaming" if enable_stream else "blocking",

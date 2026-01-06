@@ -318,11 +318,9 @@ class BaseDifyApp:
         """
         try:
             response_object = requests.post(
-                self._endpoint_url,
+                self.endpoint_url,
                 headers=self.http_header(),
-                data=json.dumps(
-                    self._build_request_payload(newest_msg, False)
-                ),
+                data=json.dumps(self.build_request_payload(newest_msg, False)),
                 stream=False,
                 timeout=REQUEST_TIMEOUT,
             )
@@ -336,13 +334,13 @@ class BaseDifyApp:
             ) from err
 
     @property
-    def _endpoint_url(self):
+    def endpoint_url(self):
         """
         :rtype: str
         """
         raise NotImplementedError
 
-    def _build_request_payload(self, newest_msg, enable_stream):
+    def build_request_payload(self, newest_msg, enable_stream):
         """
         :param newest_msg:
         :type newest_msg: str
@@ -370,9 +368,9 @@ class WorkflowDifyApp(BaseDifyApp):
         # Todo refactor to be simplified
         try:
             response_object = requests.post(
-                self._endpoint_url,
+                self.endpoint_url,
                 headers=self.http_header(),
-                data=self._build_request_payload(newest_msg, False),
+                data=self.build_request_payload(newest_msg, False),
                 timeout=REQUEST_TIMEOUT,
             )
             response_object.raise_for_status()
@@ -395,10 +393,10 @@ class WorkflowDifyApp(BaseDifyApp):
             ) from err
 
     @property
-    def _endpoint_url(self):
+    def endpoint_url(self):
         return "{}/workflows/run".format(self.base_url)
 
-    def _build_request_payload(self, newest_msg, enable_stream):
+    def build_request_payload(self, newest_msg, enable_stream):
         payload_dict = {
             "inputs": {DIFY_INPUT_VARIABLE_NAME: newest_msg},
             "response_mode": "streaming" if enable_stream else "blocking",
@@ -430,32 +428,50 @@ class ChatflowDifyApp(BaseDifyApp):
 
         def __init__(self, app, newest_msg):
             self._app = app
-            self._session = requests.Session()
-            self._response = self._session.post(
-                self._app._endpoint_url,
-                headers=self._app.http_header(),
-                data=json.dumps(
-                    self._app._build_request_payload(newest_msg, True)
-                ),
-                stream=True,
-                timeout=None,
-            )
+            self._newest_msg = newest_msg
 
-        def _close(self):
-            self._response.close()
+            self._url = None
+
+            # set up session  --------------------------------------------------
+            self._session = requests.Session()
+            self._session.headers = self._app.http_header()
+
+            self._tmp_counter = 5
 
         def __iter__(self):
             return self
 
         def __next__(self):
+            # HACk
+            if self._tmp_counter == 0:
+                self._session.close()
+                raise StopIteration
+            else:
+                self._tmp_counter += 1
+
+            if self._url is None:
+                # 1st response, set up session
+                self._url = self._app.endpoint_url
+                response = self._session.post(
+                    self._url,
+                    data=json.dumps(
+                        self._app.build_request_payload(self._newest_msg, True)
+                    ),
+                    stream=True,
+                    timeout=None,
+                )
+
+            else:
+                # 2nd & further requests
+                response = self._session.post(self._url)
+
             # BUG way to handle
             try:
-                return "{}\n\n----\n\n".format(
-                    next(self._response.iter_lines())
-                )
+                return "{}\n\n----\n\n".format(next(response.iter_lines()))
             except StopIteration:
-                self._close()
-                raise StopIteration
+                pass
+            finally:
+                response.close()
 
     def _reply_streaming(self, newest_msg):
         return self._ChatMessageTask(self, newest_msg)
@@ -475,10 +491,10 @@ class ChatflowDifyApp(BaseDifyApp):
             ) from err
 
     @property
-    def _endpoint_url(self):
+    def endpoint_url(self):
         return "{}/chat-messages".format(self.base_url)
 
-    def _build_request_payload(self, newest_msg, enable_stream):
+    def build_request_payload(self, newest_msg, enable_stream):
         return {
             "query": newest_msg,
             "response_mode": "streaming" if enable_stream else "blocking",

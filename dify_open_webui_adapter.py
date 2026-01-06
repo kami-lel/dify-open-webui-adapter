@@ -224,7 +224,7 @@ class OWUModel:
         try:
             response_object = requests.get(
                 info_url,
-                headers=self.http_header(False),
+                headers=self.http_header(),
                 timeout=REQUEST_TIMEOUT,
             )
             response_object.raise_for_status()
@@ -247,18 +247,20 @@ class OWUModel:
 
         return app_type, response_name
 
-    def http_header(self, enable_stream):
+    def http_header(self, enable_stream=False):
         """
         :return: HTTP header (including authorization info)
                 to access Dify Backend API
         :rtype: dict
         """
-        return {
+        header_dict = {
             "Authorization": "Bearer {}".format(self.key),
             "Content-Type": (
                 "text/event-stream" if enable_stream else "application/json"
             ),
         }
+
+        return header_dict
 
     def __repr__(self):
         return "OWUModel({}:{})".format(self.name, repr(self.app))
@@ -292,8 +294,8 @@ class BaseDifyApp:
     def name(self):
         return self.model.name
 
-    def http_header(self, enable_stream):
-        return self.model.http_header(enable_stream)
+    def http_header(self, enable_stream=False):
+        return self.model.http_header(enable_stream=enable_stream)
 
     # pylint: enable=missing-function-docstring
 
@@ -307,27 +309,25 @@ class BaseDifyApp:
         """
         raise NotImplementedError
 
-    def _create_http_response(self, newest_msg, enable_stream):
+    def _create_requests_response_json(self, newest_msg):
         """
         :param newest_msg:
         :type newest_msg: str
-        :param enable_stream:
-        :type enable_stream: bool
-        :return: a response object
-        :rtype: requests.Response
+        :return: a response object's json
+        :rtype: dict
         """
         try:
             response_object = requests.post(
                 self._endpoint_url,
-                headers=self.http_header(False),
+                headers=self.http_header(),
                 data=json.dumps(
                     self._build_request_payload(newest_msg, False)
                 ),
-                stream=enable_stream,
-                timeout=None if enable_stream else REQUEST_TIMEOUT,
+                stream=False,
+                timeout=REQUEST_TIMEOUT,
             )
             response_object.raise_for_status()
-            return response_object
+            return response_object.json()
 
         # handle network errors
         except requests.exceptions.RequestException as err:
@@ -367,10 +367,11 @@ class WorkflowDifyApp(BaseDifyApp):
         return self._reply_blocking(newest_msg)
 
     def _reply_blocking(self, newest_msg):
+        # Todo refactor to be simplified
         try:
             response_object = requests.post(
                 self._endpoint_url,
-                headers=self.http_header(False),
+                headers=self.http_header(),
                 data=self._build_request_payload(newest_msg, False),
                 timeout=REQUEST_TIMEOUT,
             )
@@ -429,9 +430,16 @@ class ChatflowDifyApp(BaseDifyApp):
 
         def __init__(self, app, newest_msg):
             self._app = app
-
-            self._response = self._app._create_http_response(newest_msg, True)
-            self._iter_lines = self._response.iter_lines(decode_unicode=True)
+            self._session = requests.Session()
+            self._response = self._session.post(
+                self._app._endpoint_url,
+                headers=self._app.http_header(),
+                data=json.dumps(
+                    self._app._build_request_payload(newest_msg, True)
+                ),
+                stream=True,
+                timeout=None,
+            )
 
         def _close(self):
             self._response.close()
@@ -440,9 +448,11 @@ class ChatflowDifyApp(BaseDifyApp):
             return self
 
         def __next__(self):
-            # BUG
+            # BUG way to handle
             try:
-                return "{}\n\n----\n\n".format(next(self._iter_lines))
+                return "{}\n\n----\n\n".format(
+                    next(self._response.iter_lines())
+                )
             except StopIteration:
                 self._close()
                 raise StopIteration
@@ -452,7 +462,7 @@ class ChatflowDifyApp(BaseDifyApp):
 
     def _reply_blocking(self, newest_msg):
         # parse response  ------------------------------------------------------
-        response = self._create_http_response(newest_msg, False).json()
+        response = self._create_requests_response_json(newest_msg)
         try:
             if not self.conversation_id:  # 1st round of this conversation
                 self.conversation_id = response["conversation_id"]

@@ -495,7 +495,7 @@ class ChatflowDifyApp(BaseDifyApp):
                 """
                 return self.event_type is self._EventType.END
 
-        def __init__(self, app, newest_msg, conversations_id):
+        def __init__(self, app, newest_msg):
             self.app = app
             self.response = self.app._open_reply_response(newest_msg, True)
 

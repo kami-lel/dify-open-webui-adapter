@@ -376,13 +376,13 @@ class WorkflowDifyApp(BaseDifyApp):
     representing a Workflow App in Dify
     """
 
-    def reply(self, newest_msg, enable_stream):
-        # FIXME not implementing streaming
-        return self._reply_blocking(newest_msg)
-
     @property
     def endpoint_url(self):
         return "{}/workflows/run".format(self.base_url)
+
+    def reply(self, newest_msg, enable_stream):
+        # FIXME not implementing streaming
+        return self._reply_blocking(newest_msg)
 
     def build_request_payload(self, newest_msg, enable_stream):
         payload_dict = {
@@ -425,17 +425,6 @@ class ChatflowDifyApp(BaseDifyApp):
     """
     representing a Chatflow App in Dify
     """
-
-    def __init__(self, model):
-        super().__init__(model)
-        self.conversation_id = ""
-
-    def reply(self, newest_msg, enable_stream):
-        return (
-            self._reply_streaming(newest_msg)
-            if enable_stream
-            else self._reply_blocking(newest_msg)
-        )
 
     class _ChatMessageTask:
         """
@@ -489,6 +478,31 @@ class ChatflowDifyApp(BaseDifyApp):
             finally:
                 response.close()
 
+    def __init__(self, model):
+        super().__init__(model)
+        self.conversation_id = ""
+
+    @property
+    def endpoint_url(self):
+        return "{}/chat-messages".format(self.base_url)
+
+    def reply(self, newest_msg, enable_stream):
+        return (
+            self._reply_streaming(newest_msg)
+            if enable_stream
+            else self._reply_blocking(newest_msg)
+        )
+
+    def build_request_payload(self, newest_msg, enable_stream):
+        return {
+            "query": newest_msg,
+            "response_mode": "streaming" if enable_stream else "blocking",
+            "user": DIFY_USER_ROLE,
+            "conversation_id": self.conversation_id,
+            "auto_generate_name": False,
+            "inputs": {},
+        }
+
     def _reply_streaming(self, newest_msg):
         return self._ChatMessageTask(self, newest_msg)
 
@@ -505,20 +519,6 @@ class ChatflowDifyApp(BaseDifyApp):
             raise ValueError(
                 "fail to parse response body: {}".format(err.args[0])
             ) from err
-
-    @property
-    def endpoint_url(self):
-        return "{}/chat-messages".format(self.base_url)
-
-    def build_request_payload(self, newest_msg, enable_stream):
-        return {
-            "query": newest_msg,
-            "response_mode": "streaming" if enable_stream else "blocking",
-            "user": DIFY_USER_ROLE,
-            "conversation_id": self.conversation_id,
-            "auto_generate_name": False,
-            "inputs": {},
-        }
 
 
 # helper methods  ##############################################################

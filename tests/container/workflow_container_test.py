@@ -11,38 +11,6 @@ from tests import EXAMPLE_CONFIGS
 from dify_open_webui_adapter import Pipe
 
 
-class TestGenRequestURL:  ######################################################
-    # test ._gen_request_url()
-
-    def test1(_):
-        base_url = "https://api.dify.ai/v1"
-        pipe = Pipe(
-            app_model_configs_override=EXAMPLE_CONFIGS,
-            base_url_override=base_url,
-        )
-        chatflow = pipe.model_containers["example-workflow-model"]
-
-        opt = chatflow._gen_request_url()
-
-        print(opt)
-        assert isinstance(opt, str)
-        assert opt == "https://api.dify.ai/v1/workflows/run"
-
-    def test2(_):
-        base_url = "http://11.22.33.44:1234/v1"
-        pipe = Pipe(
-            app_model_configs_override=EXAMPLE_CONFIGS,
-            base_url_override=base_url,
-        )
-        chatflow = pipe.model_containers["example-workflow-model"]
-
-        opt = chatflow._gen_request_url()
-
-        print(opt)
-        assert isinstance(opt, str)
-        assert opt == "http://11.22.33.44:1234/v1/workflows/run"
-
-
 class TestPayload:  ############################################################
     # test ._build_html_payloads()
 

@@ -1,10 +1,7 @@
 """
 pipes_test.py
 
-Unit Tests (using pytest) for:
-
-- Pipe.pipes()
-- BaseContainer.get_model_id_and_name()
+Unit Tests (using pytest) for: Pipe.pipes()
 """
 
 from dify_open_webui_adapter import Pipe
@@ -15,7 +12,10 @@ class TestPipes:
 
     def test1(_):
         configs = [EXAMPLE_CHATFLOW_CONFIG]
-        pipe = Pipe(app_model_configs_override=configs)
+        pipe = Pipe(
+            app_model_configs_override=configs,
+            disable_get_app_type_and_name=True,
+        )
         opt = pipe.pipes()
 
         print(opt)
@@ -29,7 +29,10 @@ class TestPipes:
         }
 
     def test2(_):
-        pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
+        pipe = Pipe(
+            app_model_configs_override=EXAMPLE_CONFIGS,
+            disable_get_app_type_and_name=True,
+        )
         opt = pipe.pipes()
 
         print(opt)

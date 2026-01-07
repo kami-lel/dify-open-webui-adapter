@@ -88,14 +88,22 @@ class OWUModel:
     :raises TypeError:
     """
 
-    def __init__(self, base_url, app_model_config):
+    def __init__(
+        self,
+        base_url,
+        app_model_config,
+        *,
+        disable_get_app_type_and_name_by_dify_get_info=False,
+    ):
         self.base_url = base_url
 
         self.key, self.model_id, provided_name = (
             self._parse_app_model_config_arg(app_model_config)
         )
 
-        app_type, response_name = self._get_name_mode_by_dify_get_info()
+        app_type, response_name = self._get_app_type_and_name_by_dify_get_info(
+            disable=disable_get_app_type_and_name_by_dify_get_info
+        )
 
         # set self.name
         self.name = provided_name or response_name or self.model_id
@@ -152,6 +160,21 @@ class OWUModel:
 
         return opt
 
+    def http_header(self, enable_stream=False):
+        """
+        :return: HTTP header (including authorization info)
+                to access Dify Backend API
+        :rtype: dict
+        """
+        header_dict = {
+            "Authorization": "Bearer {}".format(self.key),
+            "Content-Type": (
+                "text/event-stream" if enable_stream else "application/json"
+            ),
+        }
+
+        return header_dict
+
     def _parse_app_model_config_arg(self, config):
         """
         test & parse ``app_model_config`` arg, then set:
@@ -207,7 +230,7 @@ class OWUModel:
 
         return key, model_id, name
 
-    def _get_name_mode_by_dify_get_info(self):
+    def _get_app_type_and_name_by_dify_get_info(self, disable=False):
         """
         by GET /info endpoint of Dify Backend API,
         get Dify app type and its name
@@ -220,6 +243,9 @@ class OWUModel:
         :return: App name & type responded from Dify
         :rtype: tuple(str, DifyAppType)
         """
+        if disable:  # disable network-related function for unit tests
+            return None, None
+
         info_url = "{}/info".format(self.base_url)
 
         # GET /info  -----------------------------------------------------------
@@ -248,21 +274,6 @@ class OWUModel:
         response_name = response["name"] if "name" in response else None
 
         return app_type, response_name
-
-    def http_header(self, enable_stream=False):
-        """
-        :return: HTTP header (including authorization info)
-                to access Dify Backend API
-        :rtype: dict
-        """
-        header_dict = {
-            "Authorization": "Bearer {}".format(self.key),
-            "Content-Type": (
-                "text/event-stream" if enable_stream else "application/json"
-            ),
-        }
-
-        return header_dict
 
     def __repr__(self):
         return "OWUModel({}:{})".format(self.name, repr(self.app))

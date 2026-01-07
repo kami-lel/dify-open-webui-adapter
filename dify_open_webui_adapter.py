@@ -452,9 +452,7 @@ class ChatflowDifyApp(BaseDifyApp):
         def __init__(self, app, newest_msg):
             self.app = app
             self.response = self.app._open_reply_response(newest_msg, True)
-
-            # HACK
-            self._tmp_iter = iter(list(self.response.iter_lines()))
+            self.iter_lines = iter(self.response.iter_lines())
 
         def __iter__(self):
             return self  # make self an Iterator
@@ -465,9 +463,12 @@ class ChatflowDifyApp(BaseDifyApp):
             # keeps searching for a relevant event
             while not event.is_relevant:
                 try:
-                    event = _StreamEvent(self.app, next(self._tmp_iter))
+                    event = _StreamEvent(self.app, next(self.iter_lines))
                 except StopIteration as err:
-                    raise ValueError("NO!!") from err  # TODO
+                    raise ValueError(
+                        "exhaust event stream "
+                        "without encountering any finishing event"
+                    ) from err
 
             if event.is_end:
                 self.response.close()
@@ -568,7 +569,7 @@ class _StreamEvent:
             if line.startswith("data:"):
                 line = line[len("data:") :].lstrip()
 
-            # BUG: "event: ping"
+            # bug: "event: ping"
             data = json.loads(line)
 
             # get event type

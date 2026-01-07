@@ -42,6 +42,27 @@
 
 
 
+## [2.1.1] - 2026-01-07
+
+### Fixed
+
+- handle `event: ping`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## [2.1.0] - 2026-01-07
 
 ### Added
@@ -143,7 +164,8 @@
 
 
 
-[unreleased]: https://github.com/kami-lel/kami-log-py/compare/v2.1.0...dev
+[unreleased]: https://github.com/kami-lel/kami-log-py/compare/v2.1.1...dev
+[2.1.1]: https://github.com/kami-lel/kami-log-py/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/kami-lel/kami-log-py/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/kami-lel/kami-log-py/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/kami-lel/kami-log-py/compare/v1.0.0...v1.1.0

@@ -558,12 +558,11 @@ class _StreamEvent:
         MESSAGE_REPLACE = "message_replace"
         TTS_MESSAGE = "tts_message"
         TTS_MESSAGE_END = "tts_message_end"
-        PING = "ping"
 
     def __init__(self, app=None, raw=None):
         self.is_relevant = False
 
-        if not raw:  # an uninitialized event
+        if not raw or raw == b"event: ping":  # an uninitialized event
             return
 
         # parse raw line  ------------------------------------------------------
@@ -573,7 +572,6 @@ class _StreamEvent:
             if line.startswith("data:"):
                 line = line[len("data:") :].lstrip()
 
-            # bug: "event: ping"
             data = json.loads(line)
 
             # get event type

@@ -468,30 +468,40 @@ class ChatflowDifyApp(BaseDifyApp):
                 MESSAGE_REPLACE = "message_replace"
                 TTS_MESSAGE = "tts_message"
                 TTS_MESSAGE_END = "tts_message_end"
+                PING = "ping"
 
             def __init__(self, app=None, raw=None):
                 self.is_relevant = False
 
-                if raw is None:  # an uninitialized event
+                if not raw:  # an uninitialized event
                     return
 
                 # parse raw line  ----------------------------------------------
                 try:
-                    parsed = json.loads(raw)
-                    data = parsed["data"]
+                    line = raw.decode("utf-8")
+
+                    if line.startswith("data:"):
+                        line = line[len("data:") :].lstrip()
+
+                    # BUG: "event: ping"
+                    data = json.loads(line)
 
                     # get event type
                     self.event_type = self._EventType(data["event"])
 
-                    if not app.conversations_id:  # when empty
+                    if not app.conversation_id:  # when empty
                         app.conversation_id = data["conversation_id"]
 
                     if self.event_type is self._EventType.MESSAGE:
                         self.text_content = data["answer"]
 
+                except UnicodeDecodeError as err:
+                    raise ValueError(
+                        "bad encoding for utf-8: {}".format(err.args[0])
+                    ) from err
                 except json.JSONDecodeError as err:
                     raise ValueError(
-                        "can't parse event: {}".format(err.args[0])
+                        "can't parse event [{}] {}".format(raw, err.args[0])
                     ) from err
                 except KeyError as err:
                     raise ValueError(

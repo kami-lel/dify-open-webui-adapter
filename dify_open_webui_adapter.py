@@ -30,6 +30,8 @@ example for ``APP_MODEL_CONFIGS``::
             ~  # config for 2nd app/model
         },
     ]
+
+Q.v. ``https://github.com/kami-lel/dify-open-webui-adapter``
 """
 
 # adapter version

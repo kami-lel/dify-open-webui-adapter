@@ -427,7 +427,7 @@ class WorkflowDifyApp(BaseDifyApp):
             response_object.close()
 
     def _reply_streaming(self, newest_msg):
-        return self._reply_blocking(newest_msg)  # Todo implement real stream
+        return self._reply_blocking(newest_msg)  # TODO implement real stream
 
     def _create_post_request_payload(self, newest_msg, enable_stream=False):
         payload_dict = {

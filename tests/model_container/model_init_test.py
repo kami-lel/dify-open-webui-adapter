@@ -4,8 +4,6 @@ model_init_test.py
 Unit Tests (using pytest) for: __init__() of OWUModel
 """
 
-import pytest
-
 from dify_open_webui_adapter import (
     OWUModel,
     WorkflowDifyApp,

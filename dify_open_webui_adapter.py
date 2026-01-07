@@ -93,7 +93,7 @@ class OWUModel:
         base_url,
         app_model_config,
         *,
-        disable_get_app_type_and_name_by_dify_get_info=False,
+        disable_get_app_type_and_name=False,
         app_type_override=None,
     ):
         self.base_url = base_url
@@ -103,7 +103,7 @@ class OWUModel:
         )
 
         app_type, response_name = self._get_app_type_and_name_by_dify_get_info(
-            disable=disable_get_app_type_and_name_by_dify_get_info
+            disable=disable_get_app_type_and_name
         )
         if app_type_override is not None:  # for unit test w/o network
             app_type = app_type_override
@@ -539,7 +539,10 @@ class Pipe:  # pylint: disable=missing-class-docstring
         pass  # configuration via Python constants
 
     def __init__(
-        self, app_model_configs_override=None, base_url_override=None
+        self,
+        app_model_configs_override=None,
+        base_url_override=None,
+        disable_get_app_type_and_name=False,
     ):
         base_url = base_url_override or DIFY_BACKEND_API_BASE_URL
         app_model_configs = app_model_configs_override or APP_MODEL_CONFIGS
@@ -549,7 +552,11 @@ class Pipe:  # pylint: disable=missing-class-docstring
         # populate containers   ------------------------------------------------
         self.model_containers = {}
         for config in app_model_configs:
-            model = OWUModel(base_url, config)
+            model = OWUModel(
+                base_url,
+                config,
+                disable_get_app_type_and_name=disable_get_app_type_and_name,
+            )
             model_id = model.model_id
             self.model_containers[model_id] = model
 

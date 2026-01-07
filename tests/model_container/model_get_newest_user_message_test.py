@@ -21,7 +21,7 @@ class TestBody:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_CHATFLOW_CONFIG,
-            disable_get_app_type_and_name_by_dify_get_info=True,
+            disable_get_app_type_and_name=True,
         )
 
         opt = model._get_newest_user_message_from_body(EXAMPLE_BODY1)
@@ -34,7 +34,7 @@ class TestBody:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_CHATFLOW_CONFIG,
-            disable_get_app_type_and_name_by_dify_get_info=True,
+            disable_get_app_type_and_name=True,
         )
 
         opt = model._get_newest_user_message_from_body(EXAMPLE_BODY2)
@@ -50,7 +50,7 @@ class TestNoMessage:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_CHATFLOW_CONFIG,
-            disable_get_app_type_and_name_by_dify_get_info=True,
+            disable_get_app_type_and_name=True,
         )
         body = EXAMPLE_BODY1.copy()
         body["messages"] = []

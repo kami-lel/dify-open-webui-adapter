@@ -134,8 +134,9 @@ class OWUModel:
         :param body: `body` given by OWU Pipe.pipes(body, __user__)
         :type body: dict
         :param user: `__user__` given by Pipe.pipes(body, __user__)
-        :raises ValueError:
         :raises ConnectionError:
+        :raises ValueError:
+        :raises KeyError:
         :return: the response
         :rtype: str
         """
@@ -328,6 +329,7 @@ class BaseDifyApp:
 
 
         :raises ConnectionError:
+        :raises KeyError:
         :return: the response
         :rtype: str
         """
@@ -407,6 +409,7 @@ class WorkflowDifyApp(BaseDifyApp):
     def _reply_blocking(self, newest_msg):
         """
         :raises ConnectionError:
+        :raises KeyError:
         """
         with self._open_reply_response(newest_msg, False) as response_object:
             response = response_object.json()
@@ -501,14 +504,31 @@ class ChatflowDifyApp(BaseDifyApp):
     def endpoint_url(self):
         return "{}/chat-messages".format(self.base_url)
 
-    def reply(self, newest_msg, enable_stream):
-        return (
-            self._reply_streaming(newest_msg)
-            if enable_stream
-            else self._reply_blocking(newest_msg)
-        )
+    def _reply_blocking(self, newest_msg):
+        """
+        :raises ConnectionError:
+        :raises KeyError:
+        """
+        with self._open_reply_response(newest_msg, False) as response_object:
+            response = response_object.json()
 
-    def build_request_payload(self, newest_msg, enable_stream):
+            try:
+                if not self.conversation_id:  # 1st round of this conversation
+                    self.conversation_id = response["conversation_id"]
+
+                return response["answer"]
+
+            except KeyError as err:
+                raise KeyError(
+                    "fail to parse Dify response, missing key: {}".format(
+                        err.args[0]
+                    )
+                ) from err
+
+    def _reply_streaming(self, newest_msg):
+        return self._reply_blocking(newest_msg)  # HACK implement real stream
+
+    def _create_post_request_payload(self, newest_msg, enable_stream=False):
         return {
             "query": newest_msg,
             "response_mode": "streaming" if enable_stream else "blocking",
@@ -517,23 +537,6 @@ class ChatflowDifyApp(BaseDifyApp):
             "auto_generate_name": False,
             "inputs": {},
         }
-
-    def _reply_streaming(self, newest_msg):
-        return self._ConversationRound(self, newest_msg)
-
-    def _reply_blocking(self, newest_msg):
-        # parse response  ------------------------------------------------------
-        response = self._create_requests_response_json(newest_msg)
-        try:
-            if not self.conversation_id:  # 1st round of this conversation
-                self.conversation_id = response["conversation_id"]
-
-            return response["answer"]
-
-        except KeyError as err:
-            raise ValueError(
-                "fail to parse response body: {}".format(err.args[0])
-            ) from err
 
 
 # helper methods  ##############################################################

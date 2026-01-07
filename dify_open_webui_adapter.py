@@ -306,20 +306,16 @@ class BaseDifyApp:
         """
         raise NotImplementedError
 
-    # HACK update this
-    # pylint: enable=missing-function-docstring
-    # pylint: disable=missing-function-docstring
-
     @property
-    def base_url(self):
+    def base_url(self):  # pylint: disable=missing-function-docstring
         return self.model.base_url
 
     @property
-    def model_id(self):
+    def model_id(self):  # pylint: disable=missing-function-docstring
         return self.model.model_id
 
     @property
-    def name(self):
+    def name(self):  # pylint: disable=missing-function-docstring
         return self.model.name
 
     def reply(self, newest_msg, enable_stream):
@@ -339,7 +335,9 @@ class BaseDifyApp:
             else self._reply_blocking(newest_msg)
         )
 
-    def http_header(self, enable_stream=False):
+    def http_header(
+        self, enable_stream=False
+    ):  # pylint: disable=missing-function-docstring
         return self.model.http_header(enable_stream=enable_stream)
 
     def _reply_blocking(self, newest_msg):

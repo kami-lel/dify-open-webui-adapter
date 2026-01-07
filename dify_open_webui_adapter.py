@@ -574,7 +574,9 @@ class _StreamEvent:
             # get event type
             self.event_type = self._EventType(data["event"])
 
-            if not app.conversation_id:  # when empty
+            if (
+                isinstance(app, ChatflowDifyApp) and not app.conversation_id
+            ):  # set up conversation_id for Chatflow, if it is empty
                 app.conversation_id = data["conversation_id"]
 
             if self.event_type is self._EventType.MESSAGE:

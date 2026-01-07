@@ -380,6 +380,18 @@ class WorkflowDifyApp(BaseDifyApp):
         # FIXME not implementing streaming
         return self._reply_blocking(newest_msg)
 
+    @property
+    def endpoint_url(self):
+        return "{}/workflows/run".format(self.base_url)
+
+    def build_request_payload(self, newest_msg, enable_stream):
+        payload_dict = {
+            "inputs": {DIFY_INPUT_VARIABLE_NAME: newest_msg},
+            "response_mode": "streaming" if enable_stream else "blocking",
+            "user": DIFY_USER_ROLE,
+        }
+        return json.dumps(payload_dict)
+
     def _reply_blocking(self, newest_msg):
         # Todo refactor to be simplified
         try:
@@ -407,18 +419,6 @@ class WorkflowDifyApp(BaseDifyApp):
                     err.args[0]
                 )
             ) from err
-
-    @property
-    def endpoint_url(self):
-        return "{}/workflows/run".format(self.base_url)
-
-    def build_request_payload(self, newest_msg, enable_stream):
-        payload_dict = {
-            "inputs": {DIFY_INPUT_VARIABLE_NAME: newest_msg},
-            "response_mode": "streaming" if enable_stream else "blocking",
-            "user": DIFY_USER_ROLE,
-        }
-        return json.dumps(payload_dict)
 
 
 class ChatflowDifyApp(BaseDifyApp):

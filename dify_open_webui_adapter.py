@@ -163,10 +163,11 @@ class OWUModel:
         """
         header_dict = {
             "Authorization": "Bearer {}".format(self.key),
-            "Content-Type": (
-                "text/event-stream" if enable_stream else "application/json"
-            ),
+            "Content-Type": "application/json",
         }
+
+        if enable_stream:
+            header_dict["Accept"] = "text/event-stream"
 
         return header_dict
 
@@ -448,57 +449,75 @@ class ChatflowDifyApp(BaseDifyApp):
         represent a single conversation round with Chatflow
         """
 
+        class _StreamEvent(object):
+            """
+            represent a single SSE specified by Dify Backend API
+            """
+
+            class _EventType(Enum):
+                # value of enums are identical to them specified
+                # in Dify Backend API's /chat-messages ChunkCompletionResponse
+                START = "workflow_started"
+                NODE_STARTED = "node_started"
+                CHUNK = "text_chunk"
+                NODE_FINISHED = "node_finished"
+                END = "workflow_finished"
+                TTS_MESSAGE = "tts_message"
+                TTS_MESSAGE_END = "tts_message_end"
+
+            def __init__(self, raw=None):
+                self.is_null = False
+
+                # TODO need to do
+                if raw is None:
+                    self.is_null = True
+                    return
+
+                # TODO err
+                self.event_type = self._EventType("workflow_finished")
+                self.text_content = ""
+
+            @property
+            def is_relevant(self):
+                return self.is_null and (
+                    self.event_type
+                    in (
+                        self._EventType.START,
+                        self._EventType.CHUNK,
+                        self._EventType.END,
+                    )
+                )
+
+            @property
+            def is_end(self):
+                return self.event_type is self._EventType.END
+
         def __init__(self, app, newest_msg):
             self.app = app
             self.response = self.app._open_reply_response(newest_msg, True)
 
-            self._response = requests.post(
-                self.app.endpoint_url,
-            )
-            self._newest_msg = newest_msg
-
-            self._url = None
-
-            # set up session  --------------------------------------------------
-            self._session = requests.Session()
-            self._session.headers = self.app.http_header()
-
-            self._tmp_counter = 5
+            # HACK
+            all_lines = [line for line in self.response.iter_lines()]
+            self._tmp_iter = iter(all_lines)
 
         def __iter__(self):
             return self
 
         def __next__(self):
-            # HACk
-            if self._tmp_counter == 0:
-                self._session.close()
+            event = self._StreamEvent()
+
+            while not event.is_relevant:
+                try:
+                    raw = next(self._tmp_iter)
+                except StopIteration as err:
+                    raise ValueError("NO!!") from err  # TODO
+
+                event = self._StreamEvent(raw)
+
+            if event.is_end:
                 raise StopIteration
-            else:
-                self._tmp_counter += 1
 
-            if self._url is None:
-                # 1st response, set up session
-                self._url = self.app.endpoint_url
-                response = self._session.post(
-                    self._url,
-                    data=json.dumps(
-                        self.app.build_request_payload(self._newest_msg, True)
-                    ),
-                    stream=True,
-                    timeout=None,
-                )
-
-            else:
-                # 2nd & further requests
-                response = self._session.post(self._url)
-
-            # BUG way to handle
-            try:
-                return "{}\n\n----\n\n".format(next(response.iter_lines()))
-            except StopIteration:
-                pass
-            finally:
-                response.close()
+            return event.text_content
 
     def __init__(self, model):
         super().__init__(model)

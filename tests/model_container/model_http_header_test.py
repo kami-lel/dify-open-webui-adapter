@@ -22,7 +22,7 @@ class TestNoStream:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_CHATFLOW_CONFIG,
-            disable_get_app_type_and_name_by_dify_get_info=True,
+            disable_get_app_type_and_name=True,
         )
 
         opt = model.http_header(False)
@@ -42,7 +42,7 @@ class TestStream:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_CHATFLOW_CONFIG,
-            disable_get_app_type_and_name_by_dify_get_info=True,
+            disable_get_app_type_and_name=True,
         )
 
         opt = model.http_header(True)

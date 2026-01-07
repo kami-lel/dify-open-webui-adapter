@@ -25,7 +25,7 @@ class TestGetModelIdAndName:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             config,
-            disable_get_app_type_and_name_by_dify_get_info=True,
+            disable_get_app_type_and_name=True,
         )
 
         opt = model.get_model_id_and_name()
@@ -44,7 +44,7 @@ class TestGetModelIdAndName:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_CHATFLOW_CONFIG,
-            disable_get_app_type_and_name_by_dify_get_info=True,
+            disable_get_app_type_and_name=True,
         )
 
         opt = model.get_model_id_and_name()
@@ -63,7 +63,7 @@ class TestGetModelIdAndName:
         model = OWUModel(
             EXAMPLE_CHATFLOW_CONFIG,
             EXAMPLE_WORKFLOW_CONFIG,
-            disable_get_app_type_and_name_by_dify_get_info=True,
+            disable_get_app_type_and_name=True,
         )
 
         opt = model.get_model_id_and_name()
@@ -85,7 +85,7 @@ class TestGetModelIdAndName:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             config,
-            disable_get_app_type_and_name_by_dify_get_info=True,
+            disable_get_app_type_and_name=True,
         )
 
         opt = model.get_model_id_and_name()

@@ -23,7 +23,7 @@ class TestKey:
             OWUModel(
                 EXAMPLE_BASE_URL,
                 config,
-                disable_get_app_type_and_name_by_dify_get_info=True,
+                disable_get_app_type_and_name=True,
             )
 
         opt = str(exec_info.value)
@@ -39,7 +39,7 @@ class TestKey:
             OWUModel(
                 EXAMPLE_BASE_URL,
                 config,
-                disable_get_app_type_and_name_by_dify_get_info=True,
+                disable_get_app_type_and_name=True,
             )
 
         opt = str(exec_info.value)
@@ -55,7 +55,7 @@ class TestKey:
             OWUModel(
                 EXAMPLE_BASE_URL,
                 config,
-                disable_get_app_type_and_name_by_dify_get_info=True,
+                disable_get_app_type_and_name=True,
             )
 
         opt = str(exec_info.value)
@@ -76,7 +76,7 @@ class TestModelId:
             OWUModel(
                 EXAMPLE_BASE_URL,
                 config,
-                disable_get_app_type_and_name_by_dify_get_info=True,
+                disable_get_app_type_and_name=True,
             )
 
         opt = str(exec_info.value)
@@ -92,7 +92,7 @@ class TestModelId:
             OWUModel(
                 EXAMPLE_BASE_URL,
                 config,
-                disable_get_app_type_and_name_by_dify_get_info=True,
+                disable_get_app_type_and_name=True,
             )
 
         opt = str(exec_info.value)
@@ -108,7 +108,7 @@ class TestModelId:
             OWUModel(
                 EXAMPLE_BASE_URL,
                 config,
-                disable_get_app_type_and_name_by_dify_get_info=True,
+                disable_get_app_type_and_name=True,
             )
 
         opt = str(exec_info.value)
@@ -129,7 +129,7 @@ class TestName:
         OWUModel(
             EXAMPLE_BASE_URL,
             config,
-            disable_get_app_type_and_name_by_dify_get_info=True,
+            disable_get_app_type_and_name=True,
         )
 
     def test_none(self):  # name entry is None
@@ -139,7 +139,7 @@ class TestName:
         OWUModel(
             EXAMPLE_BASE_URL,
             config,
-            disable_get_app_type_and_name_by_dify_get_info=True,
+            disable_get_app_type_and_name=True,
         )
 
     def test_empty(self):
@@ -150,7 +150,7 @@ class TestName:
             OWUModel(
                 EXAMPLE_BASE_URL,
                 config,
-                disable_get_app_type_and_name_by_dify_get_info=True,
+                disable_get_app_type_and_name=True,
             )
 
         opt = str(exec_info.value)
@@ -166,7 +166,7 @@ class TestName:
             OWUModel(
                 EXAMPLE_BASE_URL,
                 config,
-                disable_get_app_type_and_name_by_dify_get_info=True,
+                disable_get_app_type_and_name=True,
             )
 
         opt = str(exec_info.value)
@@ -185,5 +185,5 @@ class TestPass:
         OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_CHATFLOW_CONFIG,
-            disable_get_app_type_and_name_by_dify_get_info=True,
+            disable_get_app_type_and_name=True,
         )

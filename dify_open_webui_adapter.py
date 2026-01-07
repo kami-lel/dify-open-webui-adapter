@@ -470,6 +470,7 @@ class ChatflowDifyApp(BaseDifyApp):
                     raise ValueError("NO!!") from err  # TODO
 
             if event.is_end:
+                self.response.close()
                 raise StopIteration
 
             return event.text_content
@@ -596,10 +597,12 @@ class _StreamEvent:
 
         # calc .is_relevant  -------------------------------------------
         # i.e. whether this event is relevant & need to be processed
-        if self.event_type in (
-            self._EventType.MESSAGE,
-            self._EventType.CHUNK,
-            self._EventType.WORKFLOW_END,
+        if self.is_end or (
+            self.event_type
+            in (
+                self._EventType.MESSAGE,
+                self._EventType.CHUNK,
+            )
         ):
             self.is_relevant = True
 

@@ -544,7 +544,7 @@ class _StreamEvent:
         # in Dify Backend API's /chat-messages ChunkCompletionResponse
         WORKFLOW_START = "workflow_started"
         NODE_STARTED = "node_started"
-        CHUNK = "text_chunk"
+        TEXT_CHUNK = "text_chunk"
         MESSAGE = "message"
         MESSAGE_FILE = "message_file"
         NODE_FINISHED = "node_finished"
@@ -581,6 +581,8 @@ class _StreamEvent:
 
             if self.event_type is self._EventType.MESSAGE:
                 self.text_content = data["answer"]
+            elif self.event_type is self._EventType.TEXT_CHUNK:
+                self.text_content = data["data"]["text"]
 
         except UnicodeDecodeError as err:
             raise ValueError(
@@ -603,7 +605,7 @@ class _StreamEvent:
             self.event_type
             in (
                 self._EventType.MESSAGE,
-                self._EventType.CHUNK,
+                self._EventType.TEXT_CHUNK,
             )
         ):
             self.is_relevant = True

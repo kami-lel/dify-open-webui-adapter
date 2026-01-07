@@ -467,26 +467,30 @@ class ChatflowDifyApp(BaseDifyApp):
 
             def __init__(self, raw=None):
                 self.is_null = False
+                self.is_relevant = False
 
-                # TODO need to do
                 if raw is None:
-                    self.is_null = True
+                    self.is_null = True  # an uninitialized event
                     return
 
-                # TODO err
+                # parse raw line  ----------------------------------------------
                 self.event_type = self._EventType("workflow_finished")
                 self.text_content = ""
 
+                # calc .is_relevant  -------------------------------------------
+                # i.e. whether this event is relevant & need to be processed
+                if self.event_type in (
+                    self._EventType.START,
+                    self._EventType.CHUNK,
+                    self._EventType.END,
+                ):
+                    self.is_relevant = True
+
             @property
             def is_relevant(self):
-                return self.is_null and (
-                    self.event_type
-                    in (
-                        self._EventType.START,
-                        self._EventType.CHUNK,
-                        self._EventType.END,
-                    )
-                )
+                """
+                :rtype: bool
+                """
 
             @property
             def is_end(self):
@@ -497,11 +501,10 @@ class ChatflowDifyApp(BaseDifyApp):
             self.response = self.app._open_reply_response(newest_msg, True)
 
             # HACK
-            all_lines = [line for line in self.response.iter_lines()]
-            self._tmp_iter = iter(all_lines)
+            self._tmp_iter = iter(list(self.response.iter_lines()))
 
         def __iter__(self):
-            return self
+            return self  # make self an Iterator
 
         def __next__(self):
             event = self._StreamEvent()

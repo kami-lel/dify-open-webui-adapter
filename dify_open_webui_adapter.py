@@ -54,7 +54,7 @@ import json
 from pydantic import BaseModel
 import requests
 
-# constants  ###################################################################
+# constants  ===================================================================
 OWU_USER_ROLE = DIFY_USER_ROLE = "user"
 DIFY_INPUT_VARIABLE_NAME = "input"
 DIFY_OUTPUT_VARIABLE_NAME = "output"
@@ -62,7 +62,7 @@ REQUEST_TIMEOUT = 30
 STREAM_REQUEST_TIMEOUT = 300
 
 
-# helper Enum  #################################################################
+# helper Enum  =================================================================
 class DifyAppType(Enum):
     """
     type of Dify App, either Workflow or Chatflow (multi-round)
@@ -74,7 +74,7 @@ class DifyAppType(Enum):
     CHATFLOW = "advanced-chat"  # multi-turn chats
 
 
-# OpenWeb UI model container  ##################################################
+# Open WebUI side  #############################################################
 class OWUModel:
     """
     logic & data container representing a single pipe **model** in Open WebUI,
@@ -284,7 +284,7 @@ class OWUModel:
         return "OWUModel({}:{})".format(self.name, repr(self.app))
 
 
-# Dify App container  ##########################################################
+# Dify side  ###################################################################
 class BaseDifyApp:
     """
     logic container representing an **App** in Dify,
@@ -427,7 +427,10 @@ class WorkflowDifyApp(BaseDifyApp):
             response_object.close()
 
     def _reply_streaming(self, newest_msg):
-        return self._reply_blocking(newest_msg)  # Todo implement real stream
+        """
+        :raises ValueError:
+        """
+        return _ConversationRound(self, newest_msg)
 
     def _create_post_request_payload(self, newest_msg, enable_stream=False):
         payload_dict = {
@@ -443,38 +446,6 @@ class ChatflowDifyApp(BaseDifyApp):
     """
     representing a Chatflow App in Dify
     """
-
-    class _ConversationRound:
-        """
-        represent a single conversation round with Chatflow
-        """
-
-        def __init__(self, app, newest_msg):
-            self.app = app
-            self.response = self.app._open_reply_response(newest_msg, True)
-            self.iter_lines = iter(self.response.iter_lines())
-
-        def __iter__(self):
-            return self  # make self an Iterator
-
-        def __next__(self):
-            event = _StreamEvent()
-
-            # keeps searching for a relevant event
-            while not event.is_relevant:
-                try:
-                    event = _StreamEvent(self.app, next(self.iter_lines))
-                except StopIteration as err:
-                    raise ValueError(
-                        "exhaust event stream "
-                        "without encountering any finishing event"
-                    ) from err
-
-            if event.is_end:
-                self.response.close()
-                raise StopIteration
-
-            return event.text_content
 
     def __init__(self, model):
         super().__init__(model)
@@ -509,7 +480,10 @@ class ChatflowDifyApp(BaseDifyApp):
             response_object.close()
 
     def _reply_streaming(self, newest_msg):
-        return self._ConversationRound(self, newest_msg)
+        """
+        :raises ValueError:
+        """
+        return _ConversationRound(self, newest_msg)
 
     def _create_post_request_payload(self, newest_msg, enable_stream=False):
         payload_dict = {
@@ -523,21 +497,46 @@ class ChatflowDifyApp(BaseDifyApp):
         return json.dumps(payload_dict)
 
 
-# helper methods  ##############################################################
-def _check_app_model_configs_structure(app_model_configs):
-    if len(app_model_configs) == 0:
-        raise ValueError(
-            "APP_MODEL_CONFIGS must contains at least one App/Model"
-        )
+# helper class  ================================================================
+class _ConversationRound:
+    """
+    represent a single conversation round with Dify
+    """
 
-    if any(not isinstance(config, dict) for config in app_model_configs):
-        raise ValueError("APP_MODEL_CONFIGS must contains only dicts")
+    def __init__(self, app, newest_msg):
+        self.app = app
+        self.response = self.app._open_reply_response(newest_msg, True)
+        self.iter_lines = iter(self.response.iter_lines())
+
+    def __iter__(self):
+        return self  # make self an Iterator
+
+    def __next__(self):
+        event = _StreamEvent()
+
+        # keeps searching for a relevant event
+        while not event.is_relevant:
+            try:
+                event = _StreamEvent(self.app, next(self.iter_lines))
+            except StopIteration as err:
+                raise ValueError(
+                    "exhaust event stream "
+                    "without encountering any finishing event"
+                ) from err
+
+        if event.is_end:
+            self.response.close()
+            raise StopIteration
+
+        return event.text_content
 
 
-# helper class  ################################################################
 class _StreamEvent:
     """
     represent a single SSE specified by Dify Backend API
+
+
+    :raises ValueError:
     """
 
     class _EventType(Enum):
@@ -562,7 +561,7 @@ class _StreamEvent:
         if not raw:  # an uninitialized event
             return
 
-        # parse raw line  ----------------------------------------------
+        # parse raw line  ------------------------------------------------------
         try:
             line = raw.decode("utf-8")
 
@@ -685,3 +684,14 @@ class Pipe:  # pylint: disable=missing-class-docstring
         opt = self.model_containers[model_id].reply(body, __user__)
 
         return opt
+
+
+# helper methods  ==============================================================
+def _check_app_model_configs_structure(app_model_configs):
+    if len(app_model_configs) == 0:
+        raise ValueError(
+            "APP_MODEL_CONFIGS must contains at least one App/Model"
+        )
+
+    if any(not isinstance(config, dict) for config in app_model_configs):
+        raise ValueError("APP_MODEL_CONFIGS must contains only dicts")

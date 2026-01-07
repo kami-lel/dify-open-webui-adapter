@@ -12,7 +12,7 @@ from tests import EXAMPLE_CHATFLOW_CONFIG, EXAMPLE_CONFIGS
 
 def test_verify_app_model_config():
     config = EXAMPLE_CHATFLOW_CONFIG.copy()
-    del config["type"]
+    del config["model_id"]
     ipt = [config]
 
     with pytest.raises(ValueError):
@@ -23,7 +23,10 @@ class TestContainers:  # test populating self.containers
 
     def test1(_):
         configs = [EXAMPLE_CHATFLOW_CONFIG]
-        pipe = Pipe(app_model_configs_override=configs)
+        pipe = Pipe(
+            app_model_configs_override=configs,
+            disable_get_app_type_and_name=True,
+        )
         containers = pipe.model_containers
 
         print(containers)
@@ -37,7 +40,10 @@ class TestContainers:  # test populating self.containers
         assert chatflow.name == "Example Chatflow Model/App"
 
     def test2(_):
-        pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
+        pipe = Pipe(
+            app_model_configs_override=EXAMPLE_CONFIGS,
+            disable_get_app_type_and_name=True,
+        )
         containers = pipe.model_containers
 
         print(containers)
@@ -48,7 +54,7 @@ class TestContainers:  # test populating self.containers
         chatflow = containers["example-workflow-model"]
         assert chatflow.key == "eaJxetwz"
         assert chatflow.model_id == "example-workflow-model"
-        assert chatflow.name is None
+        assert chatflow.name == "example-workflow-model"
 
         # test chatflow container  +++++++++++++++++++++++++++++++++++++++++++++
         chatflow = containers["example-chatflow-model"]

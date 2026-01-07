@@ -449,7 +449,7 @@ class ChatflowDifyApp(BaseDifyApp):
         represent a single conversation round with Chatflow
         """
 
-        class _StreamEvent(object):
+        class _StreamEvent:
             """
             represent a single SSE specified by Dify Backend API
             """
@@ -465,38 +465,37 @@ class ChatflowDifyApp(BaseDifyApp):
                 TTS_MESSAGE = "tts_message"
                 TTS_MESSAGE_END = "tts_message_end"
 
-            def __init__(self, raw=None):
-                self.is_null = False
+            def __init__(self, app=None, raw=None):
                 self.is_relevant = False
 
-                if raw is None:
-                    self.is_null = True  # an uninitialized event
+                if raw is None:  # an uninitialized event
                     return
 
                 # parse raw line  ----------------------------------------------
+                # TODO
                 self.event_type = self._EventType("workflow_finished")
                 self.text_content = ""
+
+                if not app.conversations_id:  # when empty
+                    pass  # TODO extract conversation_id from event
 
                 # calc .is_relevant  -------------------------------------------
                 # i.e. whether this event is relevant & need to be processed
                 if self.event_type in (
-                    self._EventType.START,
                     self._EventType.CHUNK,
                     self._EventType.END,
                 ):
                     self.is_relevant = True
 
             @property
-            def is_relevant(self):
+            def is_end(self):
                 """
+                :return: whether this event is `workflow_finished`
                 :rtype: bool
                 """
-
-            @property
-            def is_end(self):
                 return self.event_type is self._EventType.END
 
-        def __init__(self, app, newest_msg):
+        def __init__(self, app, newest_msg, conversations_id):
             self.app = app
             self.response = self.app._open_reply_response(newest_msg, True)
 
@@ -509,13 +508,12 @@ class ChatflowDifyApp(BaseDifyApp):
         def __next__(self):
             event = self._StreamEvent()
 
+            # keeps searching for a relevant event
             while not event.is_relevant:
                 try:
-                    raw = next(self._tmp_iter)
+                    event = self._StreamEvent(self.app, next(self._tmp_iter))
                 except StopIteration as err:
                     raise ValueError("NO!!") from err  # TODO
-
-                event = self._StreamEvent(raw)
 
             if event.is_end:
                 raise StopIteration
@@ -524,7 +522,7 @@ class ChatflowDifyApp(BaseDifyApp):
 
     def __init__(self, model):
         super().__init__(model)
-        self.conversation_id = ""
+        self.conversation_id = ""  # empty until 1st response
 
     @property
     def endpoint_url(self):

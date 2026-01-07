@@ -309,10 +309,18 @@ class BaseDifyApp:
     def name(self):
         return self.model.name
 
+    @property
+    def endpoint_url(self):
+        """
+        :return: endpoint URL to access Dify
+        :rtype: str
+        """
+        raise NotImplementedError
+
     def http_header(self, enable_stream=False):
         return self.model.http_header(enable_stream=enable_stream)
 
-    # pylint: enable=missing-function-docstring
+        # pylint: enable=missing-function-docstring
 
     def reply(self, newest_msg, enable_stream):
         """
@@ -321,6 +329,17 @@ class BaseDifyApp:
 
 
         :raises ConnectionError: fail Dify request
+        """
+        raise NotImplementedError
+
+    def build_request_payload(self, newest_msg, enable_stream):
+        """
+        :param newest_msg:
+        :type newest_msg: str
+        :param enable_stream:
+        :type enable_stream: bool
+        :return:
+        :rtype: dict
         """
         raise NotImplementedError
 
@@ -347,24 +366,6 @@ class BaseDifyApp:
             raise ConnectionError(
                 "fail Dify request: {}".format(err.args[0])
             ) from err
-
-    @property
-    def endpoint_url(self):
-        """
-        :rtype: str
-        """
-        raise NotImplementedError
-
-    def build_request_payload(self, newest_msg, enable_stream):
-        """
-        :param newest_msg:
-        :type newest_msg: str
-        :param enable_stream:
-        :type enable_stream: bool
-        :return:
-        :rtype: dict
-        """
-        raise NotImplementedError
 
     def __repr__(self):
         return "{}({})".format(type(self).__name__, self.name)

@@ -327,7 +327,7 @@ class BaseDifyApp:
         :raises ConnectionError:
         :raises KeyError:
         :return: the response
-        :rtype: str
+        :rtype: str or Iterable
         """
         return (
             self._reply_streaming(newest_msg)
@@ -349,8 +349,8 @@ class BaseDifyApp:
 
     def _reply_streaming(self, newest_msg):
         """
-        :return: the response
-        :rtype: str
+        :return: response
+        :rtype: Iterable
         """
         raise NotImplementedError
 
@@ -409,16 +409,21 @@ class WorkflowDifyApp(BaseDifyApp):
         :raises ConnectionError:
         :raises KeyError:
         """
-        with self._open_reply_response(newest_msg, False) as response_object:
-            response = response_object.json()
-            try:
-                return response["data"]["outputs"][DIFY_OUTPUT_VARIABLE_NAME]
-            except KeyError as err:
-                raise KeyError(
-                    "fail to parse Dify response, missing key: {}".format(
-                        err.args[0]
-                    )
-                ) from err
+        response_object = self._open_reply_response(newest_msg, False)
+        response = response_object.json()
+
+        try:
+            return response["data"]["outputs"][DIFY_OUTPUT_VARIABLE_NAME]
+
+        except KeyError as err:
+            raise KeyError(
+                "fail to parse Dify response, missing key: {}".format(
+                    err.args[0]
+                )
+            ) from err
+
+        finally:
+            response_object.close()
 
     def _reply_streaming(self, newest_msg):
         return self._reply_blocking(newest_msg)  # Todo implement real stream
@@ -444,10 +449,11 @@ class ChatflowDifyApp(BaseDifyApp):
         """
 
         def __init__(self, app, newest_msg):
-            self._app = app
+            self.app = app
+            self.response = self.app._open_reply_response(newest_msg, True)
 
             self._response = requests.post(
-                self._app.endpoint_url,
+                self.app.endpoint_url,
             )
             self._newest_msg = newest_msg
 
@@ -455,7 +461,7 @@ class ChatflowDifyApp(BaseDifyApp):
 
             # set up session  --------------------------------------------------
             self._session = requests.Session()
-            self._session.headers = self._app.http_header()
+            self._session.headers = self.app.http_header()
 
             self._tmp_counter = 5
 
@@ -472,11 +478,11 @@ class ChatflowDifyApp(BaseDifyApp):
 
             if self._url is None:
                 # 1st response, set up session
-                self._url = self._app.endpoint_url
+                self._url = self.app.endpoint_url
                 response = self._session.post(
                     self._url,
                     data=json.dumps(
-                        self._app.build_request_payload(self._newest_msg, True)
+                        self.app.build_request_payload(self._newest_msg, True)
                     ),
                     stream=True,
                     timeout=None,
@@ -507,24 +513,27 @@ class ChatflowDifyApp(BaseDifyApp):
         :raises ConnectionError:
         :raises KeyError:
         """
-        with self._open_reply_response(newest_msg, False) as response_object:
-            response = response_object.json()
+        response_object = self._open_reply_response(newest_msg, False)
+        response = response_object.json()
 
-            try:
-                if not self.conversation_id:  # 1st round of this conversation
-                    self.conversation_id = response["conversation_id"]
+        try:
+            if not self.conversation_id:  # 1st round of this conversation
+                self.conversation_id = response["conversation_id"]
 
-                return response["answer"]
+            return response["answer"]
 
-            except KeyError as err:
-                raise KeyError(
-                    "fail to parse Dify response, missing key: {}".format(
-                        err.args[0]
-                    )
-                ) from err
+        except KeyError as err:
+            raise KeyError(
+                "fail to parse Dify response, missing key: {}".format(
+                    err.args[0]
+                )
+            ) from err
+
+        finally:
+            response_object.close()
 
     def _reply_streaming(self, newest_msg):
-        return self._reply_blocking(newest_msg)  # HACK implement real stream
+        return self._ConversationRound(self, newest_msg)
 
     def _create_post_request_payload(self, newest_msg, enable_stream=False):
         payload_dict = {

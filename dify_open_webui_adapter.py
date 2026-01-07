@@ -558,7 +558,6 @@ class _StreamEvent:
         MESSAGE_REPLACE = "message_replace"
         TTS_MESSAGE = "tts_message"
         TTS_MESSAGE_END = "tts_message_end"
-        PING = "ping"
 
     def __init__(self, app=None, raw=None):
         self.is_relevant = False

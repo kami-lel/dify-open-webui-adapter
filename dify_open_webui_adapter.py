@@ -457,11 +457,15 @@ class ChatflowDifyApp(BaseDifyApp):
             class _EventType(Enum):
                 # value of enums are identical to them specified
                 # in Dify Backend API's /chat-messages ChunkCompletionResponse
-                START = "workflow_started"
+                WORKFLOW_START = "workflow_started"
                 NODE_STARTED = "node_started"
                 CHUNK = "text_chunk"
+                MESSAGE = "message"
+                MESSAGE_FILE = "message_file"
                 NODE_FINISHED = "node_finished"
-                END = "workflow_finished"
+                WORKFLOW_END = "workflow_finished"
+                MESSAGE_END = "message_end"
+                MESSAGE_REPLACE = "message_replace"
                 TTS_MESSAGE = "tts_message"
                 TTS_MESSAGE_END = "tts_message_end"
 
@@ -472,18 +476,38 @@ class ChatflowDifyApp(BaseDifyApp):
                     return
 
                 # parse raw line  ----------------------------------------------
-                # TODO
-                self.event_type = self._EventType("workflow_finished")
-                self.text_content = ""
+                try:
+                    parsed = json.loads(raw)
+                    data = parsed["data"]
 
-                if not app.conversations_id:  # when empty
-                    pass  # TODO extract conversation_id from event
+                    # get event type
+                    self.event_type = self._EventType(data["event"])
+
+                    if not app.conversations_id:  # when empty
+                        app.conversation_id = data["conversation_id"]
+
+                    if self.event_type is self._EventType.MESSAGE:
+                        self.text_content = data["answer"]
+
+                except json.JSONDecodeError as err:
+                    raise ValueError(
+                        "can't parse event: {}".format(err.args[0])
+                    ) from err
+                except KeyError as err:
+                    raise ValueError(
+                        "event stream missing: {}".format(err.args[0])
+                    ) from err
+                except ValueError as err:
+                    raise ValueError(
+                        "unknown event: {}".format(err.args[0])
+                    ) from err
 
                 # calc .is_relevant  -------------------------------------------
                 # i.e. whether this event is relevant & need to be processed
                 if self.event_type in (
+                    self._EventType.MESSAGE,
                     self._EventType.CHUNK,
-                    self._EventType.END,
+                    self._EventType.WORKFLOW_END,
                 ):
                     self.is_relevant = True
 
@@ -493,7 +517,10 @@ class ChatflowDifyApp(BaseDifyApp):
                 :return: whether this event is `workflow_finished`
                 :rtype: bool
                 """
-                return self.event_type is self._EventType.END
+                return self.event_type in (
+                    self._EventType.WORKFLOW_END,
+                    self._EventType.MESSAGE_END,
+                )
 
         def __init__(self, app, newest_msg):
             self.app = app

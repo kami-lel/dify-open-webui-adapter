@@ -328,6 +328,8 @@ class BaseDifyApp:
 
 
         :raises ConnectionError:
+        :return: the response
+        :rtype: str
         """
         return (
             self._reply_streaming(newest_msg)
@@ -339,9 +341,17 @@ class BaseDifyApp:
         return self.model.http_header(enable_stream=enable_stream)
 
     def _reply_blocking(self, newest_msg):
+        """
+        :return: the response
+        :rtype: str
+        """
         raise NotImplementedError
 
     def _reply_streaming(self, newest_msg):
+        """
+        :return: the response
+        :rtype: str
+        """
         raise NotImplementedError
 
     def _create_post_request_payload(self, newest_msg, enable_stream=False):

@@ -94,6 +94,7 @@ class OWUModel:
         app_model_config,
         *,
         disable_get_app_type_and_name_by_dify_get_info=False,
+        app_type_override=None,
     ):
         self.base_url = base_url
 
@@ -104,6 +105,8 @@ class OWUModel:
         app_type, response_name = self._get_app_type_and_name_by_dify_get_info(
             disable=disable_get_app_type_and_name_by_dify_get_info
         )
+        if app_type_override is not None:  # for unit test w/o network
+            app_type = app_type_override
 
         # set self.name
         self.name = provided_name or response_name or self.model_id

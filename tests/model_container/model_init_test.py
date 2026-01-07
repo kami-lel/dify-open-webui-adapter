@@ -6,7 +6,12 @@ Unit Tests (using pytest) for: __init__() of OWUModel
 
 import pytest
 
-from dify_open_webui_adapter import OWUModel, WorkflowDifyApp, ChatflowDifyApp
+from dify_open_webui_adapter import (
+    OWUModel,
+    WorkflowDifyApp,
+    ChatflowDifyApp,
+    DifyAppType,
+)
 
 from tests import (
     EXAMPLE_BASE_URL,
@@ -129,6 +134,7 @@ class TestApp:
             EXAMPLE_BASE_URL,
             EXAMPLE_WORKFLOW_CONFIG,
             disable_get_app_type_and_name_by_dify_get_info=True,
+            app_type_override=DifyAppType.WORKFLOW,
         )
 
         opt = model.app
@@ -141,6 +147,7 @@ class TestApp:
             EXAMPLE_BASE_URL,
             EXAMPLE_CHATFLOW_CONFIG,
             disable_get_app_type_and_name_by_dify_get_info=True,
+            app_type_override=DifyAppType.CHATFLOW,
         )
 
         opt = model.app

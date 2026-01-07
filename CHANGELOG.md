@@ -24,7 +24,7 @@
 
 ### Added
 
-- support for Chatflow in blocking mode
+- support for Chatflow in blocking and streaming mode
 
 ### Changed
 

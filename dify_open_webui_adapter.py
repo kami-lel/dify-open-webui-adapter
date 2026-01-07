@@ -581,7 +581,7 @@ class _StreamEvent:
 
         except UnicodeDecodeError as err:
             raise ValueError(
-                "bad encoding for utf-8: {}".format(err.args[0])
+                "bad encoding as utf-8: {}".format(err.args[0])
             ) from err
         except json.JSONDecodeError as err:
             raise ValueError(

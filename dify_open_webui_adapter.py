@@ -562,7 +562,6 @@ class _StreamEvent:
     def __init__(self, app=None, raw=None):
         self.is_relevant = False
 
-        # BUG: "event: ping"
         if not raw or raw == b"event: ping":  # an uninitialized event
             return
 

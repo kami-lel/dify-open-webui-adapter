@@ -529,7 +529,7 @@ class ChatflowDifyApp(BaseDifyApp):
         return self._reply_blocking(newest_msg)  # HACK implement real stream
 
     def _create_post_request_payload(self, newest_msg, enable_stream=False):
-        return {
+        payload_dict = {
             "query": newest_msg,
             "response_mode": "streaming" if enable_stream else "blocking",
             "user": DIFY_USER_ROLE,
@@ -537,6 +537,7 @@ class ChatflowDifyApp(BaseDifyApp):
             "auto_generate_name": False,
             "inputs": {},
         }
+        return json.dumps(payload_dict)
 
 
 # helper methods  ##############################################################

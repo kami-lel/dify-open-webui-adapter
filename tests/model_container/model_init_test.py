@@ -154,7 +154,7 @@ class TestName:
 
     def test_model_id1(_):
         model = OWUModel(
-            EXAMPLE_CHATFLOW_CONFIG,
+            EXAMPLE_BASE_URL,
             EXAMPLE_WORKFLOW_CONFIG,
             disable_get_app_type_and_name_by_dify_get_info=True,
         )

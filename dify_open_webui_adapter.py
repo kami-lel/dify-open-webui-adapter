@@ -140,17 +140,7 @@ class OWUModel:
         """
 
         # extract info from OWU's body  ----------------------------------------
-        # extract newest message
-        newest_msg = None
-        for section in reversed(body["messages"]):
-            if section["role"] == OWU_USER_ROLE:
-                newest_msg = section["content"]
-                break
-
-        if newest_msg is None:
-            raise ValueError(
-                "fail to find any '{}' messages".format(OWU_USER_ROLE)
-            )
+        newest_msg = self._get_newest_user_message_from_body(body)
 
         # extract if stream is enabled
         try:
@@ -277,6 +267,15 @@ class OWUModel:
         response_name = response["name"] if "name" in response else None
 
         return app_type, response_name
+
+    def _get_newest_user_message_from_body(self, body):
+        for section in reversed(body["messages"]):
+            if section["role"] == OWU_USER_ROLE:
+                return section["content"]
+
+        raise ValueError(
+            "fail to find any '{}' messages".format(OWU_USER_ROLE)
+        )
 
     def __repr__(self):
         return "OWUModel({}:{})".format(self.name, repr(self.app))

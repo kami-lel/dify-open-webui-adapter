@@ -226,7 +226,7 @@ class OWUModel:
         try:
             response_object = requests.get(
                 info_url,
-                headers=self.http_header,
+                headers=self.http_header(),
                 timeout=REQUEST_TIMEOUT,
             )
             response_object.raise_for_status()
@@ -249,17 +249,20 @@ class OWUModel:
 
         return app_type, response_name
 
-    @property
-    def http_header(self):
+    def http_header(self, enable_stream=False):
         """
         :return: HTTP header (including authorization info)
                 to access Dify Backend API
         :rtype: dict
         """
-        return {
+        header_dict = {
             "Authorization": "Bearer {}".format(self.key),
-            "Content-Type": "application/json",
+            "Content-Type": (
+                "text/event-stream" if enable_stream else "application/json"
+            ),
         }
+
+        return header_dict
 
     def __repr__(self):
         return "OWUModel({}:{})".format(self.name, repr(self.app))
@@ -293,9 +296,8 @@ class BaseDifyApp:
     def name(self):
         return self.model.name
 
-    @property
-    def http_header(self):
-        return self.model.http_header
+    def http_header(self, enable_stream=False):
+        return self.model.http_header(enable_stream=enable_stream)
 
     # pylint: enable=missing-function-docstring
 
@@ -309,6 +311,48 @@ class BaseDifyApp:
         """
         raise NotImplementedError
 
+    def _create_requests_response_json(self, newest_msg):
+        """
+        :param newest_msg:
+        :type newest_msg: str
+        :return: a response object's json
+        :rtype: dict
+        """
+        try:
+            response_object = requests.post(
+                self.endpoint_url,
+                headers=self.http_header(),
+                data=json.dumps(self.build_request_payload(newest_msg, False)),
+                stream=False,
+                timeout=REQUEST_TIMEOUT,
+            )
+            response_object.raise_for_status()
+            return response_object.json()
+
+        # handle network errors
+        except requests.exceptions.RequestException as err:
+            raise ConnectionError(
+                "fail Dify request: {}".format(err.args[0])
+            ) from err
+
+    @property
+    def endpoint_url(self):
+        """
+        :rtype: str
+        """
+        raise NotImplementedError
+
+    def build_request_payload(self, newest_msg, enable_stream):
+        """
+        :param newest_msg:
+        :type newest_msg: str
+        :param enable_stream:
+        :type enable_stream: bool
+        :return:
+        :rtype: dict
+        """
+        raise NotImplementedError
+
     def __repr__(self):
         return "{}({})".format(type(self).__name__, self.name)
 
@@ -319,15 +363,16 @@ class WorkflowDifyApp(BaseDifyApp):
     """
 
     def reply(self, newest_msg, enable_stream):
-        # fixme not implementing streaming
+        # FIXME not implementing streaming
         return self._reply_blocking(newest_msg)
 
     def _reply_blocking(self, newest_msg):
+        # Todo refactor to be simplified
         try:
             response_object = requests.post(
-                self._workflow_run_url,
-                headers=self.http_header,
-                data=self._create_request_payload(newest_msg, False),
+                self.endpoint_url,
+                headers=self.http_header(),
+                data=self.build_request_payload(newest_msg, False),
                 timeout=REQUEST_TIMEOUT,
             )
             response_object.raise_for_status()
@@ -350,10 +395,10 @@ class WorkflowDifyApp(BaseDifyApp):
             ) from err
 
     @property
-    def _workflow_run_url(self):
+    def endpoint_url(self):
         return "{}/workflows/run".format(self.base_url)
 
-    def _create_request_payload(self, newest_msg, enable_stream):
+    def build_request_payload(self, newest_msg, enable_stream):
         payload_dict = {
             "inputs": {DIFY_INPUT_VARIABLE_NAME: newest_msg},
             "response_mode": "streaming" if enable_stream else "blocking",
@@ -372,7 +417,6 @@ class ChatflowDifyApp(BaseDifyApp):
         self.conversation_id = ""
 
     def reply(self, newest_msg, enable_stream):
-        enable_stream = False  # Hack
         return (
             self._reply_streaming(newest_msg)
             if enable_stream
@@ -381,47 +425,62 @@ class ChatflowDifyApp(BaseDifyApp):
 
     class _ChatMessageTask:
         """
-        Hack fake streaming
+        HACK fake streaming
         """
 
-        def __init__(self):
-            self._current = ord("a")
-            self._end = ord("z")
+        def __init__(self, app, newest_msg):
+            self._app = app
+            self._newest_msg = newest_msg
+
+            self._url = None
+
+            # set up session  --------------------------------------------------
+            self._session = requests.Session()
+            self._session.headers = self._app.http_header()
+
+            self._tmp_counter = 5
 
         def __iter__(self):
             return self
 
         def __next__(self):
-            import time
-
-            if self._current > self._end:
+            # HACk
+            if self._tmp_counter == 0:
+                self._session.close()
                 raise StopIteration
-            ch = chr(self._current)
-            self._current += 1
-            time.sleep(1)
-            return "{}\n\n".format(ch)
+            else:
+                self._tmp_counter += 1
+
+            if self._url is None:
+                # 1st response, set up session
+                self._url = self._app.endpoint_url
+                response = self._session.post(
+                    self._url,
+                    data=json.dumps(
+                        self._app.build_request_payload(self._newest_msg, True)
+                    ),
+                    stream=True,
+                    timeout=None,
+                )
+
+            else:
+                # 2nd & further requests
+                response = self._session.post(self._url)
+
+            # BUG way to handle
+            try:
+                return "{}\n\n----\n\n".format(next(response.iter_lines()))
+            except StopIteration:
+                pass
+            finally:
+                response.close()
 
     def _reply_streaming(self, newest_msg):
-        return self._ChatMessageTask()  # Hack
+        return self._ChatMessageTask(self, newest_msg)
 
     def _reply_blocking(self, newest_msg):
-        try:
-            response_object = requests.post(
-                self._chat_message_url,
-                headers=self.http_header,
-                data=self._create_request_payload(newest_msg, False),
-                timeout=REQUEST_TIMEOUT,
-            )
-            response_object.raise_for_status()
-
-        # handle network errors
-        except requests.exceptions.RequestException as err:
-            raise ConnectionError(
-                "fail Dify request: {}".format(err.args[0])
-            ) from err
-
         # parse response  ------------------------------------------------------
-        response = response_object.json()
+        response = self._create_requests_response_json(newest_msg)
         try:
             if not self.conversation_id:  # 1st round of this conversation
                 self.conversation_id = response["conversation_id"]
@@ -434,11 +493,11 @@ class ChatflowDifyApp(BaseDifyApp):
             ) from err
 
     @property
-    def _chat_message_url(self):
+    def endpoint_url(self):
         return "{}/chat-messages".format(self.base_url)
 
-    def _create_request_payload(self, newest_msg, enable_stream):
-        payload_dict = {
+    def build_request_payload(self, newest_msg, enable_stream):
+        return {
             "query": newest_msg,
             "response_mode": "streaming" if enable_stream else "blocking",
             "user": DIFY_USER_ROLE,
@@ -446,7 +505,6 @@ class ChatflowDifyApp(BaseDifyApp):
             "auto_generate_name": False,
             "inputs": {},
         }
-        return json.dumps(payload_dict)
 
 
 # helper methods  ##############################################################

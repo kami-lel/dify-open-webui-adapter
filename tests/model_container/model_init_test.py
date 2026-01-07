@@ -123,8 +123,65 @@ class TestModelId:
 
 class TestName:
 
-    def test1(_):
-        pass  # TODO
+    def test_provided_name1(_):
+        WORKFLOW_NAME = "My Workflow Name"
+
+        config = EXAMPLE_CHATFLOW_CONFIG.copy()
+        config["name"] = WORKFLOW_NAME
+
+        model = OWUModel(
+            EXAMPLE_BASE_URL,
+            config,
+            disable_get_app_type_and_name_by_dify_get_info=True,
+        )
+
+        opt = model.name
+
+        print(opt)
+        assert isinstance(opt, str)
+        assert opt == WORKFLOW_NAME
+
+    def test_provided_name2(_):
+        model = OWUModel(
+            EXAMPLE_BASE_URL,
+            EXAMPLE_CHATFLOW_CONFIG,
+            disable_get_app_type_and_name_by_dify_get_info=True,
+        )
+
+        opt = model.name
+
+        print(opt)
+        assert isinstance(opt, str)
+        assert opt == "Example Chatflow Model/App"
+
+    def test_model_id1(_):
+        model = OWUModel(
+            EXAMPLE_CHATFLOW_CONFIG,
+            EXAMPLE_WORKFLOW_CONFIG,
+            disable_get_app_type_and_name_by_dify_get_info=True,
+        )
+
+        opt = model.name
+
+        print(opt)
+        assert isinstance(opt, str)
+        assert opt == "example-workflow-model"
+
+    def test_model_id2(_):
+        config = EXAMPLE_CHATFLOW_CONFIG.copy()
+        del config["name"]
+
+        model = OWUModel(
+            EXAMPLE_BASE_URL,
+            config,
+            disable_get_app_type_and_name_by_dify_get_info=True,
+        )
+
+        opt = model.name
+
+        print(opt)
+        assert isinstance(opt, str)
+        assert opt == "example-chatflow-model"
 
 
 class TestApp:

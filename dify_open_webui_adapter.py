@@ -134,8 +134,9 @@ class OWUModel:
         :param body: `body` given by OWU Pipe.pipes(body, __user__)
         :type body: dict
         :param user: `__user__` given by Pipe.pipes(body, __user__)
-        :raises ValueError:
         :raises ConnectionError:
+        :raises ValueError:
+        :raises KeyError:
         :return: the response
         :rtype: str
         """
@@ -162,10 +163,11 @@ class OWUModel:
         """
         header_dict = {
             "Authorization": "Bearer {}".format(self.key),
-            "Content-Type": (
-                "text/event-stream" if enable_stream else "application/json"
-            ),
+            "Content-Type": "application/json",
         }
+
+        if enable_stream:
+            header_dict["Accept"] = "text/event-stream"
 
         return header_dict
 
@@ -305,20 +307,16 @@ class BaseDifyApp:
         """
         raise NotImplementedError
 
-    # HACK update this
-    # pylint: enable=missing-function-docstring
-    # pylint: disable=missing-function-docstring
-
     @property
-    def base_url(self):
+    def base_url(self):  # pylint: disable=missing-function-docstring
         return self.model.base_url
 
     @property
-    def model_id(self):
+    def model_id(self):  # pylint: disable=missing-function-docstring
         return self.model.model_id
 
     @property
-    def name(self):
+    def name(self):  # pylint: disable=missing-function-docstring
         return self.model.name
 
     def reply(self, newest_msg, enable_stream):
@@ -328,6 +326,9 @@ class BaseDifyApp:
 
 
         :raises ConnectionError:
+        :raises KeyError:
+        :return: the response
+        :rtype: str or Iterable
         """
         return (
             self._reply_streaming(newest_msg)
@@ -335,13 +336,23 @@ class BaseDifyApp:
             else self._reply_blocking(newest_msg)
         )
 
-    def http_header(self, enable_stream=False):
+    def http_header(
+        self, enable_stream=False
+    ):  # pylint: disable=missing-function-docstring
         return self.model.http_header(enable_stream=enable_stream)
 
     def _reply_blocking(self, newest_msg):
+        """
+        :return: the response
+        :rtype: str
+        """
         raise NotImplementedError
 
     def _reply_streaming(self, newest_msg):
+        """
+        :return: response
+        :rtype: Iterable
+        """
         raise NotImplementedError
 
     def _create_post_request_payload(self, newest_msg, enable_stream=False):
@@ -397,17 +408,23 @@ class WorkflowDifyApp(BaseDifyApp):
     def _reply_blocking(self, newest_msg):
         """
         :raises ConnectionError:
+        :raises KeyError:
         """
-        with self._open_reply_response(newest_msg, False) as response_object:
-            response = response_object.json()
-            try:
-                return response["data"]["outputs"][DIFY_OUTPUT_VARIABLE_NAME]
-            except KeyError as err:
-                raise KeyError(
-                    "fail to parse Dify response, missing key: {}".format(
-                        err.args[0]
-                    )
-                ) from err
+        response_object = self._open_reply_response(newest_msg, False)
+        response = response_object.json()
+
+        try:
+            return response["data"]["outputs"][DIFY_OUTPUT_VARIABLE_NAME]
+
+        except KeyError as err:
+            raise KeyError(
+                "fail to parse Dify response, missing key: {}".format(
+                    err.args[0]
+                )
+            ) from err
+
+        finally:
+            response_object.close()
 
     def _reply_streaming(self, newest_msg):
         return self._reply_blocking(newest_msg)  # Todo implement real stream
@@ -433,87 +450,48 @@ class ChatflowDifyApp(BaseDifyApp):
         """
 
         def __init__(self, app, newest_msg):
-            self._app = app
-
-            self._response = requests.post(
-                self._app.endpoint_url,
-            )
-            self._newest_msg = newest_msg
-
-            self._url = None
-
-            # set up session  --------------------------------------------------
-            self._session = requests.Session()
-            self._session.headers = self._app.http_header()
-
-            self._tmp_counter = 5
+            self.app = app
+            self.response = self.app._open_reply_response(newest_msg, True)
+            self.iter_lines = iter(self.response.iter_lines())
 
         def __iter__(self):
-            return self
+            return self  # make self an Iterator
 
         def __next__(self):
-            # HACk
-            if self._tmp_counter == 0:
-                self._session.close()
+            event = _StreamEvent()
+
+            # keeps searching for a relevant event
+            while not event.is_relevant:
+                try:
+                    event = _StreamEvent(self.app, next(self.iter_lines))
+                except StopIteration as err:
+                    raise ValueError(
+                        "exhaust event stream "
+                        "without encountering any finishing event"
+                    ) from err
+
+            if event.is_end:
+                self.response.close()
                 raise StopIteration
-            else:
-                self._tmp_counter += 1
 
-            if self._url is None:
-                # 1st response, set up session
-                self._url = self._app.endpoint_url
-                response = self._session.post(
-                    self._url,
-                    data=json.dumps(
-                        self._app.build_request_payload(self._newest_msg, True)
-                    ),
-                    stream=True,
-                    timeout=None,
-                )
-
-            else:
-                # 2nd & further requests
-                response = self._session.post(self._url)
-
-            # BUG way to handle
-            try:
-                return "{}\n\n----\n\n".format(next(response.iter_lines()))
-            except StopIteration:
-                pass
-            finally:
-                response.close()
+            return event.text_content
 
     def __init__(self, model):
         super().__init__(model)
-        self.conversation_id = ""
+        self.conversation_id = ""  # empty until 1st response
 
     @property
     def endpoint_url(self):
         return "{}/chat-messages".format(self.base_url)
 
-    def reply(self, newest_msg, enable_stream):
-        return (
-            self._reply_streaming(newest_msg)
-            if enable_stream
-            else self._reply_blocking(newest_msg)
-        )
-
-    def build_request_payload(self, newest_msg, enable_stream):
-        return {
-            "query": newest_msg,
-            "response_mode": "streaming" if enable_stream else "blocking",
-            "user": DIFY_USER_ROLE,
-            "conversation_id": self.conversation_id,
-            "auto_generate_name": False,
-            "inputs": {},
-        }
-
-    def _reply_streaming(self, newest_msg):
-        return self._ConversationRound(self, newest_msg)
-
     def _reply_blocking(self, newest_msg):
-        # parse response  ------------------------------------------------------
-        response = self._create_requests_response_json(newest_msg)
+        """
+        :raises ConnectionError:
+        :raises KeyError:
+        """
+        response_object = self._open_reply_response(newest_msg, False)
+        response = response_object.json()
+
         try:
             if not self.conversation_id:  # 1st round of this conversation
                 self.conversation_id = response["conversation_id"]
@@ -521,9 +499,28 @@ class ChatflowDifyApp(BaseDifyApp):
             return response["answer"]
 
         except KeyError as err:
-            raise ValueError(
-                "fail to parse response body: {}".format(err.args[0])
+            raise KeyError(
+                "fail to parse Dify response, missing key: {}".format(
+                    err.args[0]
+                )
             ) from err
+
+        finally:
+            response_object.close()
+
+    def _reply_streaming(self, newest_msg):
+        return self._ConversationRound(self, newest_msg)
+
+    def _create_post_request_payload(self, newest_msg, enable_stream=False):
+        payload_dict = {
+            "query": newest_msg,
+            "response_mode": "streaming" if enable_stream else "blocking",
+            "user": DIFY_USER_ROLE,
+            "conversation_id": self.conversation_id,
+            "auto_generate_name": False,
+            "inputs": {},
+        }
+        return json.dumps(payload_dict)
 
 
 # helper methods  ##############################################################
@@ -535,6 +532,91 @@ def _check_app_model_configs_structure(app_model_configs):
 
     if any(not isinstance(config, dict) for config in app_model_configs):
         raise ValueError("APP_MODEL_CONFIGS must contains only dicts")
+
+
+# helper class  ################################################################
+class _StreamEvent:
+    """
+    represent a single SSE specified by Dify Backend API
+    """
+
+    class _EventType(Enum):
+        # value of enums are identical to them specified
+        # in Dify Backend API's /chat-messages ChunkCompletionResponse
+        WORKFLOW_START = "workflow_started"
+        NODE_STARTED = "node_started"
+        CHUNK = "text_chunk"
+        MESSAGE = "message"
+        MESSAGE_FILE = "message_file"
+        NODE_FINISHED = "node_finished"
+        WORKFLOW_END = "workflow_finished"
+        MESSAGE_END = "message_end"
+        MESSAGE_REPLACE = "message_replace"
+        TTS_MESSAGE = "tts_message"
+        TTS_MESSAGE_END = "tts_message_end"
+        PING = "ping"
+
+    def __init__(self, app=None, raw=None):
+        self.is_relevant = False
+
+        if not raw:  # an uninitialized event
+            return
+
+        # parse raw line  ----------------------------------------------
+        try:
+            line = raw.decode("utf-8")
+
+            if line.startswith("data:"):
+                line = line[len("data:") :].lstrip()
+
+            # bug: "event: ping"
+            data = json.loads(line)
+
+            # get event type
+            self.event_type = self._EventType(data["event"])
+
+            if not app.conversation_id:  # when empty
+                app.conversation_id = data["conversation_id"]
+
+            if self.event_type is self._EventType.MESSAGE:
+                self.text_content = data["answer"]
+
+        except UnicodeDecodeError as err:
+            raise ValueError(
+                "bad encoding as utf-8: {}".format(err.args[0])
+            ) from err
+        except json.JSONDecodeError as err:
+            raise ValueError(
+                "can't parse event [{}] {}".format(raw, err.args[0])
+            ) from err
+        except KeyError as err:
+            raise ValueError(
+                "event stream missing: {}".format(err.args[0])
+            ) from err
+        except ValueError as err:
+            raise ValueError("unknown event: {}".format(err.args[0])) from err
+
+        # calc .is_relevant  -------------------------------------------
+        # i.e. whether this event is relevant & need to be processed
+        if self.is_end or (
+            self.event_type
+            in (
+                self._EventType.MESSAGE,
+                self._EventType.CHUNK,
+            )
+        ):
+            self.is_relevant = True
+
+    @property
+    def is_end(self):
+        """
+        :return: whether this event is `workflow_finished`
+        :rtype: bool
+        """
+        return self.event_type in (
+            self._EventType.WORKFLOW_END,
+            self._EventType.MESSAGE_END,
+        )
 
 
 # Pipe class required by OWU  ##################################################

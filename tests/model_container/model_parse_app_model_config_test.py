@@ -6,8 +6,6 @@ Unit Tests (using pytest) for: OWUModel._parse_app_model_config_arg()
 
 import pytest
 
-# import verify_app_model_configs  +++++++++++++++++++++++++++++++++++++++++++++
-
 from dify_open_webui_adapter import OWUModel
 
 from tests import EXAMPLE_BASE_URL, EXAMPLE_CHATFLOW_CONFIG

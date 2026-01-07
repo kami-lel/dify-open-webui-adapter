@@ -12,7 +12,10 @@ class TestPipes:
 
     def test1(_):
         configs = [EXAMPLE_CHATFLOW_CONFIG]
-        pipe = Pipe(app_model_configs_override=configs)
+        pipe = Pipe(
+            app_model_configs_override=configs,
+            disable_get_app_type_and_name=True,
+        )
         opt = pipe.pipes()
 
         print(opt)
@@ -26,7 +29,10 @@ class TestPipes:
         }
 
     def test2(_):
-        pipe = Pipe(app_model_configs_override=EXAMPLE_CONFIGS)
+        pipe = Pipe(
+            app_model_configs_override=EXAMPLE_CONFIGS,
+            disable_get_app_type_and_name=True,
+        )
         opt = pipe.pipes()
 
         print(opt)

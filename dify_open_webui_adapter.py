@@ -59,6 +59,7 @@ OWU_USER_ROLE = DIFY_USER_ROLE = "user"
 DIFY_INPUT_VARIABLE_NAME = "input"
 DIFY_OUTPUT_VARIABLE_NAME = "output"
 REQUEST_TIMEOUT = 30
+STREAM_REQUEST_TIMEOUT = 300
 
 
 # helper Enum  #################################################################
@@ -296,7 +297,18 @@ class BaseDifyApp:
     def __init__(self, model):
         self.model = model
 
+    @property
+    def endpoint_url(self):
+        """
+        :return: endpoint URL to access Dify
+        :rtype: str
+        """
+        raise NotImplementedError
+
+    # HACK update this
+    # pylint: enable=missing-function-docstring
     # pylint: disable=missing-function-docstring
+
     @property
     def base_url(self):
         return self.model.base_url
@@ -309,57 +321,59 @@ class BaseDifyApp:
     def name(self):
         return self.model.name
 
-    @property
-    def endpoint_url(self):
-        """
-        :return: endpoint URL to access Dify
-        :rtype: str
-        """
-        raise NotImplementedError
-
-    def http_header(self, enable_stream=False):
-        return self.model.http_header(enable_stream=enable_stream)
-
-        # pylint: enable=missing-function-docstring
-
     def reply(self, newest_msg, enable_stream):
         """
         handle Dify side of processing per-round response of conversation,
         by requesting Dify Backend API
 
 
-        :raises ConnectionError: fail Dify request
+        :raises ConnectionError:
+        """
+        return (
+            self._reply_streaming(newest_msg)
+            if enable_stream
+            else self._reply_blocking(newest_msg)
+        )
+
+    def http_header(self, enable_stream=False):
+        return self.model.http_header(enable_stream=enable_stream)
+
+    def _reply_blocking(self, newest_msg):
+        raise NotImplementedError
+
+    def _reply_streaming(self, newest_msg):
+        raise NotImplementedError
+
+    def _create_post_request_payload(self, newest_msg, enable_stream=False):
+        """
+        :return: JSON-formatted request payload data,
+                e.g. it can be feed to ``requests.post(data=~)``
+        :rtype: str
         """
         raise NotImplementedError
 
-    def build_request_payload(self, newest_msg, enable_stream):
+    def _open_reply_response(self, newest_msg, enable_stream=False):
         """
-        :param newest_msg:
-        :type newest_msg: str
-        :param enable_stream:
-        :type enable_stream: bool
-        :return:
-        :rtype: dict
-        """
-        raise NotImplementedError
-
-    def _create_requests_response_json(self, newest_msg):
-        """
-        :param newest_msg:
-        :type newest_msg: str
-        :return: a response object's json
-        :rtype: dict
+        :return: per-round response connecting to Dify
+        :rtype: requests.Response
+        :raises ConnectionError:
         """
         try:
-            response_object = requests.post(
+            response_obj = requests.post(
                 self.endpoint_url,
-                headers=self.http_header(),
-                data=json.dumps(self.build_request_payload(newest_msg, False)),
-                stream=False,
-                timeout=REQUEST_TIMEOUT,
+                headers=self.http_header(enable_stream),
+                data=self._create_post_request_payload(
+                    newest_msg, enable_stream
+                ),
+                stream=enable_stream,
+                timeout=(
+                    STREAM_REQUEST_TIMEOUT
+                    if enable_stream
+                    else REQUEST_TIMEOUT
+                ),
             )
-            response_object.raise_for_status()
-            return response_object.json()
+            response_obj.raise_for_status()
+            return response_obj
 
         # handle network errors
         except requests.exceptions.RequestException as err:
@@ -380,45 +394,32 @@ class WorkflowDifyApp(BaseDifyApp):
     def endpoint_url(self):
         return "{}/workflows/run".format(self.base_url)
 
-    def reply(self, newest_msg, enable_stream):
-        # FIXME not implementing streaming
-        return self._reply_blocking(newest_msg)
+    def _reply_blocking(self, newest_msg):
+        """
+        :raises ConnectionError:
+        """
+        with self._open_reply_response(newest_msg, False) as response_object:
+            response = response_object.json()
+            try:
+                return response["data"]["outputs"][DIFY_OUTPUT_VARIABLE_NAME]
+            except KeyError as err:
+                raise KeyError(
+                    "fail to parse Dify response, missing key: {}".format(
+                        err.args[0]
+                    )
+                ) from err
 
-    def build_request_payload(self, newest_msg, enable_stream):
+    def _reply_streaming(self, newest_msg):
+        return self._reply_blocking(newest_msg)  # Todo implement real stream
+
+    def _create_post_request_payload(self, newest_msg, enable_stream=False):
         payload_dict = {
             "inputs": {DIFY_INPUT_VARIABLE_NAME: newest_msg},
             "response_mode": "streaming" if enable_stream else "blocking",
             "user": DIFY_USER_ROLE,
         }
+
         return json.dumps(payload_dict)
-
-    def _reply_blocking(self, newest_msg):
-        # Todo refactor to be simplified
-        try:
-            response_object = requests.post(
-                self.endpoint_url,
-                headers=self.http_header(),
-                data=self.build_request_payload(newest_msg, False),
-                timeout=REQUEST_TIMEOUT,
-            )
-            response_object.raise_for_status()
-
-        # handle network errors
-        except requests.exceptions.RequestException as err:
-            raise ConnectionError(
-                "fail Dify request: {}".format(err.args[0])
-            ) from err
-
-        # parse response  ------------------------------------------------------
-        response = response_object.json()
-        try:
-            return response["data"]["outputs"][DIFY_OUTPUT_VARIABLE_NAME]
-        except KeyError as err:
-            raise KeyError(
-                "fail to parse Dify response, missing key: {}".format(
-                    err.args[0]
-                )
-            ) from err
 
 
 class ChatflowDifyApp(BaseDifyApp):
@@ -426,13 +427,17 @@ class ChatflowDifyApp(BaseDifyApp):
     representing a Chatflow App in Dify
     """
 
-    class _ChatMessageTask:
+    class _ConversationRound:
         """
-        HACK fake streaming
+        represent a single conversation round with Chatflow
         """
 
         def __init__(self, app, newest_msg):
             self._app = app
+
+            self._response = requests.post(
+                self._app.endpoint_url,
+            )
             self._newest_msg = newest_msg
 
             self._url = None
@@ -504,7 +509,7 @@ class ChatflowDifyApp(BaseDifyApp):
         }
 
     def _reply_streaming(self, newest_msg):
-        return self._ChatMessageTask(self, newest_msg)
+        return self._ConversationRound(self, newest_msg)
 
     def _reply_blocking(self, newest_msg):
         # parse response  ------------------------------------------------------

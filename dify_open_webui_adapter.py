@@ -327,9 +327,8 @@ class BaseDifyApp:
         by requesting Dify Backend API
 
 
-        :raises ConnectionError: fail Dify request
+        :raises ConnectionError:
         """
-        # TODO all errors
         return (
             self._reply_streaming(newest_msg)
             if enable_stream
@@ -353,7 +352,7 @@ class BaseDifyApp:
         """
         raise NotImplementedError
 
-    def _create_reply_requests_response(self, newest_msg, enable_stream=False):
+    def _open_reply_response(self, newest_msg, enable_stream=False):
         """
         :return: per-round response connecting to Dify
         :rtype: requests.Response
@@ -396,34 +395,22 @@ class WorkflowDifyApp(BaseDifyApp):
         return "{}/workflows/run".format(self.base_url)
 
     def _reply_blocking(self, newest_msg):
-        try:
-            response_object = requests.post(
-                self.endpoint_url,
-                headers=self.http_header(),
-                data=self.build_request_payload(newest_msg, False),
-                timeout=REQUEST_TIMEOUT,
-            )
-            response_object.raise_for_status()
-
-        # handle network errors
-        except requests.exceptions.RequestException as err:
-            raise ConnectionError(
-                "fail Dify request: {}".format(err.args[0])
-            ) from err
-
-        # parse response  ------------------------------------------------------
-        response = response_object.json()
-        try:
-            return response["data"]["outputs"][DIFY_OUTPUT_VARIABLE_NAME]
-        except KeyError as err:
-            raise KeyError(
-                "fail to parse Dify response, missing key: {}".format(
-                    err.args[0]
-                )
-            ) from err
+        """
+        :raises ConnectionError:
+        """
+        with self._open_reply_response(newest_msg, False) as response_object:
+            response = response_object.json()
+            try:
+                return response["data"]["outputs"][DIFY_OUTPUT_VARIABLE_NAME]
+            except KeyError as err:
+                raise KeyError(
+                    "fail to parse Dify response, missing key: {}".format(
+                        err.args[0]
+                    )
+                ) from err
 
     def _reply_streaming(self, newest_msg):
-        raise NotImplementedError
+        raise NotImplementedError  # Todo
 
     def _create_post_request_payload(self, newest_msg, enable_stream=False):
         payload_dict = {
@@ -433,9 +420,6 @@ class WorkflowDifyApp(BaseDifyApp):
         }
 
         return json.dumps(payload_dict)
-
-    def _reply_streaming(self, newest_msg):
-        raise NotImplementedError  # Todo
 
 
 class ChatflowDifyApp(BaseDifyApp):

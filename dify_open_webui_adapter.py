@@ -563,7 +563,8 @@ class _StreamEvent:
     def __init__(self, app=None, raw=None):
         self.is_relevant = False
 
-        if not raw:  # an uninitialized event
+        # BUG: "event: ping"
+        if not raw or raw == b"event: ping":  # an uninitialized event
             return
 
         # parse raw line  ------------------------------------------------------
@@ -573,7 +574,6 @@ class _StreamEvent:
             if line.startswith("data:"):
                 line = line[len("data:") :].lstrip()
 
-            # bug: "event: ping"
             data = json.loads(line)
 
             # get event type

@@ -6,8 +6,6 @@ Unit Tests (using pytest) for: OWUModel._parse_app_model_config_arg()
 
 import pytest
 
-# import verify_app_model_configs  +++++++++++++++++++++++++++++++++++++++++++++
-
 from dify_open_webui_adapter import OWUModel
 
 from tests import EXAMPLE_BASE_URL, EXAMPLE_CHATFLOW_CONFIG
@@ -22,7 +20,11 @@ class TestKey:
         del config[self.CONFIG_KEY]
 
         with pytest.raises(ValueError) as exec_info:
-            OWUModel(EXAMPLE_BASE_URL, config)
+            OWUModel(
+                EXAMPLE_BASE_URL,
+                config,
+                disable_get_app_type_and_name_by_dify_get_info=True,
+            )
 
         opt = str(exec_info.value)
         print(opt)
@@ -34,7 +36,11 @@ class TestKey:
         config[self.CONFIG_KEY] = 123
 
         with pytest.raises(TypeError) as exec_info:
-            OWUModel(EXAMPLE_BASE_URL, config)
+            OWUModel(
+                EXAMPLE_BASE_URL,
+                config,
+                disable_get_app_type_and_name_by_dify_get_info=True,
+            )
 
         opt = str(exec_info.value)
         print(opt)
@@ -46,7 +52,11 @@ class TestKey:
         config[self.CONFIG_KEY] = ""
 
         with pytest.raises(ValueError) as exec_info:
-            OWUModel(EXAMPLE_BASE_URL, config)
+            OWUModel(
+                EXAMPLE_BASE_URL,
+                config,
+                disable_get_app_type_and_name_by_dify_get_info=True,
+            )
 
         opt = str(exec_info.value)
         print(opt)
@@ -63,7 +73,11 @@ class TestModelId:
         del config[self.CONFIG_KEY]
 
         with pytest.raises(ValueError) as exec_info:
-            OWUModel(EXAMPLE_BASE_URL, config)
+            OWUModel(
+                EXAMPLE_BASE_URL,
+                config,
+                disable_get_app_type_and_name_by_dify_get_info=True,
+            )
 
         opt = str(exec_info.value)
         print(opt)
@@ -75,7 +89,11 @@ class TestModelId:
         config[self.CONFIG_KEY] = 123
 
         with pytest.raises(TypeError) as exec_info:
-            OWUModel(EXAMPLE_BASE_URL, config)
+            OWUModel(
+                EXAMPLE_BASE_URL,
+                config,
+                disable_get_app_type_and_name_by_dify_get_info=True,
+            )
 
         opt = str(exec_info.value)
         print(opt)
@@ -87,7 +105,11 @@ class TestModelId:
         config[self.CONFIG_KEY] = ""
 
         with pytest.raises(ValueError) as exec_info:
-            OWUModel(EXAMPLE_BASE_URL, config)
+            OWUModel(
+                EXAMPLE_BASE_URL,
+                config,
+                disable_get_app_type_and_name_by_dify_get_info=True,
+            )
 
         opt = str(exec_info.value)
         print(opt)
@@ -104,20 +126,32 @@ class TestName:
         config = EXAMPLE_CHATFLOW_CONFIG.copy()
         del config[self.CONFIG_KEY]
 
-        OWUModel(EXAMPLE_BASE_URL, config)
+        OWUModel(
+            EXAMPLE_BASE_URL,
+            config,
+            disable_get_app_type_and_name_by_dify_get_info=True,
+        )
 
     def test_none(self):  # name entry is None
         config = EXAMPLE_CHATFLOW_CONFIG.copy()
         config[self.CONFIG_KEY] = None
 
-        OWUModel(EXAMPLE_BASE_URL, config)
+        OWUModel(
+            EXAMPLE_BASE_URL,
+            config,
+            disable_get_app_type_and_name_by_dify_get_info=True,
+        )
 
     def test_empty(self):
         config = EXAMPLE_CHATFLOW_CONFIG.copy()
         config[self.CONFIG_KEY] = ""
 
         with pytest.raises(ValueError) as exec_info:
-            OWUModel(EXAMPLE_BASE_URL, config)
+            OWUModel(
+                EXAMPLE_BASE_URL,
+                config,
+                disable_get_app_type_and_name_by_dify_get_info=True,
+            )
 
         opt = str(exec_info.value)
         print(opt)
@@ -129,7 +163,11 @@ class TestName:
         config[self.CONFIG_KEY] = 123
 
         with pytest.raises(TypeError) as exec_info:
-            OWUModel(EXAMPLE_BASE_URL, config)
+            OWUModel(
+                EXAMPLE_BASE_URL,
+                config,
+                disable_get_app_type_and_name_by_dify_get_info=True,
+            )
 
         opt = str(exec_info.value)
         print(opt)
@@ -144,4 +182,8 @@ class TestName:
 class TestPass:
 
     def test1(_):
-        OWUModel(EXAMPLE_BASE_URL, EXAMPLE_CHATFLOW_CONFIG)
+        OWUModel(
+            EXAMPLE_BASE_URL,
+            EXAMPLE_CHATFLOW_CONFIG,
+            disable_get_app_type_and_name_by_dify_get_info=True,
+        )

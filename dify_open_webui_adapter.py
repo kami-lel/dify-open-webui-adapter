@@ -55,11 +55,16 @@ from pydantic import BaseModel
 import requests
 
 # constants  ===================================================================
-OWU_USER_ROLE = DIFY_USER_ROLE = "user"
-DIFY_INPUT_VARIABLE_NAME = "input"
-DIFY_OUTPUT_VARIABLE_NAME = "output"
+OWU_USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
 STREAM_REQUEST_TIMEOUT = 300
+
+# Dify constants  **************************************************************
+DIFY_USER_ROLE = "user"
+# in START Node of Workflow in Dify, add an Input Field named 'input'
+DIFY_START_INPUT_FIELD_NAME = "input"
+# in END Node of Workflow in Dify, add a Output Variable named 'output'
+DIFY_OUTPUT_VARIABLE_NAME = "output"
 
 
 # helper Enum  =================================================================
@@ -434,7 +439,7 @@ class WorkflowDifyApp(BaseDifyApp):
 
     def _create_post_request_payload(self, newest_msg, enable_stream=False):
         payload_dict = {
-            "inputs": {DIFY_INPUT_VARIABLE_NAME: newest_msg},
+            "inputs": {DIFY_START_INPUT_FIELD_NAME: newest_msg},
             "response_mode": "streaming" if enable_stream else "blocking",
             "user": DIFY_USER_ROLE,
         }

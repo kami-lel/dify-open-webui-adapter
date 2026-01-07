@@ -4,18 +4,12 @@ get_model_id_and_name_test.py
 Unit Tests (using pytest) for: OWUModel.get_model_id_and_name()
 """
 
-from dify_open_webui_adapter import (
-    OWUModel,
-    WorkflowDifyApp,
-    ChatflowDifyApp,
-    DifyAppType,
-)
+from dify_open_webui_adapter import OWUModel
 
 
 from tests import (
     EXAMPLE_BASE_URL,
     EXAMPLE_CHATFLOW_CONFIG,
-    EXAMPLE_CHATFLOW2_CONFIG,
     EXAMPLE_WORKFLOW_CONFIG,
 )
 

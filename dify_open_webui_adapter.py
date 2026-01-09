@@ -48,7 +48,7 @@ APP_MODEL_CONFIGS = []
 # end of config  ###############################################################
 
 # pylint: disable=wrong-import-position
-from enum import Enum
+from enum import StrEnum
 import json
 
 from pydantic import BaseModel
@@ -536,7 +536,40 @@ class _ConversationRound:
         return event.text_content
 
 
+class _StreamEventType(StrEnum):
+    """
+    represent a single **relevant** SSE
+
+    value of enums are identical to them specified
+    in Dify Backend API's /chat-messages ChunkCompletionResponse
+    """
+
+    TEXT_CHUNK = "text_chunk"
+    MESSAGE = "message"
+    WORKFLOW_END = "workflow_finished"
+    MESSAGE_END = "message_end"
+
+    @property
+    def is_end(self):
+        """
+        :return: whether the event indicate end of API's current round response
+        :rtype: bool
+        """
+        return self in (
+            _StreamEventType.WORKFLOW_END,
+            _StreamEventType.MESSAGE_END,
+        )
+
+
 class _StreamEvent:
+    """
+    represent a single SSE specified by Dify Backend API
+    """
+
+    # TODO
+
+
+class _StreamEventOld:
     """
     represent a single SSE specified by Dify Backend API
 

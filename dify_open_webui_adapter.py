@@ -48,7 +48,7 @@ APP_MODEL_CONFIGS = []
 # end of config  ###############################################################
 
 # pylint: disable=wrong-import-position
-from enum import StrEnum
+from enum import Enum, Flag, auto
 import json
 
 from pydantic import BaseModel
@@ -503,6 +503,31 @@ class ChatflowDifyApp(BaseDifyApp):
 
 
 # helper class  ================================================================
+
+
+class _SSE(Flag):
+    """
+    represent a single **relevant** SSE specified by Dify Backend API
+    """
+
+    # pylint: disable=invalid-name
+
+    # events we don't care about
+    IRRELEVANT = 0
+
+    # enum name specified by Dify Backend API
+    text_chunk = auto()
+    message = auto()
+    workflow_finished = auto()
+    message_end = auto()
+
+    # events which indicate end of  current round response
+    IS_END = workflow_finished | message_end
+
+    # all events above are relevant
+    RELEVANT = ~IRRELEVANT
+
+
 class _ConversationRound:
     """
     represent a single conversation round with Dify
@@ -517,10 +542,12 @@ class _ConversationRound:
         return self  # make self an Iterator
 
     def __next__(self):
-        event = _StreamEvent()
+        text = None
+        event = _SSE.IRRELEVANT  # default
 
-        # keeps searching for a relevant event
-        while not event.is_relevant:
+        # consume self.iter_lines until find relevant events
+        while event not in _SSE.RELEVANT:
+            # TODO
             try:
                 event = _StreamEvent(self.app, next(self.iter_lines))
             except StopIteration as err:
@@ -528,44 +555,17 @@ class _ConversationRound:
                     "exhaust event stream "
                     "without encountering any finishing event"
                 ) from err
+        # an relevant event is found
 
-        if event.is_end:
+        if event in _SSE.IS_END:  # end of current respond
             self.response.close()
             raise StopIteration
 
-        return event.text_content
+        # a text chunk as part of current respond
+        return text
 
 
 # BUG for workflow: unknown event: 'iteration_started' is not a valid _StreamEvent._EventType
-class _StreamEvent(StrEnum):
-    """
-    represent a single **relevant** SSE specified by Dify Backend API
-
-    value of enums are identical to them specified
-    in Dify Backend API's /chat-messages ChunkCompletionResponse
-    TODO also /workflows/run
-    """
-
-    TEXT_CHUNK = "text_chunk"
-    MESSAGE = "message"
-    WORKFLOW_END = "workflow_finished"
-    MESSAGE_END = "message_end"
-
-    def __init__(self, event_name=None, raw=None):
-        pass  # TODO
-
-    @property
-    def is_end(self):
-        """
-        :return: whether the event indicate end of API's current round response
-        :rtype: bool
-        """
-        return self in (
-            _StreamEvent.WORKFLOW_END,
-            _StreamEvent.MESSAGE_END,
-        )
-
-    # TODO
 
 
 class _StreamEventOld:  # HACK rm
@@ -612,28 +612,6 @@ class _StreamEventOld:  # HACK rm
             ) from err
         except ValueError as err:
             raise ValueError("unknown event: {}".format(err.args[0])) from err
-
-        # calc .is_relevant  -------------------------------------------
-        # i.e. whether this event is relevant & need to be processed
-        if self.is_end or (
-            self.event_type
-            in (
-                self._EventType.MESSAGE,
-                self._EventType.TEXT_CHUNK,
-            )
-        ):
-            self.is_relevant = True
-
-    @property
-    def is_end(self):
-        """
-        :return: whether this event is `workflow_finished`
-        :rtype: bool
-        """
-        return self.event_type in (
-            self._EventType.WORKFLOW_END,
-            self._EventType.MESSAGE_END,
-        )
 
 
 # Pipe class required by OWU  ##################################################

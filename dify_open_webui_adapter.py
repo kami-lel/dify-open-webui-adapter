@@ -536,18 +536,23 @@ class _ConversationRound:
         return event.text_content
 
 
-class _StreamEventType(StrEnum):
+# BUG for workflow: unknown event: 'iteration_started' is not a valid _StreamEvent._EventType
+class _StreamEvent(StrEnum):
     """
-    represent a single **relevant** SSE
+    represent a single **relevant** SSE specified by Dify Backend API
 
     value of enums are identical to them specified
     in Dify Backend API's /chat-messages ChunkCompletionResponse
+    TODO also /workflows/run
     """
 
     TEXT_CHUNK = "text_chunk"
     MESSAGE = "message"
     WORKFLOW_END = "workflow_finished"
     MESSAGE_END = "message_end"
+
+    def __init__(self, event_name=None, raw=None):
+        pass  # TODO
 
     @property
     def is_end(self):
@@ -556,43 +561,14 @@ class _StreamEventType(StrEnum):
         :rtype: bool
         """
         return self in (
-            _StreamEventType.WORKFLOW_END,
-            _StreamEventType.MESSAGE_END,
+            _StreamEvent.WORKFLOW_END,
+            _StreamEvent.MESSAGE_END,
         )
-
-
-class _StreamEvent:
-    """
-    represent a single SSE specified by Dify Backend API
-    """
 
     # TODO
 
 
-class _StreamEventOld:
-    """
-    represent a single SSE specified by Dify Backend API
-
-
-    :raises ValueError:
-    """
-
-    class _EventType(Enum):
-        # value of enums are identical to them specified
-        # in Dify Backend API's /chat-messages ChunkCompletionResponse
-        WORKFLOW_START = "workflow_started"
-        NODE_STARTED = "node_started"
-        TEXT_CHUNK = "text_chunk"
-        MESSAGE = "message"
-        MESSAGE_FILE = "message_file"
-        NODE_FINISHED = "node_finished"
-        WORKFLOW_END = "workflow_finished"
-        MESSAGE_END = "message_end"
-        MESSAGE_REPLACE = "message_replace"
-        TTS_MESSAGE = "tts_message"
-        TTS_MESSAGE_END = "tts_message_end"
-
-        # BUG for workflow: unknown event: 'iteration_started' is not a valid _StreamEvent._EventType
+class _StreamEventOld:  # HACK rm
 
     def __init__(self, app=None, raw=None):
         self.is_relevant = False

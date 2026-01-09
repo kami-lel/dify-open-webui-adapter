@@ -559,7 +559,7 @@ class _StreamEvent:
         TTS_MESSAGE = "tts_message"
         TTS_MESSAGE_END = "tts_message_end"
 
-        # Bug for workflow: unknown event: 'iteration_started' is not a valid _StreamEvent._EventType
+        # BUG for workflow: unknown event: 'iteration_started' is not a valid _StreamEvent._EventType
 
     def __init__(self, app=None, raw=None):
         self.is_relevant = False

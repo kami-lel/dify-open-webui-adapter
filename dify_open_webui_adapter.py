@@ -603,11 +603,11 @@ class _ConversationRound:
                 ) from err
 
             except UnicodeDecodeError as err:
-                raise UnicodeDecodeError(
-                    "fail to decode text-stream as {}: {}".format(
-                        self._TEXT_STREAM_ENCODING, err.args[0]
-                    )
-                ) from err
+                err.args = (
+                    "fail to decode text/event-stream: {}".format(str(err)),
+                    *(err.args[1:]),
+                )
+                raise  # re-raise
 
             except JSONDecodeError as err:
                 err.args = (

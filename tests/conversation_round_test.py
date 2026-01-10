@@ -236,10 +236,44 @@ class TestExhaust:
 class TestUnicode:
 
     def test_workflow1(_):
-        pass
+        lines = convert_lines_from_data_dicts(WORKFLOW_DATA1)
+        bytes_obj = [bytearray(line, "utf_16") for line in lines]
+        text_streams = iter(bytes_obj)
+
+        with pytest.raises(UnicodeDecodeError) as exec_info:
+            for _ in _ConversationRound(
+                _create_simulated_app(text_streams), None
+            ):
+                pass
+        opt = exec_info.value.args[0]
+
+        print(opt)
+        assert (
+            opt
+            == "fail to decode text/event-stream: "
+            "'utf-8' codec can't decode byte 0xff in position 0: "
+            "invalid start byte"
+        )
 
     def test_chatflow1(_):
-        pass
+        lines = convert_lines_from_data_dicts(CHATFLOW_DATA1)
+        bytes_obj = [bytearray(line, "utf_16") for line in lines]
+        text_streams = iter(bytes_obj)
+
+        with pytest.raises(UnicodeDecodeError) as exec_info:
+            for _ in _ConversationRound(
+                _create_simulated_app(text_streams), None
+            ):
+                pass
+        opt = exec_info.value.args[0]
+
+        print(opt)
+        assert (
+            opt
+            == "fail to decode text/event-stream: "
+            "'utf-8' codec can't decode byte 0xff in position 0: "
+            "invalid start byte"
+        )
 
 
 class TestJSONDecode:

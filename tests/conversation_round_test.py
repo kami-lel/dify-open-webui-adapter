@@ -14,12 +14,11 @@ from dify_open_webui_adapter import _ConversationRound
 
 
 def _create_simulated_app(text_streams):
-    iter_lines = iter([v.encode("utf-8") for v in text_streams.split("\n")])
     sim_response = type(
         "simulated response",
         (),
         {
-            "iter_lines": lambda self: iter_lines,
+            "iter_lines": lambda self: text_streams,
             "close": lambda self: None,
         },
     )()

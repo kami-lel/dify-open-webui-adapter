@@ -617,3 +617,6 @@ WORKFLOW_STREAM3 = _create_text_stream([
         },
     },
 ])
+
+
+WORKFLOW_STREAM4 = _create_text_stream([])

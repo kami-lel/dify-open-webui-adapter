@@ -35,7 +35,7 @@ Q.v. ``https://github.com/kami-lel/dify-open-webui-adapter``
 """
 
 # adapter version
-__version__ = "2.1.1"
+__version__ = "2.1.2"
 __author__ = "kamiLeL"
 
 
@@ -44,12 +44,14 @@ DIFY_BACKEND_API_BASE_URL = "https://api.dify.ai/v1"
 
 APP_MODEL_CONFIGS = []
 
+DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
 
 # end of config  ###############################################################
 
 # pylint: disable=wrong-import-position
-from enum import Enum
+from enum import Enum, Flag, auto
 import json
+from json import JSONDecodeError
 
 from pydantic import BaseModel
 import requests
@@ -153,7 +155,7 @@ class OWUModel:
         try:
             enable_stream = bool(body["stream"])
         except KeyError as err:
-            raise ValueError() from err
+            raise ValueError("missing 'stream' in response body") from err
 
         # call DifyApp  --------------------------------------------------------
         opt = self.app.reply(newest_msg, enable_stream)
@@ -503,126 +505,142 @@ class ChatflowDifyApp(BaseDifyApp):
 
 
 # helper class  ================================================================
+
+
+class _SSE(Flag):
+    """
+    represent a single **relevant** SSE specified by Dify Backend API
+    """
+
+    # pylint: disable=invalid-name
+
+    # events we don't care about
+    IRRELEVANT = 0
+
+    # enum name specified by Dify Backend API
+    text_chunk = auto()
+    message = auto()
+    workflow_finished = auto()
+    message_end = auto()
+
+    # events which indicate end of  current round response
+    IS_END = workflow_finished | message_end
+
+
 class _ConversationRound:
     """
     represent a single conversation round with Dify
+
+
+    :raises ValueError:
+    :raises UnicodeDecodeError:
+    :raises json.JSONDecodeError:
+    :raises KeyError:
     """
+
+    _TEXT_STREAM_ENCODING = "utf-8"
+    _STREAM_PREFIX = "data: "
+    # enable debug mode such it returns text-stream directly
 
     def __init__(self, app, newest_msg):
         self.app = app
         self.response = self.app._open_reply_response(newest_msg, True)
-        self.iter_lines = iter(self.response.iter_lines())
+        self.iter_lines = self.response.iter_lines()
+        self._debug_stop_on_next = False
 
     def __iter__(self):
         return self  # make self an Iterator
 
     def __next__(self):
-        event = _StreamEvent()
+        if self._debug_stop_on_next:
+            raise StopIteration
 
-        # keeps searching for a relevant event
-        while not event.is_relevant:
+        debug_lines = ["\n"]
+
+        text = None
+        event = _SSE.IRRELEVANT  # default
+
+        # consume self.iter_lines until find relevant events
+        while not event:
             try:
-                event = _StreamEvent(self.app, next(self.iter_lines))
+                raw = next(self.iter_lines)
+                line = raw.decode(self._TEXT_STREAM_ENCODING)
+                if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
+                    debug_lines.append(line)
+
+                # deal with data: prefix
+                if not line.startswith(self._STREAM_PREFIX):
+                    continue  # not start w/ "data: ", skip
+                line = line[len(self._STREAM_PREFIX) :]
+
+                # parse data as JSON
+                data = json.loads(line)
+                event_value = data["event"]
+
+                # deal with only relevant types of SSE
+                try:
+                    event = _SSE[event_value]
+                except KeyError:  # not a relevant event
+                    continue
+
+                # extract text
+                if event is _SSE.message:
+                    text = data["answer"]
+                elif event is _SSE.text_chunk:
+                    text = data["data"]["text"]
+
+                # extract conversation_id for Chatflow, if it's empty
+                if (
+                    isinstance(self.app, ChatflowDifyApp)
+                    and not self.app.conversation_id
+                ):
+                    self.app.conversation_id = data["conversation_id"]
+
             except StopIteration as err:
                 raise ValueError(
-                    "exhaust event stream "
-                    "without encountering any finishing event"
+                    "exhaust text/event-stream "
+                    "but detect no events indicating finishing"
                 ) from err
 
-        if event.is_end:
+            except UnicodeDecodeError as err:
+                err.args = (
+                    "fail to decode text/event-stream: {}".format(str(err)),
+                    *(err.args[1:]),
+                )
+                raise  # re-raise
+
+            except JSONDecodeError as err:
+                err.args = (
+                    "fail to parse text/event-stream as JSON: {}: {}".format(
+                        err.args[0], raw
+                    ),
+                    *(err.args[1:]),
+                )
+                raise  # re-raise
+
+            except KeyError as err:
+                raise KeyError(
+                    "missing key in text/event-stream content: {}".format(
+                        str(err)
+                    )
+                ) from err
+
+        # an relevant event is found
+        if event in _SSE.IS_END:  # end of current respond
+            if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
+                self._debug_stop_on_next = True
+                debug_lines.insert(1, "# LAST PASS")
+                return "\n\n".join(debug_lines)
+
             self.response.close()
             raise StopIteration
 
-        return event.text_content
+        if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
+            debug_lines.insert(1, "# PASS")
+            return "\n\n".join(debug_lines)
 
-
-class _StreamEvent:
-    """
-    represent a single SSE specified by Dify Backend API
-
-
-    :raises ValueError:
-    """
-
-    class _EventType(Enum):
-        # value of enums are identical to them specified
-        # in Dify Backend API's /chat-messages ChunkCompletionResponse
-        WORKFLOW_START = "workflow_started"
-        NODE_STARTED = "node_started"
-        TEXT_CHUNK = "text_chunk"
-        MESSAGE = "message"
-        MESSAGE_FILE = "message_file"
-        NODE_FINISHED = "node_finished"
-        WORKFLOW_END = "workflow_finished"
-        MESSAGE_END = "message_end"
-        MESSAGE_REPLACE = "message_replace"
-        TTS_MESSAGE = "tts_message"
-        TTS_MESSAGE_END = "tts_message_end"
-
-    def __init__(self, app=None, raw=None):
-        self.is_relevant = False
-
-        if not raw or raw == b"event: ping":  # an uninitialized event
-            return
-
-        # parse raw line  ------------------------------------------------------
-        try:
-            line = raw.decode("utf-8")
-
-            if line.startswith("data:"):
-                line = line[len("data:") :].lstrip()
-
-            data = json.loads(line)
-
-            # get event type
-            self.event_type = self._EventType(data["event"])
-
-            if (
-                isinstance(app, ChatflowDifyApp) and not app.conversation_id
-            ):  # set up conversation_id for Chatflow, if it is empty
-                app.conversation_id = data["conversation_id"]
-
-            if self.event_type is self._EventType.MESSAGE:
-                self.text_content = data["answer"]
-            elif self.event_type is self._EventType.TEXT_CHUNK:
-                self.text_content = data["data"]["text"]
-
-        except UnicodeDecodeError as err:
-            raise ValueError(
-                "bad encoding as utf-8: {}".format(err.args[0])
-            ) from err
-        except json.JSONDecodeError as err:
-            raise ValueError(
-                "can't parse event [{}] {}".format(raw, err.args[0])
-            ) from err
-        except KeyError as err:
-            raise ValueError(
-                "event stream missing: {}".format(err.args[0])
-            ) from err
-        except ValueError as err:
-            raise ValueError("unknown event: {}".format(err.args[0])) from err
-
-        # calc .is_relevant  -------------------------------------------
-        # i.e. whether this event is relevant & need to be processed
-        if self.is_end or (
-            self.event_type
-            in (
-                self._EventType.MESSAGE,
-                self._EventType.TEXT_CHUNK,
-            )
-        ):
-            self.is_relevant = True
-
-    @property
-    def is_end(self):
-        """
-        :return: whether this event is `workflow_finished`
-        :rtype: bool
-        """
-        return self.event_type in (
-            self._EventType.WORKFLOW_END,
-            self._EventType.MESSAGE_END,
-        )
+        # a text chunk as part of current respond
+        return text
 
 
 # Pipe class required by OWU  ##################################################

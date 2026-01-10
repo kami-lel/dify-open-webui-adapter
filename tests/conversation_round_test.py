@@ -188,8 +188,6 @@ class TestPingEvent:
 
 # err handling #################################################################
 
-# BUG write tests for catch errors
-
 
 class TestExhaust:
 
@@ -297,22 +295,147 @@ class TestJSONDecode:
 class TestKeyErrWorkflow:
 
     def test_event(_):
-        pass
+        data = {
+            "workflow_run_id": "b790",
+            "task_id": "04db",
+            "data": {
+                "text": "FIRST RESPONSE MESSAGE",
+                "from_variable_selector": ["4502", "output"],
+            },
+        }
+        text_streams = convert_bytes_generator_from_lines(
+            convert_lines_from_data_dicts([data])
+        )
+
+        with pytest.raises(KeyError) as exec_info:
+            for _ in _ConversationRound(
+                _create_simulated_app(text_streams), None
+            ):
+                pass
+        opt = exec_info.value.args[0]
+
+        print(opt)
+        assert opt == ""
 
     def test_data(_):
-        pass
+        data = {
+            "event": "text_chunk",
+            "workflow_run_id": "b790",
+            "task_id": "04db",
+        }
+        text_streams = convert_bytes_generator_from_lines(
+            convert_lines_from_data_dicts([data])
+        )
+
+        with pytest.raises(KeyError) as exec_info:
+            for _ in _ConversationRound(
+                _create_simulated_app(text_streams), None
+            ):
+                pass
+        opt = exec_info.value.args[0]
+
+        print(opt)
+        assert opt == ""
 
     def test_data_text(_):
-        pass
+        data = {
+            "event": "text_chunk",
+            "workflow_run_id": "b790",
+            "task_id": "04db",
+            "data": {
+                "from_variable_selector": ["4502", "output"],
+            },
+        }
+        text_streams = convert_bytes_generator_from_lines(
+            convert_lines_from_data_dicts([data])
+        )
+
+        with pytest.raises(KeyError) as exec_info:
+            for _ in _ConversationRound(
+                _create_simulated_app(text_streams), None
+            ):
+                pass
+        opt = exec_info.value.args[0]
+
+        print(opt)
+        assert opt == ""
 
 
 class TestKeyErrChatflow:
 
     def test_event(_):
-        pass
+        data = {
+            "conversation_id": "c0cf",
+            "message_id": "ff06",
+            "created_at": 1768046345,
+            "task_id": "5863",
+            "id": "ff06",
+            "answer": "FIRST RESPONSE MESSAGE",
+            "from_variable_selector": ["llm", "text"],
+        }
+
+        text_streams = convert_bytes_generator_from_lines(
+            convert_lines_from_data_dicts([data])
+        )
+
+        with pytest.raises(KeyError) as exec_info:
+            for _ in _ConversationRound(
+                _create_simulated_app(text_streams), None
+            ):
+                pass
+        opt = exec_info.value.args[0]
+
+        print(opt)
+        assert opt == ""
 
     def test_answer(_):
-        pass
+        data = {
+            "event": "message",
+            "conversation_id": "c0cf",
+            "message_id": "ff06",
+            "created_at": 1768046345,
+            "task_id": "5863",
+            "id": "ff06",
+            "from_variable_selector": ["llm", "text"],
+        }
+
+        text_streams = convert_bytes_generator_from_lines(
+            convert_lines_from_data_dicts([data])
+        )
+
+        with pytest.raises(KeyError) as exec_info:
+            for _ in _ConversationRound(
+                _create_simulated_app(text_streams), None
+            ):
+                pass
+        opt = exec_info.value.args[0]
+
+        print(opt)
+        assert opt == ""
 
     def test_conversation_id(_):
-        pass
+        data = {
+            "event": "message",
+            "message_id": "ff06",
+            "created_at": 1768046345,
+            "task_id": "5863",
+            "id": "ff06",
+            "answer": "FIRST RESPONSE MESSAGE",
+            "from_variable_selector": ["llm", "text"],
+        }
+
+        text_streams = convert_bytes_generator_from_lines(
+            convert_lines_from_data_dicts([data])
+        )
+
+        with pytest.raises(KeyError) as exec_info:
+            for _ in _ConversationRound(
+                _create_simulated_app(text_streams), None
+            ):
+                pass
+        opt = exec_info.value.args[0]
+
+        print(opt)
+        assert opt == ""
+
+        # BUG write tests for catch errors

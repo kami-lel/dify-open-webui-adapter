@@ -4,10 +4,11 @@ conversation_round_test.py
 Unit Tests (using pytest) for: _ConversationRound
 """
 
-from conversation_round_testees import (
+from .conversation_round_testees import (
     WORKFLOW_STREAM1,
     WORKFLOW_STREAM2,
     WORKFLOW_STREAM3,
+    WORKFLOW_STREAM4,
 )
 from dify_open_webui_adapter import _ConversationRound
 
@@ -60,6 +61,17 @@ class TestWorkflow:
 
     def test3(_):
         text_streams = WORKFLOW_STREAM3
+        ANSWER = ["FIRST RESPONSE MESSAGE"]
+
+        for opt, answer in zip(
+            _ConversationRound(_create_simulated_app(text_streams), None),
+            ANSWER,
+        ):
+            print(opt)
+            assert opt == answer
+
+    def test4(_):
+        text_streams = WORKFLOW_STREAM4
         ANSWER = ["FIRST RESPONSE MESSAGE"]
 
         for opt, answer in zip(

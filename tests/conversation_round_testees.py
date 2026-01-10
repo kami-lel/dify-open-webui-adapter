@@ -2,34 +2,618 @@
 provide testee text-stream for ``conversation_round_test.py``
 """
 
-WORKFLOW_STREAM1 = """data: {"event": "message", "task_id": "cbe6", "message_id": "4085", "conversation_id": "7691", "answer": "FIRST RESPONSE MESSAGE", "created_at": 1705395332}
-data: {"event": "message", "task_id": "cbe6", "message_id": "4085", "conversation_id": "7691", "answer": "SECOND RESPONSE MESSAGE", "created_at": 1705395332}
-data: {"event": "message", "task_id": "cbe6", "message_id": "4085", "conversation_id": "7691", "answer": "THIRD RESPONSE MESSAGE", "created_at": 1705395332}
-data: {"event": "message_end", "task_id": "cbe6", "message_id": "4085", "conversation_id": "7691", "metadata": {}}"""
-
-WORKFLOW_STREAM2 = """data: {"event":"workflow_started","workflow_run_id":"b790","task_id":"04db","data":{"id":"b790","workflow_id":"1454","inputs":{"input":"USER REQUEST MESSAGE","sys.files":[],"sys.user_id":"user","sys.app_id":"4143","sys.workflow_id":"1454","sys.workflow_run_id":"b790"},"created_at":1768039728}}
-data: {"event":"node_started","workflow_run_id":"b790","task_id":"04db","data":{"id":"d5b9226d-457e-4dcb-bc5c-f8203962e2c9","node_id":"9657","node_type":"start","title":"User Input","index":1,"predecessor_node_id":null,"inputs":null,"inputs_truncated":false,"created_at":1768039728,"extras":{},"iteration_id":null,"loop_id":null,"agent_strategy":null}}
-data: {"event":"node_finished","workflow_run_id":"b790","task_id":"04db","data":{"id":"d5b9226d-457e-4dcb-bc5c-f8203962e2c9","node_id":"9657","node_type":"start","title":"User Input","index":1,"predecessor_node_id":null,"inputs":{"input":"test","sys.files":[],"sys.user_id":"user","sys.app_id":"4143","sys.workflow_id":"1454","sys.workflow_run_id":"b790","sys.timestamp":1768039728},"inputs_truncated":false,"process_data":{},"process_data_truncated":false,"outputs":{"input":"test","sys.files":[],"sys.user_id":"user","sys.app_id":"4143","sys.workflow_id":"1454","sys.workflow_run_id":"b790","sys.timestamp":1768039728},"outputs_truncated":false,"status":"succeeded","error":null,"elapsed_time":0.009636,"execution_metadata":null,"created_at":1768039728,"finished_at":1768039728,"files":[],"iteration_id":null,"loop_id":null}}
-data: {"event":"node_started","workflow_run_id":"b790","task_id":"04db","data":{"id":"51f130d4-b073-4b5c-bf80-eb36ffbf336e","node_id":"1768039004502","node_type":"template-transform","title":"Template","index":1,"predecessor_node_id":null,"inputs":null,"inputs_truncated":false,"created_at":1768039728,"extras":{},"iteration_id":null,"loop_id":null,"agent_strategy":null}}
-data: {"event":"text_chunk","workflow_run_id":"b790","task_id":"04db","data":{"text":"FIRST RESPONSE MESSAGE","from_variable_selector":["1768039004502","output"]}}
-data: { "event": "workflow_finished", "workflow_run_id": "b790", "task_id": "04db", "data": { "id": "a792", "workflow_id": "1454", "status": "succeeded", "outputs": { "output": "FIRST RESPONSE MESSAGE" }, "error": null, "elapsed_time": 0.158589, "total_tokens": 0, "total_steps": 3, "created_by": { "id": "438b", "user": "user" }, "created_at": 1768041225, "finished_at": 1768041225, "exceptions_count": 0, "files": [] } }"""
-
-WORKFLOW_STREAM3 = """data: {"event":"workflow_started","workflow_run_id":"eb77","task_id":"f44f","data":{"id":"eb77","workflow_id":"3838","inputs":{"input":"USER REQUEST MESSAGE","sys.files":[],"sys.user_id":"user","sys.app_id":"093b","sys.workflow_id":"3838","sys.workflow_run_id":"eb77"},"created_at":1768040269}}
-data: {"event":"node_started","workflow_run_id":"eb77","task_id":"f44f","data":{"id":"023b","node_id":"3642","node_type":"start","title":"Start","index":1,"predecessor_node_id":null,"inputs":null,"inputs_truncated":false,"created_at":1768040269,"extras":{},"iteration_id":null,"loop_id":null,"agent_strategy":null}}
-data: {"event":"node_finished","workflow_run_id":"eb77","task_id":"f44f","data":{"id":"023b","node_id":"3642","node_type":"start","title":"Start","index":1,"predecessor_node_id":null,"inputs":{"input":"USER REQUEST MESSAGE","sys.files":[],"sys.user_id":"user","sys.app_id":"093b","sys.workflow_id":"3838","sys.workflow_run_id":"eb77","sys.timestamp":1768040268},"outputs_truncated":false,"status":"succeeded","error":null,"elapsed_time":0.01455,"execution_metadata":null,"created_at":1768040269,"finished_at":1768040269,"files":[],"iteration_id":null,"loop_id":null}}
-data: {"event":"node_started","workflow_run_id":"eb77","task_id":"f44f","data":{"id":"03fa","node_id":"8468","node_type":"http-request","title":"Per File Long Getter","index":1,"predecessor_node_id":null,"inputs":null,"inputs_truncated":false,"created_at":1768040269,"extras":{},"iteration_id":null,"loop_id":null,"agent_strategy":null}}
-data: {"event":"node_started","workflow_run_id":"eb77","task_id":"f44f","data":{"id":"a1a5","node_id":"6030","node_type":"http-request","title":"Per File Short Getter","index":1,"predecessor_node_id":null,"inputs":null,"inputs_truncated":false,"created_at":1768040269,"extras":{},"iteration_id":null,"loop_id":null,"agent_strategy":null}}
-data: {"event":"node_finished","workflow_run_id":"eb77","task_id":"f44f","data":{"id":"a1a5","node_id":"6030","node_type":"http-request","title":"Per File Short Getter","index":1,"predecessor_node_id":null,"inputs":{},"inputs_truncated":false,"process_data":{"request":"GET /kaye/dify-app/kaye-commit-sense/per-file-short HTTP/1.1\r\nHost: 10.4.4.7:11255\r\n\r\n"},"process_data_truncated":false,"outputs":{"status_code":200,"body":"FIRST SYSTEM PROMPT","headers":{"server":"Werkzeug/3.1.5 Python/3.12.12","date":"Sat, 10 Jan 2026 10:17:49 GMT","content-type":"text/html; charset=utf-8","content-length":"2463","cache-status":"65fc63fef8ff;fwd=stale;detail=match","via":"1.1 65fc63fef8ff (squid/6.13)","connection":"keep-alive"},"files":[]},"outputs_truncated":false,"status":"succeeded","error":null,"elapsed_time":0.086713,"execution_metadata":null,"created_at":1768040269,"finished_at":1768040269,"files":[],"iteration_id":null,"loop_id":null}}
-data: {"event":"node_started","workflow_run_id":"eb77","task_id":"f44f","data":{"id":"65cf1242-4b7d-48fe-8c10-d8d6ae0bc0c0","node_id":"1767896024342","node_type":"http-request","title":"GET primary message prompt","index":1,"predecessor_node_id":null,"inputs":null,"inputs_truncated":false,"created_at":1768040269,"extras":{},"iteration_id":null,"loop_id":null,"agent_strategy":null}}
-data: {"event":"node_finished","workflow_run_id":"eb77","task_id":"f44f","data":{"id":"03fa","node_id":"8468","node_type":"http-request","title":"Per File Long Getter","index":1,"predecessor_node_id":null,"inputs":{},"inputs_truncated":false,"process_data":{"request":"GET /kaye/dify-app/kaye-commit-sense/per-file-long HTTP/1.1\r\nHost: 10.4.4.7:11255\r\n\r\n"},"process_data_truncated":false,"outputs":{"status_code":200,"body":"SECOND SYSTEM PROMPT","headers":{"server":"Werkzeug/3.1.5 Python/3.12.12","date":"Sat, 10 Jan 2026 10:17:49 GMT","content-type":"text/html; charset=utf-8","content-length":"2462","cache-status":"65fc63fef8ff;fwd=stale;detail=match","via":"1.1 65fc63fef8ff (squid/6.13)","connection":"keep-alive"},"files":[]},"outputs_truncated":false,"status":"succeeded","error":null,"elapsed_time":0.111779,"execution_metadata":null,"created_at":1768040269,"finished_at":1768040269,"files":[],"iteration_id":null,"loop_id":null}}
-data: {"event":"node_finished","workflow_run_id":"eb77","task_id":"f44f","data":{"id":"65cf1242-4b7d-48fe-8c10-d8d6ae0bc0c0","node_id":"1767896024342","node_type":"http-request","title":"GET primary message prompt","index":1,"predecessor_node_id":null,"inputs":{},"inputs_truncated":false,"process_data":{"request":"GET /kaye/dify-app/kaye-commit-sense/primary-message HTTP/1.1\r\nHost: 10.4.4.7:11255\r\n\r\n"},"process_data_truncated":false,"outputs":{"status_code":200,"body":"THIRD SYSTEM PROMPT","headers":{"server":"Werkzeug/3.1.5 Python/3.12.12","date":"Sat, 10 Jan 2026 10:17:49 GMT","content-type":"text/html; charset=utf-8","content-length":"1373","cache-status":"65fc63fef8ff;fwd=stale;detail=match","via":"1.1 65fc63fef8ff (squid/6.13)","connection":"keep-alive"},"files":[]},"outputs_truncated":false,"status":"succeeded","error":null,"elapsed_time":0.091595,"execution_metadata":null,"created_at":1768040269,"finished_at":1768040269,"files":[],"iteration_id":null,"loop_id":null}}
-data: {"event":"iteration_started","workflow_run_id":"eb77","task_id":"f44f","data":{"id":"1757062707114","node_id":"1757062707114","node_type":"iteration","title":"Iteration","created_at":1768040269,"extras":{},"metadata":{"iteration_length":2},"inputs":{"iterator_selector":["FIRST_ITER","SECOND_ITER"]},"inputs_truncated":false}}
-data: {"event":"iteration_next","workflow_run_id":"eb77","task_id":"f44f","data":{"id":"1757062707114","node_id":"1757062707114","node_type":"iteration","title":"Iteration","index":0,"created_at":1768040269,"extras":{}}}
-data: {"event":"iteration_completed","workflow_run_id":"eb77","task_id":"f44f","data":{"id":"1757062707114","node_id":"1757062707114","node_type":"iteration","title":"Iteration","outputs":{"output":[{"symbol":"|","summary":"add optional iter_lines_override param to _ConversationRound init for unit test injection, enabling custom iter_lines setup"},{"symbol":"^","summary":"add new test file conversation_round_test.py with placeholder tests and initial stream processing test for _ConversationRound"}]},"outputs_truncated":false,"created_at":1768040271,"extras":{},"inputs":{"iterator_selector":["FIRST_ITER","SECOND_ITER"]},"inputs_truncated":false,"status":"succeeded","error":null,"elapsed_time":1.81476,"total_tokens":1828,"execution_metadata":{"total_tokens":1828,"total_price":"0.0007996","currency":"USD","iteration_duration_map":{"1":1.473738,"0":1.77923}},"finished_at":1768040271,"steps":2}}
-data: {"event":"text_chunk","workflow_run_id":"eb77","task_id":"f44f","data":{"text":"add iter_lines_override param: _ConversationRound enable unit test injection\n\n[|]dify_open_webui_adapter.py: add optional iter_lines_override param to _ConversationRound init for unit test injection, enabling custom iter_lines setup\n[^]conversation_round_test.py: add new test file conversation_round_test.py with placeholder tests and initial stream processing test for _ConversationRound","from_variable_selector":["1759185130596","output"]}}
-data: {"event":"node_started","workflow_run_id":"eb77","task_id":"f44f","data":{"id":"39df","node_id":"6076","node_type":"end","title":"End","index":1,"predecessor_node_id":null,"inputs":null,"inputs_truncated":false,"created_at":1768041456,"extras":{},"iteration_id":null,"loop_id":null,"agent_strategy":null}}
-data: {"event":"node_finished","workflow_run_id":"eb77","task_id":"f44f","data":{"id":"39df","node_id":"6076","node_type":"end","title":"End","index":1,"predecessor_node_id":null,"inputs":{"output":"FIRST RESPONSE MESSAGE"},"inputs_truncated":false,"process_data":{},"process_data_truncated":false,"outputs":{"output":"FIRST RESPONSE MESSAGE"},"outputs_truncated":false,"status":"succeeded","error":null,"elapsed_time":0.018752,"execution_metadata":null,"created_at":1768041456,"finished_at":1768041456,"files":[],"iteration_id":null,"loop_id":null}}
-data: {"event":"workflow_finished","workflow_run_id":"eb77","task_id":"f44f","data":{"id":"5b0d","workflow_id":"3838","status":"succeeded","outputs":{"output":"FIRST RESPONSE MESSAGE"},"error":null,"elapsed_time":2.45279,"total_tokens":2684,"total_steps":12,"created_by":{"id":"1dac","user":"user"},"created_at":1768041454,"finished_at":1768041456,"exceptions_count":0,"files":[]}}"""
+import json
 
 
-WORKFLOW_STREAM4 = ""
+def _create_text_stream(data_list):
+    opt = []
+    for data_line in data_list:
+        line = ", " + json.dumps(data_line)
+        opt.append(line.encode("utf-8"))
+
+    return iter(opt)
+
+
+WORKFLOW_STREAM1 = _create_text_stream([
+    {
+        "event": "message",
+        "task_id": "cbe6",
+        "message_id": "4085",
+        "conversation_id": "7691",
+        "answer": "FIRST RESPONSE MESSAGE",
+        "created_at": 1705395332,
+    },
+    {
+        "event": "message",
+        "task_id": "cbe6",
+        "message_id": "4085",
+        "conversation_id": "7691",
+        "answer": "SECOND RESPONSE MESSAGE",
+        "created_at": 1705395332,
+    },
+    {
+        "event": "message",
+        "task_id": "cbe6",
+        "message_id": "4085",
+        "conversation_id": "7691",
+        "answer": "THIRD RESPONSE MESSAGE",
+        "created_at": 1705395332,
+    },
+    {
+        "event": "message_end",
+        "task_id": "cbe6",
+        "message_id": "4085",
+        "conversation_id": "7691",
+        "metadata": {},
+    },
+])
+
+WORKFLOW_STREAM2 = _create_text_stream([
+    {
+        "event": "workflow_started",
+        "workflow_run_id": "b790",
+        "task_id": "04db",
+        "data": {
+            "id": "b790",
+            "workflow_id": "1454",
+            "inputs": {
+                "input": "USER REQUEST MESSAGE",
+                "sys.files": [],
+                "sys.user_id": "user",
+                "sys.app_id": "4143",
+                "sys.workflow_id": "1454",
+                "sys.workflow_run_id": "b790",
+            },
+            "created_at": 1768039728,
+        },
+    },
+    {
+        "event": "node_started",
+        "workflow_run_id": "b790",
+        "task_id": "04db",
+        "data": {
+            "id": "d5b9226d-457e-4dcb-bc5c-f8203962e2c9",
+            "node_id": "9657",
+            "node_type": "start",
+            "title": "User Input",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": None,
+            "inputs_truncated": False,
+            "created_at": 1768039728,
+            "extras": {},
+            "iteration_id": None,
+            "loop_id": None,
+            "agent_strategy": None,
+        },
+    },
+    {
+        "event": "node_finished",
+        "workflow_run_id": "b790",
+        "task_id": "04db",
+        "data": {
+            "id": "d5b9226d-457e-4dcb-bc5c-f8203962e2c9",
+            "node_id": "9657",
+            "node_type": "start",
+            "title": "User Input",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": {
+                "input": "test",
+                "sys.files": [],
+                "sys.user_id": "user",
+                "sys.app_id": "4143",
+                "sys.workflow_id": "1454",
+                "sys.workflow_run_id": "b790",
+                "sys.timestamp": 1768039728,
+            },
+            "inputs_truncated": False,
+            "process_data": {},
+            "process_data_truncated": False,
+            "outputs": {
+                "input": "test",
+                "sys.files": [],
+                "sys.user_id": "user",
+                "sys.app_id": "4143",
+                "sys.workflow_id": "1454",
+                "sys.workflow_run_id": "b790",
+                "sys.timestamp": 1768039728,
+            },
+            "outputs_truncated": False,
+            "status": "succeeded",
+            "error": None,
+            "elapsed_time": 0.009636,
+            "execution_metadata": None,
+            "created_at": 1768039728,
+            "finished_at": 1768039728,
+            "files": [],
+            "iteration_id": None,
+            "loop_id": None,
+        },
+    },
+    {
+        "event": "node_started",
+        "workflow_run_id": "b790",
+        "task_id": "04db",
+        "data": {
+            "id": "51f130d4-b073-4b5c-bf80-eb36ffbf336e",
+            "node_id": "1768039004502",
+            "node_type": "template-transform",
+            "title": "Template",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": None,
+            "inputs_truncated": False,
+            "created_at": 1768039728,
+            "extras": {},
+            "iteration_id": None,
+            "loop_id": None,
+            "agent_strategy": None,
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "b790",
+        "task_id": "04db",
+        "data": {
+            "text": "FIRST RESPONSE MESSAGE",
+            "from_variable_selector": ["1768039004502", "output"],
+        },
+    },
+    {
+        "event": "workflow_finished",
+        "workflow_run_id": "b790",
+        "task_id": "04db",
+        "data": {
+            "id": "a792",
+            "workflow_id": "1454",
+            "status": "succeeded",
+            "outputs": {"output": "FIRST RESPONSE MESSAGE"},
+            "error": None,
+            "elapsed_time": 0.158589,
+            "total_tokens": 0,
+            "total_steps": 3,
+            "created_by": {"id": "438b", "user": "user"},
+            "created_at": 1768041225,
+            "finished_at": 1768041225,
+            "exceptions_count": 0,
+            "files": [],
+        },
+    },
+])
+
+
+WORKFLOW_STREAM3 = _create_text_stream([
+    {
+        "event": "workflow_started",
+        "workflow_run_id": "eb77",
+        "task_id": "f44f",
+        "data": {
+            "id": "eb77",
+            "workflow_id": "3838",
+            "inputs": {
+                "input": "USER REQUEST MESSAGE",
+                "sys.files": [],
+                "sys.user_id": "user",
+                "sys.app_id": "093b",
+                "sys.workflow_id": "3838",
+                "sys.workflow_run_id": "eb77",
+            },
+            "created_at": 1768040269,
+        },
+    },
+    {
+        "event": "node_started",
+        "workflow_run_id": "eb77",
+        "task_id": "f44f",
+        "data": {
+            "id": "023b",
+            "node_id": "3642",
+            "node_type": "start",
+            "title": "Start",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": None,
+            "inputs_truncated": False,
+            "created_at": 1768040269,
+            "extras": {},
+            "iteration_id": None,
+            "loop_id": None,
+            "agent_strategy": None,
+        },
+    },
+    {
+        "event": "node_finished",
+        "workflow_run_id": "eb77",
+        "task_id": "f44f",
+        "data": {
+            "id": "023b",
+            "node_id": "3642",
+            "node_type": "start",
+            "title": "Start",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": {
+                "input": "USER REQUEST MESSAGE",
+                "sys.files": [],
+                "sys.user_id": "user",
+                "sys.app_id": "093b",
+                "sys.workflow_id": "3838",
+                "sys.workflow_run_id": "eb77",
+                "sys.timestamp": 1768040268,
+            },
+            "outputs_truncated": False,
+            "status": "succeeded",
+            "error": None,
+            "elapsed_time": 0.01455,
+            "execution_metadata": None,
+            "created_at": 1768040269,
+            "finished_at": 1768040269,
+            "files": [],
+            "iteration_id": None,
+            "loop_id": None,
+        },
+    },
+    {
+        "event": "node_started",
+        "workflow_run_id": "eb77",
+        "task_id": "f44f",
+        "data": {
+            "id": "03fa",
+            "node_id": "8468",
+            "node_type": "http-request",
+            "title": "Per File Long Getter",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": None,
+            "inputs_truncated": False,
+            "created_at": 1768040269,
+            "extras": {},
+            "iteration_id": None,
+            "loop_id": None,
+            "agent_strategy": None,
+        },
+    },
+    {
+        "event": "node_started",
+        "workflow_run_id": "eb77",
+        "task_id": "f44f",
+        "data": {
+            "id": "a1a5",
+            "node_id": "6030",
+            "node_type": "http-request",
+            "title": "Per File Short Getter",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": None,
+            "inputs_truncated": False,
+            "created_at": 1768040269,
+            "extras": {},
+            "iteration_id": None,
+            "loop_id": None,
+            "agent_strategy": None,
+        },
+    },
+    {
+        "event": "node_finished",
+        "workflow_run_id": "eb77",
+        "task_id": "f44f",
+        "data": {
+            "id": "a1a5",
+            "node_id": "6030",
+            "node_type": "http-request",
+            "title": "Per File Short Getter",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": {},
+            "inputs_truncated": False,
+            "process_data": {
+                "request": (
+                    "GET /kaye/dify-app/kaye-commit-sense/per-file-short"
+                    " HTTP/1.1\r\nHost: 10.4.4.7:11255\r\n\r\n"
+                )
+            },
+            "process_data_truncated": False,
+            "outputs": {
+                "status_code": 200,
+                "body": "FIRST SYSTEM PROMPT",
+                "headers": {
+                    "server": "Werkzeug/3.1.5 Python/3.12.12",
+                    "date": "Sat, 10 Jan 2026 10:17:49 GMT",
+                    "content-type": "text/html; charset=utf-8",
+                    "content-length": "2463",
+                    "cache-status": "65fc63fef8ff;fwd=stale;detail=match",
+                    "via": "1.1 65fc63fef8ff (squid/6.13)",
+                    "connection": "keep-alive",
+                },
+                "files": [],
+            },
+            "outputs_truncated": False,
+            "status": "succeeded",
+            "error": None,
+            "elapsed_time": 0.086713,
+            "execution_metadata": None,
+            "created_at": 1768040269,
+            "finished_at": 1768040269,
+            "files": [],
+            "iteration_id": None,
+            "loop_id": None,
+        },
+    },
+    {
+        "event": "node_started",
+        "workflow_run_id": "eb77",
+        "task_id": "f44f",
+        "data": {
+            "id": "65cf1242-4b7d-48fe-8c10-d8d6ae0bc0c0",
+            "node_id": "1767896024342",
+            "node_type": "http-request",
+            "title": "GET primary message prompt",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": None,
+            "inputs_truncated": False,
+            "created_at": 1768040269,
+            "extras": {},
+            "iteration_id": None,
+            "loop_id": None,
+            "agent_strategy": None,
+        },
+    },
+    {
+        "event": "node_finished",
+        "workflow_run_id": "eb77",
+        "task_id": "f44f",
+        "data": {
+            "id": "03fa",
+            "node_id": "8468",
+            "node_type": "http-request",
+            "title": "Per File Long Getter",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": {},
+            "inputs_truncated": False,
+            "process_data": {
+                "request": (
+                    "GET /kaye/dify-app/kaye-commit-sense/per-file-long"
+                    " HTTP/1.1\r\nHost: 10.4.4.7:11255\r\n\r\n"
+                )
+            },
+            "process_data_truncated": False,
+            "outputs": {
+                "status_code": 200,
+                "body": "SECOND SYSTEM PROMPT",
+                "headers": {
+                    "server": "Werkzeug/3.1.5 Python/3.12.12",
+                    "date": "Sat, 10 Jan 2026 10:17:49 GMT",
+                    "content-type": "text/html; charset=utf-8",
+                    "content-length": "2462",
+                    "cache-status": "65fc63fef8ff;fwd=stale;detail=match",
+                    "via": "1.1 65fc63fef8ff (squid/6.13)",
+                    "connection": "keep-alive",
+                },
+                "files": [],
+            },
+            "outputs_truncated": False,
+            "status": "succeeded",
+            "error": None,
+            "elapsed_time": 0.111779,
+            "execution_metadata": None,
+            "created_at": 1768040269,
+            "finished_at": 1768040269,
+            "files": [],
+            "iteration_id": None,
+            "loop_id": None,
+        },
+    },
+    {
+        "event": "node_finished",
+        "workflow_run_id": "eb77",
+        "task_id": "f44f",
+        "data": {
+            "id": "65cf1242-4b7d-48fe-8c10-d8d6ae0bc0c0",
+            "node_id": "1767896024342",
+            "node_type": "http-request",
+            "title": "GET primary message prompt",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": {},
+            "inputs_truncated": False,
+            "process_data": {
+                "request": (
+                    "GET /kaye/dify-app/kaye-commit-sense/primary-message"
+                    " HTTP/1.1\r\nHost: 10.4.4.7:11255\r\n\r\n"
+                )
+            },
+            "process_data_truncated": False,
+            "outputs": {
+                "status_code": 200,
+                "body": "THIRD SYSTEM PROMPT",
+                "headers": {
+                    "server": "Werkzeug/3.1.5 Python/3.12.12",
+                    "date": "Sat, 10 Jan 2026 10:17:49 GMT",
+                    "content-type": "text/html; charset=utf-8",
+                    "content-length": "1373",
+                    "cache-status": "65fc63fef8ff;fwd=stale;detail=match",
+                    "via": "1.1 65fc63fef8ff (squid/6.13)",
+                    "connection": "keep-alive",
+                },
+                "files": [],
+            },
+            "outputs_truncated": False,
+            "status": "succeeded",
+            "error": None,
+            "elapsed_time": 0.091595,
+            "execution_metadata": None,
+            "created_at": 1768040269,
+            "finished_at": 1768040269,
+            "files": [],
+            "iteration_id": None,
+            "loop_id": None,
+        },
+    },
+    {
+        "event": "iteration_started",
+        "workflow_run_id": "eb77",
+        "task_id": "f44f",
+        "data": {
+            "id": "1757062707114",
+            "node_id": "1757062707114",
+            "node_type": "iteration",
+            "title": "Iteration",
+            "created_at": 1768040269,
+            "extras": {},
+            "metadata": {"iteration_length": 2},
+            "inputs": {"iterator_selector": ["FIRST_ITER", "SECOND_ITER"]},
+            "inputs_truncated": False,
+        },
+    },
+    {
+        "event": "iteration_next",
+        "workflow_run_id": "eb77",
+        "task_id": "f44f",
+        "data": {
+            "id": "1757062707114",
+            "node_id": "1757062707114",
+            "node_type": "iteration",
+            "title": "Iteration",
+            "index": 0,
+            "created_at": 1768040269,
+            "extras": {},
+        },
+    },
+    {
+        "event": "iteration_completed",
+        "workflow_run_id": "eb77",
+        "task_id": "f44f",
+        "data": {
+            "id": "1757062707114",
+            "node_id": "1757062707114",
+            "node_type": "iteration",
+            "title": "Iteration",
+            "outputs": {
+                "output": [
+                    {
+                        "symbol": "|",
+                        "summary": (
+                            "add optional iter_lines_override param to"
+                            " _ConversationRound init for unit test injection,"
+                            " enabling custom iter_lines setup"
+                        ),
+                    },
+                    {
+                        "symbol": "^",
+                        "summary": (
+                            "add new test file conversation_round_test.py with"
+                            " placeholder tests and initial stream processing"
+                            " test for _ConversationRound"
+                        ),
+                    },
+                ]
+            },
+            "outputs_truncated": False,
+            "created_at": 1768040271,
+            "extras": {},
+            "inputs": {"iterator_selector": ["FIRST_ITER", "SECOND_ITER"]},
+            "inputs_truncated": False,
+            "status": "succeeded",
+            "error": None,
+            "elapsed_time": 1.81476,
+            "total_tokens": 1828,
+            "execution_metadata": {
+                "total_tokens": 1828,
+                "total_price": "0.0007996",
+                "currency": "USD",
+                "iteration_duration_map": {"1": 1.473738, "0": 1.77923},
+            },
+            "finished_at": 1768040271,
+            "steps": 2,
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "eb77",
+        "task_id": "f44f",
+        "data": {
+            "text": (
+                ""
+                "add iter_lines_override param: _ConversationRound enable unit"
+                " test injection\n\n[|]dify_open_webui_adapter.py: add"
+                " optional iter_lines_override param to _ConversationRound"
+                " init for unit test injection, enabling custom iter_lines"
+                " setup\n[^]conversation_round_test.py: add new test file"
+                " conversation_round_test.py with placeholder tests and"
+                " initial stream processing test for _ConversationRound"
+            ),
+            "from_variable_selector": ["1759185130596", "output"],
+        },
+    },
+    {
+        "event": "node_started",
+        "workflow_run_id": "eb77",
+        "task_id": "f44f",
+        "data": {
+            "id": "39df",
+            "node_id": "6076",
+            "node_type": "end",
+            "title": "End",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": None,
+            "inputs_truncated": False,
+            "created_at": 1768041456,
+            "extras": {},
+            "iteration_id": None,
+            "loop_id": None,
+            "agent_strategy": None,
+        },
+    },
+    {
+        "event": "node_finished",
+        "workflow_run_id": "eb77",
+        "task_id": "f44f",
+        "data": {
+            "id": "39df",
+            "node_id": "6076",
+            "node_type": "end",
+            "title": "End",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": {"output": "FIRST RESPONSE MESSAGE"},
+            "inputs_truncated": False,
+            "process_data": {},
+            "process_data_truncated": False,
+            "outputs": {"output": "FIRST RESPONSE MESSAGE"},
+            "outputs_truncated": False,
+            "status": "succeeded",
+            "error": None,
+            "elapsed_time": 0.018752,
+            "execution_metadata": None,
+            "created_at": 1768041456,
+            "finished_at": 1768041456,
+            "files": [],
+            "iteration_id": None,
+            "loop_id": None,
+        },
+    },
+    {
+        "event": "workflow_finished",
+        "workflow_run_id": "eb77",
+        "task_id": "f44f",
+        "data": {
+            "id": "5b0d",
+            "workflow_id": "3838",
+            "status": "succeeded",
+            "outputs": {"output": "FIRST RESPONSE MESSAGE"},
+            "error": None,
+            "elapsed_time": 2.45279,
+            "total_tokens": 2684,
+            "total_steps": 12,
+            "created_by": {"id": "1dac", "user": "user"},
+            "created_at": 1768041454,
+            "finished_at": 1768041456,
+            "exceptions_count": 0,
+            "files": [],
+        },
+    },
+])

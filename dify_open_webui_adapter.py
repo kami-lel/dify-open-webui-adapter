@@ -50,6 +50,7 @@ APP_MODEL_CONFIGS = []
 # pylint: disable=wrong-import-position
 from enum import Enum, Flag, auto
 import json
+from json import JSONDecodeError
 
 from pydantic import BaseModel
 import requests
@@ -531,7 +532,16 @@ class _SSE(Flag):
 class _ConversationRound:
     """
     represent a single conversation round with Dify
+
+
+    :raises ValueError:
+    :raises UnicodeDecodeError:
+    :raises json.JSONDecodeError:
+    :raises KeyError:
     """
+
+    _TEXT_STREAM_ENCODING = "utf-8"
+    _STREAM_PREFIX = "data: "
 
     def __init__(self, app, newest_msg):
         self.app = app
@@ -547,14 +557,64 @@ class _ConversationRound:
 
         # consume self.iter_lines until find relevant events
         while event not in _SSE.RELEVANT:
-            # TODO
             try:
-                event = _StreamEvent(self.app, next(self.iter_lines))
+                raw = next(self.iter_lines)
+                line = raw.decode(self._TEXT_STREAM_ENCODING)
+
+                # deal with data: prefix
+                if not line.startswith(self._STREAM_PREFIX):
+                    continue  # not start w/ "data: ", skip
+                line = line[len(self._STREAM_PREFIX) :]
+
+                # parse data as JSON
+                data = json.loads(line)
+                event_value = data["event"]
+
+                # deal with only relevant types of SSE
+                try:
+                    event = _SSE[event_value]
+                except KeyError:  # not a relevant event
+                    continue
+
+                # extract text
+                if event is _SSE.message:
+                    text = data["answer"]
+                elif event is _SSE.text_chunk:
+                    text = data["data"]["text"]
+
+                # extract conversation_id for Chatflow, if it's empty
+                if (
+                    isinstance(self.app, ChatflowDifyApp)
+                    and not self.app.conversation_id
+                ):
+                    self.app.conversation_id = data["conversation_id"]
+
             except StopIteration as err:
                 raise ValueError(
-                    "exhaust event stream "
-                    "without encountering any finishing event"
+                    "exhaust event stream without any finishing event"
                 ) from err
+
+            except UnicodeDecodeError as err:
+                raise UnicodeDecodeError(
+                    "fail to decode text stream as {}: {}".format(
+                        self._TEXT_STREAM_ENCODING, err.args[0]
+                    )
+                ) from err
+
+            except JSONDecodeError as err:
+                err.args = (
+                    "fail to parse event as JSON: {}: {}".format(
+                        err.args[0], raw
+                    ),
+                    *(err.args[1:]),
+                )
+                raise  # re-raise
+
+            except KeyError as err:
+                raise KeyError(
+                    "missing key in text stream data: {}".format(err.args[0])
+                ) from err
+
         # an relevant event is found
 
         if event in _SSE.IS_END:  # end of current respond
@@ -566,52 +626,6 @@ class _ConversationRound:
 
 
 # BUG for workflow: unknown event: 'iteration_started' is not a valid _StreamEvent._EventType
-
-
-class _StreamEventOld:  # HACK rm
-
-    def __init__(self, app=None, raw=None):
-        self.is_relevant = False
-
-        if not raw or raw == b"event: ping":  # an uninitialized event
-            return
-
-        # parse raw line  ------------------------------------------------------
-        try:
-            line = raw.decode("utf-8")
-
-            if line.startswith("data:"):
-                line = line[len("data:") :].lstrip()
-
-            data = json.loads(line)
-
-            # get event type
-            self.event_type = self._EventType(data["event"])
-
-            if (
-                isinstance(app, ChatflowDifyApp) and not app.conversation_id
-            ):  # set up conversation_id for Chatflow, if it is empty
-                app.conversation_id = data["conversation_id"]
-
-            if self.event_type is self._EventType.MESSAGE:
-                self.text_content = data["answer"]
-            elif self.event_type is self._EventType.TEXT_CHUNK:
-                self.text_content = data["data"]["text"]
-
-        except UnicodeDecodeError as err:
-            raise ValueError(
-                "bad encoding as utf-8: {}".format(err.args[0])
-            ) from err
-        except json.JSONDecodeError as err:
-            raise ValueError(
-                "can't parse event [{}] {}".format(raw, err.args[0])
-            ) from err
-        except KeyError as err:
-            raise ValueError(
-                "event stream missing: {}".format(err.args[0])
-            ) from err
-        except ValueError as err:
-            raise ValueError("unknown event: {}".format(err.args[0])) from err
 
 
 # Pipe class required by OWU  ##################################################

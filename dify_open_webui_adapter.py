@@ -525,8 +525,12 @@ class _SSE(Flag):
     # events which indicate end of  current round response
     IS_END = workflow_finished | message_end
 
-    # all events above are relevant
-    RELEVANT = ~IRRELEVANT
+    def __bool__(self):
+        """
+        :return: if self is a relevant event & should be processed
+        :rtype: bool
+        """
+        return self is not _SSE.IRRELEVANT
 
 
 class _ConversationRound:
@@ -547,6 +551,9 @@ class _ConversationRound:
         self.app = app
         self.response = self.app._open_reply_response(newest_msg, True)
         self.iter_lines = self.response.iter_lines()
+        # HACK
+        tmp = list(self.iter_lines)
+        self.iter_lines = iter(tmp)
 
     def __iter__(self):
         return self  # make self an Iterator
@@ -556,7 +563,7 @@ class _ConversationRound:
         event = _SSE.IRRELEVANT  # default
 
         # consume self.iter_lines until find relevant events
-        while event not in _SSE.RELEVANT:
+        while not event:
             try:
                 raw = next(self.iter_lines)
                 line = raw.decode(self._TEXT_STREAM_ENCODING)

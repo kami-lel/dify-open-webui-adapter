@@ -551,9 +551,6 @@ class _ConversationRound:
         self.app = app
         self.response = self.app._open_reply_response(newest_msg, True)
         self.iter_lines = self.response.iter_lines()
-        # HACK
-        tmp = list(self.iter_lines)
-        self.iter_lines = iter(tmp)
 
     def __iter__(self):
         return self  # make self an Iterator

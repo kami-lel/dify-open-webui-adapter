@@ -84,10 +84,7 @@ class TestWorkflow:
 class TestChatflow:
 
     def test1(_):
-        TEXT_STREAMS = """data: {"event": "text_chunk", "task_id": "cbe6", "workflow_run_id": "4085", "data": {"text": "FIRST RESPONSE MESSAGE"}}
-data: {"event": "text_chunk", "task_id": "cbe6", "workflow_run_id": "4085", "data": {"text": "SECOND RESPONSE MESSAGE"}}
-data: {"event": "text_chunk", "task_id": "cbe6", "workflow_run_id": "4085", "data": {"text": "THIRD RESPONSE MESSAGE"}}
-data: {"event": "workflow_finished", "task_id": "cbe6", "workflow_run_id": "4085", "data": {}}"""
+        TEXT_STREAMS = """data: {"event": "text_chunk", "task_id": "cbe6", "workflow_run_id": "4085", "data": {"text": "FIRST RESPONSE MESSAGE"}},{"event": "text_chunk", "task_id": "cbe6", "workflow_run_id": "4085", "data": {"text": "SECOND RESPONSE MESSAGE"}},{"event": "text_chunk", "task_id": "cbe6", "workflow_run_id": "4085", "data": {"text": "THIRD RESPONSE MESSAGE"}},{"event": "workflow_finished", "task_id": "cbe6", "workflow_run_id": "4085", "data": {}}"""
 
         ANSWER = [
             "FIRST RESPONSE MESSAGE",

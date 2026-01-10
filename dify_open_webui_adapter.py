@@ -547,7 +547,7 @@ class _ConversationRound:
     _TEXT_STREAM_ENCODING = "utf-8"
     _STREAM_PREFIX = "data: "
     # enable debug mode such it returns text-stream directly
-    _DEBUG_RETURN_STREAM = True  # HACK
+    _DEBUG_RETURN_STREAM = False
 
     def __init__(self, app, newest_msg):
         self.app = app

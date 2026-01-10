@@ -546,7 +546,7 @@ class _ConversationRound:
     def __init__(self, app, newest_msg):
         self.app = app
         self.response = self.app._open_reply_response(newest_msg, True)
-        self.iter_lines = iter(self.response.iter_lines())
+        self.iter_lines = self.response.iter_lines()
 
     def __iter__(self):
         return self  # make self an Iterator

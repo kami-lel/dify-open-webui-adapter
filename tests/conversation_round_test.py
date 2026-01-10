@@ -90,7 +90,7 @@ class TestWorkflow:
 
 
 class TestChatflow:
-    # Bug test for setting conversation_id
+    # BUG test for setting conversation_id
 
     def test1(_):
         text_streams = CHATFLOW_STREAM1
@@ -163,4 +163,4 @@ class TestPingEvent:
             assert opt == answer
 
 
-# Bug write tests for catch errors
+# BUG write tests for catch errors

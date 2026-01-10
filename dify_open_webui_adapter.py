@@ -599,7 +599,7 @@ class _ConversationRound:
             except StopIteration as err:
                 raise ValueError(
                     "exhaust text/event-stream "
-                    "but detect no events indicate finishing"
+                    "but detect no events indicating finishing"
                 ) from err
 
             except UnicodeDecodeError as err:
@@ -611,7 +611,7 @@ class _ConversationRound:
 
             except JSONDecodeError as err:
                 err.args = (
-                    "fail to parse event as JSON: {}: {}".format(
+                    "fail to parse text/event-stream as JSON: {}: {}".format(
                         err.args[0], raw
                     ),
                     *(err.args[1:]),

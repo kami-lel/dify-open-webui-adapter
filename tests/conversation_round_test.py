@@ -4,6 +4,7 @@ conversation_round_test.py
 Unit Tests (using pytest) for: _ConversationRound
 """
 
+from json import JSONDecodeError
 import pytest
 
 
@@ -209,7 +210,7 @@ class TestExhaust:
         assert (
             opt
             == "exhaust text/event-stream "
-            "but detect no events indicate finishing"
+            "but detect no events indicating finishing"
         )
 
     def test_chatflow1(_):
@@ -229,7 +230,7 @@ class TestExhaust:
         assert (
             opt
             == "exhaust text/event-stream "
-            "but detect no events indicate finishing"
+            "but detect no events indicating finishing"
         )
 
 
@@ -278,11 +279,19 @@ class TestUnicode:
 
 class TestJSONDecode:
 
-    def test_workflow1(_):
-        pass
+    def test1(_):
+        bad_json = 'data: {"text": "value'
+        text_streams = convert_bytes_generator_from_lines([bad_json])
 
-    def test_chatflow1(_):
-        pass
+        with pytest.raises(JSONDecodeError) as exec_info:
+            for _ in _ConversationRound(
+                _create_simulated_app(text_streams), None
+            ):
+                pass
+        opt = exec_info.value.args[0]
+
+        print(opt)
+        assert opt.startswith("fail to parse text/event-stream as JSON")
 
 
 class TestKeyErrWorkflow:

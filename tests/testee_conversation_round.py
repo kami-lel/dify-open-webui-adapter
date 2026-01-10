@@ -7,7 +7,7 @@ import json
 ENCODING = "utf-8"
 
 
-def convert_data_dicts_to_lines(data_dicts):
+def convert_lines_from_data_dicts(data_dicts):
     opt = []
     for data in data_dicts:
         line = "data: " + json.dumps(data)
@@ -15,7 +15,7 @@ def convert_data_dicts_to_lines(data_dicts):
     return opt
 
 
-def convert_lines_to_bytes_generator(lines):
+def convert_bytes_generator_from_lines(lines):
     opt = [bytearray(line, ENCODING) for line in lines]
     return iter(opt)
 

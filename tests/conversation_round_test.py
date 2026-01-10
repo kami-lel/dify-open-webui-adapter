@@ -8,8 +8,8 @@ import pytest
 
 
 from .testee_conversation_round import (
-    convert_data_dicts_to_lines,
-    convert_lines_to_bytes_generator,
+    convert_lines_from_data_dicts,
+    convert_bytes_generator_from_lines,
     WORKFLOW_DATA1,
     WORKFLOW_DATA2,
     WORKFLOW_DATA3,
@@ -44,8 +44,8 @@ def _create_simulated_app(text_streams):
 class TestWorkflow:
 
     def test1(_):
-        text_streams = convert_lines_to_bytes_generator(
-            convert_data_dicts_to_lines(WORKFLOW_DATA1)
+        text_streams = convert_bytes_generator_from_lines(
+            convert_lines_from_data_dicts(WORKFLOW_DATA1)
         )
         answer = [
             "FIRST RESPONSE MESSAGE",
@@ -61,8 +61,8 @@ class TestWorkflow:
             assert opt == answer
 
     def test2(_):
-        text_streams = convert_lines_to_bytes_generator(
-            convert_data_dicts_to_lines(WORKFLOW_DATA2)
+        text_streams = convert_bytes_generator_from_lines(
+            convert_lines_from_data_dicts(WORKFLOW_DATA2)
         )
         answer = ["FIRST RESPONSE MESSAGE"]
 
@@ -74,8 +74,8 @@ class TestWorkflow:
             assert opt == answer
 
     def test3(_):
-        text_streams = convert_lines_to_bytes_generator(
-            convert_data_dicts_to_lines(WORKFLOW_DATA3)
+        text_streams = convert_bytes_generator_from_lines(
+            convert_lines_from_data_dicts(WORKFLOW_DATA3)
         )
         answer = ["FIRST RESPONSE MESSAGE"]
 
@@ -87,8 +87,8 @@ class TestWorkflow:
             assert opt == answer
 
     def test4(_):
-        text_streams = convert_lines_to_bytes_generator(
-            convert_data_dicts_to_lines(WORKFLOW_DATA4)
+        text_streams = convert_bytes_generator_from_lines(
+            convert_lines_from_data_dicts(WORKFLOW_DATA4)
         )
         answer = WORKFLOW_ANSWER4
 
@@ -104,8 +104,8 @@ class TestChatflow:
     # BUG test for setting conversation_id
 
     def test1(_):
-        text_streams = convert_lines_to_bytes_generator(
-            convert_data_dicts_to_lines(CHATFLOW_DATA1)
+        text_streams = convert_bytes_generator_from_lines(
+            convert_lines_from_data_dicts(CHATFLOW_DATA1)
         )
         answer = [
             "FIRST RESPONSE MESSAGE",
@@ -121,8 +121,8 @@ class TestChatflow:
             assert opt == answer
 
     def test2(_):
-        text_streams = convert_lines_to_bytes_generator(
-            convert_data_dicts_to_lines(CHATFLOW_DATA2)
+        text_streams = convert_bytes_generator_from_lines(
+            convert_lines_from_data_dicts(CHATFLOW_DATA2)
         )
         answer = CHATFLOW_ANSWER2
 
@@ -134,8 +134,8 @@ class TestChatflow:
             assert opt == answer
 
     def test3(_):
-        text_streams = convert_lines_to_bytes_generator(
-            convert_data_dicts_to_lines(CHATFLOW_DATA3)
+        text_streams = convert_bytes_generator_from_lines(
+            convert_lines_from_data_dicts(CHATFLOW_DATA3)
         )
         answer = CHATFLOW_ANSWER3
 
@@ -150,9 +150,9 @@ class TestChatflow:
 class TestPingEvent:
 
     def test_workflow(_):
-        lines = convert_data_dicts_to_lines(WORKFLOW_DATA1)
+        lines = convert_lines_from_data_dicts(WORKFLOW_DATA1)
         lines.insert(0, "event: ping")
-        text_streams = convert_lines_to_bytes_generator(lines)
+        text_streams = convert_bytes_generator_from_lines(lines)
         answer = [
             "FIRST RESPONSE MESSAGE",
             "SECOND RESPONSE MESSAGE",
@@ -167,9 +167,9 @@ class TestPingEvent:
             assert opt == answer
 
     def test_chatflow(_):
-        lines = convert_data_dicts_to_lines(CHATFLOW_DATA1)
+        lines = convert_lines_from_data_dicts(CHATFLOW_DATA1)
         lines.insert(0, "event: ping")
-        text_streams = convert_lines_to_bytes_generator(lines)
+        text_streams = convert_bytes_generator_from_lines(lines)
 
         answer = [
             "FIRST RESPONSE MESSAGE",

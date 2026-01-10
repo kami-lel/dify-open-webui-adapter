@@ -4,17 +4,19 @@ provide testee text-stream for ``conversation_round_test.py``
 
 import json
 
+ENCODING = "utf-8"
 
-def _create_text_stream(data_list):
-    opt = []
+
+def _create_text_stream(data_list, prepends=[]):
+    opt = [line.encode(ENCODING) for line in prepends]
     for data_line in data_list:
         line = "data: " + json.dumps(data_line)
-        opt.append(line.encode("utf-8"))
+        opt.append(line.encode(ENCODING))
 
     return iter(opt)
 
 
-WORKFLOW_STREAM1 = _create_text_stream([
+_WORKFLOW_STREAM1 = [
     {
         "event": "text_chunk",
         "workflow_run_id": "b790",
@@ -48,7 +50,9 @@ WORKFLOW_STREAM1 = _create_text_stream([
         "task_id": "04db",
         "data": {},
     },
-])
+]
+
+WORKFLOW_STREAM1 = _create_text_stream(_WORKFLOW_STREAM1)
 
 WORKFLOW_STREAM2 = _create_text_stream([
     {
@@ -1474,7 +1478,7 @@ WORKFLOW_ANSWER4 = [
 ]
 
 
-CHATFLOW_STREAM1 = _create_text_stream([
+_CHATFLOW_STREAM1 = [
     {
         "event": "message",
         "conversation_id": "c0cf",
@@ -1514,7 +1518,10 @@ CHATFLOW_STREAM1 = _create_text_stream([
         "workflow_run_id": "561d",
         "data": {},
     },
-])
+]
+
+
+CHATFLOW_STREAM1 = _create_text_stream(_CHATFLOW_STREAM1)
 
 
 CHATFLOW_STREAM2 = _create_text_stream([
@@ -2775,3 +2782,7 @@ CHATFLOW_ANSWER3 = [
     " insert",
     " node",
 ]
+
+
+WORKFLOW_PING = _create_text_stream(_WORKFLOW_STREAM1, ["event: ping"])
+CHATFLOW_PING = _create_text_stream(_CHATFLOW_STREAM1, ["event: ping"])

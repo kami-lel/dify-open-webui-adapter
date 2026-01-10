@@ -15,6 +15,8 @@ from .testee_conversation_round import (
     CHATFLOW_ANSWER2,
     CHATFLOW_STREAM3,
     CHATFLOW_ANSWER3,
+    WORKFLOW_PING,
+    CHATFLOW_PING,
 )
 from dify_open_webui_adapter import _ConversationRound
 
@@ -128,5 +130,37 @@ class TestChatflow:
             assert opt == answer
 
 
+class TestPingEvent:
+
+    def test_workflow(_):
+        text_streams = WORKFLOW_PING
+        answer = [
+            "FIRST RESPONSE MESSAGE",
+            "SECOND RESPONSE MESSAGE",
+            "THIRD RESPONSE MESSAGE",
+        ]
+
+        for opt, answer in zip(
+            _ConversationRound(_create_simulated_app(text_streams), None),
+            answer,
+        ):
+            print(opt)
+            assert opt == answer
+
+    def test_chatflow(_):
+        text_streams = CHATFLOW_PING
+        answer = [
+            "FIRST RESPONSE MESSAGE",
+            "SECOND RESPONSE MESSAGE",
+            "THIRD RESPONSE MESSAGE",
+        ]
+
+        for opt, answer in zip(
+            _ConversationRound(_create_simulated_app(text_streams), None),
+            answer,
+        ):
+            print(opt)
+            assert opt == answer
+
+
 # Bug write tests for catch errors
-# Bug event ping

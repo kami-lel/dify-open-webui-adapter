@@ -44,6 +44,7 @@ DIFY_BACKEND_API_BASE_URL = "https://api.dify.ai/v1"
 
 APP_MODEL_CONFIGS = []
 
+DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
 
 # end of config  ###############################################################
 
@@ -59,7 +60,6 @@ import requests
 OWU_USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
 STREAM_REQUEST_TIMEOUT = 300
-DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
 
 # Dify constants  **************************************************************
 DIFY_USER_ROLE = "user"

@@ -1472,3 +1472,7 @@ WORKFLOW_ANSWER4 = [
     " garden",
     ".",
 ]
+
+
+# TODO
+CHATFLOW_STREAM1 = _create_text_stream([])

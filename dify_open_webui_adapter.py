@@ -59,7 +59,7 @@ import requests
 OWU_USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
 STREAM_REQUEST_TIMEOUT = 300
-DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = True  # HACK
+DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
 
 # Dify constants  **************************************************************
 DIFY_USER_ROLE = "user"
@@ -525,13 +525,6 @@ class _SSE(Flag):
 
     # events which indicate end of  current round response
     IS_END = workflow_finished | message_end
-
-    def __bool__(self):
-        """
-        :return: if self is a relevant event & should be processed
-        :rtype: bool
-        """
-        return self is not _SSE.IRRELEVANT
 
 
 class _ConversationRound:

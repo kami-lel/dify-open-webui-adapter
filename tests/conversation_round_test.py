@@ -32,7 +32,6 @@ def _create_simulated_app(text_streams):
 
 
 class TestWorkflow:
-    # BUG exhausting?
 
     def test1(_):
         text_streams = WORKFLOW_STREAM1

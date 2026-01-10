@@ -8,7 +8,7 @@ import json
 def _create_text_stream(data_list):
     opt = []
     for data_line in data_list:
-        line = ", " + json.dumps(data_line)
+        line = "data: " + json.dumps(data_line)
         opt.append(line.encode("utf-8"))
 
     return iter(opt)
@@ -16,35 +16,37 @@ def _create_text_stream(data_list):
 
 WORKFLOW_STREAM1 = _create_text_stream([
     {
-        "event": "message",
-        "task_id": "cbe6",
-        "message_id": "4085",
-        "conversation_id": "7691",
-        "answer": "FIRST RESPONSE MESSAGE",
-        "created_at": 1705395332,
+        "event": "text_chunk",
+        "workflow_run_id": "b790",
+        "task_id": "04db",
+        "data": {
+            "text": "FIRST RESPONSE MESSAGE",
+            "from_variable_selector": ["4502", "output"],
+        },
     },
     {
-        "event": "message",
-        "task_id": "cbe6",
-        "message_id": "4085",
-        "conversation_id": "7691",
-        "answer": "SECOND RESPONSE MESSAGE",
-        "created_at": 1705395332,
+        "event": "text_chunk",
+        "workflow_run_id": "b790",
+        "task_id": "04db",
+        "data": {
+            "text": "SECOND RESPONSE MESSAGE",
+            "from_variable_selector": ["4502", "output"],
+        },
     },
     {
-        "event": "message",
-        "task_id": "cbe6",
-        "message_id": "4085",
-        "conversation_id": "7691",
-        "answer": "THIRD RESPONSE MESSAGE",
-        "created_at": 1705395332,
+        "event": "text_chunk",
+        "workflow_run_id": "b790",
+        "task_id": "04db",
+        "data": {
+            "text": "THIRD RESPONSE MESSAGE",
+            "from_variable_selector": ["4502", "output"],
+        },
     },
     {
-        "event": "message_end",
-        "task_id": "cbe6",
-        "message_id": "4085",
-        "conversation_id": "7691",
-        "metadata": {},
+        "event": "workflow_finished",
+        "workflow_run_id": "b790",
+        "task_id": "04db",
+        "data": {},
     },
 ])
 
@@ -137,7 +139,7 @@ WORKFLOW_STREAM2 = _create_text_stream([
         "task_id": "04db",
         "data": {
             "id": "51f130d4-b073-4b5c-bf80-eb36ffbf336e",
-            "node_id": "1768039004502",
+            "node_id": "4502",
             "node_type": "template-transform",
             "title": "Template",
             "index": 1,
@@ -157,7 +159,7 @@ WORKFLOW_STREAM2 = _create_text_stream([
         "task_id": "04db",
         "data": {
             "text": "FIRST RESPONSE MESSAGE",
-            "from_variable_selector": ["1768039004502", "output"],
+            "from_variable_selector": ["4502", "output"],
         },
     },
     {
@@ -535,17 +537,8 @@ WORKFLOW_STREAM3 = _create_text_stream([
         "workflow_run_id": "eb77",
         "task_id": "f44f",
         "data": {
-            "text": (
-                ""
-                "add iter_lines_override param: _ConversationRound enable unit"
-                " test injection\n\n[|]dify_open_webui_adapter.py: add"
-                " optional iter_lines_override param to _ConversationRound"
-                " init for unit test injection, enabling custom iter_lines"
-                " setup\n[^]conversation_round_test.py: add new test file"
-                " conversation_round_test.py with placeholder tests and"
-                " initial stream processing test for _ConversationRound"
-            ),
-            "from_variable_selector": ["1759185130596", "output"],
+            "text": "FIRST RESPONSE MESSAGE",
+            "from_variable_selector": ["0596", "output"],
         },
     },
     {

@@ -7,15 +7,23 @@ Unit Tests (using pytest) for: _ConversationRound
 from dify_open_webui_adapter import _ConversationRound
 
 
+class TestWorkflow:
+
+    def test1(_):
+        pass
+
+
+class TestChatflow:
+
+    def test1(_):
+        pass
+
+
 def test_1():
     # workflow test
     # TODO
 
-    TEXT_STREAMS = [
-        'data: {"event": "text_chunk", "task_id": "cbe6", "workflow_run_id":'
-        ' "4085", "event": "text_chunk", "data": {"text": "FIRST RESPONSE'
-        ' MESSAGE"}}'
-    ]
+    TEXT_STREAMS = """data: {"event": "text_chunk", "task_id": "cbe6", "workflow_run_id": "4085", "event": "text_chunk", "data": {"text": "FIRST RESPONSE MESSAGE"} }"""
     ANSWER = ["FIRST RESPONSE MESSAGE"]
 
     app = None
@@ -27,3 +35,6 @@ def test_1():
     ):
         print(opt)
         assert opt == answer
+
+
+# Bug catch errors tests

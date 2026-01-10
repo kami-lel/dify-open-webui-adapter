@@ -554,7 +554,8 @@ class _ConversationRound:
     def __next__(self):
         if self._debug_stop_on_next:
             raise StopIteration
-        debug_lines = []
+
+        debug_lines = ["\n"]
 
         text = None
         event = _SSE.IRRELEVANT  # default
@@ -626,13 +627,15 @@ class _ConversationRound:
         if event in _SSE.IS_END:  # end of current respond
             if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
                 self._debug_stop_on_next = True
-                return "# LAST PASS\n\n" + "\n\n".join(debug_lines)
+                debug_lines.insert(1, "# LAST PASS")
+                return "\n\n".join(debug_lines)
 
             self.response.close()
             raise StopIteration
 
         if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
-            return "# PASS\n\n + '\n\n".join(debug_lines)
+            debug_lines.insert(1, "# PASS")
+            return "\n\n".join(debug_lines)
 
         # a text chunk as part of current respond
         return text

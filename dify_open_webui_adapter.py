@@ -564,6 +564,8 @@ class _ConversationRound:
             try:
                 raw = next(self.iter_lines)
                 line = raw.decode(self._TEXT_STREAM_ENCODING)
+                if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
+                    debug_lines.append(line)
 
                 # deal with data: prefix
                 if not line.startswith(self._STREAM_PREFIX):
@@ -623,6 +625,7 @@ class _ConversationRound:
 
         if event in _SSE.IS_END:  # end of current respond
             if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
+                self._debug_stop_on_next = True
                 return "# LAST PASS\n\n" + "\n\n".join(debug_lines)
 
             self.response.close()

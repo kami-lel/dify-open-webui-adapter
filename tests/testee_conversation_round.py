@@ -457,8 +457,8 @@ WORKFLOW_STREAM3 = _create_text_stream([
         "workflow_run_id": "eb77",
         "task_id": "f44f",
         "data": {
-            "id": "1757062707114",
-            "node_id": "1757062707114",
+            "id": "7114",
+            "node_id": "7114",
             "node_type": "iteration",
             "title": "Iteration",
             "created_at": 1768040269,
@@ -473,8 +473,8 @@ WORKFLOW_STREAM3 = _create_text_stream([
         "workflow_run_id": "eb77",
         "task_id": "f44f",
         "data": {
-            "id": "1757062707114",
-            "node_id": "1757062707114",
+            "id": "7114",
+            "node_id": "7114",
             "node_type": "iteration",
             "title": "Iteration",
             "index": 0,
@@ -487,8 +487,8 @@ WORKFLOW_STREAM3 = _create_text_stream([
         "workflow_run_id": "eb77",
         "task_id": "f44f",
         "data": {
-            "id": "1757062707114",
-            "node_id": "1757062707114",
+            "id": "7114",
+            "node_id": "7114",
             "node_type": "iteration",
             "title": "Iteration",
             "outputs": {
@@ -619,4 +619,803 @@ WORKFLOW_STREAM3 = _create_text_stream([
 ])
 
 
-WORKFLOW_STREAM4 = _create_text_stream([])
+WORKFLOW_STREAM4 = _create_text_stream([
+    {
+        "event": "workflow_started",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "id": "c653",
+            "workflow_id": "e193",
+            "inputs": {
+                "input": "Tell me a Short Story",
+                "sys.files": [],
+                "sys.user_id": "user",
+                "sys.app_id": "4143",
+                "sys.workflow_id": "e193",
+                "sys.workflow_run_id": "c653",
+            },
+            "created_at": 1768043050,
+        },
+    },
+    {
+        "event": "node_started",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "id": "f574",
+            "node_id": "1768038979657",
+            "node_type": "start",
+            "title": "User Input",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": None,
+            "inputs_truncated": False,
+            "created_at": 1768043050,
+            "extras": {},
+            "iteration_id": None,
+            "loop_id": None,
+            "agent_strategy": None,
+        },
+    },
+    {
+        "event": "node_finished",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "id": "f574",
+            "node_id": "1768038979657",
+            "node_type": "start",
+            "title": "User Input",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": {
+                "input": "Tell me a Short Story",
+                "sys.files": [],
+                "sys.user_id": "user",
+                "sys.app_id": "4143",
+                "sys.workflow_id": "e193",
+                "sys.workflow_run_id": "c653",
+                "sys.timestamp": 1768043050,
+            },
+            "inputs_truncated": False,
+            "process_data": {},
+            "process_data_truncated": False,
+            "outputs": {
+                "input": "Tell me a Short Story",
+                "sys.files": [],
+                "sys.user_id": "user",
+                "sys.app_id": "4143",
+                "sys.workflow_id": "e193",
+                "sys.workflow_run_id": "c653",
+                "sys.timestamp": 1768043050,
+            },
+            "outputs_truncated": False,
+            "status": "succeeded",
+            "error": None,
+            "elapsed_time": 0.011594,
+            "execution_metadata": None,
+            "created_at": 1768043050,
+            "finished_at": 1768043050,
+            "files": [],
+            "iteration_id": None,
+            "loop_id": None,
+        },
+    },
+    {
+        "event": "node_started",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "id": "fb22",
+            "node_id": "5330",
+            "node_type": "llm",
+            "title": "LLM",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": None,
+            "inputs_truncated": False,
+            "created_at": 1768043050,
+            "extras": {},
+            "iteration_id": None,
+            "loop_id": None,
+            "agent_strategy": None,
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": "Once",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " upon",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " a",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " time",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": ",",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " in",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " a",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " quiet",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " village",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " nestled",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " between",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " rolling",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " hills",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": ",",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " there",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " lived",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " a",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " curious",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " young",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " girl",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " named",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " Lily",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": ".",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " Every",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " day",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": ",",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " she",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " explored",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " the",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " me",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": "adows",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": ",",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " collecting",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " wild",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": "flowers",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " and",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " listening",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " to",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " the",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " songs",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " of",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " birds",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": ".\n\n",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": "The",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " fair",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": "ies",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " welcomed",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " Lily",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " with",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " smiles",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " and",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " showed",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " her",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " their",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " magical",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": " garden",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "text_chunk",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "text": ".",
+            "from_variable_selector": ["5330", "text"],
+        },
+    },
+    {
+        "event": "node_finished",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "id": "fb22",
+            "node_id": "5330",
+            "node_type": "llm",
+            "title": "LLM",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": {},
+            "inputs_truncated": False,
+            "process_data": {
+                "model_mode": "chat",
+                "prompts": [{
+                    "role": "user",
+                    "text": "Tell me a Short Story",
+                    "files": [],
+                }],
+                "usage": {
+                    "prompt_tokens": 12,
+                    "prompt_unit_price": "0.1",
+                    "prompt_price_unit": "0.000001",
+                    "prompt_price": "0.0000012",
+                    "completion_tokens": 192,
+                    "completion_unit_price": "0.4",
+                    "completion_price_unit": "0.000001",
+                    "completion_price": "0.0000768",
+                    "total_tokens": 204,
+                    "total_price": "0.000078",
+                    "currency": "USD",
+                    "latency": 1.619,
+                    "time_to_first_token": 0.718,
+                    "time_to_generate": 0.901,
+                },
+                "finish_reason": "stop",
+                "model_provider": "langgenius/openai/openai",
+                "model_name": "gpt-4.1-nano",
+            },
+            "process_data_truncated": False,
+            "outputs": {
+                "text": (
+                    "Once upon a time, in a quiet village nestled between"
+                    " rolling hills, there lived a curious young girl named"
+                    " Lily. Every day, she explored the meadows, collecting"
+                    " wildflowers and listening to the songs of birds.\n\nThe"
+                    " fairies welcomed Lily with smiles and showed her their"
+                    " magical garden."
+                ),
+                "reasoning_content": "",
+                "usage": {
+                    "prompt_tokens": 12,
+                    "prompt_unit_price": "0.1",
+                    "prompt_price_unit": "0.000001",
+                    "prompt_price": "0.0000012",
+                    "completion_tokens": 192,
+                    "completion_unit_price": "0.4",
+                    "completion_price_unit": "0.000001",
+                    "completion_price": "0.0000768",
+                    "total_tokens": 204,
+                    "total_price": "0.000078",
+                    "currency": "USD",
+                    "latency": 1.619,
+                    "time_to_first_token": 0.718,
+                    "time_to_generate": 0.901,
+                },
+                "finish_reason": "stop",
+            },
+            "outputs_truncated": False,
+            "status": "succeeded",
+            "error": None,
+            "elapsed_time": 1.794752,
+            "execution_metadata": {
+                "total_tokens": 204,
+                "total_price": "0.000078",
+                "currency": "USD",
+            },
+            "created_at": 1768043050,
+            "finished_at": 1768043052,
+            "files": [],
+            "iteration_id": None,
+            "loop_id": None,
+        },
+    },
+    {
+        "event": "node_started",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "id": "e60c43d7-0d36-482a-9fca-45db0db92a82",
+            "node_id": "1768039028104",
+            "node_type": "end",
+            "title": "Output",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": None,
+            "inputs_truncated": False,
+            "created_at": 1768043052,
+            "extras": {},
+            "iteration_id": None,
+            "loop_id": None,
+            "agent_strategy": None,
+        },
+    },
+    {
+        "event": "node_finished",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "id": "e60c43d7-0d36-482a-9fca-45db0db92a82",
+            "node_id": "1768039028104",
+            "node_type": "end",
+            "title": "Output",
+            "index": 1,
+            "predecessor_node_id": None,
+            "inputs": {
+                "output": (
+                    "Once upon a time, in a quiet village nestled between"
+                    " rolling hills, there lived a curious young girl named"
+                    " Lily. Every day, she explored the meadows, collecting"
+                    " wildflowers and listening to the songs of birds.\n\nThe"
+                    " fairies welcomed Lily with smiles and showed her their"
+                    " magical garden."
+                )
+            },
+            "inputs_truncated": False,
+            "process_data": {},
+            "process_data_truncated": False,
+            "outputs": {
+                "output": (
+                    "Once upon a time, in a quiet village nestled between"
+                    " rolling hills, there lived a curious young girl named"
+                    " Lily. Every day, she explored the meadows, collecting"
+                    " wildflowers and listening to the songs of birds.\n\nThe"
+                    " fairies welcomed Lily with smiles and showed her their"
+                    " magical garden."
+                )
+            },
+            "outputs_truncated": False,
+            "status": "succeeded",
+            "error": None,
+            "elapsed_time": 0.054735,
+            "execution_metadata": None,
+            "created_at": 1768043052,
+            "finished_at": 1768043052,
+            "files": [],
+            "iteration_id": None,
+            "loop_id": None,
+        },
+    },
+    {
+        "event": "workflow_finished",
+        "workflow_run_id": "c653",
+        "task_id": "d476",
+        "data": {
+            "id": "c653",
+            "workflow_id": "e193",
+            "status": "succeeded",
+            "outputs": {
+                "output": (
+                    "Once upon a time, in a quiet village nestled between"
+                    " rolling hills, there lived a curious young girl named"
+                    " Lily. Every day, she explored the meadows, collecting"
+                    " wildflowers and listening to the songs of birds.\n\nThe"
+                    " fairies welcomed Lily with smiles and showed her their"
+                    " magical garden."
+                )
+            },
+            "error": None,
+            "elapsed_time": 1.871219,
+            "total_tokens": 204,
+            "total_steps": 3,
+            "created_by": {
+                "id": "e615af1b-92b0-4368-ad99-f9cc442d438b",
+                "user": "user",
+            },
+            "created_at": 1768043050,
+            "finished_at": 1768043052,
+            "exceptions_count": 0,
+            "files": [],
+        },
+    },
+])

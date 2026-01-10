@@ -4,8 +4,6 @@ model_http_header_test.py
 Unit Tests (using pytest) for: OWUModel.http_header()
 """
 
-import pytest
-
 from dify_open_webui_adapter import OWUModel
 
 from tests import (
@@ -13,8 +11,6 @@ from tests import (
     EXAMPLE_CHATFLOW_CONFIG,
     EXAMPLE_WORKFLOW_CONFIG,
     EXAMPLE_CHATFLOW2_CONFIG,
-    EXAMPLE_BODY1,
-    EXAMPLE_BODY2,
 )
 
 

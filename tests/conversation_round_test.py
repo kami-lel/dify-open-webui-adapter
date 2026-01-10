@@ -193,7 +193,20 @@ class TestPingEvent:
 class TestExhaust:
 
     def test_workflow1(_):
-        pass
+        data_dicts = WORKFLOW_DATA1[:2]
+        text_streams = convert_bytes_generator_from_lines(
+            convert_lines_from_data_dicts(data_dicts)
+        )
+
+        with pytest.raises(ValueError) as exec_info:
+            for _ in _ConversationRound(
+                _create_simulated_app(text_streams), None
+            ):
+                pass
+
+        opt = exec_info.value.args[0]
+        print(opt)
+        assert opt == ""
 
     def test_chatflow1(_):
         pass

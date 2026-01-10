@@ -28,7 +28,23 @@ def _create_simulated_app(text_streams):
 class TestWorkflow:
 
     def test1(_):
-        pass  # TODO
+        TEXT_STREAMS = """data: {"event": "message", "task_id": "cbe6", "message_id": "4085", "conversation_id": "7691", "answer": "FIRST RESPONSE MESSAGE", "created_at": 1705395332}
+data: {"event": "message", "task_id": "cbe6", "message_id": "4085", "conversation_id": "7691", "answer": "SECOND RESPONSE MESSAGE", "created_at": 1705395332}
+data: {"event": "message", "task_id": "cbe6", "message_id": "4085", "conversation_id": "7691", "answer": "THIRD RESPONSE MESSAGE", "created_at": 1705395332}
+data: {"event": "message_end", "task_id": "cbe6", "message_id": "4085", "conversation_id": "7691", "metadata": {}}"""
+
+        ANSWER = [
+            "FIRST RESPONSE MESSAGE",
+            "SECOND RESPONSE MESSAGE",
+            "THIRD RESPONSE MESSAGE",
+        ]
+
+        for opt, answer in zip(
+            _ConversationRound(_create_simulated_app(TEXT_STREAMS), None),
+            ANSWER,
+        ):
+            print(opt)
+            assert opt == answer
 
 
 class TestChatflow:
@@ -52,7 +68,7 @@ data: {"event": "workflow_finished", "task_id": "cbe6", "workflow_run_id": "4085
             print(opt)
             assert opt == answer
 
-        # TODO more tests
 
-
+# Todo more tests for different inputs
 # Bug catch errors tests
+# Bug test for setting conversation_id

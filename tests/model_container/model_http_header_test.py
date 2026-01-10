@@ -84,6 +84,6 @@ class TestStream:
         assert isinstance(opt, dict)
         assert (
             repr(opt)
-            == "{'Authorization': 'Bearer u0caCsmD', "
-            "'Content-Type': 'text/event-stream'}"
+            == "{'Authorization': 'Bearer u0caCsmD', 'Content-Type':"
+            " 'application/json', 'Accept': 'text/event-stream'}"
         )

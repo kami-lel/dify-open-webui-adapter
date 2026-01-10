@@ -29,6 +29,7 @@ rewrite `_ConversationRound` to:
 - ignore all irrelevant events
 - flat out data structure, removing intermediate class declaration
 - debug mode to directly print all text-stream in OWU
+- implement unit tests for `_ConversationRound`
 
 ### Deprecated
 ### Removed

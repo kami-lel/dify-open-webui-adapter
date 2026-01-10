@@ -164,4 +164,3 @@ class TestPingEvent:
 
 
 # Bug write tests for catch errors
-# BUG event ping

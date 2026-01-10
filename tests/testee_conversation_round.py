@@ -7,16 +7,20 @@ import json
 ENCODING = "utf-8"
 
 
-def _create_text_stream(data_list, prepends=[]):
-    opt = [line.encode(ENCODING) for line in prepends]
-    for data_line in data_list:
-        line = "data: " + json.dumps(data_line)
-        opt.append(line.encode(ENCODING))
+def convert_data_dicts_to_lines(data_dicts):
+    opt = []
+    for data in data_dicts:
+        line = "data: " + json.dumps(data)
+        opt.append(line)
+    return opt
 
+
+def convert_lines_to_bytes_generator(lines):
+    opt = [line.encoding(ENCODING) for line in lines]
     return iter(opt)
 
 
-_WORKFLOW_STREAM1 = [
+WORKFLOW_DATA1 = [
     {
         "event": "text_chunk",
         "workflow_run_id": "b790",
@@ -52,9 +56,8 @@ _WORKFLOW_STREAM1 = [
     },
 ]
 
-WORKFLOW_STREAM1 = _create_text_stream(_WORKFLOW_STREAM1)
 
-WORKFLOW_STREAM2 = _create_text_stream([
+WORKFLOW_DATA2 = [
     {
         "event": "workflow_started",
         "workflow_run_id": "b790",
@@ -78,7 +81,7 @@ WORKFLOW_STREAM2 = _create_text_stream([
         "workflow_run_id": "b790",
         "task_id": "04db",
         "data": {
-            "id": "d5b9226d-457e-4dcb-bc5c-f8203962e2c9",
+            "id": "e2c9",
             "node_id": "9657",
             "node_type": "start",
             "title": "User Input",
@@ -98,7 +101,7 @@ WORKFLOW_STREAM2 = _create_text_stream([
         "workflow_run_id": "b790",
         "task_id": "04db",
         "data": {
-            "id": "d5b9226d-457e-4dcb-bc5c-f8203962e2c9",
+            "id": "e2c9",
             "node_id": "9657",
             "node_type": "start",
             "title": "User Input",
@@ -186,10 +189,10 @@ WORKFLOW_STREAM2 = _create_text_stream([
             "files": [],
         },
     },
-])
+]
 
 
-WORKFLOW_STREAM3 = _create_text_stream([
+WORKFLOW_DATA3 = [
     {
         "event": "workflow_started",
         "workflow_run_id": "eb77",
@@ -613,10 +616,10 @@ WORKFLOW_STREAM3 = _create_text_stream([
             "files": [],
         },
     },
-])
+]
 
 
-WORKFLOW_STREAM4 = _create_text_stream([
+WORKFLOW_DATA4 = [
     {
         "event": "workflow_started",
         "workflow_run_id": "c653",
@@ -1415,7 +1418,8 @@ WORKFLOW_STREAM4 = _create_text_stream([
             "files": [],
         },
     },
-])
+]
+
 
 WORKFLOW_ANSWER4 = [
     "Once",
@@ -1477,8 +1481,7 @@ WORKFLOW_ANSWER4 = [
     ".",
 ]
 
-
-_CHATFLOW_STREAM1 = [
+CHATFLOW_DATA1 = [
     {
         "event": "message",
         "conversation_id": "c0cf",
@@ -1521,10 +1524,7 @@ _CHATFLOW_STREAM1 = [
 ]
 
 
-CHATFLOW_STREAM1 = _create_text_stream(_CHATFLOW_STREAM1)
-
-
-CHATFLOW_STREAM2 = _create_text_stream([
+CHATFLOW_DATA2 = [
     {
         "event": "workflow_started",
         "conversation_id": "c0cf",
@@ -2065,7 +2065,8 @@ CHATFLOW_STREAM2 = _create_text_stream([
             "files": [],
         },
     },
-])
+]
+
 
 CHATFLOW_ANSWER2 = [
     "Hello",
@@ -2095,7 +2096,7 @@ CHATFLOW_ANSWER2 = [
 ]
 
 
-CHATFLOW_STREAM3 = _create_text_stream([
+CHATFLOW_DATA3 = [
     {
         "event": "workflow_started",
         "conversation_id": "8b3b",
@@ -2754,7 +2755,9 @@ CHATFLOW_STREAM3 = _create_text_stream([
             "files": [],
         },
     },
-])
+]
+
+
 CHATFLOW_ANSWER3 = [
     "BST",
     " algorithm",
@@ -2782,7 +2785,3 @@ CHATFLOW_ANSWER3 = [
     " insert",
     " node",
 ]
-
-
-WORKFLOW_PING = _create_text_stream(_WORKFLOW_STREAM1, ["event: ping"])
-CHATFLOW_PING = _create_text_stream(_CHATFLOW_STREAM1, ["event: ping"])

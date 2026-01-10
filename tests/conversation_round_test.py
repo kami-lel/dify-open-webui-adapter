@@ -5,18 +5,13 @@ Unit Tests (using pytest) for: _ConversationRound
 """
 
 from .testee_conversation_round import (
-    WORKFLOW_STREAM1,
-    WORKFLOW_STREAM2,
-    WORKFLOW_STREAM3,
-    WORKFLOW_STREAM4,
+    convert_data_dicts_to_lines,
+    convert_lines_to_bytes_generator,
+    WORKFLOW_DATA1,
+    WORKFLOW_DATA2,
+    WORKFLOW_DATA3,
+    WORKFLOW_DATA4,
     WORKFLOW_ANSWER4,
-    CHATFLOW_STREAM1,
-    CHATFLOW_STREAM2,
-    CHATFLOW_ANSWER2,
-    CHATFLOW_STREAM3,
-    CHATFLOW_ANSWER3,
-    WORKFLOW_PING,
-    CHATFLOW_PING,
 )
 from dify_open_webui_adapter import _ConversationRound
 
@@ -41,7 +36,9 @@ def _create_simulated_app(text_streams):
 class TestWorkflow:
 
     def test1(_):
-        text_streams = WORKFLOW_STREAM1
+        text_streams = convert_lines_to_bytes_generator(
+            convert_lines_to_bytes_generator(WORKFLOW_DATA1)
+        )
         answer = [
             "FIRST RESPONSE MESSAGE",
             "SECOND RESPONSE MESSAGE",
@@ -56,7 +53,9 @@ class TestWorkflow:
             assert opt == answer
 
     def test2(_):
-        text_streams = WORKFLOW_STREAM2
+        text_streams = convert_lines_to_bytes_generator(
+            convert_lines_to_bytes_generator(WORKFLOW_DATA2)
+        )
         answer = ["FIRST RESPONSE MESSAGE"]
 
         for opt, answer in zip(
@@ -67,7 +66,9 @@ class TestWorkflow:
             assert opt == answer
 
     def test3(_):
-        text_streams = WORKFLOW_STREAM3
+        text_streams = convert_lines_to_bytes_generator(
+            convert_lines_to_bytes_generator(WORKFLOW_DATA3)
+        )
         answer = ["FIRST RESPONSE MESSAGE"]
 
         for opt, answer in zip(
@@ -78,7 +79,9 @@ class TestWorkflow:
             assert opt == answer
 
     def test4(_):
-        text_streams = WORKFLOW_STREAM4
+        text_streams = convert_lines_to_bytes_generator(
+            convert_lines_to_bytes_generator(WORKFLOW_DATA4)
+        )
         answer = WORKFLOW_ANSWER4
 
         for opt, answer in zip(
@@ -162,5 +165,7 @@ class TestPingEvent:
             print(opt)
             assert opt == answer
 
+
+# err handling #################################################################
 
 # BUG write tests for catch errors

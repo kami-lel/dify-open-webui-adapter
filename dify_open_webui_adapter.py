@@ -35,7 +35,7 @@ Q.v. ``https://github.com/kami-lel/dify-open-webui-adapter``
 """
 
 # adapter version
-__version__ = "2.1.2-alpha"
+__version__ = "2.1.2"
 __author__ = "kamiLeL"
 
 

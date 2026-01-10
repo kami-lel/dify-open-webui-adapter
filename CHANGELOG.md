@@ -23,6 +23,28 @@
 
 ### Added
 ### Changed
+### Deprecated
+### Removed
+### Fixed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## [2.1.2] - 2026-01-10
+
+### Changed
 
 rewrite `_ConversationRound` to:
 
@@ -31,9 +53,6 @@ rewrite `_ConversationRound` to:
 - debug mode to directly print all text-stream in OWU
 - implement unit tests for `_ConversationRound`
 
-### Deprecated
-### Removed
-### Fixed
 
 
 
@@ -172,7 +191,8 @@ rewrite `_ConversationRound` to:
 
 
 
-[unreleased]: https://github.com/kami-lel/kami-log-py/compare/v2.1.1...dev
+[unreleased]: https://github.com/kami-lel/kami-log-py/compare/v2.1.2...dev
+[2.1.2]: https://github.com/kami-lel/kami-log-py/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/kami-lel/kami-log-py/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/kami-lel/kami-log-py/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/kami-lel/kami-log-py/compare/v1.1.0...v2.0.0

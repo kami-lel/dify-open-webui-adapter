@@ -155,7 +155,7 @@ class OWUModel:
         try:
             enable_stream = bool(body["stream"])
         except KeyError as err:
-            raise ValueError() from err
+            raise ValueError("missing 'stream' in response body") from err
 
         # call DifyApp  --------------------------------------------------------
         opt = self.app.reply(newest_msg, enable_stream)
@@ -598,19 +598,20 @@ class _ConversationRound:
 
             except StopIteration as err:
                 raise ValueError(
-                    "exhaust event stream without any finishing event"
+                    "exhaust text/event-stream "
+                    "but detect no events indicating finishing"
                 ) from err
 
             except UnicodeDecodeError as err:
-                raise UnicodeDecodeError(
-                    "fail to decode text stream as {}: {}".format(
-                        self._TEXT_STREAM_ENCODING, err.args[0]
-                    )
-                ) from err
+                err.args = (
+                    "fail to decode text/event-stream: {}".format(str(err)),
+                    *(err.args[1:]),
+                )
+                raise  # re-raise
 
             except JSONDecodeError as err:
                 err.args = (
-                    "fail to parse event as JSON: {}: {}".format(
+                    "fail to parse text/event-stream as JSON: {}: {}".format(
                         err.args[0], raw
                     ),
                     *(err.args[1:]),
@@ -619,11 +620,12 @@ class _ConversationRound:
 
             except KeyError as err:
                 raise KeyError(
-                    "missing key in text stream data: {}".format(err.args[0])
+                    "missing key in text/event-stream content: {}".format(
+                        str(err)
+                    )
                 ) from err
 
         # an relevant event is found
-
         if event in _SSE.IS_END:  # end of current respond
             if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
                 self._debug_stop_on_next = True

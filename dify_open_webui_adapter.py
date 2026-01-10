@@ -508,15 +508,10 @@ class _ConversationRound:
     represent a single conversation round with Dify
     """
 
-    def __init__(self, app, newest_msg, *, iter_lines_override=None):
+    def __init__(self, app, newest_msg):
         self.app = app
-
-        if iter_lines_override is not None:  # for unit test
-            self.iter_lines = iter_lines_override
-            return
-
         self.response = self.app._open_reply_response(newest_msg, True)
-        self.iter_lines = iter(self.response.iter_lines())
+        self.iter_lines = self.response.iter_lines()
 
     def __iter__(self):
         return self  # make self an Iterator

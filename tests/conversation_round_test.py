@@ -4,11 +4,12 @@ conversation_round_test.py
 Unit Tests (using pytest) for: _ConversationRound
 """
 
-from .conversation_round_testees import (
+from .testee_conversation_round import (
     WORKFLOW_STREAM1,
     WORKFLOW_STREAM2,
     WORKFLOW_STREAM3,
     WORKFLOW_STREAM4,
+    WORKFLOW_ANSWER4,
 )
 from dify_open_webui_adapter import _ConversationRound
 
@@ -34,7 +35,7 @@ class TestWorkflow:
 
     def test1(_):
         text_streams = WORKFLOW_STREAM1
-        ANSWER = [
+        answer = [
             "FIRST RESPONSE MESSAGE",
             "SECOND RESPONSE MESSAGE",
             "THIRD RESPONSE MESSAGE",
@@ -42,40 +43,40 @@ class TestWorkflow:
 
         for opt, answer in zip(
             _ConversationRound(_create_simulated_app(text_streams), None),
-            ANSWER,
+            answer,
         ):
             print(opt)
             assert opt == answer
 
     def test2(_):
         text_streams = WORKFLOW_STREAM2
-        ANSWER = ["FIRST RESPONSE MESSAGE"]
+        answer = ["FIRST RESPONSE MESSAGE"]
 
         for opt, answer in zip(
             _ConversationRound(_create_simulated_app(text_streams), None),
-            ANSWER,
+            answer,
         ):
             print(opt)
             assert opt == answer
 
     def test3(_):
         text_streams = WORKFLOW_STREAM3
-        ANSWER = ["FIRST RESPONSE MESSAGE"]
+        answer = ["FIRST RESPONSE MESSAGE"]
 
         for opt, answer in zip(
             _ConversationRound(_create_simulated_app(text_streams), None),
-            ANSWER,
+            answer,
         ):
             print(opt)
             assert opt == answer
 
     def test4(_):
         text_streams = WORKFLOW_STREAM4
-        ANSWER = ["FIRST RESPONSE MESSAGE"]
+        answer = WORKFLOW_ANSWER4
 
         for opt, answer in zip(
             _ConversationRound(_create_simulated_app(text_streams), None),
-            ANSWER,
+            answer,
         ):
             print(opt)
             assert opt == answer
@@ -86,7 +87,7 @@ class TestChatflow:
     def test1(_):
         TEXT_STREAMS = """data: {"event": "text_chunk", "task_id": "cbe6", "workflow_run_id": "4085", "data": {"text": "FIRST RESPONSE MESSAGE"}},{"event": "text_chunk", "task_id": "cbe6", "workflow_run_id": "4085", "data": {"text": "SECOND RESPONSE MESSAGE"}},{"event": "text_chunk", "task_id": "cbe6", "workflow_run_id": "4085", "data": {"text": "THIRD RESPONSE MESSAGE"}},{"event": "workflow_finished", "task_id": "cbe6", "workflow_run_id": "4085", "data": {}}"""
 
-        ANSWER = [
+        answer = [
             "FIRST RESPONSE MESSAGE",
             "SECOND RESPONSE MESSAGE",
             "THIRD RESPONSE MESSAGE",
@@ -94,7 +95,7 @@ class TestChatflow:
 
         for opt, answer in zip(
             _ConversationRound(_create_simulated_app(TEXT_STREAMS), None),
-            ANSWER,
+            answer,
         ):
             print(opt)
             assert opt == answer

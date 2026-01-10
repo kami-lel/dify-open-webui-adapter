@@ -10,6 +10,11 @@ from .testee_conversation_round import (
     WORKFLOW_STREAM3,
     WORKFLOW_STREAM4,
     WORKFLOW_ANSWER4,
+    CHATFLOW_STREAM1,
+    CHATFLOW_STREAM2,
+    CHATFLOW_ANSWER2,
+    CHATFLOW_STREAM3,
+    CHATFLOW_ANSWER3,
 )
 from dify_open_webui_adapter import _ConversationRound
 
@@ -85,9 +90,7 @@ class TestWorkflow:
 class TestChatflow:
 
     def test1(_):
-        return  # BUG
-        TEXT_STREAMS = """data: {"event": "text_chunk", "task_id": "cbe6", "workflow_run_id": "4085", "data": {"text": "FIRST RESPONSE MESSAGE"}},{"event": "text_chunk", "task_id": "cbe6", "workflow_run_id": "4085", "data": {"text": "SECOND RESPONSE MESSAGE"}},{"event": "text_chunk", "task_id": "cbe6", "workflow_run_id": "4085", "data": {"text": "THIRD RESPONSE MESSAGE"}},{"event": "workflow_finished", "task_id": "cbe6", "workflow_run_id": "4085", "data": {}}"""
-
+        text_streams = CHATFLOW_STREAM1
         answer = [
             "FIRST RESPONSE MESSAGE",
             "SECOND RESPONSE MESSAGE",
@@ -95,13 +98,34 @@ class TestChatflow:
         ]
 
         for opt, answer in zip(
-            _ConversationRound(_create_simulated_app(TEXT_STREAMS), None),
+            _ConversationRound(_create_simulated_app(text_streams), None),
+            answer,
+        ):
+            print(opt)
+            assert opt == answer
+
+    def test2(_):
+        text_streams = CHATFLOW_STREAM2
+        answer = CHATFLOW_ANSWER2
+
+        for opt, answer in zip(
+            _ConversationRound(_create_simulated_app(text_streams), None),
+            answer,
+        ):
+            print(opt)
+            assert opt == answer
+
+    def test3(_):
+        text_streams = CHATFLOW_STREAM3
+        answer = CHATFLOW_ANSWER3
+
+        for opt, answer in zip(
+            _ConversationRound(_create_simulated_app(text_streams), None),
             answer,
         ):
             print(opt)
             assert opt == answer
 
 
-# Todo more tests for different inputs
-# Bug catch errors tests
+# Bug write tests for catch errors
 # Bug test for setting conversation_id

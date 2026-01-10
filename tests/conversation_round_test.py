@@ -4,6 +4,11 @@ conversation_round_test.py
 Unit Tests (using pytest) for: _ConversationRound
 """
 
+from conversation_round_testees import (
+    WORKFLOW_STREAM1,
+    WORKFLOW_STREAM2,
+    WORKFLOW_STREAM3,
+)
 from dify_open_webui_adapter import _ConversationRound
 
 
@@ -28,11 +33,7 @@ def _create_simulated_app(text_streams):
 class TestWorkflow:
 
     def test1(_):
-        TEXT_STREAMS = """data: {"event": "message", "task_id": "cbe6", "message_id": "4085", "conversation_id": "7691", "answer": "FIRST RESPONSE MESSAGE", "created_at": 1705395332}
-data: {"event": "message", "task_id": "cbe6", "message_id": "4085", "conversation_id": "7691", "answer": "SECOND RESPONSE MESSAGE", "created_at": 1705395332}
-data: {"event": "message", "task_id": "cbe6", "message_id": "4085", "conversation_id": "7691", "answer": "THIRD RESPONSE MESSAGE", "created_at": 1705395332}
-data: {"event": "message_end", "task_id": "cbe6", "message_id": "4085", "conversation_id": "7691", "metadata": {}}"""
-
+        text_streams = WORKFLOW_STREAM1
         ANSWER = [
             "FIRST RESPONSE MESSAGE",
             "SECOND RESPONSE MESSAGE",
@@ -40,7 +41,29 @@ data: {"event": "message_end", "task_id": "cbe6", "message_id": "4085", "convers
         ]
 
         for opt, answer in zip(
-            _ConversationRound(_create_simulated_app(TEXT_STREAMS), None),
+            _ConversationRound(_create_simulated_app(text_streams), None),
+            ANSWER,
+        ):
+            print(opt)
+            assert opt == answer
+
+    def test2(_):
+        text_streams = WORKFLOW_STREAM2
+        ANSWER = ["FIRST RESPONSE MESSAGE"]
+
+        for opt, answer in zip(
+            _ConversationRound(_create_simulated_app(text_streams), None),
+            ANSWER,
+        ):
+            print(opt)
+            assert opt == answer
+
+    def test3(_):
+        text_streams = WORKFLOW_STREAM3
+        ANSWER = ["FIRST RESPONSE MESSAGE"]
+
+        for opt, answer in zip(
+            _ConversationRound(_create_simulated_app(text_streams), None),
             ANSWER,
         ):
             print(opt)

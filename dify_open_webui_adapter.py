@@ -598,12 +598,13 @@ class _ConversationRound:
 
             except StopIteration as err:
                 raise ValueError(
-                    "exhaust event stream without any finishing event"
+                    "exhaust text/event-stream "
+                    "but detect no events indicate finishing"
                 ) from err
 
             except UnicodeDecodeError as err:
                 raise UnicodeDecodeError(
-                    "fail to decode text stream as {}: {}".format(
+                    "fail to decode text-stream as {}: {}".format(
                         self._TEXT_STREAM_ENCODING, err.args[0]
                     )
                 ) from err
@@ -623,7 +624,6 @@ class _ConversationRound:
                 ) from err
 
         # an relevant event is found
-
         if event in _SSE.IS_END:  # end of current respond
             if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
                 self._debug_stop_on_next = True

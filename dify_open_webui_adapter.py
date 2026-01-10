@@ -620,7 +620,9 @@ class _ConversationRound:
 
             except KeyError as err:
                 raise KeyError(
-                    "missing key in text stream data: {}".format(err.args[0])
+                    "missing key in text/event-stream content: {}".format(
+                        str(err)
+                    )
                 ) from err
 
         # an relevant event is found

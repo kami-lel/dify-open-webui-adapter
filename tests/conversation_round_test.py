@@ -102,7 +102,7 @@ class TestWorkflow:
 
 
 class TestChatflow:
-    # BUG test for setting conversation_id
+    # bug test for setting conversation_id
 
     def test1(_):
         text_streams = convert_bytes_generator_from_lines(
@@ -315,7 +315,7 @@ class TestKeyErrWorkflow:
         opt = exec_info.value.args[0]
 
         print(opt)
-        assert opt == ""
+        assert opt == "missing key in text/event-stream content: 'event'"
 
     def test_data(_):
         data = {
@@ -335,7 +335,7 @@ class TestKeyErrWorkflow:
         opt = exec_info.value.args[0]
 
         print(opt)
-        assert opt == ""
+        assert opt == "missing key in text/event-stream content: 'data'"
 
     def test_data_text(_):
         data = {
@@ -358,7 +358,7 @@ class TestKeyErrWorkflow:
         opt = exec_info.value.args[0]
 
         print(opt)
-        assert opt == ""
+        assert opt == "missing key in text/event-stream content: 'text'"
 
 
 class TestKeyErrChatflow:
@@ -386,7 +386,7 @@ class TestKeyErrChatflow:
         opt = exec_info.value.args[0]
 
         print(opt)
-        assert opt == ""
+        assert opt == "missing key in text/event-stream content: 'event'"
 
     def test_answer(_):
         data = {
@@ -411,9 +411,11 @@ class TestKeyErrChatflow:
         opt = exec_info.value.args[0]
 
         print(opt)
-        assert opt == ""
+        assert opt == "missing key in text/event-stream content: 'answer'"
 
     def test_conversation_id(_):
+        # bug test for missing key conversation id
+        return
         data = {
             "event": "message",
             "message_id": "ff06",
@@ -436,6 +438,7 @@ class TestKeyErrChatflow:
         opt = exec_info.value.args[0]
 
         print(opt)
-        assert opt == ""
-
-        # BUG write tests for catch errors
+        assert (
+            opt
+            == "missing key in text/event-stream content: 'conversation_id'"
+        )

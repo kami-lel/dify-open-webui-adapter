@@ -641,9 +641,6 @@ class _ConversationRound:
         return text
 
 
-# BUG for workflow: unknown event: 'iteration_started' is not a valid _StreamEvent._EventType
-
-
 # Pipe class required by OWU  ##################################################
 class Pipe:  # pylint: disable=missing-class-docstring
 

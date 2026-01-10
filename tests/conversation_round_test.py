@@ -12,6 +12,11 @@ from .testee_conversation_round import (
     WORKFLOW_DATA3,
     WORKFLOW_DATA4,
     WORKFLOW_ANSWER4,
+    CHATFLOW_DATA1,
+    CHATFLOW_DATA2,
+    CHATFLOW_ANSWER2,
+    CHATFLOW_DATA3,
+    CHATFLOW_ANSWER3,
 )
 from dify_open_webui_adapter import _ConversationRound
 
@@ -37,7 +42,7 @@ class TestWorkflow:
 
     def test1(_):
         text_streams = convert_lines_to_bytes_generator(
-            convert_lines_to_bytes_generator(WORKFLOW_DATA1)
+            convert_data_dicts_to_lines(WORKFLOW_DATA1)
         )
         answer = [
             "FIRST RESPONSE MESSAGE",
@@ -54,7 +59,7 @@ class TestWorkflow:
 
     def test2(_):
         text_streams = convert_lines_to_bytes_generator(
-            convert_lines_to_bytes_generator(WORKFLOW_DATA2)
+            convert_data_dicts_to_lines(WORKFLOW_DATA2)
         )
         answer = ["FIRST RESPONSE MESSAGE"]
 
@@ -67,7 +72,7 @@ class TestWorkflow:
 
     def test3(_):
         text_streams = convert_lines_to_bytes_generator(
-            convert_lines_to_bytes_generator(WORKFLOW_DATA3)
+            convert_data_dicts_to_lines(WORKFLOW_DATA3)
         )
         answer = ["FIRST RESPONSE MESSAGE"]
 
@@ -80,7 +85,7 @@ class TestWorkflow:
 
     def test4(_):
         text_streams = convert_lines_to_bytes_generator(
-            convert_lines_to_bytes_generator(WORKFLOW_DATA4)
+            convert_data_dicts_to_lines(WORKFLOW_DATA4)
         )
         answer = WORKFLOW_ANSWER4
 
@@ -96,7 +101,9 @@ class TestChatflow:
     # BUG test for setting conversation_id
 
     def test1(_):
-        text_streams = CHATFLOW_STREAM1
+        text_streams = convert_lines_to_bytes_generator(
+            convert_data_dicts_to_lines(CHATFLOW_DATA1)
+        )
         answer = [
             "FIRST RESPONSE MESSAGE",
             "SECOND RESPONSE MESSAGE",
@@ -111,7 +118,9 @@ class TestChatflow:
             assert opt == answer
 
     def test2(_):
-        text_streams = CHATFLOW_STREAM2
+        text_streams = convert_lines_to_bytes_generator(
+            convert_data_dicts_to_lines(CHATFLOW_DATA2)
+        )
         answer = CHATFLOW_ANSWER2
 
         for opt, answer in zip(
@@ -122,7 +131,9 @@ class TestChatflow:
             assert opt == answer
 
     def test3(_):
-        text_streams = CHATFLOW_STREAM3
+        text_streams = convert_lines_to_bytes_generator(
+            convert_data_dicts_to_lines(CHATFLOW_DATA3)
+        )
         answer = CHATFLOW_ANSWER3
 
         for opt, answer in zip(
@@ -136,7 +147,9 @@ class TestChatflow:
 class TestPingEvent:
 
     def test_workflow(_):
-        text_streams = WORKFLOW_PING
+        lines = convert_data_dicts_to_lines(WORKFLOW_DATA1)
+        lines.insert(0, "event: ping")
+        text_streams = convert_lines_to_bytes_generator(lines)
         answer = [
             "FIRST RESPONSE MESSAGE",
             "SECOND RESPONSE MESSAGE",
@@ -151,7 +164,10 @@ class TestPingEvent:
             assert opt == answer
 
     def test_chatflow(_):
-        text_streams = CHATFLOW_PING
+        lines = convert_data_dicts_to_lines(CHATFLOW_DATA1)
+        lines.insert(0, "event: ping")
+        text_streams = convert_lines_to_bytes_generator(lines)
+
         answer = [
             "FIRST RESPONSE MESSAGE",
             "SECOND RESPONSE MESSAGE",

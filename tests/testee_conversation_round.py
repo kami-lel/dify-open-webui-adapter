@@ -16,7 +16,7 @@ def convert_data_dicts_to_lines(data_dicts):
 
 
 def convert_lines_to_bytes_generator(lines):
-    opt = [line.encoding(ENCODING) for line in lines]
+    opt = [bytearray(line, ENCODING) for line in lines]
     return iter(opt)
 
 

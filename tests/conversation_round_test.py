@@ -4,6 +4,9 @@ conversation_round_test.py
 Unit Tests (using pytest) for: _ConversationRound
 """
 
+import pytest
+
+
 from .testee_conversation_round import (
     convert_data_dicts_to_lines,
     convert_lines_to_bytes_generator,
@@ -185,3 +188,54 @@ class TestPingEvent:
 # err handling #################################################################
 
 # BUG write tests for catch errors
+
+
+class TestExhaust:
+
+    def test_workflow1(_):
+        pass
+
+    def test_chatflow1(_):
+        pass
+
+
+class TestUnicode:
+
+    def test_workflow1(_):
+        pass
+
+    def test_chatflow1(_):
+        pass
+
+
+class TestJSONDecode:
+
+    def test_workflow1(_):
+        pass
+
+    def test_chatflow1(_):
+        pass
+
+
+class TestKeyErrWorkflow:
+
+    def test_event(_):
+        pass
+
+    def test_data(_):
+        pass
+
+    def test_data_text(_):
+        pass
+
+
+class TestKeyErrChatflow:
+
+    def test_event(_):
+        pass
+
+    def test_answer(_):
+        pass
+
+    def test_conversation_id(_):
+        pass

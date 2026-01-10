@@ -546,16 +546,23 @@ class _ConversationRound:
 
     _TEXT_STREAM_ENCODING = "utf-8"
     _STREAM_PREFIX = "data: "
+    # enable debug mode such it returns text-stream directly
+    _DEBUG_RETURN_STREAM = True  # HACK
 
     def __init__(self, app, newest_msg):
         self.app = app
         self.response = self.app._open_reply_response(newest_msg, True)
         self.iter_lines = self.response.iter_lines()
+        self._debug_stop_on_next = False
 
     def __iter__(self):
         return self  # make self an Iterator
 
     def __next__(self):
+        if self._debug_stop_on_next:
+            raise StopIteration
+        debug_lines = []
+
         text = None
         event = _SSE.IRRELEVANT  # default
 
@@ -622,8 +629,14 @@ class _ConversationRound:
         # an relevant event is found
 
         if event in _SSE.IS_END:  # end of current respond
+            if self._DEBUG_RETURN_STREAM:
+                return "# LAST PASS" + "\n\n".join(debug_lines)
+
             self.response.close()
             raise StopIteration
+
+        if self._DEBUG_RETURN_STREAM:
+            return "# PASS\n\n + '\n\n".join(debug_lines)
 
         # a text chunk as part of current respond
         return text

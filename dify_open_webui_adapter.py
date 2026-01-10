@@ -59,6 +59,7 @@ import requests
 OWU_USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
 STREAM_REQUEST_TIMEOUT = 300
+DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = True  # HACK
 
 # Dify constants  **************************************************************
 DIFY_USER_ROLE = "user"
@@ -547,7 +548,6 @@ class _ConversationRound:
     _TEXT_STREAM_ENCODING = "utf-8"
     _STREAM_PREFIX = "data: "
     # enable debug mode such it returns text-stream directly
-    _DEBUG_RETURN_STREAM = False
 
     def __init__(self, app, newest_msg):
         self.app = app
@@ -629,13 +629,13 @@ class _ConversationRound:
         # an relevant event is found
 
         if event in _SSE.IS_END:  # end of current respond
-            if self._DEBUG_RETURN_STREAM:
-                return "# LAST PASS" + "\n\n".join(debug_lines)
+            if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
+                return "# LAST PASS\n\n" + "\n\n".join(debug_lines)
 
             self.response.close()
             raise StopIteration
 
-        if self._DEBUG_RETURN_STREAM:
+        if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
             return "# PASS\n\n + '\n\n".join(debug_lines)
 
         # a text chunk as part of current respond

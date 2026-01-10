@@ -4,12 +4,14 @@ provide testee text-stream for ``conversation_round_test.py``
 
 import json
 
+ENCODING = "utf-8"
+
 
 def _create_text_stream(data_list, prepends=[]):
-    opt = prepends
+    opt = [line.encode(ENCODING) for line in prepends]
     for data_line in data_list:
         line = "data: " + json.dumps(data_line)
-        opt.append(line.encode("utf-8"))
+        opt.append(line.encode(ENCODING))
 
     return iter(opt)
 

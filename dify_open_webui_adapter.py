@@ -155,7 +155,7 @@ class OWUModel:
         try:
             enable_stream = bool(body["stream"])
         except KeyError as err:
-            raise ValueError() from err
+            raise ValueError("missing 'stream' in response body") from err
 
         # call DifyApp  --------------------------------------------------------
         opt = self.app.reply(newest_msg, enable_stream)

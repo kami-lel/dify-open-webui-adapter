@@ -152,11 +152,7 @@ class OWUModel:
         newest_msg = self._get_newest_user_message_from_body(body)
 
         # extract if stream is enabled
-        try:
-            enable_stream = bool(body["stream"])
-        except KeyError as err:
-            # Bug just log it, don't raise error
-            raise ValueError("missing 'stream' in response body") from err
+        enable_stream = "stream" in body and bool(body["stream"])
 
         # call DifyApp  --------------------------------------------------------
         opt = self.app.reply(newest_msg, enable_stream)

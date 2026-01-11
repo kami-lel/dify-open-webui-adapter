@@ -42,6 +42,28 @@
 
 
 
+## [2.1.3] - 2026-01-11
+
+### Fixed
+
+- instead of raising error, simply assume disable stream feature
+  when `'stream'` is missing from response body
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## [2.1.2] - 2026-01-10
 
 ### Changed

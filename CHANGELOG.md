@@ -42,6 +42,28 @@
 
 
 
+## [2.1.3] - 2026-01-11
+
+### Fixed
+
+- instead of raising error, simply assume disable stream feature
+  when `'stream'` is missing from response body
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## [2.1.2] - 2026-01-10
 
 ### Changed
@@ -191,7 +213,8 @@ rewrite `_ConversationRound` to:
 
 
 
-[unreleased]: https://github.com/kami-lel/kami-log-py/compare/v2.1.2...dev
+[unreleased]: https://github.com/kami-lel/kami-log-py/compare/v2.1.3...dev
+[2.1.3]: https://github.com/kami-lel/kami-log-py/compare/v2.1.2...v2.1.3
 [2.1.2]: https://github.com/kami-lel/kami-log-py/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/kami-lel/kami-log-py/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/kami-lel/kami-log-py/compare/v2.0.0...v2.1.0

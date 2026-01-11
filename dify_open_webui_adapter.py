@@ -155,6 +155,7 @@ class OWUModel:
         try:
             enable_stream = bool(body["stream"])
         except KeyError as err:
+            # Bug just log it, don't raise error
             raise ValueError("missing 'stream' in response body") from err
 
         # call DifyApp  --------------------------------------------------------

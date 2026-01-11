@@ -66,10 +66,9 @@ STREAM_REQUEST_TIMEOUT = 300
 DIFY_USER_ROLE = "user"
 # Todo make both configurable in CONFIG
 # in START Node of Workflow in Dify, add an Input Field named 'input'
-# Todo change to query
-DIFY_START_INPUT_FIELD_NAME = "input"
+DIFY_DEFAULT_INPUT_FIELD_QUERY_KEY = "query"
 # in END Node of Workflow in Dify, add a Output Variable named 'output'
-DIFY_OUTPUT_VARIABLE_NAME = "output"
+DIFY_DEFAULT_OUTPUT_VARIABLE_KEY = "output"
 
 
 # helper Enum  =================================================================
@@ -399,6 +398,8 @@ class BaseDifyApp:
                 "fail Dify request: {}".format(err.args[0])
             ) from err
 
+        # Bug: test what happens if mismatched query key
+
     def __repr__(self):
         return "{}({})".format(type(self).__name__, self.name)
 
@@ -421,9 +422,12 @@ class WorkflowDifyApp(BaseDifyApp):
         response = response_object.json()
 
         try:
-            return response["data"]["outputs"][DIFY_OUTPUT_VARIABLE_NAME]
+            return response["data"]["outputs"][
+                DIFY_DEFAULT_OUTPUT_VARIABLE_KEY
+            ]
 
         except KeyError as err:
+            # Bug test what happens with mismatched key
             raise KeyError(
                 "fail to parse Dify response, missing key: {}".format(
                     err.args[0]
@@ -441,7 +445,7 @@ class WorkflowDifyApp(BaseDifyApp):
 
     def _create_post_request_payload(self, newest_msg, enable_stream=False):
         payload_dict = {
-            "inputs": {DIFY_START_INPUT_FIELD_NAME: newest_msg},
+            "inputs": {DIFY_DEFAULT_INPUT_FIELD_QUERY_KEY: newest_msg},
             "response_mode": "streaming" if enable_stream else "blocking",
             "user": DIFY_USER_ROLE,
         }

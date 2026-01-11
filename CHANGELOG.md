@@ -23,6 +23,10 @@
 
 ### Added
 ### Changed
+
+- use `'query'` (instead of  `'input'`)
+  as the default key of main input field for Workflow
+
 ### Deprecated
 ### Removed
 ### Fixed

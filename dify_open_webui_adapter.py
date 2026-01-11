@@ -427,6 +427,7 @@ class WorkflowDifyApp(BaseDifyApp):
             ]
 
         except KeyError as err:
+            # Bug test what happens with mismatched key
             raise KeyError(
                 "fail to parse Dify response, missing key: {}".format(
                     err.args[0]

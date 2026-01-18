@@ -102,7 +102,7 @@ class TestWorkflow:
 
 
 class TestChatflow:
-    # bug test for setting conversation_id
+    # Bug test for setting conversation_id
 
     def test1(_):
         text_streams = convert_bytes_generator_from_lines(
@@ -414,7 +414,7 @@ class TestKeyErrChatflow:
         assert opt == "missing key in text/event-stream content: 'answer'"
 
     def test_conversation_id(_):
-        # bug test for missing key conversation id
+        # Bug test for missing key conversation id
         return
         data = {
             "event": "message",

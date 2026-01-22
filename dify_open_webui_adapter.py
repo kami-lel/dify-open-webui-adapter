@@ -36,6 +36,7 @@ STREAM_REQUEST_TIMEOUT = 300
 
 # Dify constants  **************************************************************
 DIFY_USER_ROLE = "user"
+# TODO allow add. input
 # TODO make both configurable in CONFIG
 # in START Node of Workflow in Dify, add an Input Field named 'input'
 DIFY_DEFAULT_INPUT_FIELD_QUERY_KEY = "query"

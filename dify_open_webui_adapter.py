@@ -42,7 +42,7 @@ __author__ = "kamiLeL"
 # config  ######################################################################
 DIFY_BACKEND_API_BASE_URL = "https://api.dify.ai/v1"
 
-# Todo: allow additional_inputs: {}
+# TODO: allow additional_inputs: {}
 APP_MODEL_CONFIGS = []
 
 DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
@@ -64,7 +64,7 @@ STREAM_REQUEST_TIMEOUT = 300
 
 # Dify constants  **************************************************************
 DIFY_USER_ROLE = "user"
-# Todo make both configurable in CONFIG
+# TODO make both configurable in CONFIG
 # in START Node of Workflow in Dify, add an Input Field named 'input'
 DIFY_DEFAULT_INPUT_FIELD_QUERY_KEY = "query"
 # in END Node of Workflow in Dify, add a Output Variable named 'output'

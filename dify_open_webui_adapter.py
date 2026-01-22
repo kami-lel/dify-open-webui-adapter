@@ -39,7 +39,7 @@ STREAM_REQUEST_TIMEOUT = 300
 # Dify constants  **************************************************************
 DIFY_USER_ROLE = "user"
 DEFAULT_QUERY_INPUT_FIELD_IDENTIFIER = "query"
-DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER = "response"
+DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER = "answer"
 
 
 # helper Enum  =================================================================
@@ -347,12 +347,12 @@ class BaseDifyApp:
         :raises ConnectionError:
         """
         try:
+            data = self._create_post_request_payload(newest_msg, enable_stream)
+            headers = self.http_header(enable_stream)
             response_obj = requests.post(
                 self.endpoint_url,
-                headers=self.http_header(enable_stream),
-                data=self._create_post_request_payload(
-                    newest_msg, enable_stream
-                ),
+                headers=headers,
+                data=data,
                 stream=enable_stream,
                 timeout=(
                     STREAM_REQUEST_TIMEOUT
@@ -366,7 +366,7 @@ class BaseDifyApp:
         # handle network errors
         except requests.exceptions.RequestException as err:
             raise ConnectionError(
-                "fail Dify request: {}".format(err.args[0])
+                "fail request to Dify: {}\n{}".format(err.args[0], data)
             ) from err
 
         # Bug: test what happens if mismatched query key

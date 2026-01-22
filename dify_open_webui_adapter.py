@@ -454,7 +454,7 @@ class ChatflowDifyApp(BaseDifyApp):
 
     def __init__(self, model):
         super().__init__(model)
-        # Bug conversation id is not updated for chat window
+        # BUG conversation id is not updated for chat window
         self.conversation_id = ""  # empty until 1st response
 
     @property

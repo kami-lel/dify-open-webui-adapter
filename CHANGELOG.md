@@ -2,8 +2,6 @@
 
 [^format]
 
-<!-- todo support file uploads -->
-
 
 
 

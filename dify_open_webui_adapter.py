@@ -489,6 +489,7 @@ class ChatflowDifyApp(BaseDifyApp):
                 empty if a new conversation is required
         :rtype: str
         """
+        # BUG buggy
         if self.current_chat_id not in self.chat2conversation_ids:
             # waiting to be set
             self.chat2conversation_ids[self.current_chat_id] = ""

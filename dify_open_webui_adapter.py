@@ -131,11 +131,9 @@ class OWUModel:
         newest_msg = self._get_newest_user_message_from_body(body)
         # extract if stream is enabled
         enable_stream = "stream" in body and bool(body["stream"])
-        # extract chat_id (for Chatflow)
-        # TODO how to deal w/ chat id
-        chat_id = metadata.get("chat_id", "")
 
         # call DifyApp  --------------------------------------------------------
+        self.app.update(user, metadata)
         opt = self.app.reply(newest_msg, enable_stream)
 
         return opt
@@ -304,6 +302,19 @@ class BaseDifyApp:
     def name(self):  # pylint: disable=missing-function-docstring
         return self.model.name
 
+    def update(self, user, metadata):
+        """
+        parse ``__user__`` and ``__metadata__``
+        and extract/update relevant information from them
+
+
+        :param user:
+        :type user: dict
+        :param metadata:
+        :type metadata: dict
+        """
+        return  # no op
+
     def reply(self, newest_msg, enable_stream):
         """
         handle Dify side of processing per-round response of conversation,
@@ -460,14 +471,14 @@ class ChatflowDifyApp(BaseDifyApp):
     representing a Chatflow App in Dify
     """
 
-    def __init__(self, model):
-        super().__init__(model)
-        # BUG conversation id is not updated for chat window
-        self.conversation_id = ""  # empty until 1st response
-
     @property
     def endpoint_url(self):
         return "{}/chat-messages".format(self.base_url)
+
+    def update(self, user, metadata):
+        super().update(user, metadata)
+        # TODO
+        chat_id = metadata.get("chat_id", "")
 
     def _reply_blocking(self, newest_msg):
         """
@@ -478,8 +489,9 @@ class ChatflowDifyApp(BaseDifyApp):
         response = response_object.json()
 
         try:
-            if not self.conversation_id:  # 1st round of this conversation
-                self.conversation_id = response["conversation_id"]
+            # HACK rm
+            # if not self.conversation_id:  # 1st round of this conversation
+            #     self.conversation_id = response["conversation_id"]
 
             return response["answer"]
 

@@ -687,7 +687,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
             for model in self.model_containers.values()
         ]
 
-    def pipe(self, body, __user__):
+    async def pipe(self, body, __user__):
         """
         main pipe logic per round
 

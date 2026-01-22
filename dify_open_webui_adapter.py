@@ -31,7 +31,6 @@ from pydantic import BaseModel
 import requests
 
 # constants  ===================================================================
-DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
 OWU_USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
 STREAM_REQUEST_TIMEOUT = 300
@@ -40,6 +39,10 @@ STREAM_REQUEST_TIMEOUT = 300
 DIFY_USER_ROLE = "user"
 DEFAULT_QUERY_INPUT_FIELD_IDENTIFIER = "query"
 DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER = "answer"
+
+# debug flags  *****************************************************************
+DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
+DEBUG_PIPE_DIRECT_RESPONSE = False
 
 
 # helper Enum  =================================================================
@@ -124,13 +127,13 @@ class OWUModel:
         :rtype: str
         """
 
-        # TODO extract chat_id in metadata & utilize it
-
         # extract info from OWU's body  ----------------------------------------
         newest_msg = self._get_newest_user_message_from_body(body)
-
         # extract if stream is enabled
         enable_stream = "stream" in body and bool(body["stream"])
+        # extract chat_id (for Chatflow)
+        # TODO how to deal w/ chat id
+        chat_id = metadata.get("chat_id", "")
 
         # call DifyApp  --------------------------------------------------------
         opt = self.app.reply(newest_msg, enable_stream)
@@ -705,6 +708,20 @@ class Pipe:  # pylint: disable=missing-class-docstring
         :return: replied message by the model
         :rtype: str
         """
+        if DEBUG_PIPE_DIRECT_RESPONSE:
+            return """## `body`
+
+{}
+
+## `__user__`
+
+{}
+
+## `__metadata__`
+
+{}
+""".format(body, __user__, __metadata__)
+
         if "model" not in body:
             raise IndexError("missing entry 'model' in body")
 

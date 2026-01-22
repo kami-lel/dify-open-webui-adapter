@@ -24,8 +24,11 @@
 ### Added
 ### Changed
 
-- use `'query'` (instead of  `'input'`)
-  as the default key of main input field for Workflow
+- allow configurable input field / output variable for Workflow Dify App
+
+  - use `"query"` (instead of  `"input"`)
+  - use `"reply"` (instead of  `"output"`)
+  - allow *additional input fields*
 
 ### Deprecated
 ### Removed
@@ -51,7 +54,7 @@
 ### Fixed
 
 - instead of raising error, simply assume disable stream feature
-  when `'stream'` is missing from response body
+  when `"stream"` is missing from response body
 
 
 

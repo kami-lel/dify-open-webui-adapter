@@ -49,3 +49,6 @@ class Test:
         assert app.base_url == EXAMPLE_BASE_URL
         assert app.model_id == "example-chatflow-model"
         assert app.http_header(True) == model.http_header(True)
+
+
+# Bug more tests for more input fields functions?

@@ -36,12 +36,8 @@ STREAM_REQUEST_TIMEOUT = 300
 
 # Dify constants  **************************************************************
 DIFY_USER_ROLE = "user"
-# TODO allow add. input
-# TODO make both configurable in CONFIG
-# in START Node of Workflow in Dify, add an Input Field named 'input'
-DIFY_DEFAULT_INPUT_FIELD_QUERY_KEY = "query"
-# in END Node of Workflow in Dify, add a Output Variable named 'output'
-DIFY_DEFAULT_OUTPUT_VARIABLE_KEY = "output"
+DEFAULT_QUERY_INPUT_FIELD_IDENTIFIER = "query"
+DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER = "response"
 
 
 # helper Enum  =================================================================
@@ -96,7 +92,7 @@ class OWUModel:
 
         # create app
         if app_type == DifyAppType.WORKFLOW:
-            self.app = WorkflowDifyApp(self)
+            self.app = WorkflowDifyApp(self, app_model_config)
         else:
             self.app = ChatflowDifyApp(self)
 
@@ -382,6 +378,22 @@ class WorkflowDifyApp(BaseDifyApp):
     representing a Workflow App in Dify
     """
 
+    # TODO allow add. input
+    # TODO make both configurable in CONFIG
+
+    def __init__(self, model, config):
+        super().__init__(model)
+        # read from config  ----------------------------------------------------
+        self.query_identifier = config.get(
+            "query_input_field_identifier",
+            DEFAULT_QUERY_INPUT_FIELD_IDENTIFIER,
+        )
+        self.reply_identifier = config.get(
+            "reply_output_variable_identifier",
+            DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER,
+        )
+        # read additional configs
+
     @property
     def endpoint_url(self):
         return "{}/workflows/run".format(self.base_url)
@@ -395,9 +407,7 @@ class WorkflowDifyApp(BaseDifyApp):
         response = response_object.json()
 
         try:
-            return response["data"]["outputs"][
-                DIFY_DEFAULT_OUTPUT_VARIABLE_KEY
-            ]
+            return response["data"]["outputs"][self.reply_identifier]
 
         except KeyError as err:
             # Bug test what happens with mismatched key
@@ -418,7 +428,7 @@ class WorkflowDifyApp(BaseDifyApp):
 
     def _create_post_request_payload(self, newest_msg, enable_stream=False):
         payload_dict = {
-            "inputs": {DIFY_DEFAULT_INPUT_FIELD_QUERY_KEY: newest_msg},
+            "inputs": {self.query_identifier: newest_msg},
             "response_mode": "streaming" if enable_stream else "blocking",
             "user": DIFY_USER_ROLE,
         }

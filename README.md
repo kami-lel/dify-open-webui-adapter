@@ -19,3 +19,5 @@ Integrate **Open WebUI** and **Dify** by exposing a Dify App
 ## configurations
 
 <!-- TODO -->
+
+<!-- TODO: allow additional_inputs -->

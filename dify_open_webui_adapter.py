@@ -42,10 +42,7 @@ __author__ = "kamiLeL"
 # config  ######################################################################
 DIFY_BACKEND_API_BASE_URL = "https://api.dify.ai/v1"
 
-# TODO: allow additional_inputs: {}
 APP_MODEL_CONFIGS = []
-
-DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
 
 # end of config  ###############################################################
 
@@ -58,6 +55,7 @@ from pydantic import BaseModel
 import requests
 
 # constants  ===================================================================
+DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
 OWU_USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
 STREAM_REQUEST_TIMEOUT = 300

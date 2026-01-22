@@ -378,9 +378,6 @@ class WorkflowDifyApp(BaseDifyApp):
     representing a Workflow App in Dify
     """
 
-    # TODO allow add. input
-    # TODO make both configurable in CONFIG
-
     def __init__(self, model, config):
         super().__init__(model)
         # read from config  ----------------------------------------------------
@@ -392,7 +389,19 @@ class WorkflowDifyApp(BaseDifyApp):
             "reply_output_variable_identifier",
             DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER,
         )
-        # read additional configs
+        # read additional input fields
+        self.input_fields = {
+            k: v
+            for k, v in config.items()
+            if k
+            not in (
+                "key",
+                "model_id",
+                "name",
+                "query_input_field_identifier",
+                "reply_output_variable_identifier",
+            )
+        }
 
     @property
     def endpoint_url(self):
@@ -428,7 +437,7 @@ class WorkflowDifyApp(BaseDifyApp):
 
     def _create_post_request_payload(self, newest_msg, enable_stream=False):
         payload_dict = {
-            "inputs": {self.query_identifier: newest_msg},
+            "inputs": {self.query_identifier: newest_msg, **self.input_fields},
             "response_mode": "streaming" if enable_stream else "blocking",
             "user": DIFY_USER_ROLE,
         }

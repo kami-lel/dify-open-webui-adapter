@@ -51,4 +51,4 @@ class Test:
         assert app.http_header(True) == model.http_header(True)
 
 
-# BUG more tests
+# Bug more tests for more input fields functions?

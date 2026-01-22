@@ -369,7 +369,7 @@ class BaseDifyApp:
                 "fail Dify request: {}".format(err.args[0])
             ) from err
 
-        # Bug: test what happens if mismatched query key
+        # BUG: test what happens if mismatched query key
 
     def __repr__(self):
         return "{}({})".format(type(self).__name__, self.name)
@@ -421,7 +421,7 @@ class WorkflowDifyApp(BaseDifyApp):
             return response["data"]["outputs"][self.reply_identifier]
 
         except KeyError as err:
-            # Bug test what happens with mismatched key
+            # BUG test what happens with mismatched key
             raise KeyError(
                 "fail to parse Dify response, missing key: {}".format(
                     err.args[0]

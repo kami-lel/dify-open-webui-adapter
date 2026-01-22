@@ -23,6 +23,7 @@ APP_MODEL_CONFIGS = []
 # end of config  ###############################################################
 
 # pylint: disable=wrong-import-position
+import uuid
 from enum import Enum, Flag, auto
 import json
 from json import JSONDecodeError
@@ -474,14 +475,35 @@ class ChatflowDifyApp(BaseDifyApp):
     def __init__(self, model):
         super().__init__(model)
         self.current_chat_id = ""
+        self.chat2conversation_ids = {}
 
     @property
     def endpoint_url(self):
         return "{}/chat-messages".format(self.base_url)
 
+    @property
+    def conversation_id(self):
+        """
+        :return: correct Dify ``conversation_id``
+                (depends on OWU ``chat_id``);
+                empty if a new conversation is required
+        :rtype: str
+        """
+        if self.current_chat_id not in self.chat2conversation_ids:
+            # waiting to be set
+            self.chat2conversation_ids[self.current_chat_id] = ""
+
+        return self.chat2conversation_ids[self.current_chat_id]
+
+    @conversation_id.setter
+    def conversation_id(self, value):
+        self.chat2conversation_ids[self.current_chat_id] = value
+
     def update(self, user, metadata):
         super().update(user, metadata)
-        self.current_chat_id = metadata.get("chat_id", "")
+        # get chat_id from metadata
+        # use a random chat_id if it is not provided by OWU
+        self.current_chat_id = metadata.get("chat_id", uuid.uuid4().hex)
 
     def _reply_blocking(self, newest_msg):
         """
@@ -492,6 +514,9 @@ class ChatflowDifyApp(BaseDifyApp):
         response = response_object.json()
 
         try:
+            if not self.conversation_id:  # 1st round of this conversation
+                self.conversation_id = response["conversation_id"]
+
             return response["answer"]
 
         except KeyError as err:

@@ -471,14 +471,17 @@ class ChatflowDifyApp(BaseDifyApp):
     representing a Chatflow App in Dify
     """
 
+    def __init__(self, model):
+        super().__init__(model)
+        self.current_chat_id = ""
+
     @property
     def endpoint_url(self):
         return "{}/chat-messages".format(self.base_url)
 
     def update(self, user, metadata):
         super().update(user, metadata)
-        # TODO
-        chat_id = metadata.get("chat_id", "")
+        self.current_chat_id = metadata.get("chat_id", "")
 
     def _reply_blocking(self, newest_msg):
         """
@@ -489,10 +492,6 @@ class ChatflowDifyApp(BaseDifyApp):
         response = response_object.json()
 
         try:
-            # HACK rm
-            # if not self.conversation_id:  # 1st round of this conversation
-            #     self.conversation_id = response["conversation_id"]
-
             return response["answer"]
 
         except KeyError as err:
@@ -516,7 +515,7 @@ class ChatflowDifyApp(BaseDifyApp):
             "query": newest_msg,
             "response_mode": "streaming" if enable_stream else "blocking",
             "user": DIFY_USER_ROLE,
-            "conversation_id": self.conversation_id,
+            "conversation_id": self.current_chat_id,
             "auto_generate_name": False,
             "inputs": {},
         }

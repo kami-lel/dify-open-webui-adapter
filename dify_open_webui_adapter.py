@@ -106,7 +106,7 @@ class OWUModel:
         """
         return {"id": self.model_id, "name": self.name}
 
-    def reply(self, body, user):
+    def reply(self, body, user, metadata):
         """
         handle OWU side of processing per-round response of conversation
 
@@ -114,12 +114,17 @@ class OWUModel:
         :param body: `body` given by OWU Pipe.pipes(body, __user__)
         :type body: dict
         :param user: `__user__` given by Pipe.pipes(body, __user__)
+        :type user: dict
+        :param metadata: `__metadata__` given by Pipe.pipes(body, __user__)
+        :type metadata: dict
         :raises ConnectionError:
         :raises ValueError:
         :raises KeyError:
         :return: the response
         :rtype: str
         """
+
+        # TODO extract chat_id in metadata & utilize it
 
         # extract info from OWU's body  ----------------------------------------
         newest_msg = self._get_newest_user_message_from_body(body)
@@ -687,7 +692,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
             for model in self.model_containers.values()
         ]
 
-    async def pipe(self, body, __user__):
+    async def pipe(self, body, __user__, __metadata__):
         """
         main pipe logic per round
 
@@ -705,7 +710,9 @@ class Pipe:  # pylint: disable=missing-class-docstring
 
         # extract model_id from body
         model_id = body["model"][body["model"].find(".") + 1 :]
-        opt = self.model_containers[model_id].reply(body, __user__)
+        opt = self.model_containers[model_id].reply(
+            body, __user__, __metadata__
+        )
 
         return opt
 

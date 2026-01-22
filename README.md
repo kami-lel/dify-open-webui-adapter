@@ -45,6 +45,10 @@ A `list` of model/app config; each config is a `dict` that defines a connected m
 - `"name"`: **model name** as appeared in Open WebUI;
   if empty/absent, will fetch app name from Dify to use
 
+- `"allows_streaming": True/False`: whether allows **streaming** for this connection; streaming may not be available even this is set to `True`; defaults to `True`.
+
+<!-- Todo implement allows streaming -->
+
 Fields for *Workflow* dify app, (ignored for *Chatflow* dify app):
 
 - `"query_input_field_identifier"`: name of **main input field** set in the *Start* node;

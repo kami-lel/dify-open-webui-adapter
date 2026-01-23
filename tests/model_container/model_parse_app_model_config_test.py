@@ -180,7 +180,7 @@ class TestName:  #  ============================================================
 
 
 class TestStream:  #  ==========================================================
-    CONFIG_KEY = "allows_streaming"
+    CONFIG_KEY = "disallows_streaming"
 
     def test_absent(self):  # no name entry present
         config = EXAMPLE_CHATFLOW_CONFIG.copy()
@@ -207,7 +207,7 @@ class TestStream:  #  ==========================================================
 
         assert opt == (
             "entry in APP_MODEL_CONFIGS, "
-            + "value of 'allows_streaming' must be bool: 123"
+            + "value of 'disallows_streaming' must be bool: 123"
         )
 
 

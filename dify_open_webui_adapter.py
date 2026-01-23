@@ -35,6 +35,13 @@ DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
 OWU_USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
 STREAM_REQUEST_TIMEOUT = 300
+DEFINED_APP_MODEL_CONFIG_KEYS = (
+    "key",
+    "model_id",
+    "name",
+    "query_input_field_identifier",
+    "reply_output_variable_identifier",
+)
 
 # Dify constants  **************************************************************
 DIFY_USER_ROLE = "user"
@@ -393,14 +400,7 @@ class WorkflowDifyApp(BaseDifyApp):
         self.input_fields = {
             k: v
             for k, v in config.items()
-            if k
-            not in (
-                "key",
-                "model_id",
-                "name",
-                "query_input_field_identifier",
-                "reply_output_variable_identifier",
-            )
+            if k not in DEFINED_APP_MODEL_CONFIG_KEYS
         }
 
     @property

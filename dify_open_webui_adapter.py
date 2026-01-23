@@ -23,6 +23,7 @@ APP_MODEL_CONFIGS = []
 # end of config  ###############################################################
 
 # pylint: disable=wrong-import-position
+import uuid
 from enum import Enum, Flag, auto
 import json
 from json import JSONDecodeError
@@ -31,7 +32,6 @@ from pydantic import BaseModel
 import requests
 
 # constants  ===================================================================
-DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
 OWU_USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
 STREAM_REQUEST_TIMEOUT = 300
@@ -39,7 +39,11 @@ STREAM_REQUEST_TIMEOUT = 300
 # Dify constants  **************************************************************
 DIFY_USER_ROLE = "user"
 DEFAULT_QUERY_INPUT_FIELD_IDENTIFIER = "query"
-DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER = "response"
+DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER = "answer"
+
+# debug flags  *****************************************************************
+DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
+DEBUG_PIPE_DIRECT_RESPONSE = False
 
 
 # helper Enum  =================================================================
@@ -106,7 +110,7 @@ class OWUModel:
         """
         return {"id": self.model_id, "name": self.name}
 
-    def reply(self, body, user):
+    def reply(self, body, user, metadata):
         """
         handle OWU side of processing per-round response of conversation
 
@@ -114,6 +118,9 @@ class OWUModel:
         :param body: `body` given by OWU Pipe.pipes(body, __user__)
         :type body: dict
         :param user: `__user__` given by Pipe.pipes(body, __user__)
+        :type user: dict
+        :param metadata: `__metadata__` given by Pipe.pipes(body, __user__)
+        :type metadata: dict
         :raises ConnectionError:
         :raises ValueError:
         :raises KeyError:
@@ -123,11 +130,11 @@ class OWUModel:
 
         # extract info from OWU's body  ----------------------------------------
         newest_msg = self._get_newest_user_message_from_body(body)
-
         # extract if stream is enabled
         enable_stream = "stream" in body and bool(body["stream"])
 
         # call DifyApp  --------------------------------------------------------
+        self.app.update(user, metadata)
         opt = self.app.reply(newest_msg, enable_stream)
 
         return opt
@@ -296,6 +303,19 @@ class BaseDifyApp:
     def name(self):  # pylint: disable=missing-function-docstring
         return self.model.name
 
+    def update(self, user, metadata):
+        """
+        parse ``__user__`` and ``__metadata__``
+        and extract/update relevant information from them
+
+
+        :param user:
+        :type user: dict
+        :param metadata:
+        :type metadata: dict
+        """
+        return  # no op
+
     def reply(self, newest_msg, enable_stream):
         """
         handle Dify side of processing per-round response of conversation,
@@ -347,12 +367,12 @@ class BaseDifyApp:
         :raises ConnectionError:
         """
         try:
+            data = self._create_post_request_payload(newest_msg, enable_stream)
+            headers = self.http_header(enable_stream)
             response_obj = requests.post(
                 self.endpoint_url,
-                headers=self.http_header(enable_stream),
-                data=self._create_post_request_payload(
-                    newest_msg, enable_stream
-                ),
+                headers=headers,
+                data=data,
                 stream=enable_stream,
                 timeout=(
                     STREAM_REQUEST_TIMEOUT
@@ -366,7 +386,7 @@ class BaseDifyApp:
         # handle network errors
         except requests.exceptions.RequestException as err:
             raise ConnectionError(
-                "fail Dify request: {}".format(err.args[0])
+                "fail request to Dify: {}\n{}".format(err.args[0], data)
             ) from err
 
         # Bug: test what happens if mismatched query key
@@ -454,12 +474,36 @@ class ChatflowDifyApp(BaseDifyApp):
 
     def __init__(self, model):
         super().__init__(model)
-        # Bug conversation id is not updated for chat window
-        self.conversation_id = ""  # empty until 1st response
+        self.current_chat_id = ""
+        self.chat2conversation_ids = {}
 
     @property
     def endpoint_url(self):
         return "{}/chat-messages".format(self.base_url)
+
+    @property
+    def conversation_id(self):
+        """
+        :return: correct Dify ``conversation_id``
+                (depends on OWU ``chat_id``);
+                empty if a new conversation is required
+        :rtype: str
+        """
+        if self.current_chat_id not in self.chat2conversation_ids:
+            # waiting to be set
+            self.chat2conversation_ids[self.current_chat_id] = ""
+
+        return self.chat2conversation_ids[self.current_chat_id]
+
+    @conversation_id.setter
+    def conversation_id(self, value):
+        self.chat2conversation_ids[self.current_chat_id] = value
+
+    def update(self, user, metadata):
+        super().update(user, metadata)
+        # get chat_id from metadata
+        # use a random chat_id if it is not provided by OWU
+        self.current_chat_id = metadata.get("chat_id", uuid.uuid4().hex)
 
     def _reply_blocking(self, newest_msg):
         """
@@ -687,7 +731,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
             for model in self.model_containers.values()
         ]
 
-    def pipe(self, body, __user__):
+    async def pipe(self, body, __user__, __metadata__):
         """
         main pipe logic per round
 
@@ -700,12 +744,28 @@ class Pipe:  # pylint: disable=missing-class-docstring
         :return: replied message by the model
         :rtype: str
         """
+        if DEBUG_PIPE_DIRECT_RESPONSE:
+            return """## `body`
+
+{}
+
+## `__user__`
+
+{}
+
+## `__metadata__`
+
+{}
+""".format(body, __user__, __metadata__)
+
         if "model" not in body:
             raise IndexError("missing entry 'model' in body")
 
         # extract model_id from body
         model_id = body["model"][body["model"].find(".") + 1 :]
-        opt = self.model_containers[model_id].reply(body, __user__)
+        opt = self.model_containers[model_id].reply(
+            body, __user__, __metadata__
+        )
 
         return opt
 

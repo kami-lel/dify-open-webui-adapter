@@ -55,7 +55,7 @@ Fields for *Workflow* dify app, (ignored for *Chatflow* dify app):
   default to use `"query"`
 
 - `"reply_output_variable_identifier"`: name of **main output variable** set in the *End* node;
-  default to use `"response"`
+  default to use `"answer"`
 
 - additional static *input fields* pass-through: key-value entries that will be passed to *input fields* of Dify App's *Start* node. This is useful to set up settings for the Dify App.
 
@@ -78,7 +78,7 @@ APP_MODEL_CONFIGS = [
         "model_id": "my-workflow-model-1",
         "name": "",  # fetch directly from Dify
         "query_input_field_identifier": "request",
-        "reply_output_variable_identifier": "reply",
+        "reply_output_variable_identifier": "response",
         # additional static input fields pass-through
         "model_temperature": "0.5",
         "max_token": "2048",

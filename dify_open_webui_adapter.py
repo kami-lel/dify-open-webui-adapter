@@ -32,6 +32,7 @@ from pydantic import BaseModel
 import requests
 
 # constants  ===================================================================
+# todo read user role from metadata
 OWU_USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
 STREAM_REQUEST_TIMEOUT = 300

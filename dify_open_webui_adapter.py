@@ -11,7 +11,7 @@ Q.v. ``https://github.com/kami-lel/dify-open-webui-adapter``
 # todo support file uploads
 
 # adapter version
-__version__ = "2.1.4-alpha"
+__version__ = "2.2.0"
 __author__ = "kamiLeL"
 
 

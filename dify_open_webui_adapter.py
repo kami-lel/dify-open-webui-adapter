@@ -8,7 +8,7 @@ Supported Dify Version:         1.11.2
 Q.v. ``https://github.com/kami-lel/dify-open-webui-adapter``
 """
 
-# Todo support file uploads
+# todo support file uploads
 
 # adapter version
 __version__ = "2.1.4-alpha"

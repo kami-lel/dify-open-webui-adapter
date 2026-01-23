@@ -5,37 +5,13 @@ Integrate Open WebUI and Dify by exposing a Dify App
 Supported Open WebUI Version:   v0.7.1
 Supported Dify Version:         1.11.2
 
-User must configure these 2 constant in Python script before use:
-
-``DIFY_BACKEND_API_BASE_URL``: base URL to access Dify Backend Service API
-
-``APP_MODEL_CONFIGS``: a ``list`` of model/app config (each as ``dict``)
-
-example for a single model/app::
-
-    {
-        "key": "...",             # Backend Service API secret key of Dify App
-        "model_id": "model_id1",  # model id as used in Open WebUI
-        "name": "First Model",    # model Name as appeared in Open WebUI
-    }
-
-example for ``APP_MODEL_CONFIGS``::
-
-    APP_MODEL_CONFIGS = [
-        {
-            "key": "...",
-            "model_id": "model_id1",
-        },
-        {
-            ~  # config for 2nd app/model
-        },
-    ]
-
 Q.v. ``https://github.com/kami-lel/dify-open-webui-adapter``
 """
 
+# todo support file uploads
+
 # adapter version
-__version__ = "2.1.3"
+__version__ = "2.2.0"
 __author__ = "kamiLeL"
 
 
@@ -44,11 +20,10 @@ DIFY_BACKEND_API_BASE_URL = "https://api.dify.ai/v1"
 
 APP_MODEL_CONFIGS = []
 
-DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
-
 # end of config  ###############################################################
 
 # pylint: disable=wrong-import-position
+import uuid
 from enum import Enum, Flag, auto
 import json
 from json import JSONDecodeError
@@ -60,13 +35,23 @@ import requests
 OWU_USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
 STREAM_REQUEST_TIMEOUT = 300
+DEFINED_APP_MODEL_CONFIG_KEYS = (
+    "key",
+    "model_id",
+    "name",
+    "query_input_field_identifier",
+    "reply_output_variable_identifier",
+    "disallows_streaming",
+)
 
 # Dify constants  **************************************************************
 DIFY_USER_ROLE = "user"
-# in START Node of Workflow in Dify, add an Input Field named 'input'
-DIFY_START_INPUT_FIELD_NAME = "input"
-# in END Node of Workflow in Dify, add a Output Variable named 'output'
-DIFY_OUTPUT_VARIABLE_NAME = "output"
+DEFAULT_QUERY_INPUT_FIELD_IDENTIFIER = "query"
+DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER = "answer"
+
+# debug flags  *****************************************************************
+DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
+DEBUG_PIPE_DIRECT_RESPONSE = False
 
 
 # helper Enum  =================================================================
@@ -106,7 +91,7 @@ class OWUModel:
     ):
         self.base_url = base_url
 
-        self.key, self.model_id, provided_name = (
+        self.key, self.model_id, provided_name, self.disallows_streaming = (
             self._parse_app_model_config_arg(app_model_config)
         )
 
@@ -121,7 +106,7 @@ class OWUModel:
 
         # create app
         if app_type == DifyAppType.WORKFLOW:
-            self.app = WorkflowDifyApp(self)
+            self.app = WorkflowDifyApp(self, app_model_config)
         else:
             self.app = ChatflowDifyApp(self)
 
@@ -133,7 +118,7 @@ class OWUModel:
         """
         return {"id": self.model_id, "name": self.name}
 
-    def reply(self, body, user):
+    def reply(self, body, user, metadata):
         """
         handle OWU side of processing per-round response of conversation
 
@@ -141,6 +126,9 @@ class OWUModel:
         :param body: `body` given by OWU Pipe.pipes(body, __user__)
         :type body: dict
         :param user: `__user__` given by Pipe.pipes(body, __user__)
+        :type user: dict
+        :param metadata: `__metadata__` given by Pipe.pipes(body, __user__)
+        :type metadata: dict
         :raises ConnectionError:
         :raises ValueError:
         :raises KeyError:
@@ -150,11 +138,11 @@ class OWUModel:
 
         # extract info from OWU's body  ----------------------------------------
         newest_msg = self._get_newest_user_message_from_body(body)
-
         # extract if stream is enabled
         enable_stream = "stream" in body and bool(body["stream"])
 
         # call DifyApp  --------------------------------------------------------
+        self.app.update(user, metadata)
         opt = self.app.reply(newest_msg, enable_stream)
 
         return opt
@@ -228,7 +216,19 @@ class OWUModel:
                     + "value of 'name' must be str or None"
                 )
 
-        return key, model_id, name
+        # allows streaming  ----------------------------------------------------
+        disallows_streaming = False
+        if "disallows_streaming" in config:
+            disallows_streaming = config["disallows_streaming"]
+            if not isinstance(disallows_streaming, bool):
+                raise TypeError(
+                    "entry in APP_MODEL_CONFIGS, "
+                    + "value of 'disallows_streaming' must be bool: {}".format(
+                        disallows_streaming
+                    )
+                )
+
+        return key, model_id, name, disallows_streaming
 
     def _get_app_type_and_name_by_dify_get_info(self, disable=False):
         """
@@ -323,6 +323,19 @@ class BaseDifyApp:
     def name(self):  # pylint: disable=missing-function-docstring
         return self.model.name
 
+    def update(self, user, metadata):
+        """
+        parse ``__user__`` and ``__metadata__``
+        and extract/update relevant information from them
+
+
+        :param user:
+        :type user: dict
+        :param metadata:
+        :type metadata: dict
+        """
+        return  # no op
+
     def reply(self, newest_msg, enable_stream):
         """
         handle Dify side of processing per-round response of conversation,
@@ -336,7 +349,7 @@ class BaseDifyApp:
         """
         return (
             self._reply_streaming(newest_msg)
-            if enable_stream
+            if not self.model.disallows_streaming and enable_stream
             else self._reply_blocking(newest_msg)
         )
 
@@ -374,12 +387,12 @@ class BaseDifyApp:
         :raises ConnectionError:
         """
         try:
+            data = self._create_post_request_payload(newest_msg, enable_stream)
+            headers = self.http_header(enable_stream)
             response_obj = requests.post(
                 self.endpoint_url,
-                headers=self.http_header(enable_stream),
-                data=self._create_post_request_payload(
-                    newest_msg, enable_stream
-                ),
+                headers=headers,
+                data=data,
                 stream=enable_stream,
                 timeout=(
                     STREAM_REQUEST_TIMEOUT
@@ -393,7 +406,7 @@ class BaseDifyApp:
         # handle network errors
         except requests.exceptions.RequestException as err:
             raise ConnectionError(
-                "fail Dify request: {}".format(err.args[0])
+                "fail request to Dify: {}\n{}".format(err.args[0], data)
             ) from err
 
     def __repr__(self):
@@ -404,6 +417,24 @@ class WorkflowDifyApp(BaseDifyApp):
     """
     representing a Workflow App in Dify
     """
+
+    def __init__(self, model, config):
+        super().__init__(model)
+        # read from config  ----------------------------------------------------
+        self.query_identifier = config.get(
+            "query_input_field_identifier",
+            DEFAULT_QUERY_INPUT_FIELD_IDENTIFIER,
+        )
+        self.reply_identifier = config.get(
+            "reply_output_variable_identifier",
+            DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER,
+        )
+        # read additional input fields
+        self.input_fields = {
+            k: v
+            for k, v in config.items()
+            if k not in DEFINED_APP_MODEL_CONFIG_KEYS
+        }
 
     @property
     def endpoint_url(self):
@@ -418,7 +449,7 @@ class WorkflowDifyApp(BaseDifyApp):
         response = response_object.json()
 
         try:
-            return response["data"]["outputs"][DIFY_OUTPUT_VARIABLE_NAME]
+            return response["data"]["outputs"][self.reply_identifier]
 
         except KeyError as err:
             raise KeyError(
@@ -438,7 +469,7 @@ class WorkflowDifyApp(BaseDifyApp):
 
     def _create_post_request_payload(self, newest_msg, enable_stream=False):
         payload_dict = {
-            "inputs": {DIFY_START_INPUT_FIELD_NAME: newest_msg},
+            "inputs": {self.query_identifier: newest_msg, **self.input_fields},
             "response_mode": "streaming" if enable_stream else "blocking",
             "user": DIFY_USER_ROLE,
         }
@@ -453,11 +484,36 @@ class ChatflowDifyApp(BaseDifyApp):
 
     def __init__(self, model):
         super().__init__(model)
-        self.conversation_id = ""  # empty until 1st response
+        self.current_chat_id = ""
+        self.chat2conversation_ids = {}
 
     @property
     def endpoint_url(self):
         return "{}/chat-messages".format(self.base_url)
+
+    @property
+    def conversation_id(self):
+        """
+        :return: correct Dify ``conversation_id``
+                (depends on OWU ``chat_id``);
+                empty if a new conversation is required
+        :rtype: str
+        """
+        if self.current_chat_id not in self.chat2conversation_ids:
+            # waiting to be set
+            self.chat2conversation_ids[self.current_chat_id] = ""
+
+        return self.chat2conversation_ids[self.current_chat_id]
+
+    @conversation_id.setter
+    def conversation_id(self, value):
+        self.chat2conversation_ids[self.current_chat_id] = value
+
+    def update(self, user, metadata):
+        super().update(user, metadata)
+        # get chat_id from metadata
+        # use a random chat_id if it is not provided by OWU
+        self.current_chat_id = metadata.get("chat_id", uuid.uuid4().hex)
 
     def _reply_blocking(self, newest_msg):
         """
@@ -685,7 +741,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
             for model in self.model_containers.values()
         ]
 
-    def pipe(self, body, __user__):
+    async def pipe(self, body, __user__, __metadata__):
         """
         main pipe logic per round
 
@@ -698,12 +754,28 @@ class Pipe:  # pylint: disable=missing-class-docstring
         :return: replied message by the model
         :rtype: str
         """
+        if DEBUG_PIPE_DIRECT_RESPONSE:
+            return """## `body`
+
+{}
+
+## `__user__`
+
+{}
+
+## `__metadata__`
+
+{}
+""".format(body, __user__, __metadata__)
+
         if "model" not in body:
             raise IndexError("missing entry 'model' in body")
 
         # extract model_id from body
         model_id = body["model"][body["model"].find(".") + 1 :]
-        opt = self.model_containers[model_id].reply(body, __user__)
+        opt = self.model_containers[model_id].reply(
+            body, __user__, __metadata__
+        )
 
         return opt
 

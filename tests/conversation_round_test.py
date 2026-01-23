@@ -102,7 +102,6 @@ class TestWorkflow:
 
 
 class TestChatflow:
-    # bug test for setting conversation_id
 
     def test1(_):
         text_streams = convert_bytes_generator_from_lines(
@@ -412,33 +411,3 @@ class TestKeyErrChatflow:
 
         print(opt)
         assert opt == "missing key in text/event-stream content: 'answer'"
-
-    def test_conversation_id(_):
-        # bug test for missing key conversation id
-        return
-        data = {
-            "event": "message",
-            "message_id": "ff06",
-            "created_at": 1768046345,
-            "task_id": "5863",
-            "id": "ff06",
-            "answer": "FIRST RESPONSE MESSAGE",
-            "from_variable_selector": ["llm", "text"],
-        }
-
-        text_streams = convert_bytes_generator_from_lines(
-            convert_lines_from_data_dicts([data])
-        )
-
-        with pytest.raises(KeyError) as exec_info:
-            for _ in _ConversationRound(
-                _create_simulated_app(text_streams), None
-            ):
-                pass
-        opt = exec_info.value.args[0]
-
-        print(opt)
-        assert (
-            opt
-            == "missing key in text/event-stream content: 'conversation_id'"
-        )

@@ -13,7 +13,7 @@ from dify_open_webui_adapter import Pipe
 # err handle  ##################################################################
 
 
-class TestBadBody:
+class TestBadBody:  # bug fail bad body test
 
     def test_no_msg(_):
         pipe = Pipe(
@@ -27,7 +27,7 @@ class TestBadBody:
         }
 
         with pytest.raises(IndexError) as exec_info:
-            pipe.pipe(bad_body, None)
+            pipe.pipe(bad_body, {}, {})
 
         opt = str(exec_info.value)
         print(opt)

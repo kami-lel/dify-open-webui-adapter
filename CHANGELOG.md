@@ -2,8 +2,6 @@
 
 [^format]
 
-<!-- todo support file uploads -->
-
 
 
 
@@ -42,12 +40,45 @@
 
 
 
+## [2.2.0] - 2026-01-23
+
+### Added
+
+- `disallows_streaming` option for configs
+
+### Changed
+
+- allow configurable input field / output variable for Workflow Dify App
+
+  - use `"query"` (instead of  `"input"`)
+  - use `"reply"` (instead of  `"output"`)
+  - allow *additional input fields*
+
+### Fixed
+
+- fix chat_id / conversation_id logic
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## [2.1.3] - 2026-01-11
 
 ### Fixed
 
 - instead of raising error, simply assume disable stream feature
-  when `'stream'` is missing from response body
+  when `"stream"` is missing from response body
 
 
 
@@ -213,7 +244,8 @@ rewrite `_ConversationRound` to:
 
 
 
-[unreleased]: https://github.com/kami-lel/kami-log-py/compare/v2.1.3...dev
+[unreleased]: https://github.com/kami-lel/kami-log-py/compare/v2.2.0...dev
+[2.2.0]: https://github.com/kami-lel/kami-log-py/compare/v2.1.3...v2.2.0
 [2.1.3]: https://github.com/kami-lel/kami-log-py/compare/v2.1.2...v2.1.3
 [2.1.2]: https://github.com/kami-lel/kami-log-py/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/kami-lel/kami-log-py/compare/v2.1.0...v2.1.1

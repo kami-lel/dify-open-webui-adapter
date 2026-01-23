@@ -489,7 +489,6 @@ class ChatflowDifyApp(BaseDifyApp):
                 empty if a new conversation is required
         :rtype: str
         """
-        # BUG buggy
         if self.current_chat_id not in self.chat2conversation_ids:
             # waiting to be set
             self.chat2conversation_ids[self.current_chat_id] = ""
@@ -541,7 +540,7 @@ class ChatflowDifyApp(BaseDifyApp):
             "query": newest_msg,
             "response_mode": "streaming" if enable_stream else "blocking",
             "user": DIFY_USER_ROLE,
-            "conversation_id": self.current_chat_id,
+            "conversation_id": self.conversation_id,
             "auto_generate_name": False,
             "inputs": {},
         }

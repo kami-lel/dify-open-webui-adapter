@@ -32,6 +32,8 @@
 ### Removed
 ### Fixed
 
+- fix chat_id / conversation_id logic
+
 
 
 

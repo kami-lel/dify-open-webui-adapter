@@ -16,6 +16,7 @@ from dify_open_webui_adapter import Pipe
 class TestBadBody:
 
     def test_no_msg(_):
+        # bug this case failed
         pipe = Pipe(
             app_model_configs_override=EXAMPLE_CONFIGS,
             disable_get_app_type_and_name=True,
@@ -27,7 +28,7 @@ class TestBadBody:
         }
 
         with pytest.raises(IndexError) as exec_info:
-            pipe.pipe(bad_body, None)
+            pipe.pipe(bad_body, {}, {})
 
         opt = str(exec_info.value)
         print(opt)

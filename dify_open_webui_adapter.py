@@ -41,6 +41,7 @@ DEFINED_APP_MODEL_CONFIG_KEYS = (
     "name",
     "query_input_field_identifier",
     "reply_output_variable_identifier",
+    "disallows_streaming",
 )
 
 # Dify constants  **************************************************************
@@ -90,7 +91,7 @@ class OWUModel:
     ):
         self.base_url = base_url
 
-        self.key, self.model_id, provided_name = (
+        self.key, self.model_id, provided_name, self.disallows_streaming = (
             self._parse_app_model_config_arg(app_model_config)
         )
 
@@ -215,7 +216,19 @@ class OWUModel:
                     + "value of 'name' must be str or None"
                 )
 
-        return key, model_id, name
+        # allows streaming  ----------------------------------------------------
+        disallows_streaming = False
+        if "disallows_streaming" in config:
+            disallows_streaming = config["disallows_streaming"]
+            if not isinstance(disallows_streaming, bool):
+                raise TypeError(
+                    "entry in APP_MODEL_CONFIGS, "
+                    + "value of 'disallows_streaming' must be bool: {}".format(
+                        disallows_streaming
+                    )
+                )
+
+        return key, model_id, name, disallows_streaming
 
     def _get_app_type_and_name_by_dify_get_info(self, disable=False):
         """
@@ -336,7 +349,7 @@ class BaseDifyApp:
         """
         return (
             self._reply_streaming(newest_msg)
-            if enable_stream
+            if not self.model.disallows_streaming and enable_stream
             else self._reply_blocking(newest_msg)
         )
 

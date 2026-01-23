@@ -11,7 +11,8 @@ from dify_open_webui_adapter import OWUModel
 from tests import EXAMPLE_BASE_URL, EXAMPLE_CHATFLOW_CONFIG
 
 
-class TestKey:
+# fail cases ###################################################################
+class TestKey:  #  =============================================================
 
     CONFIG_KEY = "key"
 
@@ -64,7 +65,7 @@ class TestKey:
         assert opt == "entry in APP_MODEL_CONFIGS must have non-empty 'key'"
 
 
-class TestModelId:
+class TestModelId:  #  =========================================================
 
     CONFIG_KEY = "model_id"
 
@@ -119,7 +120,7 @@ class TestModelId:
         )
 
 
-class TestName:
+class TestName:  #  ============================================================
     CONFIG_KEY = "name"
 
     def test_absent(self):  # no name entry present
@@ -175,6 +176,38 @@ class TestName:
         assert opt == (
             "entry in APP_MODEL_CONFIGS, "
             + "value of 'name' must be str or None"
+        )
+
+
+class TestStream:  #  ==========================================================
+    CONFIG_KEY = "disallows_streaming"
+
+    def test_absent(self):  # no name entry present
+        config = EXAMPLE_CHATFLOW_CONFIG.copy()
+
+        OWUModel(
+            EXAMPLE_BASE_URL,
+            config,
+            disable_get_app_type_and_name=True,
+        )
+
+    def test_type(self):
+        config = EXAMPLE_CHATFLOW_CONFIG.copy()
+        config[self.CONFIG_KEY] = 123
+
+        with pytest.raises(TypeError) as exec_info:
+            OWUModel(
+                EXAMPLE_BASE_URL,
+                config,
+                disable_get_app_type_and_name=True,
+            )
+
+        opt = str(exec_info.value)
+        print(opt)
+
+        assert opt == (
+            "entry in APP_MODEL_CONFIGS, "
+            + "value of 'disallows_streaming' must be bool: 123"
         )
 
 

@@ -20,6 +20,9 @@
 ## [Unreleased]
 
 ### Added
+
+- `disallows_streaming` option for configs
+
 ### Changed
 
 - allow configurable input field / output variable for Workflow Dify App

@@ -35,6 +35,13 @@ import requests
 OWU_USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
 STREAM_REQUEST_TIMEOUT = 300
+DEFINED_APP_MODEL_CONFIG_KEYS = (
+    "key",
+    "model_id",
+    "name",
+    "query_input_field_identifier",
+    "reply_output_variable_identifier",
+)
 
 # Dify constants  **************************************************************
 DIFY_USER_ROLE = "user"
@@ -389,8 +396,6 @@ class BaseDifyApp:
                 "fail request to Dify: {}\n{}".format(err.args[0], data)
             ) from err
 
-        # Bug: test what happens if mismatched query key
-
     def __repr__(self):
         return "{}({})".format(type(self).__name__, self.name)
 
@@ -415,14 +420,7 @@ class WorkflowDifyApp(BaseDifyApp):
         self.input_fields = {
             k: v
             for k, v in config.items()
-            if k
-            not in (
-                "key",
-                "model_id",
-                "name",
-                "query_input_field_identifier",
-                "reply_output_variable_identifier",
-            )
+            if k not in DEFINED_APP_MODEL_CONFIG_KEYS
         }
 
     @property
@@ -441,7 +439,6 @@ class WorkflowDifyApp(BaseDifyApp):
             return response["data"]["outputs"][self.reply_identifier]
 
         except KeyError as err:
-            # Bug test what happens with mismatched key
             raise KeyError(
                 "fail to parse Dify response, missing key: {}".format(
                     err.args[0]

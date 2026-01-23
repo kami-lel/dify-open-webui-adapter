@@ -47,7 +47,7 @@ A `list` of model/app config; each config is a `dict` that defines a connected m
 
 - `"allows_streaming": True/False`: whether allows **streaming** for this connection; streaming may not be available even this is set to `True`; defaults to `True`.
 
-<!-- Todo implement allows streaming -->
+<!-- TODO implement allows streaming -->
 
 Fields for *Workflow* dify app, (ignored for *Chatflow* dify app):
 

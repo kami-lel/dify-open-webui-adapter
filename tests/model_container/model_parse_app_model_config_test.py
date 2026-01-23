@@ -187,6 +187,3 @@ class TestPass:
             EXAMPLE_CHATFLOW_CONFIG,
             disable_get_app_type_and_name=True,
         )
-
-
-# TODO additional tests

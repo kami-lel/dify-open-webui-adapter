@@ -13,10 +13,9 @@ from dify_open_webui_adapter import Pipe
 # err handle  ##################################################################
 
 
-class TestBadBody:
+class TestBadBody:  # bug fail bad body test
 
     def test_no_msg(_):
-        # bug this case failed
         pipe = Pipe(
             app_model_configs_override=EXAMPLE_CONFIGS,
             disable_get_app_type_and_name=True,

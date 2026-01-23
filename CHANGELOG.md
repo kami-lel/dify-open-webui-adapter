@@ -20,6 +20,29 @@
 ## [Unreleased]
 
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## [2.2.0] - 2026-01-23
+
+### Added
 
 - `disallows_streaming` option for configs
 
@@ -31,8 +54,6 @@
   - use `"reply"` (instead of  `"output"`)
   - allow *additional input fields*
 
-### Deprecated
-### Removed
 ### Fixed
 
 - fix chat_id / conversation_id logic
@@ -223,7 +244,8 @@ rewrite `_ConversationRound` to:
 
 
 
-[unreleased]: https://github.com/kami-lel/kami-log-py/compare/v2.1.3...dev
+[unreleased]: https://github.com/kami-lel/kami-log-py/compare/v2.2.0...dev
+[2.2.0]: https://github.com/kami-lel/kami-log-py/compare/v2.1.3...v2.2.0
 [2.1.3]: https://github.com/kami-lel/kami-log-py/compare/v2.1.2...v2.1.3
 [2.1.2]: https://github.com/kami-lel/kami-log-py/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/kami-lel/kami-log-py/compare/v2.1.0...v2.1.1

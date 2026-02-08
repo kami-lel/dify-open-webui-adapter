@@ -9,6 +9,7 @@ Q.v. ``https://github.com/kami-lel/dify-open-webui-adapter``
 """
 
 # todo support file uploads
+# Bug keeps sending chat to the same chat id, when use from continue
 
 # adapter version
 __version__ = "2.2.1-alpha"
@@ -281,9 +282,7 @@ class OWUModel:
             if section["role"] == OWU_USER_ROLE:
                 return section["content"]
 
-        raise ValueError(
-            "fail to find any '{}' messages".format(OWU_USER_ROLE)
-        )
+        raise ValueError("fail to find any '{}' messages".format(OWU_USER_ROLE))
 
     def __repr__(self):
         return "OWUModel({}:{})".format(self.name, repr(self.app))
@@ -396,9 +395,7 @@ class BaseDifyApp:
                 data=data,
                 stream=enable_stream,
                 timeout=(
-                    STREAM_REQUEST_TIMEOUT
-                    if enable_stream
-                    else REQUEST_TIMEOUT
+                    STREAM_REQUEST_TIMEOUT if enable_stream else REQUEST_TIMEOUT
                 ),
             )
             response_obj.raise_for_status()

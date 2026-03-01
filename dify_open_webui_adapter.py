@@ -109,6 +109,7 @@ class OWUModel:
 
         # extract info from OWU's body  ----------------------------------------
         newest_msg = self._get_newest_user_message_from_body(body)
+        # TODO make file upload
         # extract if stream is enabled
         enable_stream = "stream" in body and bool(body["stream"])
 

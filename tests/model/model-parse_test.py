@@ -1,5 +1,5 @@
 """
-model_parse_app_model_config_test.py
+model-parse_test.py
 
 Unit Tests (using pytest) for: OWUModel._parse_app_model_config_arg()
 """

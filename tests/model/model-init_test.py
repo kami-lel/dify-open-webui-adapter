@@ -1,5 +1,5 @@
 """
-model_init_test.py
+model-init_test.py
 
 Unit Tests (using pytest) for: __init__() of OWUModel
 """

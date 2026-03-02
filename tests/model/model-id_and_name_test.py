@@ -1,5 +1,5 @@
 """
-get_model_id_and_name_test.py
+model-id_and_name_test.py
 
 Unit Tests (using pytest) for: OWUModel.get_model_id_and_name()
 """

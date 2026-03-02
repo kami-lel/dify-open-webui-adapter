@@ -1,5 +1,5 @@
 """
-pipes_test.py
+pipe-pipes_test.py
 
 Unit Tests (using pytest) for: Pipe.pipes()
 """

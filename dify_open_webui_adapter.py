@@ -108,14 +108,15 @@ class OWUModel:
         """
 
         # extract info from OWU's body  ----------------------------------------
-        newest_msg = self._get_newest_user_message_from_body(body)
+        newest_msg = self._get_newest_user_message(body)
+        newest_msg_content = newest_msg["content"]
         # TODO make file upload
         # extract if stream is enabled
         enable_stream = "stream" in body and bool(body["stream"])
 
         # call DifyApp  --------------------------------------------------------
         self.app.update(user, metadata)
-        opt = self.app.reply(newest_msg, enable_stream)
+        opt = self.app.reply(newest_msg_content, enable_stream)
 
         return opt
 
@@ -279,10 +280,10 @@ class OWUModel:
 
         return app_type, response_name
 
-    def _get_newest_user_message_from_body(self, body):
+    def _get_newest_user_message(self, body):
         for section in reversed(body["messages"]):
             if section["role"] == OWU_USER_ROLE:
-                return section["content"]
+                return section
 
         raise ValueError("fail to find any '{}' messages".format(OWU_USER_ROLE))
 
@@ -328,18 +329,8 @@ class BaseDifyApp:
 
     # public methods  ==========================================================
 
-    def update(self, user, metadata):
-        """
-        parse ``__user__`` and ``__metadata__``
-        and extract/update relevant information from them
-
-
-        :param user:
-        :type user: dict
-        :param metadata:
-        :type metadata: dict
-        """
-        return  # no op
+    def upload(self, content):
+        pass  # TODO
 
     def reply(self, newest_msg, enable_stream):
         """
@@ -364,6 +355,19 @@ class BaseDifyApp:
         return self.model.http_header(enable_stream=enable_stream)
 
     # abstract methods  ========================================================
+
+    def update(self, user, metadata):
+        """
+        parse ``__user__`` and ``__metadata__``
+        and extract/update relevant information from them
+
+
+        :param user:
+        :type user: dict
+        :param metadata:
+        :type metadata: dict
+        """
+        return  # no op
 
     def _reply_blocking(self, newest_msg):
         """

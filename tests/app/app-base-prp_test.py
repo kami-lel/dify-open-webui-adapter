@@ -2,20 +2,11 @@
 app-base_test.py
 
 tests for: BaseDifyApp
-
-- .model
-- .base_url
-- .model_id
-- .http_header
 """
 
 from dify_open_webui_adapter import OWUModel
 
-from tests import (
-    EXAMPLE_BASE_URL,
-    EXAMPLE_WORKFLOW_CONFIG,
-    EXAMPLE_CHATFLOW_CONFIG,
-)
+# BUG fix this
 
 
 class Test:

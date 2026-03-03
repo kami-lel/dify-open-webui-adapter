@@ -55,8 +55,3 @@ def chatflow_config2():
 @pytest.fixture
 def configs1(workflow_config1, chatflow_config1, chatflow_config2):
     return [workflow_config1, chatflow_config1, chatflow_config2]
-
-
-@pytest.fixture
-def empty_configs():
-    return []

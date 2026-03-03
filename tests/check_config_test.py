@@ -12,8 +12,8 @@ from dify_open_webui_adapter import _check_app_model_configs_structure
 
 
 # empty  #######################################################################
-def test_empty(empty_configs):
-    ipt = empty_configs
+def test_empty():
+    ipt = []
 
     with pytest.raises(ValueError) as exec_info:
         _check_app_model_configs_structure(ipt)
@@ -21,7 +21,35 @@ def test_empty(empty_configs):
     msg = str(exec_info.value)
     print(msg)
 
-    assert msg == "APP_MODEL_CONFIGS must contains at least one App/Model"
+    assert msg == "APP_MODEL_CONFIGS must contain at least one App/Model"
 
 
-# TODO more
+class TestBadType:  ############################################################
+
+    def test1(_, configs1):
+        ipt = configs1
+        ipt.append(123)
+
+        with pytest.raises(ValueError) as exec_info:
+            _check_app_model_configs_structure(ipt)
+
+        msg = str(exec_info.value)
+        print(msg)
+
+        assert msg == "APP_MODEL_CONFIGS must contains only dicts: (123,)"
+
+    def test2(_, configs1):
+        ipt = configs1
+        ipt.append([1, 2, 3])
+        ipt.append("abc")
+
+        with pytest.raises(ValueError) as exec_info:
+            _check_app_model_configs_structure(ipt)
+
+        msg = str(exec_info.value)
+        print(msg)
+
+        assert (
+            msg
+            == "APP_MODEL_CONFIGS must contains only dicts: ([1, 2, 3], 'abc')"
+        )

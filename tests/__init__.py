@@ -1,10 +1,3 @@
-import sys
-from pathlib import Path
-
-project_root_path = str(Path(__file__).resolve().parents[1])
-if project_root_path not in sys.path:
-    sys.path.insert(0, project_root_path)
-
 EXAMPLE_BASE_URL = "https://api.dify.ai/v1"
 
 EXAMPLE_WORKFLOW_CONFIG = {

@@ -4,6 +4,8 @@ check_non_empty_app_model_configs_test.py
 Unit Tests (using pytest) for: _check_app_model_configs_structure()
 """
 
+# HACK rm
+
 import pytest
 
 # import verify_app_model_configs  +++++++++++++++++++++++++++++++++++++++++++++

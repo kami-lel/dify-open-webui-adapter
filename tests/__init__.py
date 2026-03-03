@@ -1,5 +1,3 @@
-EXAMPLE_BASE_URL = "https://api.dify.ai/v1"
-
 EXAMPLE_WORKFLOW_CONFIG = {
     "key": "eaJxetwz",
     "model_id": "example-workflow-model",

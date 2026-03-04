@@ -300,16 +300,7 @@ class BaseDifyApp:
     :type model: OWUModel
     """
 
-    def __init__(self, model):
-        self.model = model
-
-    @property
-    def endpoint_url(self):
-        """
-        :return: endpoint URL to access Dify
-        :rtype: str
-        """
-        raise NotImplementedError
+    # public methods  ==========================================================
 
     @property
     def base_url(self):  # pylint: disable=missing-function-docstring
@@ -358,6 +349,16 @@ class BaseDifyApp:
     ):  # pylint: disable=missing-function-docstring
         return self.model.http_header(enable_stream=enable_stream)
 
+    # abstract methods  ========================================================
+
+    @property
+    def endpoint_url(self):
+        """
+        :return: endpoint URL to access Dify
+        :rtype: str
+        """
+        raise NotImplementedError
+
     def _reply_blocking(self, newest_msg):
         """
         :return: the response
@@ -379,6 +380,12 @@ class BaseDifyApp:
         :rtype: str
         """
         raise NotImplementedError
+
+    # constructor  =============================================================
+    def __init__(self, model):
+        self.model = model
+
+    # private methods  =========================================================
 
     def _open_reply_response(self, newest_msg, enable_stream=False):
         """
@@ -406,6 +413,8 @@ class BaseDifyApp:
             raise ConnectionError(
                 "fail request to Dify: {}\n{}".format(err.args[0], data)
             ) from err
+
+    # magic methods  ===========================================================
 
     def __repr__(self):
         return "{}({})".format(type(self).__name__, self.name)

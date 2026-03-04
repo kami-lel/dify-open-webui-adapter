@@ -6,8 +6,8 @@ Unit Tests (using pytest) for: __init__() of OWUModel
 
 from dify_open_webui_adapter import (
     OWUModel,
-    WorkflowDifyApp,
-    ChatflowDifyApp,
+    WorkflowApp,
+    ChatflowApp,
     DifyAppType,
 )
 
@@ -195,7 +195,7 @@ class TestApp:
         opt = model.app
 
         print(opt)
-        assert isinstance(opt, WorkflowDifyApp)
+        assert isinstance(opt, WorkflowApp)
 
     def test2(_):
         model = OWUModel(
@@ -208,4 +208,4 @@ class TestApp:
         opt = model.app
 
         print(opt)
-        assert isinstance(opt, ChatflowDifyApp)
+        assert isinstance(opt, ChatflowApp)

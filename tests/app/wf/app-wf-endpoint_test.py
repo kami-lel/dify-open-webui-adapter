@@ -3,7 +3,7 @@ app-wf-endpoint_test.py
 
 Unit Tests (using pytest) for:
 
-WorkflowDifyApp.main_url
+WorkflowApp.main_url
 """
 
 import pytest

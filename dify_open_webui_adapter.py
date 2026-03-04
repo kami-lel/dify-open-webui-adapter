@@ -108,9 +108,9 @@ class OWUModel:
 
         # create app
         if app_type == DifyAppType.WORKFLOW:
-            self.app = WorkflowDifyApp(self, app_model_config)
+            self.app = WorkflowApp(self, app_model_config)
         else:
-            self.app = ChatflowDifyApp(self)
+            self.app = ChatflowApp(self)
 
     def get_model_id_and_name(self):
         """
@@ -420,7 +420,7 @@ class BaseDifyApp:
         return "{}({})".format(type(self).__name__, self.name)
 
 
-class WorkflowDifyApp(BaseDifyApp):
+class WorkflowApp(BaseDifyApp):
     """
     representing a Workflow App in Dify
     """
@@ -489,7 +489,7 @@ class WorkflowDifyApp(BaseDifyApp):
         return json.dumps(payload_dict)
 
 
-class ChatflowDifyApp(BaseDifyApp):
+class ChatflowApp(BaseDifyApp):
     """
     representing a Chatflow App in Dify
     """
@@ -663,7 +663,7 @@ class _ConversationRound:
 
                 # extract conversation_id for Chatflow, if it's empty
                 if (
-                    isinstance(self.app, ChatflowDifyApp)
+                    isinstance(self.app, ChatflowApp)
                     and not self.app.conversation_id
                 ):
                     self.app.conversation_id = data["conversation_id"]

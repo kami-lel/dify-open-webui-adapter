@@ -1,7 +1,7 @@
 """
 app-chatflow_test.py
 
-Unit Tests (using pytest) for: ChatflowDifyApp
+Unit Tests (using pytest) for: ChatflowApp
 """
 
 from dify_open_webui_adapter import OWUModel, DifyAppType

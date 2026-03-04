@@ -314,19 +314,6 @@ class BaseDifyApp:
     def name(self):  # pylint: disable=missing-function-docstring
         return self.model.name
 
-    def update(self, user, metadata):
-        """
-        parse ``__user__`` and ``__metadata__``
-        and extract/update relevant information from them
-
-
-        :param user:
-        :type user: dict
-        :param metadata:
-        :type metadata: dict
-        """
-        return  # no op
-
     def reply(self, newest_msg, enable_stream):
         """
         handle Dify side of processing per-round response of conversation,
@@ -358,6 +345,19 @@ class BaseDifyApp:
         :rtype: str
         """
         raise NotImplementedError
+
+    def update(self, user, metadata):
+        """
+        parse ``__user__`` and ``__metadata__``
+        and extract/update relevant information from them
+
+
+        :param user:
+        :type user: dict
+        :param metadata:
+        :type metadata: dict
+        """
+        return  # no op
 
     def _reply_blocking(self, newest_msg):
         """

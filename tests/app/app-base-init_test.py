@@ -1,13 +1,22 @@
 """
 app-base-init_test.py
 
-Unit Tests (using pytest) for:
+Unit Tests (using pytest) for BaseDifyApp for:
 
-BaseDifyApp.__init__()
+- .__init__()
+- .base_url
+- .model_id
+- .name
 """
 
+import pytest
 
-class TestInit:
 
-    def test1(_):
+class Test1:
+
+    @pytest.fixture
+    def create_app():
+        return  # TODO
+
+    def test1(_, create_app):
         pass  # TODO

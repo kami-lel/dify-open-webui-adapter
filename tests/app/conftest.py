@@ -2,7 +2,8 @@ import pytest
 
 
 @pytest.fixture
-def model1(add_project_root_into_sys_path, base_url, workflow_config1):
+def model1(base_url, workflow_config1):
+    # BUG
     from dify_open_webui_adapter import OWUModel
 
     return OWUModel(

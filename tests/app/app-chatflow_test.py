@@ -22,7 +22,7 @@ class TestEndpointUrl:
         )
         app = model.app
 
-        opt = app.endpoint_url
+        opt = app.main_url
 
         print(opt)
         assert isinstance(opt, str)
@@ -38,7 +38,7 @@ class TestEndpointUrl:
         )
         app = model.app
 
-        opt = app.endpoint_url
+        opt = app.main_url
 
         print(opt)
         assert isinstance(opt, str)

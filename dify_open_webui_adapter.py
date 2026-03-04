@@ -339,7 +339,7 @@ class BaseDifyApp:
     # abstract methods  ========================================================
 
     @property
-    def endpoint_url(self):
+    def main_url(self):
         """
         :return: endpoint URL to access Dify
         :rtype: str
@@ -397,7 +397,7 @@ class BaseDifyApp:
             data = self._create_post_request_payload(newest_msg, enable_stream)
             headers = self.http_header(enable_stream)
             response_obj = requests.post(
-                self.endpoint_url,
+                self.main_url,
                 headers=headers,
                 data=data,
                 stream=enable_stream,
@@ -447,7 +447,7 @@ class WorkflowDifyApp(BaseDifyApp):
     # implement BaseDifyApp  ===================================================
 
     @property
-    def endpoint_url(self):
+    def main_url(self):
         return "{}/workflows/run".format(self.base_url)
 
     def _reply_blocking(self, newest_msg):
@@ -501,7 +501,7 @@ class ChatflowDifyApp(BaseDifyApp):
     # implement BaseDifyApp  ===================================================
 
     @property
-    def endpoint_url(self):
+    def main_url(self):
         return "{}/chat-messages".format(self.base_url)
 
     def update(self, user, metadata):

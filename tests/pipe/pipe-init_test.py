@@ -1,5 +1,5 @@
 """
-pipe_init_test.py
+pipe-init_test.py
 
 Unit Tests (using pytest) for: class Pipe initialization
 """

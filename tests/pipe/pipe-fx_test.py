@@ -1,5 +1,5 @@
 """
-pipe_fx_test.py
+pipe-fx_test.py
 
 Unit Tests (using pytest) for: Pipe.pipe()
 """
@@ -13,7 +13,7 @@ from dify_open_webui_adapter import Pipe
 # err handle  ##################################################################
 
 
-class TestBadBody:  # bug fail bad body test
+class TestBadBody:  # Bug fail bad body test
 
     def test_no_msg(_):
         pipe = Pipe(

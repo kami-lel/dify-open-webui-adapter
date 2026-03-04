@@ -7,6 +7,8 @@ source "$(dirname "${BASH_SOURCE[0]}")/set_environment_variables.sh"
 # shellcheck source=/dev/null
 source "$(dirname "${BASH_SOURCE[0]}")/../hooks_utility/hooks_utility.sh"
 
+commit_type="$(hooks_utility_get_commit_type)"
+
 # start pre-commit checks  #####################################################
 echo "pre-commit" | hooks_utility_enter
 
@@ -22,6 +24,12 @@ hooks_utility_ensure_version_updated
 
 # perform branch protection  ---------------------------------------------------
 hooks_utility_protect_branch
+
+# unit tests  ------------------------------------------------------------------
+if [[ "${commit_type}" == merge-binary* ]]; then
+    pytest "$(dirname "${BASH_SOURCE[0]}")/../../tests"
+fi
+echo "Pytest Unit Tests" | hooks_utility_pass
 
 # finish pre-commit checks  ####################################################
 echo "pre-commit" | hooks_utility_pass

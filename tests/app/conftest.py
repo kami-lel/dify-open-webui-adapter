@@ -6,7 +6,6 @@ from dify_open_webui_adapter import OWUModel
 
 @pytest.fixture
 def wf_model1(base_url, workflow_config1):
-
     return OWUModel(
         base_url,
         workflow_config1,
@@ -16,10 +15,18 @@ def wf_model1(base_url, workflow_config1):
 
 @pytest.fixture
 def cf_model1(base_url, chatflow_config1):
-
     return OWUModel(
         base_url,
         chatflow_config1,
+        disable_get_app_type_and_name=True,
+    )
+
+
+@pytest.fixture
+def cf_model2(base_url, chatflow_config2):
+    return OWUModel(
+        base_url,
+        chatflow_config2,
         disable_get_app_type_and_name=True,
     )
 
@@ -32,3 +39,8 @@ def wf_app1(wf_model1):
 @pytest.fixture
 def cf_app1(cf_model1):
     return cf_model1.app
+
+
+@pytest.fixture
+def cf_app2(cf_model2):
+    return cf_model2.app

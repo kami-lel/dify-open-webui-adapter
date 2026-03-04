@@ -1,13 +1,13 @@
 """
-model_init_test.py
+model-init_test.py
 
 Unit Tests (using pytest) for: __init__() of OWUModel
 """
 
 from dify_open_webui_adapter import (
     OWUModel,
-    WorkflowDifyApp,
-    ChatflowDifyApp,
+    WorkflowApp,
+    ChatflowApp,
     DifyAppType,
 )
 
@@ -25,7 +25,7 @@ class TestBaseUrl:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_CHATFLOW_CONFIG,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
         )
 
         opt = model.base_url
@@ -41,7 +41,7 @@ class TestKey:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_WORKFLOW_CONFIG,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
         )
 
         opt = model.key
@@ -54,7 +54,7 @@ class TestKey:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_CHATFLOW_CONFIG,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
         )
 
         opt = model.key
@@ -67,7 +67,7 @@ class TestKey:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_CHATFLOW2_CONFIG,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
         )
 
         opt = model.key
@@ -83,7 +83,7 @@ class TestModelId:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_WORKFLOW_CONFIG,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
         )
 
         opt = model.model_id
@@ -96,7 +96,7 @@ class TestModelId:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_CHATFLOW_CONFIG,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
         )
 
         opt = model.model_id
@@ -109,7 +109,7 @@ class TestModelId:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_CHATFLOW2_CONFIG,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
         )
 
         opt = model.model_id
@@ -130,7 +130,7 @@ class TestName:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             config,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
         )
 
         opt = model.name
@@ -143,7 +143,7 @@ class TestName:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_CHATFLOW_CONFIG,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
         )
 
         opt = model.name
@@ -156,7 +156,7 @@ class TestName:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_WORKFLOW_CONFIG,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
         )
 
         opt = model.name
@@ -172,7 +172,7 @@ class TestName:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             config,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
         )
 
         opt = model.name
@@ -188,24 +188,24 @@ class TestApp:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_WORKFLOW_CONFIG,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
             app_type_override=DifyAppType.WORKFLOW,
         )
 
         opt = model.app
 
         print(opt)
-        assert isinstance(opt, WorkflowDifyApp)
+        assert isinstance(opt, WorkflowApp)
 
     def test2(_):
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_CHATFLOW_CONFIG,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
             app_type_override=DifyAppType.CHATFLOW,
         )
 
         opt = model.app
 
         print(opt)
-        assert isinstance(opt, ChatflowDifyApp)
+        assert isinstance(opt, ChatflowApp)

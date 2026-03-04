@@ -89,7 +89,7 @@ class OWUModel:
         base_url,
         app_model_config,
         *,
-        disable_get_app_type_and_name=False,
+        skip_get_app_type_and_name=False,
         app_type_override=None,
     ):
         self.base_url = base_url
@@ -99,7 +99,7 @@ class OWUModel:
         )
 
         app_type, response_name = self._get_app_type_and_name_by_dify_get_info(
-            disable=disable_get_app_type_and_name
+            disable=skip_get_app_type_and_name
         )
         if app_type_override is not None:  # for unit test w/o network
             app_type = app_type_override
@@ -109,9 +109,9 @@ class OWUModel:
 
         # create app
         if app_type == DifyAppType.WORKFLOW:
-            self.app = WorkflowDifyApp(self, app_model_config)
+            self.app = WorkflowApp(self, app_model_config)
         else:
-            self.app = ChatflowDifyApp(self)
+            self.app = ChatflowApp(self)
 
     def get_model_id_and_name(self):
         """
@@ -301,16 +301,7 @@ class BaseDifyApp:
     :type model: OWUModel
     """
 
-    def __init__(self, model):
-        self.model = model
-
-    @property
-    def endpoint_url(self):
-        """
-        :return: endpoint URL to access Dify
-        :rtype: str
-        """
-        raise NotImplementedError
+    # public methods  ==========================================================
 
     @property
     def base_url(self):  # pylint: disable=missing-function-docstring
@@ -323,19 +314,6 @@ class BaseDifyApp:
     @property
     def name(self):  # pylint: disable=missing-function-docstring
         return self.model.name
-
-    def update(self, user, metadata):
-        """
-        parse ``__user__`` and ``__metadata__``
-        and extract/update relevant information from them
-
-
-        :param user:
-        :type user: dict
-        :param metadata:
-        :type metadata: dict
-        """
-        return  # no op
 
     def reply(self, newest_msg, enable_stream):
         """
@@ -359,6 +337,29 @@ class BaseDifyApp:
     ):  # pylint: disable=missing-function-docstring
         return self.model.http_header(enable_stream=enable_stream)
 
+    # abstract methods  ========================================================
+
+    @property
+    def main_url(self):
+        """
+        :return: endpoint URL to access Dify
+        :rtype: str
+        """
+        raise NotImplementedError
+
+    def update(self, user, metadata):
+        """
+        parse ``__user__`` and ``__metadata__``
+        and extract/update relevant information from them
+
+
+        :param user:
+        :type user: dict
+        :param metadata:
+        :type metadata: dict
+        """
+        return  # no op
+
     def _reply_blocking(self, newest_msg):
         """
         :return: the response
@@ -381,6 +382,12 @@ class BaseDifyApp:
         """
         raise NotImplementedError
 
+    # constructor  =============================================================
+    def __init__(self, model):
+        self.model = model
+
+    # private methods  =========================================================
+
     def _open_reply_response(self, newest_msg, enable_stream=False):
         """
         :return: per-round response connecting to Dify
@@ -391,7 +398,7 @@ class BaseDifyApp:
             data = self._create_post_request_payload(newest_msg, enable_stream)
             headers = self.http_header(enable_stream)
             response_obj = requests.post(
-                self.endpoint_url,
+                self.main_url,
                 headers=headers,
                 data=data,
                 stream=enable_stream,
@@ -408,15 +415,18 @@ class BaseDifyApp:
                 "fail request to Dify: {}\n{}".format(err.args[0], data)
             ) from err
 
+    # magic methods  ===========================================================
+
     def __repr__(self):
         return "{}({})".format(type(self).__name__, self.name)
 
 
-class WorkflowDifyApp(BaseDifyApp):
+class WorkflowApp(BaseDifyApp):
     """
     representing a Workflow App in Dify
     """
 
+    # constructor  =============================================================
     def __init__(self, model, config):
         super().__init__(model)
         # read from config  ----------------------------------------------------
@@ -435,9 +445,13 @@ class WorkflowDifyApp(BaseDifyApp):
             if k not in DEFINED_APP_MODEL_CONFIG_KEYS
         }
 
+    # implement BaseDifyApp  ===================================================
+
     @property
-    def endpoint_url(self):
+    def main_url(self):
         return "{}/workflows/run".format(self.base_url)
+
+    # Todo unit tests private function
 
     def _reply_blocking(self, newest_msg):
         """
@@ -476,37 +490,24 @@ class WorkflowDifyApp(BaseDifyApp):
         return json.dumps(payload_dict)
 
 
-class ChatflowDifyApp(BaseDifyApp):
+class ChatflowApp(BaseDifyApp):
     """
     representing a Chatflow App in Dify
     """
 
+    # constructor  =============================================================
     def __init__(self, model):
         super().__init__(model)
         self.current_chat_id = ""
         self.chat2conversation_ids = {}
 
+    # implement BaseDifyApp  ===================================================
+
     @property
-    def endpoint_url(self):
+    def main_url(self):
         return "{}/chat-messages".format(self.base_url)
 
-    @property
-    def conversation_id(self):
-        """
-        :return: correct Dify ``conversation_id``
-                (depends on OWU ``chat_id``);
-                empty if a new conversation is required
-        :rtype: str
-        """
-        if self.current_chat_id not in self.chat2conversation_ids:
-            # waiting to be set
-            self.chat2conversation_ids[self.current_chat_id] = ""
-
-        return self.chat2conversation_ids[self.current_chat_id]
-
-    @conversation_id.setter
-    def conversation_id(self, value):
-        self.chat2conversation_ids[self.current_chat_id] = value
+    # Todo unit tests these functions
 
     def update(self, user, metadata):
         super().update(user, metadata)
@@ -554,6 +555,26 @@ class ChatflowDifyApp(BaseDifyApp):
             "inputs": {},
         }
         return json.dumps(payload_dict)
+
+    # properties  ==============================================================
+
+    @property
+    def conversation_id(self):
+        """
+        :return: correct Dify ``conversation_id``
+                (depends on OWU ``chat_id``);
+                empty if a new conversation is required
+        :rtype: str
+        """
+        if self.current_chat_id not in self.chat2conversation_ids:
+            # waiting to be set
+            self.chat2conversation_ids[self.current_chat_id] = ""
+
+        return self.chat2conversation_ids[self.current_chat_id]
+
+    @conversation_id.setter
+    def conversation_id(self, value):
+        self.chat2conversation_ids[self.current_chat_id] = value
 
 
 # helper class  ================================================================
@@ -643,7 +664,7 @@ class _ConversationRound:
 
                 # extract conversation_id for Chatflow, if it's empty
                 if (
-                    isinstance(self.app, ChatflowDifyApp)
+                    isinstance(self.app, ChatflowApp)
                     and not self.app.conversation_id
                 ):
                     self.app.conversation_id = data["conversation_id"]
@@ -718,7 +739,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
             model = OWUModel(
                 base_url,
                 config,
-                disable_get_app_type_and_name=disable_get_app_type_and_name,
+                skip_get_app_type_and_name=disable_get_app_type_and_name,
             )
             model_id = model.model_id
             self.model_containers[model_id] = model
@@ -783,8 +804,13 @@ class Pipe:  # pylint: disable=missing-class-docstring
 def _check_app_model_configs_structure(app_model_configs):
     if len(app_model_configs) == 0:
         raise ValueError(
-            "APP_MODEL_CONFIGS must contains at least one App/Model"
+            "APP_MODEL_CONFIGS must contain at least one App/Model"
         )
 
-    if any(not isinstance(config, dict) for config in app_model_configs):
-        raise ValueError("APP_MODEL_CONFIGS must contains only dicts")
+    bads = tuple(
+        config for config in app_model_configs if not isinstance(config, dict)
+    )
+    if bads:
+        raise ValueError(
+            "APP_MODEL_CONFIGS must contains only dicts: {}".format(bads)
+        )

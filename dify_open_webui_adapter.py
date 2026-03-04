@@ -450,6 +450,8 @@ class WorkflowDifyApp(BaseDifyApp):
     def main_url(self):
         return "{}/workflows/run".format(self.base_url)
 
+    # TODO unit tests private function
+
     def _reply_blocking(self, newest_msg):
         """
         :raises ConnectionError:
@@ -503,6 +505,8 @@ class ChatflowDifyApp(BaseDifyApp):
     @property
     def main_url(self):
         return "{}/chat-messages".format(self.base_url)
+
+    # TODO unit tests these functions
 
     def update(self, user, metadata):
         super().update(user, metadata)

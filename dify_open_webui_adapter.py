@@ -8,9 +8,9 @@ Supported Dify Version:         1.11.2
 Q.v. ``https://github.com/kami-lel/dify-open-webui-adapter``
 """
 
-# todo support file uploads
 # Bug keeps sending chat to the same chat id, when use from continue
 # Bug fail to do pass thru
+# Todo make file upload
 
 # adapter version
 __version__ = "2.2.1-alpha"
@@ -84,6 +84,63 @@ class OWUModel:
     :raises TypeError:
     """
 
+    # public methods  ==========================================================
+
+    def get_model_id_and_name(self):
+        """
+        :return: an entry of this model,
+                such that it can be served to ``Pipe.pipes()``
+        :rtype: dict{str: str}
+        """
+        return {"id": self.model_id, "name": self.name}
+
+    def reply(self, body, user, metadata):
+        """
+        handle OWU side of processing per-round response of conversation
+
+
+        :param body: `body` given by OWU Pipe.pipes(body, __user__)
+        :type body: dict
+        :param user: `__user__` given by Pipe.pipes(body, __user__)
+        :type user: dict
+        :param metadata: `__metadata__` given by Pipe.pipes(body, __user__)
+        :type metadata: dict
+        :raises ConnectionError:
+        :raises ValueError:
+        :raises KeyError:
+        :return: the response
+        :rtype: str
+        """
+
+        # extract info from OWU's body  ----------------------------------------
+        newest_msg = self._get_newest_user_message(body)
+        newest_msg_content = newest_msg["content"]
+        # extract if stream is enabled
+        enable_stream = "stream" in body and bool(body["stream"])
+
+        # call DifyApp  --------------------------------------------------------
+        self.app.update(user, metadata)
+        opt = self.app.reply(newest_msg_content, enable_stream)
+
+        return opt
+
+    def http_header(self, enable_stream=False):
+        """
+        :return: HTTP header (including authorization info)
+                to access Dify Backend API
+        :rtype: dict
+        """
+        header_dict = {
+            "Authorization": "Bearer {}".format(self.key),
+            "Content-Type": "application/json",
+        }
+
+        if enable_stream:
+            header_dict["Accept"] = "text/event-stream"
+
+        return header_dict
+
+    # constructor  =============================================================
     def __init__(
         self,
         base_url,
@@ -113,58 +170,7 @@ class OWUModel:
         else:
             self.app = ChatflowApp(self)
 
-    def get_model_id_and_name(self):
-        """
-        :return: an entry of this model,
-                such that it can be served to ``Pipe.pipes()``
-        :rtype: dict{str: str}
-        """
-        return {"id": self.model_id, "name": self.name}
-
-    def reply(self, body, user, metadata):
-        """
-        handle OWU side of processing per-round response of conversation
-
-
-        :param body: `body` given by OWU Pipe.pipes(body, __user__)
-        :type body: dict
-        :param user: `__user__` given by Pipe.pipes(body, __user__)
-        :type user: dict
-        :param metadata: `__metadata__` given by Pipe.pipes(body, __user__)
-        :type metadata: dict
-        :raises ConnectionError:
-        :raises ValueError:
-        :raises KeyError:
-        :return: the response
-        :rtype: str
-        """
-
-        # extract info from OWU's body  ----------------------------------------
-        newest_msg = self._get_newest_user_message_from_body(body)
-        # extract if stream is enabled
-        enable_stream = "stream" in body and bool(body["stream"])
-
-        # call DifyApp  --------------------------------------------------------
-        self.app.update(user, metadata)
-        opt = self.app.reply(newest_msg, enable_stream)
-
-        return opt
-
-    def http_header(self, enable_stream=False):
-        """
-        :return: HTTP header (including authorization info)
-                to access Dify Backend API
-        :rtype: dict
-        """
-        header_dict = {
-            "Authorization": "Bearer {}".format(self.key),
-            "Content-Type": "application/json",
-        }
-
-        if enable_stream:
-            header_dict["Accept"] = "text/event-stream"
-
-        return header_dict
+    # private methods  =========================================================
 
     def _parse_app_model_config_arg(self, config):
         """
@@ -278,12 +284,14 @@ class OWUModel:
 
         return app_type, response_name
 
-    def _get_newest_user_message_from_body(self, body):
+    def _get_newest_user_message(self, body):
         for section in reversed(body["messages"]):
             if section["role"] == OWU_USER_ROLE:
-                return section["content"]
+                return section
 
         raise ValueError("fail to find any '{}' messages".format(OWU_USER_ROLE))
+
+    # magic methods  ===========================================================
 
     def __repr__(self):
         return "OWUModel({}:{})".format(self.name, repr(self.app))
@@ -314,6 +322,8 @@ class BaseDifyApp:
     @property
     def name(self):  # pylint: disable=missing-function-docstring
         return self.model.name
+
+    # public methods  ==========================================================
 
     def reply(self, newest_msg, enable_stream):
         """

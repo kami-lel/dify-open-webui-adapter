@@ -30,16 +30,16 @@ def local_app1(chatflow_config1):
 
 class Test1:
 
-    def test1(_, wf_app1):
-        opt = wf_app1.main_url
+    def test1(_, cf_app1):
+        opt = cf_app1.main_url
 
         print(opt)
         assert isinstance(opt, str)
-        assert opt == "https://api.dify.ai/v1/workflows/run"
+        assert opt == "https://api.dify.ai/v1/chat-messages"
 
     def test_local1(_, local_app1):
         opt = local_app1.main_url
 
         print(opt)
         assert isinstance(opt, str)
-        assert opt == "http://11.22.33.44/workflows/run"
+        assert opt == "http://11.22.33.44/chat-messages"

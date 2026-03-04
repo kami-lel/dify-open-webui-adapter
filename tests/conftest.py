@@ -4,12 +4,14 @@ import uuid
 
 import pytest
 
+# set up  ######################################################################
+# to allows importing from dify_open_webui_adapter.py
+project_root_path = str(Path(__file__).resolve().parents[1])
+if project_root_path not in sys.path:
+    sys.path.insert(0, project_root_path)
 
-@pytest.fixture(scope="session", autouse=True)
-def add_project_root_into_sys_path():
-    project_root_path = str(Path(__file__).resolve().parents[1])
-    if project_root_path not in sys.path:
-        sys.path.insert(0, project_root_path)
+
+# pytest fixtures  #############################################################
 
 
 @pytest.fixture(scope="session")
@@ -22,8 +24,8 @@ def random_key():
     return uuid.uuid4().hex
 
 
-# config  ######################################################################
-# workflow config  =============================================================
+# config  ======================================================================
+# workflow config  -------------------------------------------------------------
 
 
 @pytest.fixture
@@ -34,7 +36,7 @@ def workflow_config1(random_key):
     }
 
 
-# chatflow config  =============================================================
+# chatflow config  -------------------------------------------------------------
 
 
 @pytest.fixture
@@ -55,7 +57,7 @@ def chatflow_config2(random_key):
     }
 
 
-# configs  #####################################################################
+# configs  =====================================================================
 
 
 @pytest.fixture

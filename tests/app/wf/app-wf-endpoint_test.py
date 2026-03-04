@@ -13,9 +13,9 @@ from dify_open_webui_adapter import OWUModel, DifyAppType
 
 # pytest fixtures  #############################################################
 @pytest.fixture
-def local_app1(chatflow_config1):
+def local_app1(workflow_config1):
     base_url = "http://11.22.33.44"
-    config = chatflow_config1
+    config = workflow_config1
     model = OWUModel(
         base_url,
         config,
@@ -30,8 +30,8 @@ def local_app1(chatflow_config1):
 
 class Test1:
 
-    def test1(_, cf_app1):
-        opt = cf_app1.main_url
+    def test1(_, wf_app1):
+        opt = wf_app1.main_url
 
         print(opt)
         assert isinstance(opt, str)

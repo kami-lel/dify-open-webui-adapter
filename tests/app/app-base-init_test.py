@@ -21,7 +21,7 @@ def local_wf_app(workflow_model1):
 
 @pytest.fixture
 def local_cf_app(chatflow_model1):
-    return chatflow_model1.app  # HACK change
+    return chatflow_model1.app
 
 
 # tests  #######################################################################
@@ -53,6 +53,7 @@ class Test1:  # ================================================================
 
 
 class Test2:  # ================================================================
+
     def test_init(_, local_cf_app, chatflow_model1):
         app = local_cf_app
         model = chatflow_model1

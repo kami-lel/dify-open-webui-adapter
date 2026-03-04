@@ -19,7 +19,7 @@ def base_url():
 
 @pytest.fixture
 def random_key():
-    return uuid.uuid4.hex
+    return uuid.uuid4().hex
 
 
 # config  ######################################################################

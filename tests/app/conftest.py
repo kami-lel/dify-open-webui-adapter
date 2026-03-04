@@ -1,7 +1,7 @@
 import pytest
 
 
-from dify_open_webui_adapter import OWUModel
+from dify_open_webui_adapter import OWUModel, DifyAppType
 
 
 @pytest.fixture
@@ -10,6 +10,7 @@ def wf_model1(base_url, workflow_config1):
         base_url,
         workflow_config1,
         skip_get_app_type_and_name=True,
+        app_type_override=DifyAppType.WORKFLOW,
     )
 
 
@@ -19,6 +20,7 @@ def cf_model1(base_url, chatflow_config1):
         base_url,
         chatflow_config1,
         skip_get_app_type_and_name=True,
+        app_type_override=DifyAppType.CHATFLOW,
     )
 
 
@@ -28,6 +30,7 @@ def cf_model2(base_url, chatflow_config2):
         base_url,
         chatflow_config2,
         skip_get_app_type_and_name=True,
+        app_type_override=DifyAppType.CHATFLOW,
     )
 
 

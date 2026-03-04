@@ -10,7 +10,7 @@ Q.v. ``https://github.com/kami-lel/dify-open-webui-adapter``
 
 # Bug keeps sending chat to the same chat id, when use from continue
 # Bug fail to do pass thru
-# Todo make file upload
+# TODO make file upload
 
 # adapter version
 __version__ = "2.2.1-alpha"
@@ -83,6 +83,8 @@ class OWUModel:
     :raises ValueError:
     :raises TypeError:
     """
+
+    # FIXME fix all tests
 
     # public methods  ==========================================================
 
@@ -461,7 +463,7 @@ class WorkflowApp(BaseDifyApp):
     def main_url(self):
         return "{}/workflows/run".format(self.base_url)
 
-    # Todo unit tests private function
+    # TODO unit tests private function
 
     def _reply_blocking(self, newest_msg):
         """
@@ -517,7 +519,7 @@ class ChatflowApp(BaseDifyApp):
     def main_url(self):
         return "{}/chat-messages".format(self.base_url)
 
-    # Todo unit tests these functions
+    # TODO unit tests these functions
 
     def update(self, user, metadata):
         super().update(user, metadata)

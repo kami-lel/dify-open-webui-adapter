@@ -12,3 +12,13 @@ def workflow_model1(base_url, workflow_config1):
         workflow_config1,
         disable_get_app_type_and_name=True,
     )
+
+
+@pytest.fixture
+def chatflow_model1(base_url, chatflow_config1):
+
+    return OWUModel(
+        base_url,
+        chatflow_config1,
+        disable_get_app_type_and_name=True,
+    )

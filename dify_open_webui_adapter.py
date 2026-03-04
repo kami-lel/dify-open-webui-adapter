@@ -10,6 +10,7 @@ Q.v. ``https://github.com/kami-lel/dify-open-webui-adapter``
 
 # Bug keeps sending chat to the same chat id, when use from continue
 # Bug fail to do pass thru
+# Todo make file upload
 
 # adapter version
 __version__ = "2.2.1-alpha"
@@ -53,7 +54,7 @@ DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER = "answer"
 
 # debug flags  *****************************************************************
 DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
-DEBUG_PIPE_DIRECT_RESPONSE = True  # HACK
+DEBUG_PIPE_DIRECT_RESPONSE = False
 
 
 # helper Enum  =================================================================
@@ -114,7 +115,6 @@ class OWUModel:
         # extract info from OWU's body  ----------------------------------------
         newest_msg = self._get_newest_user_message(body)
         newest_msg_content = newest_msg["content"]
-        # TODO make file upload
         # extract if stream is enabled
         enable_stream = "stream" in body and bool(body["stream"])
 
@@ -324,9 +324,6 @@ class BaseDifyApp:
         return self.model.name
 
     # public methods  ==========================================================
-
-    def upload(self, content):
-        pass  # TODO
 
     def reply(self, newest_msg, enable_stream):
         """

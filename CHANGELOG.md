@@ -21,6 +21,9 @@
 
 ### Added
 ### Changed
+
+- more completed unit tests
+
 ### Deprecated
 ### Removed
 ### Fixed

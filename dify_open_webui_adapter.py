@@ -88,7 +88,7 @@ class OWUModel:
         base_url,
         app_model_config,
         *,
-        disable_get_app_type_and_name=False,
+        skip_get_app_type_and_name=False,
         app_type_override=None,
     ):
         self.base_url = base_url
@@ -98,7 +98,7 @@ class OWUModel:
         )
 
         app_type, response_name = self._get_app_type_and_name_by_dify_get_info(
-            disable=disable_get_app_type_and_name
+            disable=skip_get_app_type_and_name
         )
         if app_type_override is not None:  # for unit test w/o network
             app_type = app_type_override
@@ -734,7 +734,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
             model = OWUModel(
                 base_url,
                 config,
-                disable_get_app_type_and_name=disable_get_app_type_and_name,
+                skip_get_app_type_and_name=disable_get_app_type_and_name,
             )
             model_id = model.model_id
             self.model_containers[model_id] = model

@@ -9,7 +9,7 @@ def wf_model1(base_url, workflow_config1):
     return OWUModel(
         base_url,
         workflow_config1,
-        disable_get_app_type_and_name=True,
+        skip_get_app_type_and_name=True,
     )
 
 
@@ -18,7 +18,7 @@ def cf_model1(base_url, chatflow_config1):
     return OWUModel(
         base_url,
         chatflow_config1,
-        disable_get_app_type_and_name=True,
+        skip_get_app_type_and_name=True,
     )
 
 
@@ -27,7 +27,7 @@ def cf_model2(base_url, chatflow_config2):
     return OWUModel(
         base_url,
         chatflow_config2,
-        disable_get_app_type_and_name=True,
+        skip_get_app_type_and_name=True,
     )
 
 

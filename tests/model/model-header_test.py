@@ -20,7 +20,7 @@ class TestNoStream:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_CHATFLOW_CONFIG,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
         )
 
         opt = model.http_header(False)
@@ -36,7 +36,7 @@ class TestNoStream:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_WORKFLOW_CONFIG,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
         )
 
         opt = model.http_header(False)
@@ -52,7 +52,7 @@ class TestNoStream:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_CHATFLOW2_CONFIG,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
         )
 
         opt = model.http_header(False)
@@ -71,7 +71,7 @@ class TestStream:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_CHATFLOW_CONFIG,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
         )
 
         opt = model.http_header(True)

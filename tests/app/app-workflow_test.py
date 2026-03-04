@@ -18,7 +18,7 @@ class TestEndpointUrl:
         model = OWUModel(
             EXAMPLE_BASE_URL,
             EXAMPLE_WORKFLOW_CONFIG,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
             app_type_override=DifyAppType.WORKFLOW,
         )
         app = model.app
@@ -34,7 +34,7 @@ class TestEndpointUrl:
         model = OWUModel(
             base_url,
             EXAMPLE_WORKFLOW_CONFIG,
-            disable_get_app_type_and_name=True,
+            skip_get_app_type_and_name=True,
             app_type_override=DifyAppType.WORKFLOW,
         )
         app = model.app

@@ -30,8 +30,8 @@ def local_app1(chatflow_config1):
 
 class Test1:
 
-    def test1(_, wf_app1):
-        opt = wf_app1.main_url
+    def test1(_, cf_app1):
+        opt = cf_app1.main_url
 
         print(opt)
         assert isinstance(opt, str)

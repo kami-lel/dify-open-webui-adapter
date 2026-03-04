@@ -10,10 +10,11 @@ import pytest
 
 from dify_open_webui_adapter import OWUModel, DifyAppType
 
-
 # pytest fixtures  #############################################################
+
+
 @pytest.fixture
-def local_app1(base_url, chatflow_config1):
+def local_model1(base_url, chatflow_config1):
     config = chatflow_config1
     config["query_input_field_identifier"] = "aaaaaa"
     model = OWUModel(
@@ -22,11 +23,16 @@ def local_app1(base_url, chatflow_config1):
         skip_get_app_type_and_name=True,
         app_type_override=DifyAppType.WORKFLOW,
     )
-    return model.app
+    return model
 
 
 @pytest.fixture
-def local_app2(base_url, chatflow_config1):
+def local_app1(local_model1):
+    return local_model1.app
+
+
+@pytest.fixture
+def local_model2(base_url, chatflow_config1):
     config = chatflow_config1
     config["reply_output_variable_identifier"] = "zzzzzz"
     config["foo"] = "aabbcc"
@@ -37,7 +43,12 @@ def local_app2(base_url, chatflow_config1):
         skip_get_app_type_and_name=True,
         app_type_override=DifyAppType.WORKFLOW,
     )
-    return model.app
+    return model
+
+
+@pytest.fixture
+def local_app2(local_model2):
+    return local_model2.app
 
 
 # tests  #######################################################################
@@ -45,22 +56,27 @@ def local_app2(base_url, chatflow_config1):
 
 class Test1:  # ================================================================
 
-    def test_query(_, wf_app1):
-        opt = wf_app1.query_identifier
+    def test_model(_, cf_app1, wf_model1):
+        app = cf_app1
+        model = wf_model1
+        assert app.model is model
+
+    def test_query(_, cf_app1):
+        opt = cf_app1.query_identifier
 
         print(opt)
         assert isinstance(opt, str)
         assert opt == "query"
 
-    def test_repply(_, wf_app1):
-        opt = wf_app1.reply_identifier
+    def test_repply(_, cf_app1):
+        opt = cf_app1.reply_identifier
 
         print(opt)
         assert isinstance(opt, str)
         assert opt == "answer"
 
-    def test_fields(_, wf_app1):
-        opt = wf_app1.input_fields
+    def test_fields(_, cf_app1):
+        opt = cf_app1.input_fields
 
         print(opt)
         assert isinstance(opt, dict)
@@ -68,6 +84,11 @@ class Test1:  # ================================================================
 
 
 class TestL1:  # ===============================================================
+
+    def test_model(_, local_app1, local_model1):
+        app = local_app1
+        model = local_model1
+        assert app.model is model
 
     def test_query(_, local_app1):
         opt = local_app1.query_identifier
@@ -92,6 +113,11 @@ class TestL1:  # ===============================================================
 
 
 class TestL2:  # ===============================================================
+
+    def test_model(_, local_app2, local_model2):
+        app = local_app2
+        model = local_model2
+        assert app.model is model
 
     def test_query(_, local_app2):
         opt = local_app2.query_identifier

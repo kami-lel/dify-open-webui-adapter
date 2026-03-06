@@ -10,7 +10,7 @@ Q.v. ``https://github.com/kami-lel/dify-open-webui-adapter``
 
 # Bug keeps sending chat to the same chat id, when use from continue
 # Bug fail to do pass thru
-# TODO make file upload
+# Todo make file upload
 
 # adapter version
 __version__ = "2.2.1-alpha"

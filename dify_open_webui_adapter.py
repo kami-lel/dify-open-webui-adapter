@@ -490,7 +490,7 @@ class WorkflowApp(BaseDifyApp):
         """
         :raises ValueError:
         """
-        return _ConversationRound(self, newest_msg)
+        return _StreamingConversationRound(self, newest_msg)
 
     def _create_post_request_payload(self, newest_msg, enable_stream=False):
         payload_dict = {
@@ -555,7 +555,7 @@ class ChatflowApp(BaseDifyApp):
         """
         :raises ValueError:
         """
-        return _ConversationRound(self, newest_msg)
+        return _StreamingConversationRound(self, newest_msg)
 
     def _create_post_request_payload(self, newest_msg, enable_stream=False):
         payload_dict = {
@@ -612,7 +612,7 @@ class _SSE(Flag):
     IS_END = workflow_finished | message_end
 
 
-class _ConversationRound:
+class _StreamingConversationRound:
     """
     represent a single conversation round with Dify
 

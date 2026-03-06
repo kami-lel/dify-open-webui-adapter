@@ -24,7 +24,7 @@ from .testee_conversation_round import (
     CHATFLOW_DATA3,
     CHATFLOW_ANSWER3,
 )
-from dify_open_webui_adapter import _ConversationRound
+from dify_open_webui_adapter import _StreamingConversationRound
 
 
 def _create_simulated_app(text_streams):
@@ -57,7 +57,9 @@ class TestWorkflow:
         ]
 
         for opt, answer in zip(
-            _ConversationRound(_create_simulated_app(text_streams), None),
+            _StreamingConversationRound(
+                _create_simulated_app(text_streams), None
+            ),
             answer,
         ):
             print(opt)
@@ -70,7 +72,9 @@ class TestWorkflow:
         answer = ["FIRST RESPONSE MESSAGE"]
 
         for opt, answer in zip(
-            _ConversationRound(_create_simulated_app(text_streams), None),
+            _StreamingConversationRound(
+                _create_simulated_app(text_streams), None
+            ),
             answer,
         ):
             print(opt)
@@ -83,7 +87,9 @@ class TestWorkflow:
         answer = ["FIRST RESPONSE MESSAGE"]
 
         for opt, answer in zip(
-            _ConversationRound(_create_simulated_app(text_streams), None),
+            _StreamingConversationRound(
+                _create_simulated_app(text_streams), None
+            ),
             answer,
         ):
             print(opt)
@@ -96,7 +102,9 @@ class TestWorkflow:
         answer = WORKFLOW_ANSWER4
 
         for opt, answer in zip(
-            _ConversationRound(_create_simulated_app(text_streams), None),
+            _StreamingConversationRound(
+                _create_simulated_app(text_streams), None
+            ),
             answer,
         ):
             print(opt)
@@ -116,7 +124,9 @@ class TestChatflow:
         ]
 
         for opt, answer in zip(
-            _ConversationRound(_create_simulated_app(text_streams), None),
+            _StreamingConversationRound(
+                _create_simulated_app(text_streams), None
+            ),
             answer,
         ):
             print(opt)
@@ -129,7 +139,9 @@ class TestChatflow:
         answer = CHATFLOW_ANSWER2
 
         for opt, answer in zip(
-            _ConversationRound(_create_simulated_app(text_streams), None),
+            _StreamingConversationRound(
+                _create_simulated_app(text_streams), None
+            ),
             answer,
         ):
             print(opt)
@@ -142,7 +154,9 @@ class TestChatflow:
         answer = CHATFLOW_ANSWER3
 
         for opt, answer in zip(
-            _ConversationRound(_create_simulated_app(text_streams), None),
+            _StreamingConversationRound(
+                _create_simulated_app(text_streams), None
+            ),
             answer,
         ):
             print(opt)
@@ -162,7 +176,9 @@ class TestPingEvent:
         ]
 
         for opt, answer in zip(
-            _ConversationRound(_create_simulated_app(text_streams), None),
+            _StreamingConversationRound(
+                _create_simulated_app(text_streams), None
+            ),
             answer,
         ):
             print(opt)
@@ -180,7 +196,9 @@ class TestPingEvent:
         ]
 
         for opt, answer in zip(
-            _ConversationRound(_create_simulated_app(text_streams), None),
+            _StreamingConversationRound(
+                _create_simulated_app(text_streams), None
+            ),
             answer,
         ):
             print(opt)
@@ -199,7 +217,7 @@ class TestExhaust:
         )
 
         with pytest.raises(ValueError) as exec_info:
-            for _ in _ConversationRound(
+            for _ in _StreamingConversationRound(
                 _create_simulated_app(text_streams), None
             ):
                 pass
@@ -219,7 +237,7 @@ class TestExhaust:
         )
 
         with pytest.raises(ValueError) as exec_info:
-            for _ in _ConversationRound(
+            for _ in _StreamingConversationRound(
                 _create_simulated_app(text_streams), None
             ):
                 pass
@@ -241,7 +259,7 @@ class TestUnicode:
         text_streams = iter(bytes_obj)
 
         with pytest.raises(UnicodeDecodeError) as exec_info:
-            for _ in _ConversationRound(
+            for _ in _StreamingConversationRound(
                 _create_simulated_app(text_streams), None
             ):
                 pass
@@ -261,7 +279,7 @@ class TestUnicode:
         text_streams = iter(bytes_obj)
 
         with pytest.raises(UnicodeDecodeError) as exec_info:
-            for _ in _ConversationRound(
+            for _ in _StreamingConversationRound(
                 _create_simulated_app(text_streams), None
             ):
                 pass
@@ -283,7 +301,7 @@ class TestJSONDecode:
         text_streams = convert_bytes_generator_from_lines([bad_json])
 
         with pytest.raises(JSONDecodeError) as exec_info:
-            for _ in _ConversationRound(
+            for _ in _StreamingConversationRound(
                 _create_simulated_app(text_streams), None
             ):
                 pass
@@ -309,7 +327,7 @@ class TestKeyErrWorkflow:
         )
 
         with pytest.raises(KeyError) as exec_info:
-            for _ in _ConversationRound(
+            for _ in _StreamingConversationRound(
                 _create_simulated_app(text_streams), None
             ):
                 pass
@@ -329,7 +347,7 @@ class TestKeyErrWorkflow:
         )
 
         with pytest.raises(KeyError) as exec_info:
-            for _ in _ConversationRound(
+            for _ in _StreamingConversationRound(
                 _create_simulated_app(text_streams), None
             ):
                 pass
@@ -352,7 +370,7 @@ class TestKeyErrWorkflow:
         )
 
         with pytest.raises(KeyError) as exec_info:
-            for _ in _ConversationRound(
+            for _ in _StreamingConversationRound(
                 _create_simulated_app(text_streams), None
             ):
                 pass
@@ -380,7 +398,7 @@ class TestKeyErrChatflow:
         )
 
         with pytest.raises(KeyError) as exec_info:
-            for _ in _ConversationRound(
+            for _ in _StreamingConversationRound(
                 _create_simulated_app(text_streams), None
             ):
                 pass
@@ -405,7 +423,7 @@ class TestKeyErrChatflow:
         )
 
         with pytest.raises(KeyError) as exec_info:
-            for _ in _ConversationRound(
+            for _ in _StreamingConversationRound(
                 _create_simulated_app(text_streams), None
             ):
                 pass

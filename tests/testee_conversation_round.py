@@ -2,6 +2,8 @@
 provide testee text-stream for ``conversation_round_test.py``
 """
 
+# HACK rm
+
 import json
 
 ENCODING = "utf-8"

@@ -4,6 +4,8 @@ conversation_round_test.py
 Unit Tests (using pytest) for: _ConversationRound
 """
 
+# HACK update test
+
 from json import JSONDecodeError
 import pytest
 

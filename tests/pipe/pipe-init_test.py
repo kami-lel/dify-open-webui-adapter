@@ -4,6 +4,8 @@ pipe-init_test.py
 Unit Tests (using pytest) for: class Pipe initialization
 """
 
+# HACK make test work
+
 import pytest
 
 from dify_open_webui_adapter import Pipe

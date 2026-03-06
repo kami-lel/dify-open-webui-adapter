@@ -4,6 +4,8 @@ pipe-pipes_test.py
 Unit Tests (using pytest) for: Pipe.pipes()
 """
 
+# HACK make test work
+
 from dify_open_webui_adapter import Pipe
 from tests import EXAMPLE_CHATFLOW_CONFIG, EXAMPLE_CONFIGS
 

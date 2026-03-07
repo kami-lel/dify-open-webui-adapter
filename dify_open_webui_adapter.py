@@ -325,8 +325,6 @@ class BaseDifyApp:
     def name(self):  # pylint: disable=missing-function-docstring
         return self.model.name
 
-    # public methods  ==========================================================
-
     def reply(self, newest_msg, enable_stream):
         """
         handle Dify side of processing per-round response of conversation,
@@ -507,6 +505,26 @@ class ChatflowApp(BaseDifyApp):
     representing a Chatflow App in Dify
     """
 
+    # properties  ==============================================================
+
+    @property
+    def conversation_id(self):
+        """
+        :return: correct Dify ``conversation_id``
+                (depends on OWU ``chat_id``);
+                empty if a new conversation is required
+        :rtype: str
+        """
+        if self.current_chat_id not in self.chat2conversation_ids:
+            # waiting to be set
+            self.chat2conversation_ids[self.current_chat_id] = ""
+
+        return self.chat2conversation_ids[self.current_chat_id]
+
+    @conversation_id.setter
+    def conversation_id(self, value):
+        self.chat2conversation_ids[self.current_chat_id] = value
+
     # constructor  =============================================================
     def __init__(self, model):
         super().__init__(model)
@@ -567,26 +585,6 @@ class ChatflowApp(BaseDifyApp):
             "inputs": {},
         }
         return json.dumps(payload_dict)
-
-    # properties  ==============================================================
-
-    @property
-    def conversation_id(self):
-        """
-        :return: correct Dify ``conversation_id``
-                (depends on OWU ``chat_id``);
-                empty if a new conversation is required
-        :rtype: str
-        """
-        if self.current_chat_id not in self.chat2conversation_ids:
-            # waiting to be set
-            self.chat2conversation_ids[self.current_chat_id] = ""
-
-        return self.chat2conversation_ids[self.current_chat_id]
-
-    @conversation_id.setter
-    def conversation_id(self, value):
-        self.chat2conversation_ids[self.current_chat_id] = value
 
 
 # helper class  ================================================================

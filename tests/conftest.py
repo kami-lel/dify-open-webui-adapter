@@ -19,6 +19,11 @@ def base_url():
     return "https://api.dify.ai/v1"
 
 
+@pytest.fixture(scope="session")
+def base_url_alt():
+    return "https://55.44.33.22/v1"
+
+
 @pytest.fixture
 def random_key():
     return uuid.uuid4().hex

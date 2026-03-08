@@ -148,8 +148,8 @@ class OWUModel:
         base_url,
         app_model_config,
         *,
-        skip_get_app_type_and_name=False,
-        app_type_override=None,
+        skip_get_app_type_and_name=False,  # for debug & testing
+        app_type_override=None,  # for debug & testing
     ):
         self.base_url = base_url
 

@@ -9,13 +9,17 @@ OWUModel.__init__() related to arg app_model_config
 
 class TestWf1:  # ==============================================================
 
-    def test1(
-        _,
-    ):
-        pass
+    def test1(_, wf_model1):
+        pass  # TODO TODO
 
 
-# TODO TODO
+class TestCf1:  # ==============================================================
+    pass
+
+
+class TestCf2:  # ==============================================================
+    pass
+
 
 # HACK rm
 # class TestKey:

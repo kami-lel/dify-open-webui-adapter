@@ -3,18 +3,36 @@ model-init-config_test.py
 
 Unit Tests (using pytest) for:
 
-OWUModel.__init__() related to arg app_model_config
+OWUModel.__init__() related to arg app_model_skip_config
 """
 
 
 class TestWf1:  # ==============================================================
 
-    def test1(_, wf_model1):
-        pass  # TODO TODO
+    def test_key(_, wf_model_skip1):
+        opt = wf_model_skip1.key
+
+        print(opt)
+        assert isinstance(opt, str)
+        assert opt == ""
+
+    def test_model(_, wf_model_skip1):
+        opt = wf_model_skip1.model_id
+
+        print(opt)
+        assert isinstance(opt, str)
+        assert opt == ""
+
+    def test_disallow(_, wf_model_skip1):
+        opt = wf_model_skip1.disallows_streaming
+
+        print(opt)
+        assert isinstance(opt, bool)
+        assert opt
 
 
 class TestCf1:  # ==============================================================
-    pass
+    pass  # TODO TODO
 
 
 class TestCf2:  # ==============================================================

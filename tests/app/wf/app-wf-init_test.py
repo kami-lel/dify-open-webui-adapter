@@ -15,7 +15,7 @@ from dify_open_webui_adapter import OWUModel, DifyAppType
 
 @pytest.fixture
 def local_model1(base_url, workflow_config1):
-    config = workflow_config1
+    config = workflow_config1.copy()
     config["query_input_field_identifier"] = "aaaaaa"
     model = OWUModel(
         base_url,
@@ -33,7 +33,7 @@ def local_app1(local_model1):
 
 @pytest.fixture
 def local_model2(base_url, workflow_config1):
-    config = workflow_config1
+    config = workflow_config1.copy()
     config["reply_output_variable_identifier"] = "zzzzzz"
     config["foo"] = "aabbcc"
     config["bar"] = 123

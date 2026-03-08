@@ -84,8 +84,6 @@ class OWUModel:
     :raises TypeError:
     """
 
-    # FIXME fix all tests
-
     # public methods  ==========================================================
 
     def get_model_id_and_name(self):

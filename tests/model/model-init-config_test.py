@@ -9,116 +9,71 @@ OWUModel.__init__() related to arg app_model_skip_config
 
 class TestWf1:  # ==============================================================
 
-    def test_key(_, wf_model_skip1):
+    def test_key(_, wf_model_skip1, workflow_config1):
         opt = wf_model_skip1.key
 
         print(opt)
         assert isinstance(opt, str)
-        assert opt == ""
+        assert opt == workflow_config1["key"]
 
     def test_model(_, wf_model_skip1):
         opt = wf_model_skip1.model_id
 
         print(opt)
         assert isinstance(opt, str)
-        assert opt == ""
+        assert opt == "example-workflow-model"
 
     def test_disallow(_, wf_model_skip1):
         opt = wf_model_skip1.disallows_streaming
 
         print(opt)
         assert isinstance(opt, bool)
-        assert opt
+        assert not opt
 
 
 class TestCf1:  # ==============================================================
-    pass  # TODO TODO
+
+    def test_key(_, cf_model_skip1, chatflow_config1):
+        opt = cf_model_skip1.key
+
+        print(opt)
+        assert isinstance(opt, str)
+        assert opt == chatflow_config1["key"]
+
+    def test_model(_, cf_model_skip1):
+        opt = cf_model_skip1.model_id
+
+        print(opt)
+        assert isinstance(opt, str)
+        assert opt == "example-chatflow-model"
+
+    def test_disallow(_, cf_model_skip1):
+        opt = cf_model_skip1.disallows_streaming
+
+        print(opt)
+        assert isinstance(opt, bool)
+        assert not opt
 
 
 class TestCf2:  # ==============================================================
-    pass
 
+    def test_key(_, cf_model_skip2, chatflow_config2):
+        opt = cf_model_skip2.key
 
-# HACK rm
-# class TestKey:
+        print(opt)
+        assert isinstance(opt, str)
+        assert opt == chatflow_config2["key"]
 
-#     def test1(_):
-#         model = OWUModel(
-#             EXAMPLE_BASE_URL,
-#             EXAMPLE_WORKFLOW_CONFIG,
-#             skip_get_app_type_and_name=True,
-#         )
+    def test_model(_, cf_model_skip2):
+        opt = cf_model_skip2.model_id
 
-#         opt = model.key
+        print(opt)
+        assert isinstance(opt, str)
+        assert opt == "example-chatflow-model-2"
 
-#         print(opt)
-#         assert isinstance(opt, str)
-#         assert opt == "eaJxetwz"
+    def test_disallow(_, cf_model_skip2):
+        opt = cf_model_skip2.disallows_streaming
 
-#     def test2(_):
-#         model = OWUModel(
-#             EXAMPLE_BASE_URL,
-#             EXAMPLE_CHATFLOW_CONFIG,
-#             skip_get_app_type_and_name=True,
-#         )
-
-#         opt = model.key
-
-#         print(opt)
-#         assert isinstance(opt, str)
-#         assert opt == "u0caCsmD"
-
-#     def test3(_):
-#         model = OWUModel(
-#             EXAMPLE_BASE_URL,
-#             EXAMPLE_CHATFLOW2_CONFIG,
-#             skip_get_app_type_and_name=True,
-#         )
-
-#         opt = model.key
-
-#         print(opt)
-#         assert isinstance(opt, str)
-#         assert opt == "YIFpPns6"
-
-
-# class TestModelId:
-
-#     def test1(_):
-#         model = OWUModel(
-#             EXAMPLE_BASE_URL,
-#             EXAMPLE_WORKFLOW_CONFIG,
-#             skip_get_app_type_and_name=True,
-#         )
-
-#         opt = model.model_id
-
-#         print(opt)
-#         assert isinstance(opt, str)
-#         assert opt == "example-workflow-model"
-
-#     def test2(_):
-#         model = OWUModel(
-#             EXAMPLE_BASE_URL,
-#             EXAMPLE_CHATFLOW_CONFIG,
-#             skip_get_app_type_and_name=True,
-#         )
-
-#         opt = model.model_id
-
-#         print(opt)
-#         assert isinstance(opt, str)
-#         assert opt == "example-chatflow-model"
-
-#     def test3(_):
-#         model = OWUModel(
-#             EXAMPLE_BASE_URL,
-#             EXAMPLE_CHATFLOW2_CONFIG,
-#             skip_get_app_type_and_name=True,
-#         )
-
-#         opt = model.model_id
-
-#         print(opt)
-#         assert isinstance(opt, str)
-#         assert opt == "example-chatflow-model-2"
+        print(opt)
+        assert isinstance(opt, bool)
+        assert opt

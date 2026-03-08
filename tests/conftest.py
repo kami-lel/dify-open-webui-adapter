@@ -54,6 +54,7 @@ def chatflow_config2():
         "key": random_key(),
         "model_id": "example-chatflow-model-2",
         "name": "Aux Example Chatflow Model/App",
+        "disallows_streaming": True,
     }
 
 

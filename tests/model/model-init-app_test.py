@@ -1,3 +1,12 @@
+"""
+model-init-app_test.py
+
+Unit Tests (using pytest) for OWUModel:
+
+- .app_type
+- .app
+"""
+
 # TODO
 # class TestApp:
 

@@ -1,3 +1,9 @@
+"""
+model-init-name_test.py
+
+Unit Tests (using pytest) for: OWUModel.name
+"""
+
 # HACK
 # class TestName:
 

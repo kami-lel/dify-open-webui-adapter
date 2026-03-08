@@ -155,17 +155,18 @@ class OWUModel:
             self._parse_app_model_config_arg(app_model_config)
         )
 
-        app_type, response_name = self._get_app_type_and_name_by_dify_get_info(
-            disable=skip_get_app_type_and_name
-        )
-        if app_type_override is not None:  # for unit test w/o network
-            app_type = app_type_override
+        if skip_get_app_type_and_name:
+            self.app_type, response_name = app_type_override, None
+        else:
+            self.app_type, response_name = (
+                self._get_app_type_and_name_by_dify_get_info()
+            )
 
         # set self.name
         self.name = provided_name or response_name or self.model_id
 
         # create app
-        if app_type == DifyAppType.WORKFLOW:
+        if self.app_type == DifyAppType.WORKFLOW:
             self.app = WorkflowApp(self, app_model_config)
         else:
             self.app = ChatflowApp(self)
@@ -239,7 +240,7 @@ class OWUModel:
 
         return key, model_id, name, disallows_streaming
 
-    def _get_app_type_and_name_by_dify_get_info(self, disable=False):
+    def _get_app_type_and_name_by_dify_get_info(self):
         """
         by GET /info endpoint of Dify Backend API,
         get Dify app type and its name
@@ -252,9 +253,6 @@ class OWUModel:
         :return: App name & type responded from Dify
         :rtype: tuple(str, DifyAppType)
         """
-        if disable:  # disable network-related function for unit tests
-            return None, None
-
         info_url = "{}/info".format(self.base_url)
 
         # GET /info  -----------------------------------------------------------

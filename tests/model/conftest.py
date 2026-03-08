@@ -7,7 +7,7 @@ from dify_open_webui_adapter import (
 
 
 # pytest fixtures  #############################################################
-@pytest.fixture
+@pytest.fixture(scope="session")
 def wf_model1(base_url, workflow_config1):
     return OWUModel(
         base_url,
@@ -17,7 +17,7 @@ def wf_model1(base_url, workflow_config1):
     )
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def wf_model2(base_url_alt, workflow_config1):
     return OWUModel(
         base_url_alt,
@@ -27,7 +27,7 @@ def wf_model2(base_url_alt, workflow_config1):
     )
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def cf_model1(base_url, chatflow_config1):
     return OWUModel(
         base_url,
@@ -37,7 +37,7 @@ def cf_model1(base_url, chatflow_config1):
     )
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def cf_model2(base_url, chatflow_config2):
     return OWUModel(
         base_url,

@@ -274,9 +274,7 @@ class OWUModel:
         try:
             app_type = DifyAppType(response["mode"])
         except (KeyError, ValueError) as err:
-            raise ValueError(
-                "fail to get App type from Dify: {}".format(err.args[0])
-            ) from err
+            raise ValueError("fail to get App Type from Dify") from err
 
         response_name = response["name"] if "name" in response else None
 

@@ -27,7 +27,7 @@ def test_empty():
 class TestBadType:  ############################################################
 
     def test1(_, configs1):
-        ipt = configs1
+        ipt = configs1.copy()
         ipt.append(123)
 
         with pytest.raises(ValueError) as exec_info:
@@ -39,7 +39,7 @@ class TestBadType:  ############################################################
         assert msg == "APP_MODEL_CONFIGS must contains only dicts: (123,)"
 
     def test2(_, configs1):
-        ipt = configs1
+        ipt = configs1.copy()
         ipt.append([1, 2, 3])
         ipt.append("abc")
 

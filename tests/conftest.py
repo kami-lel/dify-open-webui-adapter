@@ -44,7 +44,6 @@ def chatflow_config1():
     return {
         "key": "f2277b0e16154cba981c866bdc124386",
         "model_id": "example-chatflow-model",
-        # "name": "Example Chatflow Model/App",
     }
 
 

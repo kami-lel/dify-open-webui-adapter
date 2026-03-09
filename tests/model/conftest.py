@@ -51,7 +51,7 @@ def cf_model_skip2(base_url, chatflow_config2):
 
 # mocks  =======================================================================
 @pytest.fixture
-def patch_and_result_cf1():
+def patch_and_result_wf1():
     patch_url = "dify_open_webui_adapter.requests.get"
 
     mock_resp = Mock()
@@ -63,7 +63,7 @@ def patch_and_result_cf1():
     assert_url = "https://api.dify.ai/v1/info"
     assert_kwargs = {
         "headers": {
-            "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
+            "Authorization": "Bearer f2277b0e16154cba981c866bdc124386",
             "Content-Type": "application/json",
         },
         "timeout": 30,
@@ -73,7 +73,7 @@ def patch_and_result_cf1():
 
 
 @pytest.fixture
-def patch_and_result_wf1():
+def patch_and_result_cf1():
     patch_url = "dify_open_webui_adapter.requests.get"
 
     mock_resp = Mock()
@@ -85,7 +85,7 @@ def patch_and_result_wf1():
     assert_url = "https://api.dify.ai/v1/info"
     assert_kwargs = {
         "headers": {
-            "Authorization": "Bearer f2277b0e16154cba981c866bdc124386",
+            "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
             "Content-Type": "application/json",
         },
         "timeout": 30,

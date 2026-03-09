@@ -132,7 +132,7 @@ class TestResponse:  ###########################################################
             opt = model.name
             print(opt)
             assert isinstance(opt, str)
-            assert opt == "My Workflow App"
+            assert opt == "My Chatflow App"
 
             mock_get.assert_called_once_with(assert_url, **assert_kwargs)
 
@@ -146,7 +146,7 @@ class TestResponse:  ###########################################################
             opt = model.name
             print(opt)
             assert isinstance(opt, str)
-            assert opt == "My Chatflow App"
+            assert opt == "My Workflow App"
 
             mock_get.assert_called_once_with(assert_url, **assert_kwargs)
 

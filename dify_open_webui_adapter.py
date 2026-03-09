@@ -259,7 +259,7 @@ class OWUModel:
         try:
             response_object = requests.get(
                 info_url,
-                headers=self.http_header(),
+                headers=self.http_header(enable_stream=False),
                 timeout=REQUEST_TIMEOUT,
             )
             response_object.raise_for_status()

@@ -4,84 +4,66 @@ model-header_test.py
 Unit Tests (using pytest) for: OWUModel.http_header()
 """
 
-from dify_open_webui_adapter import OWUModel
 
-from tests import (
-    EXAMPLE_BASE_URL,
-    EXAMPLE_CHATFLOW_CONFIG,
-    EXAMPLE_WORKFLOW_CONFIG,
-    EXAMPLE_CHATFLOW2_CONFIG,
-)
+class Test1:  # ================================================================
 
-# TODO TODO
-
-
-class TestNoStream:
-
-    def test1(_):
-        model = OWUModel(
-            EXAMPLE_BASE_URL,
-            EXAMPLE_CHATFLOW_CONFIG,
-            skip_get_app_type_and_name=True,
-        )
-
-        opt = model.http_header(False)
+    def test_no_stream(_, wf_model_skip1):
+        opt = wf_model_skip1.http_header(enable_stream=True)
 
         print(opt)
-        assert isinstance(opt, dict)
         assert opt == {
-            "Authorization": "Bearer u0caCsmD",
+            "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
             "Content-Type": "application/json",
+            "Accept": "text/event-stream",
         }
 
-    def test2(_):
-        model = OWUModel(
-            EXAMPLE_BASE_URL,
-            EXAMPLE_WORKFLOW_CONFIG,
-            skip_get_app_type_and_name=True,
-        )
-
-        opt = model.http_header(False)
+    def test_stream(_, wf_model_skip1):
+        opt = wf_model_skip1.http_header(enable_stream=True)
 
         print(opt)
-        assert isinstance(opt, dict)
         assert opt == {
-            "Authorization": "Bearer eaJxetwz",
+            "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
             "Content-Type": "application/json",
+            "Accept": "text/event-stream",
         }
 
-    def test3(_):
-        model = OWUModel(
-            EXAMPLE_BASE_URL,
-            EXAMPLE_CHATFLOW2_CONFIG,
-            skip_get_app_type_and_name=True,
-        )
-
-        opt = model.http_header(False)
+    def test_dft(_, wf_model_skip1):
+        opt = wf_model_skip1.http_header()
 
         print(opt)
-        assert isinstance(opt, dict)
         assert opt == {
-            "Authorization": "Bearer YIFpPns6",
+            "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
             "Content-Type": "application/json",
         }
 
 
-class TestStream:
+class Test2:  # ================================================================
 
-    def test1(_):
-        model = OWUModel(
-            EXAMPLE_BASE_URL,
-            EXAMPLE_CHATFLOW_CONFIG,
-            skip_get_app_type_and_name=True,
-        )
-
-        opt = model.http_header(True)
+    def test_no_stream(_, cf_model_skip1):
+        opt = cf_model_skip1.http_header(enable_stream=True)
 
         print(opt)
-        assert isinstance(opt, dict)
-        assert (
-            repr(opt)
-            == "{'Authorization': 'Bearer u0caCsmD', 'Content-Type':"
-            " 'application/json', 'Accept': 'text/event-stream'}"
-        )
+        assert opt == {
+            "Authorization": "Bearer f2277b0e16154cba981c866bdc124386",
+            "Content-Type": "application/json",
+            "Accept": "text/event-stream",
+        }
+
+    def test_stream(_, cf_model_skip1):
+        opt = cf_model_skip1.http_header(enable_stream=True)
+
+        print(opt)
+        assert opt == {
+            "Authorization": "Bearer f2277b0e16154cba981c866bdc124386",
+            "Content-Type": "application/json",
+            "Accept": "text/event-stream",
+        }
+
+    def test_dft(_, cf_model_skip1):
+        opt = cf_model_skip1.http_header()
+
+        print(opt)
+        assert opt == {
+            "Authorization": "Bearer f2277b0e16154cba981c866bdc124386",
+            "Content-Type": "application/json",
+        }

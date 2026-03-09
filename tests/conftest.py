@@ -31,7 +31,7 @@ def base_url_alt():
 @pytest.fixture(scope="session")
 def workflow_config1():
     return {
-        "key": random_key(),
+        "key": "068937402cc741689986cc5b6ed433a",
         "model_id": "example-workflow-model",
     }
 
@@ -42,7 +42,7 @@ def workflow_config1():
 @pytest.fixture(scope="session")
 def chatflow_config1():
     return {
-        "key": random_key(),
+        "key": "f2277b0e16154cba981c866bdc124386",
         "model_id": "example-chatflow-model",
         "name": "Example Chatflow Model/App",
     }
@@ -51,7 +51,7 @@ def chatflow_config1():
 @pytest.fixture(scope="session")
 def chatflow_config2():
     return {
-        "key": random_key(),
+        "key": "820ab10b649b4c748513cb8e7a628063",
         "model_id": "example-chatflow-model-2",
         "name": "Aux Example Chatflow Model/App",
         "disallows_streaming": True,
@@ -64,8 +64,3 @@ def chatflow_config2():
 @pytest.fixture(scope="session")
 def configs1(workflow_config1, chatflow_config1, chatflow_config2):
     return [workflow_config1, chatflow_config1, chatflow_config2]
-
-
-# helpers  #####################################################################
-def random_key():
-    return uuid.uuid4().hex

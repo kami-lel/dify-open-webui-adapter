@@ -267,7 +267,7 @@ class OWUModel:
 
         except requests.exceptions.RequestException as err:
             raise ConnectionError(
-                "fail Dify request: {}".format(err.args[0])
+                "fail request to Dify: {}".format(err.args[0])
             ) from err
 
         # parse App type  ------------------------------------------------------

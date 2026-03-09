@@ -1,11 +1,14 @@
 """
 model-init-name_test.py
 
-Unit Tests (using pytest) for: OWUModel.name
+Unit Tests (using pytest) for: OWUModel
+
+- .name
+- _get_app_type_and_name_by_dify_get_info()
 """
 
-import unittest
 from unittest.mock import patch, Mock
+import requests
 
 
 from dify_open_webui_adapter import (
@@ -175,7 +178,21 @@ class TestResponse:  ###########################################################
 
     # err handling  ============================================================
 
-    # TODO connection err
+    def test_bad_conncetion(_, base_url, workflow_config1):
+        config = workflow_config1.copy()
+
+        with patch(
+            "dify_open_webui_adapter.requests.get",
+            side_effect=requests.exceptions.ConnectionError("Bad Connection"),
+        ):
+            with pytest.raises(ConnectionError) as exec_info:
+                OWUModel(base_url, config)
+            opt = exec_info.value.args[0]
+
+            print(opt)
+            assert opt == "fail request to Dify: Bad Connection"
 
 
 # model id  ####################################################################
+
+# TODO TODO

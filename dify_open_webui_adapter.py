@@ -253,6 +253,7 @@ class OWUModel:
         :return: App name & type responded from Dify
         :rtype: tuple(str, DifyAppType)
         """
+        # Todo move this function to dify app side
         info_url = "{}/info".format(self.base_url)
 
         # GET /info  -----------------------------------------------------------

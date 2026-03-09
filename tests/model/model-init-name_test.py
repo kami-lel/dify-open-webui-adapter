@@ -193,6 +193,56 @@ class TestResponse:  ###########################################################
             assert opt == "fail request to Dify: Bad Connection"
 
 
-# model id  ####################################################################
+class TestModelId:  ############################################################
 
-# TODO TODO
+    def test1(_, base_url, workflow_config1):
+        config = workflow_config1.copy()
+        mock_resp = Mock()
+        mock_resp.json.return_value = {
+            "mode": "workflow",
+        }
+
+        with patch(
+            "dify_open_webui_adapter.requests.get", return_value=mock_resp
+        ) as mock_get:
+            model = OWUModel(base_url, config)
+
+            opt = model.name
+            print(opt)
+            assert isinstance(opt, str)
+            assert opt == "example-workflow-model"
+
+            mock_get.assert_called_once_with(
+                "https://api.dify.ai/v1/info",
+                headers={
+                    "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
+                    "Content-Type": "application/json",
+                },
+                timeout=30,
+            )
+
+    def test2(_, base_url, chatflow_config1):
+        config = chatflow_config1.copy()
+        mock_resp = Mock()
+        mock_resp.json.return_value = {
+            "mode": "advanced-chat",
+        }
+
+        with patch(
+            "dify_open_webui_adapter.requests.get", return_value=mock_resp
+        ) as mock_get:
+            model = OWUModel(base_url, config)
+
+            opt = model.name
+            print(opt)
+            assert isinstance(opt, str)
+            assert opt == "example-chatflow-model"
+
+            mock_get.assert_called_once_with(
+                "https://api.dify.ai/v1/info",
+                headers={
+                    "Authorization": "Bearer f2277b0e16154cba981c866bdc124386",
+                    "Content-Type": "application/json",
+                },
+                timeout=30,
+            )

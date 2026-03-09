@@ -7,6 +7,13 @@ Unit Tests (using pytest) for OWUModel:
 - .app
 """
 
+
+class TestApp:
+
+    def test1(_):
+        pass
+
+
 # TODO
 # class TestApp:
 

@@ -122,17 +122,11 @@ class TestProvided:  ###########################################################
 
 class TestResponse:  ###########################################################
 
-    def test1(_, base_url, workflow_config1):
+    def test1(_, base_url, workflow_config1, patch_and_result_cf1):
         config = workflow_config1.copy()
-        mock_resp = Mock()
-        mock_resp.json.return_value = {
-            "mode": "workflow",
-            "name": "My Workflow App",
-        }
+        patch_url, mock_resp, assert_url, assert_kwargs = patch_and_result_cf1
 
-        with patch(
-            "dify_open_webui_adapter.requests.get", return_value=mock_resp
-        ) as mock_get:
+        with patch(patch_url, return_value=mock_resp) as mock_get:
             model = OWUModel(base_url, config)
 
             opt = model.name
@@ -140,26 +134,13 @@ class TestResponse:  ###########################################################
             assert isinstance(opt, str)
             assert opt == "My Workflow App"
 
-            mock_get.assert_called_once_with(
-                "https://api.dify.ai/v1/info",
-                headers={
-                    "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
-                    "Content-Type": "application/json",
-                },
-                timeout=30,
-            )
+            mock_get.assert_called_once_with(assert_url, **assert_kwargs)
 
-    def test2(_, base_url, chatflow_config1):
+    def test2(_, base_url, chatflow_config1, patch_and_result_wf1):
         config = chatflow_config1.copy()
-        mock_resp = Mock()
-        mock_resp.json.return_value = {
-            "mode": "advanced-chat",
-            "name": "My Chatflow App",
-        }
+        patch_url, mock_resp, assert_url, assert_kwargs = patch_and_result_wf1
 
-        with patch(
-            "dify_open_webui_adapter.requests.get", return_value=mock_resp
-        ) as mock_get:
+        with patch(patch_url, return_value=mock_resp) as mock_get:
             model = OWUModel(base_url, config)
 
             opt = model.name
@@ -167,14 +148,7 @@ class TestResponse:  ###########################################################
             assert isinstance(opt, str)
             assert opt == "My Chatflow App"
 
-            mock_get.assert_called_once_with(
-                "https://api.dify.ai/v1/info",
-                headers={
-                    "Authorization": "Bearer f2277b0e16154cba981c866bdc124386",
-                    "Content-Type": "application/json",
-                },
-                timeout=30,
-            )
+            mock_get.assert_called_once_with(assert_url, **assert_kwargs)
 
     # err handling  ============================================================
 

@@ -626,6 +626,8 @@ class _StreamingConversationRound:
         self.iter_lines = self.response.iter_lines()
         self._debug_stop_on_next = False
 
+    # implemetn iter()  ========================================================
+
     def __iter__(self):
         return self  # make self an Iterator
 

@@ -751,7 +751,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
         :return: replied message by the model
         :rtype: str
         """
-        if DEBUG_PIPE_DIRECT_RESPONSE:
+        if DEBUG_PIPE_DIRECT_RESPONSE:  # Todo make json literal
             return """## `body`
 
 {}

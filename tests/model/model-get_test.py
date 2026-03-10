@@ -1,0 +1,54 @@
+"""
+model-get_test.py
+
+Unit Tests (using pytest) for:
+
+OWUModel.get_model_id_and_name()
+"""
+
+
+class TestGet:
+
+    def test_wf1(_, wf_model_skip1):
+        model = wf_model_skip1
+
+        opt = model.get_model_id_and_name()
+
+        print(opt)
+        assert opt == {
+            "id": "example-workflow-model",
+            "name": "example-workflow-model",
+        }
+
+    def test_wf2(_, wf_provide_name_model1):
+        model = wf_provide_name_model1
+
+        opt = model.get_model_id_and_name()
+
+        print(opt)
+        assert opt == {
+            "id": "example-workflow-model",
+            "name": "My Workflow Name",
+        }
+
+    def test_cf1(_, cf_model_skip1):
+        model = cf_model_skip1
+
+        opt = model.get_model_id_and_name()
+
+        print(opt)
+        assert opt == {
+            "id": "example-chatflow-model",
+            "name": "example-chatflow-model",
+        }
+
+    def test_cf2(_, cf_provide_name_model1):
+        model = cf_provide_name_model1
+
+        opt = model.get_model_id_and_name()
+
+        print(opt)
+        assert opt == {
+            "id": "example-chatflow-model",
+            "name": "Example Chatflow Model/App",
+        }

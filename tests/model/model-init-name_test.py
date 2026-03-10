@@ -21,30 +21,6 @@ import pytest
 
 # pytest fixtures  #############################################################
 @pytest.fixture(scope="session")
-def wf_provided_model1(base_url, workflow_config1):
-    config = workflow_config1.copy()
-    config["name"] = "My Workflow Name"
-    return OWUModel(
-        base_url,
-        config,
-        skip_get_app_type_and_name=True,
-        app_type_override=DifyAppType.WORKFLOW,
-    )
-
-
-@pytest.fixture(scope="session")
-def cf_provided_model1(base_url, chatflow_config1):
-    config = chatflow_config1.copy()
-    config["name"] = "Example Chatflow Model/App"
-    return OWUModel(
-        base_url,
-        config,
-        skip_get_app_type_and_name=True,
-        app_type_override=DifyAppType.CHATFLOW,
-    )
-
-
-@pytest.fixture(scope="session")
 def cf_no_name_model1(base_url, chatflow_config1):
     config = chatflow_config1.copy()
     del config["name"]
@@ -59,15 +35,15 @@ def cf_no_name_model1(base_url, chatflow_config1):
 # provided
 class TestProvided:  ###########################################################
 
-    def test1(_, wf_provided_model1):
-        opt = wf_provided_model1.name
+    def test1(_, wf_provide_name_model1):
+        opt = wf_provide_name_model1.name
 
         print(opt)
         assert isinstance(opt, str)
         assert opt == "My Workflow Name"
 
-    def test2(_, cf_provided_model1):
-        opt = cf_provided_model1.name
+    def test2(_, cf_provide_name_model1):
+        opt = cf_provide_name_model1.name
 
         print(opt)
         assert isinstance(opt, str)

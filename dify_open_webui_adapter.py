@@ -752,7 +752,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
         :rtype: str
         """
         if DEBUG_PIPE_DIRECT_RESPONSE:
-            return _generate_pipe_direct_responsep(body, __user__, __metadata__)
+            return _generate_pipe_direct_response(body, __user__, __metadata__)
 
         if "model" not in body:
             raise IndexError("missing entry 'model' in body")
@@ -782,7 +782,7 @@ def _check_app_model_configs_structure(app_model_configs):
         )
 
 
-def _generate_pipe_direct_responsep(body, user, metadata):
+def _generate_pipe_direct_response(body, user, metadata):
     # TODO mpv
     return """## `body`
 

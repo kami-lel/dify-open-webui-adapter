@@ -4,13 +4,9 @@ model-init-name_test.py
 Unit Tests (using pytest) for: OWUModel
 
 - .name
-- _get_app_type_and_name_by_dify_get_info()
 """
 
-# HACK HACK
-
 from unittest.mock import patch, Mock
-import requests
 
 
 from dify_open_webui_adapter import (

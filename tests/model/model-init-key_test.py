@@ -6,40 +6,60 @@ Unit Tests (using pytest) for:
 key-related in OWUModel.__init__()
 """
 
-# TODO TODO
+import pytest
+
+from dify_open_webui_adapter import OWUModel, DifyAppType
 
 
-# def test_key_present(_, base_url, config_wf1):
-#     config = config_wf1.copy()
-#     del config["key"]
+# pytest  ######################################################################
+class TestKey:
 
-#     with pytest.raises(ValueError) as exec_info:
-#         WorkflowApp(None, base_url, config)
-#     opt = exec_info.value.args[0]
+    def test_key_present(_, base_url, config_wf1):
+        config = config_wf1.copy()
+        del config["key"]
 
-#     print(opt)
-#     assert opt == "entry in APP_MODEL_CONFIGS missing 'key'"
+        with pytest.raises(ValueError) as exec_info:
+            OWUModel(
+                base_url,
+                config,
+                skip_get_app_type_and_name=True,
+                app_type_override=DifyAppType.WORKFLOW,
+            )
+        opt = exec_info.value.args[0]
 
-# def test_key_type(_, base_url, config_wf1):
-#     config = config_wf1.copy()
+        print(opt)
+        assert opt == "entry in APP_MODEL_CONFIGS missing 'key'"
 
-#     config["key"] = 123
+    def test_key_type(_, base_url, config_wf1):
+        config = config_wf1.copy()
 
-#     with pytest.raises(TypeError) as exec_info:
-#         WorkflowApp(None, base_url, config)
-#     opt = exec_info.value.args[0]
+        config["key"] = 123
 
-#     print(opt)
-#     assert opt == "entry in APP_MODEL_CONFIGS must have str 'key'"
+        with pytest.raises(TypeError) as exec_info:
+            OWUModel(
+                base_url,
+                config,
+                skip_get_app_type_and_name=True,
+                app_type_override=DifyAppType.WORKFLOW,
+            )
+        opt = exec_info.value.args[0]
 
-# def test_key_empty(_, base_url, config_wf1):
-#     config = config_wf1.copy()
+        print(opt)
+        assert opt == "entry in APP_MODEL_CONFIGS must have str 'key'"
 
-#     config["key"] = ""
+    def test_key_empty(_, base_url, config_wf1):
+        config = config_wf1.copy()
 
-#     with pytest.raises(ValueError) as exec_info:
-#         WorkflowApp(None, base_url, config)
-#     opt = exec_info.value.args[0]
+        config["key"] = ""
 
-#     print(opt)
-#     assert opt == "entry in APP_MODEL_CONFIGS must have non-empty 'key'"
+        with pytest.raises(ValueError) as exec_info:
+            OWUModel(
+                base_url,
+                config,
+                skip_get_app_type_and_name=True,
+                app_type_override=DifyAppType.WORKFLOW,
+            )
+        opt = exec_info.value.args[0]
+
+        print(opt)
+        assert opt == "entry in APP_MODEL_CONFIGS must have non-empty 'key'"

@@ -1,14 +1,16 @@
 """
-model-header_test.py
+app-base-header_test.py
 
-Unit Tests (using pytest) for: OWUModel.http_header()
+Unit Tests (using pytest) for:
+
+BaseDifyApp.http_header()
 """
 
 
 class Test1:  # ================================================================
 
-    def test_no_stream(_, wf_model_skip1):
-        opt = wf_model_skip1.http_header(enable_stream=True)
+    def test_no_stream(_, app_skip_wf1):
+        opt = app_skip_wf1.http_header(enable_stream=True)
 
         print(opt)
         assert opt == {
@@ -17,8 +19,8 @@ class Test1:  # ================================================================
             "Accept": "text/event-stream",
         }
 
-    def test_stream(_, wf_model_skip1):
-        opt = wf_model_skip1.http_header(enable_stream=True)
+    def test_stream(_, app_skip_wf1):
+        opt = app_skip_wf1.http_header(enable_stream=True)
 
         print(opt)
         assert opt == {
@@ -27,8 +29,8 @@ class Test1:  # ================================================================
             "Accept": "text/event-stream",
         }
 
-    def test_dft(_, wf_model_skip1):
-        opt = wf_model_skip1.http_header()
+    def test_dft(_, app_skip_wf1):
+        opt = app_skip_wf1.http_header()
 
         print(opt)
         assert opt == {
@@ -39,8 +41,8 @@ class Test1:  # ================================================================
 
 class Test2:  # ================================================================
 
-    def test_no_stream(_, cf_model_skip1):
-        opt = cf_model_skip1.http_header(enable_stream=True)
+    def test_no_stream(_, app_skip_cf1):
+        opt = app_skip_cf1.http_header(enable_stream=True)
 
         print(opt)
         assert opt == {
@@ -49,8 +51,8 @@ class Test2:  # ================================================================
             "Accept": "text/event-stream",
         }
 
-    def test_stream(_, cf_model_skip1):
-        opt = cf_model_skip1.http_header(enable_stream=True)
+    def test_stream(_, app_skip_cf1):
+        opt = app_skip_cf1.http_header(enable_stream=True)
 
         print(opt)
         assert opt == {
@@ -59,8 +61,8 @@ class Test2:  # ================================================================
             "Accept": "text/event-stream",
         }
 
-    def test_dft(_, cf_model_skip1):
-        opt = cf_model_skip1.http_header()
+    def test_dft(_, app_skip_cf1):
+        opt = app_skip_cf1.http_header()
 
         print(opt)
         assert opt == {

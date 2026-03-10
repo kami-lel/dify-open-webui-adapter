@@ -300,7 +300,7 @@ class BaseDifyApp:
     def http_header(
         self, enable_stream=False
     ):  # pylint: disable=missing-function-docstring
-        return self.model.http_header(enable_stream=enable_stream)
+        return create_http_header(self.key, enable_stream=enable_stream)
 
     # abstract methods  ========================================================
 

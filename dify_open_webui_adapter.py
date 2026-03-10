@@ -208,7 +208,7 @@ class OWUModel:
 
         return key, model_id, name
 
-    def _get_last_user_msg_content(self, body):  # TODO need test
+    def _get_last_user_msg_content(self, body):
         for section in reversed(body["messages"]):
             if section["role"] == OWU_USER_ROLE:
                 return section["content"]

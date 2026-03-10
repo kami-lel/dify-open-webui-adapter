@@ -35,7 +35,7 @@ class TestGet:
         body = pipe_body1
         body["messages"] = []
 
-        with pytest.raises(IndexError) as exec_info:
+        with pytest.raises(ValueError) as exec_info:
             model._get_last_user_msg_content(body)
         opt = exec_info.value.args[0]
 

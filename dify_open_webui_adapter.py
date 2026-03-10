@@ -124,23 +124,6 @@ class OWUModel:
 
         return opt
 
-    def http_header(self, enable_stream=False):
-        """
-        :return: HTTP header (including authorization info)
-                to access Dify Backend API
-        :rtype: dict
-        """
-        # HACK HACK rm
-        header_dict = {
-            "Authorization": "Bearer {}".format(self.key),
-            "Content-Type": "application/json",
-        }
-
-        if enable_stream:
-            header_dict["Accept"] = "text/event-stream"
-
-        return header_dict
-
     # constructor  =============================================================
     def __init__(
         self,

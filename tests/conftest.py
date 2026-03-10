@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-import uuid
+from unittest.mock import Mock
 
 import pytest
 
@@ -24,6 +24,11 @@ def base_url():
 @pytest.fixture(scope="session")
 def base_url_alt():
     return "https://55.44.33.22/v1"
+
+
+@pytest.fixture
+def info_endpoint():
+    return "https://api.dify.ai/v1/info"
 
 
 # configs  =====================================================================
@@ -98,3 +103,47 @@ def app_skip_cf1(model_skip_cf1):
 @pytest.fixture(scope="session")
 def app_skip_cf2(model_skip_cf2):
     return model_skip_cf2.app
+
+
+# mocks  =======================================================================
+@pytest.fixture
+def patch_target():
+    return "dify_open_webui_adapter.requests.get"
+
+
+@pytest.fixture
+def patch_and_result_wf1():
+    mock_resp = Mock()
+    mock_resp.json.return_value = {
+        "mode": "workflow",
+        "name": "My Workflow App",
+    }
+
+    assert_kwargs = {
+        "headers": {
+            "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
+            "Content-Type": "application/json",
+        },
+        "timeout": 30,
+    }
+
+    return mock_resp, assert_kwargs
+
+
+@pytest.fixture
+def patch_and_result_cf1():
+    mock_resp = Mock()
+    mock_resp.json.return_value = {
+        "mode": "advanced-chat",
+        "name": "My Chatflow App",
+    }
+
+    assert_kwargs = {
+        "headers": {
+            "Authorization": "Bearer f2277b0e16154cba981c866bdc124386",
+            "Content-Type": "application/json",
+        },
+        "timeout": 30,
+    }
+
+    return mock_resp, assert_kwargs

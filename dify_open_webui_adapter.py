@@ -425,9 +425,7 @@ class WorkflowApp(BaseDifyApp):
 
         except KeyError as err:
             raise KeyError(
-                "fail to parse Dify response, missing key: {}".format(
-                    err.args[0]
-                )
+                "miss key in Dify response: {}".format(err.args[0])
             ) from err
 
         finally:
@@ -501,9 +499,7 @@ class ChatflowApp(BaseDifyApp):
 
         except KeyError as err:
             raise KeyError(
-                "fail to parse Dify response, missing key: {}".format(
-                    err.args[0]
-                )
+                "miss key in Dify response: {}".format(err.args[0])
             ) from err
 
         finally:
@@ -661,9 +657,7 @@ class _StreamingConversationRound:
 
             except KeyError as err:
                 raise KeyError(
-                    "missing key in text/event-stream content: {}".format(
-                        str(err)
-                    )
+                    "miss key in text/event-stream content: {}".format(str(err))
                 ) from err
 
         # an relevant event is found

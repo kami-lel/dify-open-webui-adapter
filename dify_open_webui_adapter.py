@@ -751,19 +751,8 @@ class Pipe:  # pylint: disable=missing-class-docstring
         :return: replied message by the model
         :rtype: str
         """
-        if DEBUG_PIPE_DIRECT_RESPONSE:  # TODO make json literal
-            return """## `body`
-
-{}
-
-## `__user__`
-
-{}
-
-## `__metadata__`
-
-{}
-""".format(body, __user__, __metadata__)
+        if DEBUG_PIPE_DIRECT_RESPONSE:
+            return _generate_pipe_direct_responsep(body, __user__, __metadata__)
 
         if "model" not in body:
             raise IndexError("missing entry 'model' in body")
@@ -794,4 +783,16 @@ def _check_app_model_configs_structure(app_model_configs):
 
 
 def _generate_pipe_direct_responsep(body, user, metadata):
-    pass  # TODO
+    # TODO mpv
+    return """## `body`
+
+{}
+
+## `__user__`
+
+{}
+
+## `__metadata__`
+
+{}
+""".format(body, user, metadata)

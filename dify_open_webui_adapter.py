@@ -152,7 +152,7 @@ class OWUModel:
     ):
         self.base_url = base_url
 
-        self.key, self.model_id, provided_name, self.disallows_streaming = (
+        key, self.model_id, provided_name, disallows_streaming = (
             self._parse_app_model_config_arg(app_model_config)
         )
 
@@ -168,7 +168,9 @@ class OWUModel:
 
         # create app
         if self.app_type == DifyAppType.WORKFLOW:
-            self.app = WorkflowApp(self, app_model_config)
+            self.app = WorkflowApp(
+                self, app_model_config, key, disallows_streaming
+            )
         else:
             self.app = ChatflowApp(self)
 
@@ -389,8 +391,10 @@ class BaseDifyApp:
         raise NotImplementedError
 
     # constructor  =============================================================
-    def __init__(self, model):
+    def __init__(self, model, key, disallows_streaming):
         self.model = model
+        self.key = key
+        self.disallows_streaming = disallows_streaming
 
     # private methods  =========================================================
 
@@ -433,8 +437,8 @@ class WorkflowApp(BaseDifyApp):
     """
 
     # constructor  =============================================================
-    def __init__(self, model, config):
-        super().__init__(model)
+    def __init__(self, model, config, key, disallows_streaming):
+        super().__init__(model, key, disallows_streaming)
         # read from config  ----------------------------------------------------
         self.query_identifier = config.get(
             "query_input_field_identifier",

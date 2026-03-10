@@ -8,7 +8,7 @@ BaseDifyApp.__init__()
 
 import pytest
 
-from dify_open_webui_adapter import OWUModel, DifyAppType
+from dify_open_webui_adapter import OWUModel, DifyAppType, WorkflowApp
 
 # pytest fixtures  #############################################################
 
@@ -97,9 +97,6 @@ class TestLocalWf1:  # =========================================================
         assert not opt
 
 
-# TODO local one, alt url
-
-
 class TestCf1:  # ==============================================================
 
     def test_model(_, app_skip_cf1, model_skip_cf1):
@@ -134,5 +131,53 @@ class TestCf1:  # ==============================================================
 
 class TestErr:  #  =============================================================
 
-    def test1(_):
-        pass  # TODO
+    def test_key_present(_, base_url, config_wf1):
+        config = config_wf1.copy()
+        del config["key"]
+
+        with pytest.raises(ValueError) as exec_info:
+            WorkflowApp(None, base_url, config)
+        opt = exec_info.value.args[0]
+
+        print(opt)
+        assert opt == "entry in APP_MODEL_CONFIGS missing 'key'"
+
+    def test_key_type(_, base_url, config_wf1):
+        config = config_wf1.copy()
+
+        config["key"] = 123
+
+        with pytest.raises(TypeError) as exec_info:
+            WorkflowApp(None, base_url, config)
+        opt = exec_info.value.args[0]
+
+        print(opt)
+        assert opt == "entry in APP_MODEL_CONFIGS must have str 'key'"
+
+    def test_key_empty(_, base_url, config_wf1):
+        config = config_wf1.copy()
+
+        config["key"] = ""
+
+        with pytest.raises(ValueError) as exec_info:
+            WorkflowApp(None, base_url, config)
+        opt = exec_info.value.args[0]
+
+        print(opt)
+        assert opt == "entry in APP_MODEL_CONFIGS must have non-empty 'key'"
+
+    def test_disallow_type(_, base_url, config_wf1):
+        config = config_wf1.copy()
+
+        config["disallows_streaming"] = 123
+
+        with pytest.raises(TypeError) as exec_info:
+            WorkflowApp(None, base_url, config)
+        opt = exec_info.value.args[0]
+
+        print(opt)
+        assert (
+            opt
+            == "entry in APP_MODEL_CONFIGS, value of 'disallows_streaming' "
+            "must be bool: 123"
+        )

@@ -117,8 +117,13 @@ def app_skip_cf2(model_skip_cf2):
 
 # mocks  =======================================================================
 @pytest.fixture
-def patch_target():
+def patch_target_get():
     return "dify_open_webui_adapter.requests.get"
+
+
+@pytest.fixture
+def patch_target_post():
+    return "dify_open_webui_adapter.requests.post"
 
 
 @pytest.fixture

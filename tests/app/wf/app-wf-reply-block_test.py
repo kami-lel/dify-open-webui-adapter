@@ -12,7 +12,7 @@ from unittest.mock import Mock, patch
 # pytest  ######################################################################
 class TestBlock:
 
-    def test1(_, app_skip_wf1, patch_target):
+    def test1(_, app_skip_wf1, patch_target_get):
         return  # BUG
         mock_resp = Mock()
         mock_resp.json.return_value = {
@@ -27,7 +27,7 @@ class TestBlock:
             "timeout": 30,
         }
 
-        with patch(patch_target, return_value=mock_resp) as mock_get:
+        with patch(patch_target_get, return_value=mock_resp) as mock_get:
             app_skip_wf1._reply_blocking()
 
             mock_get.assert_awaited_once_with("", **assert_kwargs)

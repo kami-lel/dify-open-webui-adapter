@@ -88,13 +88,13 @@ class TestResponse:  ###########################################################
         base_url,
         config_wf1,
         patch_and_result_wf1,
-        patch_target,
+        patch_target_get,
         info_endpoint,
     ):
         config = config_wf1.copy()
         mock_resp, assert_kwargs = patch_and_result_wf1
 
-        with patch(patch_target, return_value=mock_resp) as mock_get:
+        with patch(patch_target_get, return_value=mock_resp) as mock_get:
             model = OWUModel(base_url, config)
 
             opt = model.name
@@ -109,13 +109,13 @@ class TestResponse:  ###########################################################
         base_url,
         config_cf1,
         patch_and_result_cf1,
-        patch_target,
+        patch_target_get,
         info_endpoint,
     ):
         config = config_cf1.copy()
         mock_resp, assert_kwargs = patch_and_result_cf1
 
-        with patch(patch_target, return_value=mock_resp) as mock_get:
+        with patch(patch_target_get, return_value=mock_resp) as mock_get:
             model = OWUModel(base_url, config)
 
             opt = model.name
@@ -128,14 +128,14 @@ class TestResponse:  ###########################################################
 
 class TestModelId:  ############################################################
 
-    def test1(_, base_url, config_wf1, patch_target, info_endpoint):
+    def test1(_, base_url, config_wf1, patch_target_get, info_endpoint):
         config = config_wf1.copy()
         mock_resp = Mock()
         mock_resp.json.return_value = {
             "mode": "workflow",
         }
 
-        with patch(patch_target, return_value=mock_resp) as mock_get:
+        with patch(patch_target_get, return_value=mock_resp) as mock_get:
             model = OWUModel(base_url, config)
 
             opt = model.name
@@ -152,14 +152,14 @@ class TestModelId:  ############################################################
                 timeout=30,
             )
 
-    def test2(_, base_url, config_cf1, patch_target, info_endpoint):
+    def test2(_, base_url, config_cf1, patch_target_get, info_endpoint):
         config = config_cf1.copy()
         mock_resp = Mock()
         mock_resp.json.return_value = {
             "mode": "advanced-chat",
         }
 
-        with patch(patch_target, return_value=mock_resp) as mock_get:
+        with patch(patch_target_get, return_value=mock_resp) as mock_get:
             model = OWUModel(base_url, config)
 
             opt = model.name

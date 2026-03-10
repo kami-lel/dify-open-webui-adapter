@@ -130,6 +130,7 @@ class OWUModel:
                 to access Dify Backend API
         :rtype: dict
         """
+        # HACK HACK rm
         header_dict = {
             "Authorization": "Bearer {}".format(self.key),
             "Content-Type": "application/json",
@@ -583,6 +584,26 @@ class ChatflowApp(BaseDifyApp):
 
 
 # helper class  ================================================================
+
+
+def create_http_header(key, enable_stream=False):
+    """
+    :param key:
+    :type key: str
+    :param enable_stream:
+    :type enable_stream: bool, optional
+    :return: http header object provided to `requests.get`
+    :rtype: dict
+    """
+    header_dict = {
+        "Authorization": "Bearer {}".format(key),
+        "Content-Type": "application/json",
+    }
+
+    if enable_stream:
+        header_dict["Accept"] = "text/event-stream"
+
+    return header_dict
 
 
 class _SSE(Flag):

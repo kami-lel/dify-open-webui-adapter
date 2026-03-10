@@ -4,7 +4,7 @@ model-newest_user_test.py
 Unit Tests (using pytest) for: OWUModel._get_newest_user_message_from_body()
 """
 
-# HACK
+# Hack
 
 # import pytest
 

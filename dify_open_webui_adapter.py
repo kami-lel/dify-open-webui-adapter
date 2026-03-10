@@ -133,15 +133,15 @@ class OWUModel:
         skip_get_app_type_and_name=False,  # for debug & testing
         app_type_override=None,  # for debug & testing
     ):
-        key, self.model_id, provided_name, disallows_streaming = (
-            self._parse_app_model_config_arg(app_model_config)
+        key, self.model_id, provided_name = self._parse_app_model_config_arg(
+            app_model_config
         )
 
         if skip_get_app_type_and_name:
             self.app_type, response_name = app_type_override, None
         else:
-            self.app_type, response_name = (
-                self._get_app_type_and_name_by_dify_get_info()
+            self.app_type, response_name = BaseDifyApp.get_app_type_and_name(
+                base_url, key
             )
 
         # set self.name
@@ -171,12 +171,12 @@ class OWUModel:
         # key  -----------------------------------------------------------------
         if "key" not in config:
             raise ValueError("entry in APP_MODEL_CONFIGS missing 'key'")
-        self.key = config["key"]
+        key = config["key"]
 
-        if not isinstance(self.key, str):
+        if not isinstance(key, str):
             raise TypeError("entry in APP_MODEL_CONFIGS must have str 'key'")
 
-        if len(self.key) == 0:
+        if len(key) == 0:
             raise ValueError(
                 "entry in APP_MODEL_CONFIGS must have non-empty 'key'"
             )
@@ -209,7 +209,7 @@ class OWUModel:
                     + "value of 'name' must be str or None"
                 )
 
-        return None, model_id, name, None
+        return key, model_id, name
 
     def _get_newest_user_message(self, body):
         for section in reversed(body["messages"]):

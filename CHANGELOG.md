@@ -20,9 +20,12 @@
 ## [Unreleased]
 
 ### Added
+
+- more completed set of *unit tests*
+
 ### Changed
 
-- more completed unit tests
+- *unit test* utilizing `unittest.mock`
 
 ### Deprecated
 ### Removed

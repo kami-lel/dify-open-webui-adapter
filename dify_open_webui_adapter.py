@@ -84,8 +84,6 @@ class OWUModel:
     :raises TypeError:
     """
 
-    # FIXME fix all tests
-
     # public methods  ==========================================================
 
     def get_model_id_and_name(self):
@@ -126,51 +124,34 @@ class OWUModel:
 
         return opt
 
-    def http_header(self, enable_stream=False):
-        """
-        :return: HTTP header (including authorization info)
-                to access Dify Backend API
-        :rtype: dict
-        """
-        header_dict = {
-            "Authorization": "Bearer {}".format(self.key),
-            "Content-Type": "application/json",
-        }
-
-        if enable_stream:
-            header_dict["Accept"] = "text/event-stream"
-
-        return header_dict
-
     # constructor  =============================================================
     def __init__(
         self,
         base_url,
         app_model_config,
         *,
-        skip_get_app_type_and_name=False,
-        app_type_override=None,
+        skip_get_app_type_and_name=False,  # for debug & testing
+        app_type_override=None,  # for debug & testing
     ):
-        self.base_url = base_url
-
-        self.key, self.model_id, provided_name, self.disallows_streaming = (
-            self._parse_app_model_config_arg(app_model_config)
+        key, self.model_id, provided_name = self._parse_app_model_config_arg(
+            app_model_config
         )
 
-        app_type, response_name = self._get_app_type_and_name_by_dify_get_info(
-            disable=skip_get_app_type_and_name
-        )
-        if app_type_override is not None:  # for unit test w/o network
-            app_type = app_type_override
+        if skip_get_app_type_and_name:
+            self.app_type, response_name = app_type_override, None
+        else:
+            self.app_type, response_name = BaseDifyApp.get_app_type_and_name(
+                base_url, key
+            )
 
         # set self.name
         self.name = provided_name or response_name or self.model_id
 
         # create app
-        if app_type == DifyAppType.WORKFLOW:
-            self.app = WorkflowApp(self, app_model_config)
+        if self.app_type == DifyAppType.WORKFLOW:
+            self.app = WorkflowApp(self, base_url, app_model_config)
         else:
-            self.app = ChatflowApp(self)
+            self.app = ChatflowApp(self, base_url, app_model_config)
 
     # private methods  =========================================================
 
@@ -186,6 +167,7 @@ class OWUModel:
         :raises ValueError:
         :raises TypeError:
         """
+
         # key  -----------------------------------------------------------------
         if "key" not in config:
             raise ValueError("entry in APP_MODEL_CONFIGS missing 'key'")
@@ -227,64 +209,7 @@ class OWUModel:
                     + "value of 'name' must be str or None"
                 )
 
-        # allows streaming  ----------------------------------------------------
-        disallows_streaming = False
-        if "disallows_streaming" in config:
-            disallows_streaming = config["disallows_streaming"]
-            if not isinstance(disallows_streaming, bool):
-                raise TypeError(
-                    "entry in APP_MODEL_CONFIGS, "
-                    + "value of 'disallows_streaming' must be bool: {}".format(
-                        disallows_streaming
-                    )
-                )
-
-        return key, model_id, name, disallows_streaming
-
-    def _get_app_type_and_name_by_dify_get_info(self, disable=False):
-        """
-        by GET /info endpoint of Dify Backend API,
-        get Dify app type and its name
-
-        helper method used in __init__()
-
-
-        :raises ConnectionError:
-        :raises ValueError:
-        :return: App name & type responded from Dify
-        :rtype: tuple(str, DifyAppType)
-        """
-        if disable:  # disable network-related function for unit tests
-            return None, None
-
-        info_url = "{}/info".format(self.base_url)
-
-        # GET /info  -----------------------------------------------------------
-        try:
-            response_object = requests.get(
-                info_url,
-                headers=self.http_header(),
-                timeout=REQUEST_TIMEOUT,
-            )
-            response_object.raise_for_status()
-            response = response_object.json()
-
-        except requests.exceptions.RequestException as err:
-            raise ConnectionError(
-                "fail Dify request: {}".format(err.args[0])
-            ) from err
-
-        # parse App type  ------------------------------------------------------
-        try:
-            app_type = DifyAppType(response["mode"])
-        except (KeyError, ValueError) as err:
-            raise ValueError(
-                "fail to get App type from Dify: {}".format(err.args[0])
-            ) from err
-
-        response_name = response["name"] if "name" in response else None
-
-        return app_type, response_name
+        return key, model_id, name
 
     def _get_newest_user_message(self, body):
         for section in reversed(body["messages"]):
@@ -313,19 +238,47 @@ class BaseDifyApp:
 
     # public methods  ==========================================================
 
-    @property
-    def base_url(self):  # pylint: disable=missing-function-docstring
-        return self.model.base_url
+    @staticmethod
+    def get_app_type_and_name(base_url, key):
+        """
+        get Dify App's Type & Name, by GET /info of Dicy Backend API
 
-    @property
-    def model_id(self):  # pylint: disable=missing-function-docstring
-        return self.model.model_id
 
-    @property
-    def name(self):  # pylint: disable=missing-function-docstring
-        return self.model.name
+        :param base_url:
+        :type base_url: str
+        :param key:
+        :type key: str
+        :raises ConnectionError:
+        :raises ValueError:
+        :return: type & name of Dify App
+        :rtype: tuple(str, DifyAppType)
+        """
+        info_url = "{}/info".format(base_url)
 
-    # public methods  ==========================================================
+        # GET /info  -----------------------------------------------------------
+        try:
+            response_object = requests.get(
+                info_url,
+                headers=create_http_header(key, enable_stream=False),
+                timeout=REQUEST_TIMEOUT,
+            )
+            response_object.raise_for_status()
+            response = response_object.json()
+
+        except requests.exceptions.RequestException as err:
+            raise ConnectionError(
+                "fail request to Dify: {}".format(err.args[0])
+            ) from err
+
+        # parse App type  ------------------------------------------------------
+        try:
+            app_type = DifyAppType(response["mode"])
+        except (KeyError, ValueError) as err:
+            raise ValueError("fail to get App Type from Dify") from err
+
+        response_name = response["name"] if "name" in response else None
+
+        return app_type, response_name
 
     def reply(self, newest_msg, enable_stream):
         """
@@ -347,7 +300,7 @@ class BaseDifyApp:
     def http_header(
         self, enable_stream=False
     ):  # pylint: disable=missing-function-docstring
-        return self.model.http_header(enable_stream=enable_stream)
+        return create_http_header(self.key, enable_stream=enable_stream)
 
     # abstract methods  ========================================================
 
@@ -358,19 +311,6 @@ class BaseDifyApp:
         :rtype: str
         """
         raise NotImplementedError
-
-    def update(self, user, metadata):
-        """
-        parse ``__user__`` and ``__metadata__``
-        and extract/update relevant information from them
-
-
-        :param user:
-        :type user: dict
-        :param metadata:
-        :type metadata: dict
-        """
-        return  # no op
 
     def _reply_blocking(self, newest_msg):
         """
@@ -395,8 +335,22 @@ class BaseDifyApp:
         raise NotImplementedError
 
     # constructor  =============================================================
-    def __init__(self, model):
+    def __init__(self, model, base_url, config):
         self.model = model
+        self.base_url = base_url
+        self.key = config["key"]
+
+        # allows streaming  ----------------------------------------------------
+        self.disallows_streaming = False
+        if "disallows_streaming" in config:
+            self.disallows_streaming = config["disallows_streaming"]
+            if not isinstance(self.disallows_streaming, bool):
+                raise TypeError(
+                    "entry in APP_MODEL_CONFIGS, "
+                    + "value of 'disallows_streaming' must be bool: {}".format(
+                        self.disallows_streaming
+                    )
+                )
 
     # private methods  =========================================================
 
@@ -427,11 +381,6 @@ class BaseDifyApp:
                 "fail request to Dify: {}\n{}".format(err.args[0], data)
             ) from err
 
-    # magic methods  ===========================================================
-
-    def __repr__(self):
-        return "{}({})".format(type(self).__name__, self.name)
-
 
 class WorkflowApp(BaseDifyApp):
     """
@@ -439,8 +388,8 @@ class WorkflowApp(BaseDifyApp):
     """
 
     # constructor  =============================================================
-    def __init__(self, model, config):
-        super().__init__(model)
+    def __init__(self, model, base_url, config):
+        super().__init__(model, base_url, config)
         # read from config  ----------------------------------------------------
         self.query_identifier = config.get(
             "query_input_field_identifier",
@@ -463,7 +412,7 @@ class WorkflowApp(BaseDifyApp):
     def main_url(self):
         return "{}/workflows/run".format(self.base_url)
 
-    # TODO unit tests private function
+    # Todo unit tests private function
 
     def _reply_blocking(self, newest_msg):
         """
@@ -490,7 +439,7 @@ class WorkflowApp(BaseDifyApp):
         """
         :raises ValueError:
         """
-        return _ConversationRound(self, newest_msg)
+        return _StreamingConversationRound(self, newest_msg)
 
     def _create_post_request_payload(self, newest_msg, enable_stream=False):
         payload_dict = {
@@ -507,9 +456,29 @@ class ChatflowApp(BaseDifyApp):
     representing a Chatflow App in Dify
     """
 
+    # properties  ==============================================================
+
+    @property
+    def conversation_id(self):
+        """
+        :return: correct Dify ``conversation_id``
+                (depends on OWU ``chat_id``);
+                empty if a new conversation is required
+        :rtype: str
+        """
+        if self.current_chat_id not in self.chat2conversation_ids:
+            # waiting to be set
+            self.chat2conversation_ids[self.current_chat_id] = ""
+
+        return self.chat2conversation_ids[self.current_chat_id]
+
+    @conversation_id.setter
+    def conversation_id(self, value):
+        self.chat2conversation_ids[self.current_chat_id] = value
+
     # constructor  =============================================================
-    def __init__(self, model):
-        super().__init__(model)
+    def __init__(self, model, base_url, config):
+        super().__init__(model, base_url, config)
         self.current_chat_id = ""
         self.chat2conversation_ids = {}
 
@@ -519,13 +488,7 @@ class ChatflowApp(BaseDifyApp):
     def main_url(self):
         return "{}/chat-messages".format(self.base_url)
 
-    # TODO unit tests these functions
-
-    def update(self, user, metadata):
-        super().update(user, metadata)
-        # get chat_id from metadata
-        # use a random chat_id if it is not provided by OWU
-        self.current_chat_id = metadata.get("chat_id", uuid.uuid4().hex)
+    # Todo unit tests these functions
 
     def _reply_blocking(self, newest_msg):
         """
@@ -555,7 +518,7 @@ class ChatflowApp(BaseDifyApp):
         """
         :raises ValueError:
         """
-        return _ConversationRound(self, newest_msg)
+        return _StreamingConversationRound(self, newest_msg)
 
     def _create_post_request_payload(self, newest_msg, enable_stream=False):
         payload_dict = {
@@ -568,28 +531,28 @@ class ChatflowApp(BaseDifyApp):
         }
         return json.dumps(payload_dict)
 
-    # properties  ==============================================================
-
-    @property
-    def conversation_id(self):
-        """
-        :return: correct Dify ``conversation_id``
-                (depends on OWU ``chat_id``);
-                empty if a new conversation is required
-        :rtype: str
-        """
-        if self.current_chat_id not in self.chat2conversation_ids:
-            # waiting to be set
-            self.chat2conversation_ids[self.current_chat_id] = ""
-
-        return self.chat2conversation_ids[self.current_chat_id]
-
-    @conversation_id.setter
-    def conversation_id(self, value):
-        self.chat2conversation_ids[self.current_chat_id] = value
-
 
 # helper class  ================================================================
+
+
+def create_http_header(key, enable_stream=False):
+    """
+    :param key:
+    :type key: str
+    :param enable_stream:
+    :type enable_stream: bool, optional
+    :return: http header object provided to `requests.get`
+    :rtype: dict
+    """
+    header_dict = {
+        "Authorization": "Bearer {}".format(key),
+        "Content-Type": "application/json",
+    }
+
+    if enable_stream:
+        header_dict["Accept"] = "text/event-stream"
+
+    return header_dict
 
 
 class _SSE(Flag):
@@ -612,7 +575,7 @@ class _SSE(Flag):
     IS_END = workflow_finished | message_end
 
 
-class _ConversationRound:
+class _StreamingConversationRound:
     """
     represent a single conversation round with Dify
 
@@ -632,6 +595,8 @@ class _ConversationRound:
         self.response = self.app._open_reply_response(newest_msg, True)
         self.iter_lines = self.response.iter_lines()
         self._debug_stop_on_next = False
+
+    # implemetn iter()  ========================================================
 
     def __iter__(self):
         return self  # make self an Iterator
@@ -738,7 +703,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
         self,
         app_model_configs_override=None,
         base_url_override=None,
-        disable_get_app_type_and_name=False,
+        skip_get_app_type_and_name=False,
     ):
         base_url = base_url_override or DIFY_BACKEND_API_BASE_URL
         app_model_configs = app_model_configs_override or APP_MODEL_CONFIGS
@@ -751,7 +716,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
             model = OWUModel(
                 base_url,
                 config,
-                skip_get_app_type_and_name=disable_get_app_type_and_name,
+                skip_get_app_type_and_name=skip_get_app_type_and_name,
             )
             model_id = model.model_id
             self.model_containers[model_id] = model

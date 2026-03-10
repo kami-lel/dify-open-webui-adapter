@@ -99,11 +99,11 @@ class OWUModel:
         handle OWU side of processing per-round response of conversation
 
 
-        :param body: `body` given by OWU Pipe.pipes(body, __user__)
+        :param body: `body` given by OWU Pipe.pipe()
         :type body: dict
-        :param user: `__user__` given by Pipe.pipes(body, __user__)
+        :param user: `__user__` given by Pipe.pipe()
         :type user: dict
-        :param metadata: `__metadata__` given by Pipe.pipes(body, __user__)
+        :param metadata: `__metadata__` given by Pipe.pipe()
         :type metadata: dict
         :raises ConnectionError:
         :raises ValueError:
@@ -112,14 +112,11 @@ class OWUModel:
         :rtype: str
         """
 
-        # extract info from OWU's body  ----------------------------------------
-        newest_msg = self._get_newest_user_message(body)
-        newest_msg_content = newest_msg["content"]
-        # extract if stream is enabled
+        # OWU side  ------------------------------------------------------------
+        newest_msg_content = self._get_last_user_msg_content(body)
         enable_stream = "stream" in body and bool(body["stream"])
 
-        # call DifyApp  --------------------------------------------------------
-        self.app.update(user, metadata)
+        # Dify side  -----------------------------------------------------------
         opt = self.app.reply(newest_msg_content, enable_stream)
 
         return opt
@@ -211,7 +208,7 @@ class OWUModel:
 
         return key, model_id, name
 
-    def _get_newest_user_message(self, body):
+    def _get_last_user_msg_content(self, body):  # TODO need test
         for section in reversed(body["messages"]):
             if section["role"] == OWU_USER_ROLE:
                 return section

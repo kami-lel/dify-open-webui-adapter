@@ -365,12 +365,10 @@ class BaseDifyApp:
         :raises ConnectionError:
         """
         try:
-            data = self._create_reply_payload()
-            headers = self.http_header
             response_obj = requests.post(
                 self.main_url,
-                headers=headers,
-                data=data,
+                headers=self.http_header,
+                data=self._create_reply_payload(),
                 stream=self.current_enable_stream,
                 timeout=(
                     STREAM_REQUEST_TIMEOUT
@@ -384,7 +382,7 @@ class BaseDifyApp:
         # handle network errors
         except requests.exceptions.RequestException as err:
             raise ConnectionError(
-                "fail request to Dify: {}\n{}".format(err.args[0], data)
+                "fail request to Dify: {}".format(err.args[0])
             ) from err
 
 

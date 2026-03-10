@@ -90,7 +90,7 @@ class TestGet:
             print(opt)
             assert opt == "fail to get App Type from Dify"
 
-    def test_bad_conncetion(_, base_url, config_wf1, patch_target_get):
+    def test_bad_connections(_, base_url, config_wf1, patch_target_get):
         config = config_wf1
         key = config["key"]
 

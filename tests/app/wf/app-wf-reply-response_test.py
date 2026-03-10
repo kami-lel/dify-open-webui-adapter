@@ -7,11 +7,14 @@ WorkflowApp._open_reply_response()
 """
 
 from unittest.mock import Mock, patch
+import requests
+import pytest
 
 
 class TestResponse:
 
     def test1_no_stream(_, app_skip_wf1, patch_target_post, wf_endpoint):
+        # BUG BUG
         replied = "Pseudo Message"
 
         app = app_skip_wf1
@@ -19,7 +22,7 @@ class TestResponse:
         app.current_enable_stream = False
 
         mock_resp = Mock()
-        mock_resp.json.return_value = {}
+        mock_resp.json.return_value = {"a": "b", "replied": replied}
 
         assert_kwargs = {
             "headers": {
@@ -33,7 +36,7 @@ class TestResponse:
             opt = app._open_reply_response()
 
             print(opt)
-            assert isinstance(opt, str)
+            assert isinstance(opt, requests.Response)
             assert opt == "My Workflow App"
 
             mock_get.assert_called_once_with(wf_endpoint, **assert_kwargs)
@@ -44,4 +47,16 @@ class TestResponse:
 
     # err handling  ============================================================
 
-    # TODO
+    def test_bad_connection(_, app_skip_wf1, patch_target_post):
+        with patch(
+            patch_target_post,
+            side_effect=requests.exceptions.ConnectionError("Bad Connection"),
+        ):
+            app = app_skip_wf1
+
+            with pytest.raises(ConnectionError) as exec_info:
+                app._open_reply_response()
+            opt = exec_info.value.args[0]
+
+            print(opt)
+            assert opt == "fail request to Dify: Bad Connection"

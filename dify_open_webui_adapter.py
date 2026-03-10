@@ -115,6 +115,7 @@ class OWUModel:
         # OWU side  ------------------------------------------------------------
         newest_msg_content = self._get_last_user_msg_content(body)
         enable_stream = "stream" in body and bool(body["stream"])
+        # Todo extract custom para from body
 
         # Dify side  -----------------------------------------------------------
         opt = self.app.reply(newest_msg_content, enable_stream)
@@ -290,7 +291,7 @@ class BaseDifyApp:
         """
         return (
             self._reply_streaming(newest_msg)
-            if not self.model.disallows_streaming and enable_stream
+            if not self.disallows_streaming and enable_stream
             else self._reply_blocking(newest_msg)
         )
 

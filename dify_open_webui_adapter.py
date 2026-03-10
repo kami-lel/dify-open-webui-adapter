@@ -258,16 +258,18 @@ class BaseDifyApp:
     @staticmethod
     def get_app_type_and_name(base_url, key):
         """
-        by GET /info endpoint of Dify Backend API,
-        get Dify app type and its name
+        get Dify App's Type & Name, by GET /info of Dicy Backend API
 
 
+        :param base_url:
+        :type base_url: str
+        :param key:
+        :type key: str
         :raises ConnectionError:
         :raises ValueError:
-        :return: App name & type responded from Dify
+        :return: type & name of Dify App
         :rtype: tuple(str, DifyAppType)
         """
-        # TODO TODO move this function to dify app side
         info_url = "{}/info".format(base_url)
 
         # GET /info  -----------------------------------------------------------

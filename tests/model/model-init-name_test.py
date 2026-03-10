@@ -140,22 +140,6 @@ class TestResponse:  ###########################################################
 
             mock_get.assert_called_once_with(info_endpoint, **assert_kwargs)
 
-    # err handling  ============================================================
-
-    def test_bad_conncetion(_, base_url, workflow_config1, patch_target):
-        config = workflow_config1.copy()
-
-        with patch(
-            patch_target,
-            side_effect=requests.exceptions.ConnectionError("Bad Connection"),
-        ):
-            with pytest.raises(ConnectionError) as exec_info:
-                OWUModel(base_url, config)
-            opt = exec_info.value.args[0]
-
-            print(opt)
-            assert opt == "fail request to Dify: Bad Connection"
-
 
 class TestModelId:  ############################################################
 

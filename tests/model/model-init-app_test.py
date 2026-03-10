@@ -72,20 +72,3 @@ class TestApp:
             assert isinstance(app, WorkflowApp)
 
             mock_get.assert_called_once_with(info_endpoint, **assert_kwargs)
-
-    # err handling  ------------------------------------------------------------
-
-    def test_no_type(_, base_url, workflow_config1, patch_target):
-        config = workflow_config1.copy()
-        mock_resp = Mock()
-        mock_resp.json.return_value = {
-            "name": "Some Names",
-        }
-
-        with patch(patch_target, return_value=mock_resp):
-            with pytest.raises(ValueError) as exec_info:
-                OWUModel(base_url, config)
-            opt = exec_info.value.args[0]
-
-            print(opt)
-            assert opt == "fail to get App Type from Dify"

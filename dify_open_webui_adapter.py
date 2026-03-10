@@ -150,8 +150,6 @@ class OWUModel:
         skip_get_app_type_and_name=False,  # for debug & testing
         app_type_override=None,  # for debug & testing
     ):
-        self.base_url = base_url
-
         key, self.model_id, provided_name, disallows_streaming = (
             self._parse_app_model_config_arg(app_model_config)
         )
@@ -168,11 +166,9 @@ class OWUModel:
 
         # create app
         if self.app_type == DifyAppType.WORKFLOW:
-            self.app = WorkflowApp(
-                self, app_model_config, key, disallows_streaming
-            )
+            self.app = WorkflowApp(self, base_url, app_model_config)
         else:
-            self.app = ChatflowApp(self)
+            self.app = ChatflowApp(self, base_url, app_model_config)
 
     # private methods  =========================================================
 
@@ -188,18 +184,6 @@ class OWUModel:
         :raises ValueError:
         :raises TypeError:
         """
-        # key  -----------------------------------------------------------------
-        if "key" not in config:
-            raise ValueError("entry in APP_MODEL_CONFIGS missing 'key'")
-        key = config["key"]
-
-        if not isinstance(key, str):
-            raise TypeError("entry in APP_MODEL_CONFIGS must have str 'key'")
-
-        if len(key) == 0:
-            raise ValueError(
-                "entry in APP_MODEL_CONFIGS must have non-empty 'key'"
-            )
 
         # id  ------------------------------------------------------------------
         if "model_id" not in config:
@@ -229,19 +213,7 @@ class OWUModel:
                     + "value of 'name' must be str or None"
                 )
 
-        # allows streaming  ----------------------------------------------------
-        disallows_streaming = False
-        if "disallows_streaming" in config:
-            disallows_streaming = config["disallows_streaming"]
-            if not isinstance(disallows_streaming, bool):
-                raise TypeError(
-                    "entry in APP_MODEL_CONFIGS, "
-                    + "value of 'disallows_streaming' must be bool: {}".format(
-                        disallows_streaming
-                    )
-                )
-
-        return key, model_id, name, disallows_streaming
+        return None, model_id, name, None
 
     def _get_app_type_and_name_by_dify_get_info(self):
         """
@@ -311,18 +283,6 @@ class BaseDifyApp:
 
     # public methods  ==========================================================
 
-    @property
-    def base_url(self):  # pylint: disable=missing-function-docstring
-        return self.model.base_url
-
-    @property
-    def model_id(self):  # pylint: disable=missing-function-docstring
-        return self.model.model_id
-
-    @property
-    def name(self):  # pylint: disable=missing-function-docstring
-        return self.model.name
-
     def reply(self, newest_msg, enable_stream):
         """
         handle Dify side of processing per-round response of conversation,
@@ -391,10 +351,34 @@ class BaseDifyApp:
         raise NotImplementedError
 
     # constructor  =============================================================
-    def __init__(self, model, key, disallows_streaming):
+    def __init__(self, model, base_url, config):
         self.model = model
-        self.key = key
-        self.disallows_streaming = disallows_streaming
+        self.base_url = base_url
+
+        # key  -----------------------------------------------------------------
+        if "key" not in config:
+            raise ValueError("entry in APP_MODEL_CONFIGS missing 'key'")
+        self.key = config["key"]
+
+        if not isinstance(self.key, str):
+            raise TypeError("entry in APP_MODEL_CONFIGS must have str 'key'")
+
+        if len(self.key) == 0:
+            raise ValueError(
+                "entry in APP_MODEL_CONFIGS must have non-empty 'key'"
+            )
+
+        # allows streaming  ----------------------------------------------------
+        self.disallows_streaming = False
+        if "disallows_streaming" in config:
+            self.disallows_streaming = config["disallows_streaming"]
+            if not isinstance(self.disallows_streaming, bool):
+                raise TypeError(
+                    "entry in APP_MODEL_CONFIGS, "
+                    + "value of 'disallows_streaming' must be bool: {}".format(
+                        self.disallows_streaming
+                    )
+                )
 
     # private methods  =========================================================
 
@@ -437,8 +421,8 @@ class WorkflowApp(BaseDifyApp):
     """
 
     # constructor  =============================================================
-    def __init__(self, model, config, key, disallows_streaming):
-        super().__init__(model, key, disallows_streaming)
+    def __init__(self, model, base_url, config):
+        super().__init__(model, base_url, config)
         # read from config  ----------------------------------------------------
         self.query_identifier = config.get(
             "query_input_field_identifier",
@@ -526,8 +510,8 @@ class ChatflowApp(BaseDifyApp):
         self.chat2conversation_ids[self.current_chat_id] = value
 
     # constructor  =============================================================
-    def __init__(self, model):
-        super().__init__(model)
+    def __init__(self, model, base_url, config):
+        super().__init__(model, base_url, config)
         self.current_chat_id = ""
         self.chat2conversation_ids = {}
 

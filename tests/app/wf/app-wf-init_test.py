@@ -61,29 +61,6 @@ def app_local2(model_local2):
 
 class Test1:  # ================================================================
 
-    def test_model(_, app_skip_wf1, model_skip_wf1):
-        app = app_skip_wf1
-        model = model_skip_wf1
-        assert app.model is model
-
-    def test_key(_, app_skip_wf1):
-        app = app_skip_wf1
-        opt = app.key
-
-        print(opt)
-        assert isinstance(opt, str)
-        assert opt == "068937402cc741689986cc5b6ed433a"
-
-    def test_disallows(_, app_skip_wf1):
-        app = app_skip_wf1
-        opt = app.disallows_streaming
-
-        print(opt)
-        assert isinstance(opt, bool)
-        assert not opt
-
-    # specific to Chatflow  ----------------------------------------------------
-
     def test_query(_, app_skip_wf1):
         app = app_skip_wf1
         opt = app.query_identifier
@@ -111,29 +88,6 @@ class Test1:  # ================================================================
 
 class TestLocal1:  # ===========================================================
 
-    def test_model(_, app_local1, model_local1):
-        app = app_local1
-        model = model_local1
-        assert app.model is model
-
-    def test_key(_, app_local1):
-        app = app_local1
-        opt = app.key
-
-        print(opt)
-        assert isinstance(opt, str)
-        assert opt == "068937402cc741689986cc5b6ed433a"
-
-    def test_disallows(_, app_local1):
-        app = app_local1
-        opt = app.disallows_streaming
-
-        print(opt)
-        assert isinstance(opt, bool)
-        assert not opt
-
-    # specific to Chatflow  ----------------------------------------------------
-
     def test_query(_, app_local1):
         app = app_local1
         opt = app.query_identifier
@@ -160,29 +114,6 @@ class TestLocal1:  # ===========================================================
 
 
 class TestLocal2:  # ===========================================================
-
-    def test_model(_, app_local2, model_local2):
-        app = app_local2
-        model = model_local2
-        assert app.model is model
-
-    def test_key(_, app_local2):
-        app = app_local2
-        opt = app.key
-
-        print(opt)
-        assert isinstance(opt, str)
-        assert opt == "068937402cc741689986cc5b6ed433a"
-
-    def test_disallows(_, app_local2):
-        app = app_local2
-        opt = app.disallows_streaming
-
-        print(opt)
-        assert isinstance(opt, bool)
-        assert not opt
-
-    # specific to Chatflow  ----------------------------------------------------
 
     def test_query(_, app_local2):
         app = app_local2

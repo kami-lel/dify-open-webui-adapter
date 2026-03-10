@@ -409,11 +409,6 @@ class BaseDifyApp:
                 "fail request to Dify: {}\n{}".format(err.args[0], data)
             ) from err
 
-    # magic methods  ===========================================================
-
-    def __repr__(self):
-        return "{}({})".format(type(self).__name__, self.name)
-
 
 class WorkflowApp(BaseDifyApp):
     """

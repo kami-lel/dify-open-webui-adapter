@@ -317,10 +317,11 @@ class BaseDifyApp:
         """
         raise NotImplementedError
 
-    def _create_post_request_payload(
-        self, last_user_msg_content, enable_stream=False
-    ):
+    def _create_reply_payload(self, last_user_msg_content, enable_stream=False):
         """
+        generate payload during .reply()
+
+
         :return: JSON-formatted request payload data,
                 e.g. it can be feed to ``requests.post(data=~)``
         :rtype: str
@@ -349,12 +350,15 @@ class BaseDifyApp:
 
     def _open_reply_response(self, last_user_msg_content, enable_stream=False):
         """
-        :return: per-round response connecting to Dify
+        open a `Response` object connecting to Dify during .reply()
+
+
+        :return:
         :rtype: requests.Response
         :raises ConnectionError:
         """
         try:
-            data = self._create_post_request_payload(
+            data = self._create_reply_payload(
                 last_user_msg_content, enable_stream
             )
             headers = self.http_header(enable_stream)
@@ -407,8 +411,6 @@ class WorkflowApp(BaseDifyApp):
     def main_url(self):
         return "{}/workflows/run".format(self.base_url)
 
-    # TODO unit tests private function
-
     def _reply_blocking(self, last_user_msg_content):
         """
         :raises ConnectionError:
@@ -432,9 +434,7 @@ class WorkflowApp(BaseDifyApp):
         finally:
             response_object.close()
 
-    def _create_post_request_payload(
-        self, last_user_msg_content, enable_stream=False
-    ):
+    def _create_reply_payload(self, last_user_msg_content, enable_stream=False):
         payload_dict = {
             "inputs": {
                 self.query_identifier: last_user_msg_content,
@@ -484,8 +484,6 @@ class ChatflowApp(BaseDifyApp):
     def main_url(self):
         return "{}/chat-messages".format(self.base_url)
 
-    # TODO unit tests these functions
-
     def _reply_blocking(self, last_user_msg_content):
         """
         :raises ConnectionError:
@@ -512,9 +510,7 @@ class ChatflowApp(BaseDifyApp):
         finally:
             response_object.close()
 
-    def _create_post_request_payload(
-        self, last_user_msg_content, enable_stream=False
-    ):
+    def _create_reply_payload(self, last_user_msg_content, enable_stream=False):
         payload_dict = {
             "query": last_user_msg_content,
             "response_mode": "streaming" if enable_stream else "blocking",

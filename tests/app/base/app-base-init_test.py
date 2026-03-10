@@ -10,11 +10,7 @@ import pytest
 
 from dify_open_webui_adapter import OWUModel, DifyAppType
 
-
 # pytest fixtures  #############################################################
-@pytest.fixture(scope="session")
-def base_url_alt():
-    return "https://55.44.33.22/v1"
 
 
 @pytest.fixture(scope="session")

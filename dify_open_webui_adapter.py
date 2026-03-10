@@ -34,7 +34,6 @@ from pydantic import BaseModel
 import requests
 
 # constants  ===================================================================
-# Todo read user role from metadata
 OWU_USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
 STREAM_REQUEST_TIMEOUT = 300
@@ -48,7 +47,7 @@ DEFINED_APP_MODEL_CONFIG_KEYS = (
 )
 
 # Dify constants  **************************************************************
-DIFY_USER_ROLE = "user"
+DIFY_USER_ROLE = "user"  # Todo read user role from metadata
 DEFAULT_QUERY_INPUT_FIELD_IDENTIFIER = "query"
 DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER = "answer"
 

@@ -26,6 +26,7 @@
 ### Changed
 
 - *unit test* utilizing `unittest.mock`
+- improve print format from debug feature *pipe direct response*
 
 ### Deprecated
 ### Removed

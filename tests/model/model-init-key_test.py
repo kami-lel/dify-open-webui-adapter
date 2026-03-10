@@ -14,6 +14,8 @@ from dify_open_webui_adapter import OWUModel, DifyAppType
 # pytest  ######################################################################
 class TestKey:
 
+    # err handling  ============================================================
+
     def test_key_present(_, base_url, config_wf1):
         config = config_wf1.copy()
         del config["key"]

@@ -22,7 +22,7 @@ class TestResponse:
         app.current_enable_stream = False
 
         mock_resp = Mock()
-        mock_resp.json.return_value = {"a": "b", "replied": replied}
+        mock_resp.return_value = {"a": "b", "replied": replied}
 
         assert_kwargs = {
             "headers": {
@@ -36,14 +36,15 @@ class TestResponse:
             opt = app._open_reply_response()
 
             print(opt)
-            assert isinstance(opt, requests.Response)
-            assert opt == "My Workflow App"
+            assert opt == {}
 
             mock_get.assert_called_once_with(wf_endpoint, **assert_kwargs)
 
         opt = app._open_reply_response()
         print(opt)
         assert opt == {}
+
+    # TODO stream
 
     # err handling  ============================================================
 

@@ -4,7 +4,18 @@ pipe-init_test.py
 Unit Tests (using pytest) for: class Pipe initialization
 """
 
-# HACK make test work
+
+# pytest  ######################################################################
+class Test0:  # ================================================================
+
+    pass
+
+
+class Test1:  # ================================================================
+    pass
+
+
+# HACK HACK make test work
 
 # import pytest
 

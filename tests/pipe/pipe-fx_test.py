@@ -4,8 +4,6 @@ pipe-fx_test.py
 Unit Tests (using pytest) for: Pipe.pipe()
 """
 
-# HACK
-
 # import pytest
 
 # from tests import EXAMPLE_CONFIGS
@@ -15,7 +13,7 @@ Unit Tests (using pytest) for: Pipe.pipe()
 # err handle  ##################################################################
 
 
-# class TestBadBody:  # BUG fail bad body test
+# class TestBadBody:  # Bug fail bad body test
 
 #     def test_no_msg(_):
 #         pipe = Pipe(

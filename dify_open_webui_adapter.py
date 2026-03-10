@@ -211,7 +211,7 @@ class OWUModel:
     def _get_last_user_msg_content(self, body):  # TODO need test
         for section in reversed(body["messages"]):
             if section["role"] == OWU_USER_ROLE:
-                return section
+                return section["content"]
 
         raise ValueError("fail to find any '{}' messages".format(OWU_USER_ROLE))
 

@@ -157,3 +157,62 @@ def patch_and_result_cf1():
     }
 
     return mock_resp, assert_kwargs
+
+
+# .pipe() args  ================================================================
+
+
+@pytest.fixture
+def pipe_body1():
+    return {
+        "stream": False,
+        "model": "dify_open_webui_adapter.example-chatflow-model",
+        "messages": [{"role": "user", "content": "FIRST USER MESSAGE"}],
+    }
+
+
+@pytest.fixture
+def pipe_body2():
+    return {
+        "stream": False,
+        "model": "dify_open_webui_adapter.example-chatflow-model",
+        "messages": [
+            {"role": "user", "content": "FIRST USER MESSAGE"},
+            {"role": "assistant", "content": "FIRST BOT REPLY"},
+            {"role": "user", "content": "SECOND USER MESSAGE"},
+            {"role": "assistant", "content": "SECOND BOT REPLY"},
+            {"role": "user", "content": "THIRD USER MESSAGE"},
+        ],
+    }
+
+
+@pytest.fixture
+def pipe_args_no_stream1(pipe_body1):
+    body = pipe_body1
+    user = {}
+    metadata = {}
+
+    return body, user, metadata
+
+
+@pytest.fixture
+def pipe_args_stream1(pipe_body1, pipe_args_no_stream1):
+    _, user, metadata = pipe_args_no_stream1
+    body = pipe_body1
+    body["stream"] = True
+    return body, user, metadata
+
+
+@pytest.fixture
+def pipe_args_no_stream2(pipe_body2):
+    body = pipe_body2
+    user = {}
+    metadata = {}
+    return body, user, metadata
+
+
+def pipe_args_stream2(pipe_body2, pipe_args_no_stream2):
+    _, user, metadata = pipe_args_no_stream2
+    body = pipe_body2
+    body["stream"] = True
+    return body, user, metadata

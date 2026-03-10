@@ -783,16 +783,25 @@ def _check_app_model_configs_structure(app_model_configs):
 
 
 def _generate_pipe_direct_response(body, user, metadata):
-    # TODO mpv
     return """## `body`
 
+```json
 {}
+```
 
 ## `__user__`
 
+```json
 {}
+```
 
 ## `__metadata__`
 
+```json
 {}
-""".format(body, user, metadata)
+```
+""".format(
+        json.dumps(body, indent=2),
+        json.dumps(user, indent=2),
+        json.dumps(metadata, indent=2),
+    )

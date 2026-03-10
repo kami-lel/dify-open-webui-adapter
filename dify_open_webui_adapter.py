@@ -213,9 +213,7 @@ class OWUModel:
             if section["role"] == OWU_USER_ROLE:
                 return section["content"]
 
-        raise ValueError(
-            "fail to find {} message in body".format(OWU_USER_ROLE)
-        )
+        raise ValueError("missing {} message in body".format(OWU_USER_ROLE))
 
     # magic methods  ===========================================================
 

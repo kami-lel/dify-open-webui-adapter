@@ -40,4 +40,4 @@ class TestGet:
         opt = exec_info.value.args[0]
 
         print(opt)
-        assert opt == "fail to find user message in body"
+        assert opt == "missing user message in body"

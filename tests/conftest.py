@@ -59,6 +59,11 @@ def config_cf2():
 
 
 @pytest.fixture(scope="session")
+def configs0(config_cf1):
+    return [config_cf1]
+
+
+@pytest.fixture(scope="session")
 def configs1(config_wf1, config_cf1, config_cf2):
     return [config_wf1, config_cf1, config_cf2]
 

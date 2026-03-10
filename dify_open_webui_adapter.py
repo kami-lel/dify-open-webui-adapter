@@ -312,19 +312,6 @@ class BaseDifyApp:
         """
         raise NotImplementedError
 
-    def update(self, user, metadata):
-        """
-        parse ``__user__`` and ``__metadata__``
-        and extract/update relevant information from them
-
-
-        :param user:
-        :type user: dict
-        :param metadata:
-        :type metadata: dict
-        """
-        return  # no op
-
     def _reply_blocking(self, newest_msg):
         """
         :return: the response
@@ -425,7 +412,7 @@ class WorkflowApp(BaseDifyApp):
     def main_url(self):
         return "{}/workflows/run".format(self.base_url)
 
-    # TODO unit tests private function
+    # Todo unit tests private function
 
     def _reply_blocking(self, newest_msg):
         """
@@ -501,13 +488,7 @@ class ChatflowApp(BaseDifyApp):
     def main_url(self):
         return "{}/chat-messages".format(self.base_url)
 
-    # TODO unit tests these functions
-
-    def update(self, user, metadata):
-        super().update(user, metadata)
-        # get chat_id from metadata
-        # use a random chat_id if it is not provided by OWU
-        self.current_chat_id = metadata.get("chat_id", uuid.uuid4().hex)
+    # Todo unit tests these functions
 
     def _reply_blocking(self, newest_msg):
         """

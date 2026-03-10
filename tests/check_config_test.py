@@ -11,6 +11,7 @@ import pytest
 from dify_open_webui_adapter import _check_app_model_configs_structure
 
 
+# HACK merge into init
 # empty  #######################################################################
 def test_empty():
     ipt = []

@@ -4,55 +4,74 @@ pipe-pipes_test.py
 Unit Tests (using pytest) for: Pipe.pipes()
 """
 
-# HACK make test work
-
-# from dify_open_webui_adapter import Pipe
-# from tests import EXAMPLE_CHATFLOW_CONFIG, EXAMPLE_CONFIGS
+import pytest
 
 
-# class TestPipes:
+# pytest fixtures  #############################################################
+@pytest.fixture(scope="session")
+def pipe_pipes0(pipe0):
+    return pipe0.pipes()
 
-#     def test1(_):
-#         configs = [EXAMPLE_CHATFLOW_CONFIG]
-#         pipe = Pipe(
-#             app_model_configs_override=configs,
-#             disable_get_app_type_and_name=True,
-#         )
-#         opt = pipe.pipes()
 
-#         print(opt)
+@pytest.fixture(scope="session")
+def pipe_pipes1(pipe1):
+    return pipe1.pipes()
 
-#         assert isinstance(opt, list)
-#         assert len(opt) == 1
 
-#         assert opt[0] == {
-#             "id": "example-chatflow-model",
-#             "name": "Example Chatflow Model/App",
-#         }
+# pytest  ######################################################################
 
-#     def test2(_):
-#         pipe = Pipe(
-#             app_model_configs_override=EXAMPLE_CONFIGS,
-#             disable_get_app_type_and_name=True,
-#         )
-#         opt = pipe.pipes()
 
-#         print(opt)
+class Test0:  # ================================================================
 
-#         assert isinstance(opt, list)
-#         assert len(opt) == 3
+    def test_type(_, pipe_pipes0):
+        opt = pipe_pipes0
 
-#         assert opt[0] == {
-#             "id": "example-workflow-model",
-#             "name": "example-workflow-model",
-#         }
+        print(opt)
+        assert isinstance(opt, list)
+        assert len(opt) == 1
 
-#         assert opt[1] == {
-#             "id": "example-chatflow-model",
-#             "name": "Example Chatflow Model/App",
-#         }
+    def test1(_, pipe_pipes0):
+        opt = pipe_pipes0[0]
 
-#         assert opt[2] == {
-#             "id": "example-chatflow-model-2",
-#             "name": "Aux Example Chatflow Model/App",
-#         }
+        print(opt)
+        assert opt == {
+            "id": "example-chatflow-model",
+            "name": "example-chatflow-model",
+        }
+
+
+class Test1:  # ================================================================
+
+    def test_type(_, pipe_pipes1):
+        opt = pipe_pipes1
+
+        print(opt)
+        assert isinstance(opt, list)
+        assert len(opt) == 3
+
+    def test1(_, pipe_pipes1):
+        opt = pipe_pipes1[0]
+
+        print(opt)
+        assert opt == {
+            "id": "example-workflow-model",
+            "name": "example-workflow-model",
+        }
+
+    def test2(_, pipe_pipes1):
+        opt = pipe_pipes1[1]
+
+        print(opt)
+        assert opt == {
+            "id": "example-chatflow-model",
+            "name": "example-chatflow-model",
+        }
+
+    def test3(_, pipe_pipes1):
+        opt = pipe_pipes1[2]
+
+        print(opt)
+        assert opt == {
+            "id": "example-chatflow-model-2",
+            "name": "Aux Example Chatflow Model/App",
+        }

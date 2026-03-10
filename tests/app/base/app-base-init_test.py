@@ -8,25 +8,7 @@ BaseDifyApp.__init__()
 
 import pytest
 
-from dify_open_webui_adapter import OWUModel, DifyAppType, WorkflowApp
-
-# pytest fixtures  #############################################################
-
-
-@pytest.fixture(scope="session")
-def model_local_wf1(base_url_alt, config_wf1):
-    return OWUModel(
-        base_url_alt,
-        config_wf1,
-        skip_get_app_type_and_name=True,
-        app_type_override=DifyAppType.WORKFLOW,
-    )
-
-
-@pytest.fixture(scope="session")
-def app_local_wf1(model_local_wf1):
-    return model_local_wf1.app
-
+from dify_open_webui_adapter import WorkflowApp
 
 # pytest  ######################################################################
 
@@ -66,30 +48,30 @@ class TestWf1:  # ==============================================================
 
 class TestLocalWf1:  # =========================================================
 
-    def test_model(_, app_local_wf1, model_local_wf1):
-        app = app_local_wf1
-        model = model_local_wf1
+    def test_model(_, app_wf_alt_url, model_wf_alt_url):
+        app = app_wf_alt_url
+        model = model_wf_alt_url
 
         assert app.model is model
 
-    def test_base_url(_, app_local_wf1, base_url_alt):
-        app = app_local_wf1
+    def test_base_url(_, app_wf_alt_url, base_url_alt):
+        app = app_wf_alt_url
 
         opt = app.base_url
         print(opt)
         assert isinstance(opt, str)
         assert opt == base_url_alt
 
-    def test_key(_, app_local_wf1):
-        app = app_local_wf1
+    def test_key(_, app_wf_alt_url):
+        app = app_wf_alt_url
         opt = app.key
 
         print(opt)
         assert isinstance(opt, str)
         assert opt == "068937402cc741689986cc5b6ed433a"
 
-    def test_disallows(_, app_local_wf1):
-        app = app_local_wf1
+    def test_disallows(_, app_wf_alt_url):
+        app = app_wf_alt_url
         opt = app.disallows_streaming
 
         print(opt)

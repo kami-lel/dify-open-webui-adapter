@@ -31,6 +31,16 @@ def info_endpoint():
     return "https://api.dify.ai/v1/info"
 
 
+@pytest.fixture
+def wf_endpoint(base_url):
+    return base_url + "/workflows/run"
+
+
+@pytest.fixture
+def cf_endpoint(base_url):
+    return base_url + "/chat-messages"
+
+
 # configs  =====================================================================
 @pytest.fixture(scope="session")
 def config_wf1():

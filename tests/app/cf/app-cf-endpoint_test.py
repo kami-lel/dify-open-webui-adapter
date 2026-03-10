@@ -23,12 +23,12 @@ def app_cf_alt_url(base_url_alt, config_cf1):
 
 class Test1:
 
-    def test1(_, app_skip_cf1):
+    def test1(_, app_skip_cf1, cf_endpoint):
         opt = app_skip_cf1.main_url
 
         print(opt)
         assert isinstance(opt, str)
-        assert opt == "https://api.dify.ai/v1/chat-messages"
+        assert opt == cf_endpoint
 
     def test_local1(_, app_cf_alt_url):
         opt = app_cf_alt_url.main_url

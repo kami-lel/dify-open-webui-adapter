@@ -423,9 +423,7 @@ class WorkflowApp(BaseDifyApp):
         :raises ConnectionError:
         :raises KeyError:
         """
-        response_object = self._open_reply_response(
-            self.current_user_msg_content, False
-        )
+        response_object = self._open_reply_response()
         response = response_object.json()
 
         try:
@@ -496,9 +494,7 @@ class ChatflowApp(BaseDifyApp):
         :raises ConnectionError:
         :raises KeyError:
         """
-        response_object = self._open_reply_response(
-            self.current_user_msg_content, False
-        )
+        response_object = self._open_reply_response()
         response = response_object.json()
 
         try:

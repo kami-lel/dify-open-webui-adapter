@@ -345,6 +345,10 @@ class BaseDifyApp:
                     )
                 )
 
+        # current conversations  -----------------------------------------------
+        self.current_user_msg_content = ""
+        self.current_enable_stream = False
+
     # private methods  =========================================================
 
     def _open_reply_response(self, last_user_msg_content, enable_stream=False):

@@ -45,6 +45,22 @@ class TestWf1:  # ==============================================================
         assert isinstance(opt, bool)
         assert not opt
 
+    def test_msg(_, app_skip_wf1):
+        app = app_skip_wf1
+        opt = app.current_user_msg_content
+
+        print(opt)
+        assert isinstance(opt, str)
+        assert opt == ""
+
+    def test_enables(_, app_skip_wf1):
+        app = app_skip_wf1
+        opt = app.current_enable_stream
+
+        print(opt)
+        assert isinstance(opt, bool)
+        assert not opt
+
 
 class TestLocalWf1:  # =========================================================
 
@@ -78,6 +94,22 @@ class TestLocalWf1:  # =========================================================
         assert isinstance(opt, bool)
         assert not opt
 
+    def test_msg(_, app_wf_alt_url):
+        app = app_wf_alt_url
+        opt = app.current_user_msg_content
+
+        print(opt)
+        assert isinstance(opt, str)
+        assert opt == ""
+
+    def test_enables(_, app_wf_alt_url):
+        app = app_wf_alt_url
+        opt = app.current_enable_stream
+
+        print(opt)
+        assert isinstance(opt, bool)
+        assert not opt
+
 
 class TestCf1:  # ==============================================================
 
@@ -105,6 +137,22 @@ class TestCf1:  # ==============================================================
     def test_disallows(_, app_skip_cf1):
         app = app_skip_cf1
         opt = app.disallows_streaming
+
+        print(opt)
+        assert isinstance(opt, bool)
+        assert not opt
+
+    def test_msg(_, app_skip_cf1):
+        app = app_skip_cf1
+        opt = app.current_user_msg_content
+
+        print(opt)
+        assert isinstance(opt, str)
+        assert opt == ""
+
+    def test_enables(_, app_skip_cf1):
+        app = app_skip_cf1
+        opt = app.current_enable_stream
 
         print(opt)
         assert isinstance(opt, bool)

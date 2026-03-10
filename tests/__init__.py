@@ -1,4 +1,4 @@
-# HACK rm old test files
+# Hack rm old test files
 
 EXAMPLE_BODY1 = {
     "stream": True,

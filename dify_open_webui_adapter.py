@@ -113,12 +113,12 @@ class OWUModel:
         """
 
         # OWU side  ------------------------------------------------------------
-        newest_msg_content = self._get_last_user_msg_content(body)
+        last_user_msg_content_content = self._get_last_user_msg_content(body)
         enable_stream = "stream" in body and bool(body["stream"])
         # Todo extract custom para from body
 
         # Dify side  -----------------------------------------------------------
-        opt = self.app.reply(newest_msg_content, enable_stream)
+        opt = self.app.reply(last_user_msg_content_content, enable_stream)
 
         return opt
 
@@ -278,7 +278,7 @@ class BaseDifyApp:
 
         return app_type, response_name
 
-    def reply(self, newest_msg, enable_stream):
+    def reply(self, last_user_msg_content, enable_stream):
         """
         handle Dify side of processing per-round response of conversation,
         by requesting Dify Backend API
@@ -290,9 +290,9 @@ class BaseDifyApp:
         :rtype: str or Iterable
         """
         return (
-            self._reply_streaming(newest_msg)
+            self._reply_streaming(last_user_msg_content)
             if not self.disallows_streaming and enable_stream
-            else self._reply_blocking(newest_msg)
+            else self._reply_blocking(last_user_msg_content)
         )
 
     def http_header(
@@ -310,21 +310,23 @@ class BaseDifyApp:
         """
         raise NotImplementedError
 
-    def _reply_blocking(self, newest_msg):
+    def _reply_blocking(self, last_user_msg_content):
         """
         :return: the response
         :rtype: str
         """
         raise NotImplementedError
 
-    def _reply_streaming(self, newest_msg):
+    def _reply_streaming(self, last_user_msg_content):
         """
         :return: response
         :rtype: Iterable
         """
         raise NotImplementedError
 
-    def _create_post_request_payload(self, newest_msg, enable_stream=False):
+    def _create_post_request_payload(
+        self, last_user_msg_content, enable_stream=False
+    ):
         """
         :return: JSON-formatted request payload data,
                 e.g. it can be feed to ``requests.post(data=~)``
@@ -352,14 +354,16 @@ class BaseDifyApp:
 
     # private methods  =========================================================
 
-    def _open_reply_response(self, newest_msg, enable_stream=False):
+    def _open_reply_response(self, last_user_msg_content, enable_stream=False):
         """
         :return: per-round response connecting to Dify
         :rtype: requests.Response
         :raises ConnectionError:
         """
         try:
-            data = self._create_post_request_payload(newest_msg, enable_stream)
+            data = self._create_post_request_payload(
+                last_user_msg_content, enable_stream
+            )
             headers = self.http_header(enable_stream)
             response_obj = requests.post(
                 self.main_url,
@@ -412,12 +416,14 @@ class WorkflowApp(BaseDifyApp):
 
     # TODO unit tests private function
 
-    def _reply_blocking(self, newest_msg):
+    def _reply_blocking(self, last_user_msg_content):
         """
         :raises ConnectionError:
         :raises KeyError:
         """
-        response_object = self._open_reply_response(newest_msg, False)
+        response_object = self._open_reply_response(
+            last_user_msg_content, False
+        )
         response = response_object.json()
 
         try:
@@ -433,15 +439,20 @@ class WorkflowApp(BaseDifyApp):
         finally:
             response_object.close()
 
-    def _reply_streaming(self, newest_msg):
+    def _reply_streaming(self, last_user_msg_content):
         """
         :raises ValueError:
         """
-        return _StreamingConversationRound(self, newest_msg)
+        return _StreamingConversationRound(self, last_user_msg_content)
 
-    def _create_post_request_payload(self, newest_msg, enable_stream=False):
+    def _create_post_request_payload(
+        self, last_user_msg_content, enable_stream=False
+    ):
         payload_dict = {
-            "inputs": {self.query_identifier: newest_msg, **self.input_fields},
+            "inputs": {
+                self.query_identifier: last_user_msg_content,
+                **self.input_fields,
+            },
             "response_mode": "streaming" if enable_stream else "blocking",
             "user": DIFY_USER_ROLE,
         }
@@ -488,12 +499,14 @@ class ChatflowApp(BaseDifyApp):
 
     # TODO unit tests these functions
 
-    def _reply_blocking(self, newest_msg):
+    def _reply_blocking(self, last_user_msg_content):
         """
         :raises ConnectionError:
         :raises KeyError:
         """
-        response_object = self._open_reply_response(newest_msg, False)
+        response_object = self._open_reply_response(
+            last_user_msg_content, False
+        )
         response = response_object.json()
 
         try:
@@ -512,15 +525,17 @@ class ChatflowApp(BaseDifyApp):
         finally:
             response_object.close()
 
-    def _reply_streaming(self, newest_msg):
+    def _reply_streaming(self, last_user_msg_content):
         """
         :raises ValueError:
         """
-        return _StreamingConversationRound(self, newest_msg)
+        return _StreamingConversationRound(self, last_user_msg_content)
 
-    def _create_post_request_payload(self, newest_msg, enable_stream=False):
+    def _create_post_request_payload(
+        self, last_user_msg_content, enable_stream=False
+    ):
         payload_dict = {
-            "query": newest_msg,
+            "query": last_user_msg_content,
             "response_mode": "streaming" if enable_stream else "blocking",
             "user": DIFY_USER_ROLE,
             "conversation_id": self.conversation_id,
@@ -588,9 +603,11 @@ class _StreamingConversationRound:
     _STREAM_PREFIX = "data: "
     # enable debug mode such it returns text-stream directly
 
-    def __init__(self, app, newest_msg):
+    def __init__(self, app, last_user_msg_content):
         self.app = app
-        self.response = self.app._open_reply_response(newest_msg, True)
+        self.response = self.app._open_reply_response(
+            last_user_msg_content, True
+        )
         self.iter_lines = self.response.iter_lines()
         self._debug_stop_on_next = False
 

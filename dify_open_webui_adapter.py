@@ -185,6 +185,19 @@ class OWUModel:
         :raises TypeError:
         """
 
+        # key  -----------------------------------------------------------------
+        if "key" not in config:
+            raise ValueError("entry in APP_MODEL_CONFIGS missing 'key'")
+        self.key = config["key"]
+
+        if not isinstance(self.key, str):
+            raise TypeError("entry in APP_MODEL_CONFIGS must have str 'key'")
+
+        if len(self.key) == 0:
+            raise ValueError(
+                "entry in APP_MODEL_CONFIGS must have non-empty 'key'"
+            )
+
         # id  ------------------------------------------------------------------
         if "model_id" not in config:
             raise ValueError("entry in APP_MODEL_CONFIGS missing 'model_id'")
@@ -215,47 +228,6 @@ class OWUModel:
 
         return None, model_id, name, None
 
-    def _get_app_type_and_name_by_dify_get_info(self):
-        """
-        by GET /info endpoint of Dify Backend API,
-        get Dify app type and its name
-
-        helper method used in __init__()
-
-
-        :raises ConnectionError:
-        :raises ValueError:
-        :return: App name & type responded from Dify
-        :rtype: tuple(str, DifyAppType)
-        """
-        # Todo move this function to dify app side
-        info_url = "{}/info".format(self.base_url)
-
-        # GET /info  -----------------------------------------------------------
-        try:
-            response_object = requests.get(
-                info_url,
-                headers=self.http_header(enable_stream=False),
-                timeout=REQUEST_TIMEOUT,
-            )
-            response_object.raise_for_status()
-            response = response_object.json()
-
-        except requests.exceptions.RequestException as err:
-            raise ConnectionError(
-                "fail request to Dify: {}".format(err.args[0])
-            ) from err
-
-        # parse App type  ------------------------------------------------------
-        try:
-            app_type = DifyAppType(response["mode"])
-        except (KeyError, ValueError) as err:
-            raise ValueError("fail to get App Type from Dify") from err
-
-        response_name = response["name"] if "name" in response else None
-
-        return app_type, response_name
-
     def _get_newest_user_message(self, body):
         for section in reversed(body["messages"]):
             if section["role"] == OWU_USER_ROLE:
@@ -282,6 +254,46 @@ class BaseDifyApp:
     """
 
     # public methods  ==========================================================
+
+    @staticmethod
+    def get_app_type_and_name(base_url, key):
+        """
+        by GET /info endpoint of Dify Backend API,
+        get Dify app type and its name
+
+
+        :raises ConnectionError:
+        :raises ValueError:
+        :return: App name & type responded from Dify
+        :rtype: tuple(str, DifyAppType)
+        """
+        # TODO TODO move this function to dify app side
+        info_url = "{}/info".format(base_url)
+
+        # GET /info  -----------------------------------------------------------
+        try:
+            response_object = requests.get(
+                info_url,
+                headers=create_http_header(key, enable_stream=False),
+                timeout=REQUEST_TIMEOUT,
+            )
+            response_object.raise_for_status()
+            response = response_object.json()
+
+        except requests.exceptions.RequestException as err:
+            raise ConnectionError(
+                "fail request to Dify: {}".format(err.args[0])
+            ) from err
+
+        # parse App type  ------------------------------------------------------
+        try:
+            app_type = DifyAppType(response["mode"])
+        except (KeyError, ValueError) as err:
+            raise ValueError("fail to get App Type from Dify") from err
+
+        response_name = response["name"] if "name" in response else None
+
+        return app_type, response_name
 
     def reply(self, newest_msg, enable_stream):
         """
@@ -354,19 +366,7 @@ class BaseDifyApp:
     def __init__(self, model, base_url, config):
         self.model = model
         self.base_url = base_url
-
-        # key  -----------------------------------------------------------------
-        if "key" not in config:
-            raise ValueError("entry in APP_MODEL_CONFIGS missing 'key'")
         self.key = config["key"]
-
-        if not isinstance(self.key, str):
-            raise TypeError("entry in APP_MODEL_CONFIGS must have str 'key'")
-
-        if len(self.key) == 0:
-            raise ValueError(
-                "entry in APP_MODEL_CONFIGS must have non-empty 'key'"
-            )
 
         # allows streaming  ----------------------------------------------------
         self.disallows_streaming = False

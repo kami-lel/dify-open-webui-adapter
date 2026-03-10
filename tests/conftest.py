@@ -58,6 +58,11 @@ def config_cf2():
     }
 
 
+@pytest.fixture(scope="session")
+def configs1(config_wf1, config_cf1, config_cf2):
+    return [config_wf1, config_cf1, config_cf2]
+
+
 # model  =======================================================================
 @pytest.fixture(scope="session")
 def model_skip_wf1(base_url, config_wf1):

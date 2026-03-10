@@ -92,6 +92,7 @@ class OWUModel:
                 such that it can be served to ``Pipe.pipes()``
         :rtype: dict{str: str}
         """
+        # BUG BUG BUG
         return {"id": self.model_id, "name": self.name}
 
     def reply(self, body, user, metadata):

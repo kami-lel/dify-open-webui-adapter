@@ -14,8 +14,6 @@ import pytest
 
 from dify_open_webui_adapter import BaseDifyApp, DifyAppType
 
-# pytest fixtures  #############################################################
-
 # pytest  ######################################################################
 
 

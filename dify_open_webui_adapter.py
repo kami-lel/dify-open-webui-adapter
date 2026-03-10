@@ -117,7 +117,10 @@ class OWUModel:
         # Todo extract custom para from body
 
         # Dify side  -----------------------------------------------------------
-        opt = self.app.reply(last_user_msg_content_content, enable_stream)
+        self.app.current_user_msg_content = last_user_msg_content_content
+        self.app.current_enable_stream = enable_stream
+
+        opt = self.app.reply()
 
         return opt
 
@@ -277,7 +280,7 @@ class BaseDifyApp:
 
         return app_type, response_name
 
-    def reply(self, last_user_msg_content, enable_stream):
+    def reply(self):
         """
         handle Dify side of processing per-round response of conversation,
         by requesting Dify Backend API
@@ -289,9 +292,9 @@ class BaseDifyApp:
         :rtype: str or Iterable
         """
         return (
-            _StreamingConversationRound(self, last_user_msg_content)
-            if not self.disallows_streaming and enable_stream
-            else self._reply_blocking(last_user_msg_content)
+            _StreamingConversationRound(self, self.current_user_msg_content)
+            if not self.disallows_streaming and self.current_enable_stream
+            else self._reply_blocking()
         )
 
     def http_header(
@@ -309,14 +312,14 @@ class BaseDifyApp:
         """
         raise NotImplementedError
 
-    def _reply_blocking(self, last_user_msg_content):
+    def _reply_blocking(self):
         """
         :return: the response
         :rtype: str
         """
         raise NotImplementedError
 
-    def _create_reply_payload(self, last_user_msg_content, enable_stream=False):
+    def _create_reply_payload(self):
         """
         generate payload during .reply()
 
@@ -361,9 +364,7 @@ class BaseDifyApp:
         :raises ConnectionError:
         """
         try:
-            data = self._create_reply_payload(
-                last_user_msg_content, enable_stream
-            )
+            data = self._create_reply_payload()
             headers = self.http_header(enable_stream)
             response_obj = requests.post(
                 self.main_url,
@@ -414,13 +415,13 @@ class WorkflowApp(BaseDifyApp):
     def main_url(self):
         return "{}/workflows/run".format(self.base_url)
 
-    def _reply_blocking(self, last_user_msg_content):
+    def _reply_blocking(self):
         """
         :raises ConnectionError:
         :raises KeyError:
         """
         response_object = self._open_reply_response(
-            last_user_msg_content, False
+            self.current_user_msg_content, False
         )
         response = response_object.json()
 
@@ -435,13 +436,15 @@ class WorkflowApp(BaseDifyApp):
         finally:
             response_object.close()
 
-    def _create_reply_payload(self, last_user_msg_content, enable_stream=False):
+    def _create_reply_payload(self):
         payload_dict = {
             "inputs": {
-                self.query_identifier: last_user_msg_content,
+                self.query_identifier: self.current_user_msg_content,
                 **self.input_fields,
             },
-            "response_mode": "streaming" if enable_stream else "blocking",
+            "response_mode": (
+                "streaming" if self.current_enable_stream else "blocking"
+            ),
             "user": DIFY_USER_ROLE,
         }
 
@@ -485,13 +488,13 @@ class ChatflowApp(BaseDifyApp):
     def main_url(self):
         return "{}/chat-messages".format(self.base_url)
 
-    def _reply_blocking(self, last_user_msg_content):
+    def _reply_blocking(self):
         """
         :raises ConnectionError:
         :raises KeyError:
         """
         response_object = self._open_reply_response(
-            last_user_msg_content, False
+            self.current_user_msg_content, False
         )
         response = response_object.json()
 
@@ -509,10 +512,12 @@ class ChatflowApp(BaseDifyApp):
         finally:
             response_object.close()
 
-    def _create_reply_payload(self, last_user_msg_content, enable_stream=False):
+    def _create_reply_payload(self):
         payload_dict = {
-            "query": last_user_msg_content,
-            "response_mode": "streaming" if enable_stream else "blocking",
+            "query": self.current_user_msg_content,
+            "response_mode": (
+                "streaming" if self.current_enable_stream else "blocking"
+            ),
             "user": DIFY_USER_ROLE,
             "conversation_id": self.conversation_id,
             "auto_generate_name": False,

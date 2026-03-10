@@ -290,7 +290,7 @@ class BaseDifyApp:
         :rtype: str or Iterable
         """
         return (
-            self._reply_streaming(last_user_msg_content)
+            _StreamingConversationRound(self, last_user_msg_content)
             if not self.disallows_streaming and enable_stream
             else self._reply_blocking(last_user_msg_content)
         )
@@ -314,13 +314,6 @@ class BaseDifyApp:
         """
         :return: the response
         :rtype: str
-        """
-        raise NotImplementedError
-
-    def _reply_streaming(self, last_user_msg_content):
-        """
-        :return: response
-        :rtype: Iterable
         """
         raise NotImplementedError
 
@@ -439,12 +432,6 @@ class WorkflowApp(BaseDifyApp):
         finally:
             response_object.close()
 
-    def _reply_streaming(self, last_user_msg_content):
-        """
-        :raises ValueError:
-        """
-        return _StreamingConversationRound(self, last_user_msg_content)
-
     def _create_post_request_payload(
         self, last_user_msg_content, enable_stream=False
     ):
@@ -524,12 +511,6 @@ class ChatflowApp(BaseDifyApp):
 
         finally:
             response_object.close()
-
-    def _reply_streaming(self, last_user_msg_content):
-        """
-        :raises ValueError:
-        """
-        return _StreamingConversationRound(self, last_user_msg_content)
 
     def _create_post_request_payload(
         self, last_user_msg_content, enable_stream=False

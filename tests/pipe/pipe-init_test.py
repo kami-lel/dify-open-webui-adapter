@@ -12,78 +12,58 @@ from dify_open_webui_adapter import Pipe
 # pytest  ######################################################################
 class Test0:  # ================================================================
 
-    pass
+    def test_container(_, pipe0):
+        container = pipe0.model_containers
+
+        print(container)
+        assert isinstance(container, dict)
+        assert len(container) == 1
+
+    def test_model1(_, pipe0):
+        container = pipe0.model_containers
+
+        assert "example-chatflow-model" in container
+
+        opt = container["example-chatflow-model"]
+        print(opt)
+        assert opt.model_id == "example-chatflow-model"
 
 
 class Test1:  # ================================================================
-    pass
 
+    def test_container(_, pipe1):
+        container = pipe1.model_containers
 
-# HACK HACK make test work
+        print(container)
+        assert isinstance(container, dict)
+        assert len(container) == 3
 
-# import pytest
+    def test_model1(_, pipe1):
+        containers = pipe1.model_containers
+        model_id = "example-workflow-model"
 
-# from dify_open_webui_adapter import Pipe
-# from tests import EXAMPLE_CHATFLOW_CONFIG, EXAMPLE_CONFIGS
+        assert model_id in containers
+        opt = containers[model_id]
+        print(opt)
+        assert opt.model_id == model_id
 
+    def test_model2(_, pipe1):
+        containers = pipe1.model_containers
+        model_id = "example-chatflow-model"
 
-# def test_verify_app_model_config():
-#     config = EXAMPLE_CHATFLOW_CONFIG.copy()
-#     del config["model_id"]
-#     ipt = [config]
+        assert model_id in containers
+        opt = containers[model_id]
+        print(opt)
+        assert opt.model_id == model_id
 
-#     with pytest.raises(ValueError):
-#         Pipe(ipt)
+    def test_model3(_, pipe1):
+        containers = pipe1.model_containers
+        model_id = "example-chatflow-model-2"
 
-
-# class TestContainers:  # test populating self.containers
-
-#     def test1(_):
-#         configs = [EXAMPLE_CHATFLOW_CONFIG]
-#         pipe = Pipe(
-#             app_model_configs_override=configs,
-#             disable_get_app_type_and_name=True,
-#         )
-#         containers = pipe.model_containers
-
-#         print(containers)
-
-#         assert len(containers) == 1
-
-#         # test chatflow container  +++++++++++++++++++++++++++++++++++++++++++++
-#         chatflow = containers["example-chatflow-model"]
-#         assert chatflow.key == "u0caCsmD"
-#         assert chatflow.model_id == "example-chatflow-model"
-#         assert chatflow.name == "Example Chatflow Model/App"
-
-#     def test2(_):
-#         pipe = Pipe(
-#             app_model_configs_override=EXAMPLE_CONFIGS,
-#             disable_get_app_type_and_name=True,
-#         )
-#         containers = pipe.model_containers
-
-#         print(containers)
-
-#         assert len(containers) == 3
-
-#         # test workflow container  +++++++++++++++++++++++++++++++++++++++++++++
-#         chatflow = containers["example-workflow-model"]
-#         assert chatflow.key == "eaJxetwz"
-#         assert chatflow.model_id == "example-workflow-model"
-#         assert chatflow.name == "example-workflow-model"
-
-#         # test chatflow container  +++++++++++++++++++++++++++++++++++++++++++++
-#         chatflow = containers["example-chatflow-model"]
-#         assert chatflow.key == "u0caCsmD"
-#         assert chatflow.model_id == "example-chatflow-model"
-#         assert chatflow.name == "Example Chatflow Model/App"
-
-#         # test chatflow2 container  ++++++++++++++++++++++++++++++++++++++++++++
-#         chatflow = containers["example-chatflow-model-2"]
-#         assert chatflow.key == "YIFpPns6"
-#         assert chatflow.model_id == "example-chatflow-model-2"
-#         assert chatflow.name == "Aux Example Chatflow Model/App"
+        assert model_id in containers
+        opt = containers[model_id]
+        print(opt)
+        assert opt.model_id == model_id
 
 
 class TestErr:
@@ -102,9 +82,6 @@ class TestErr:
         print(msg)
 
         assert msg == "APP_MODEL_CONFIGS must contain at least one App/Model"
-
-
-class TestBadType:  ############################################################
 
     def test_bad_type1(_, configs1, base_url):
         ipt = configs1.copy()

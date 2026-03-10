@@ -69,7 +69,7 @@ def configs1(config_wf1, config_cf1, config_cf2):
 
 
 # model  =======================================================================
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def model_skip_wf1(base_url, config_wf1):
     return OWUModel(
         base_url,
@@ -79,7 +79,7 @@ def model_skip_wf1(base_url, config_wf1):
     )
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def model_skip_cf1(base_url, config_cf1):
     return OWUModel(
         base_url,
@@ -89,7 +89,7 @@ def model_skip_cf1(base_url, config_cf1):
     )
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def model_skip_cf2(base_url, config_cf2):
     return OWUModel(
         base_url,
@@ -100,17 +100,17 @@ def model_skip_cf2(base_url, config_cf2):
 
 
 # app  =========================================================================
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def app_skip_wf1(model_skip_wf1):
     return model_skip_wf1.app
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def app_skip_cf1(model_skip_cf1):
     return model_skip_cf1.app
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def app_skip_cf2(model_skip_cf2):
     return model_skip_cf2.app
 

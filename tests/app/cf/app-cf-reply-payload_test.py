@@ -6,17 +6,15 @@ Unit Tests (using pytest) for:
 ChatflowApp._create_reply_payload()
 """
 
-# BUG BUG
-
 
 class Test1:  # ================================================================
 
     def test_no_stream(_, app_skip_cf1):
         app = app_skip_cf1
-        msg = "USER MESSAGE"
-        enable_stream = False
+        app.current_user_msg_content = "USER MESSAGE"
+        app.current_enable_stream = False
 
-        opt = app._create_reply_payload(msg, enable_stream=enable_stream)
+        opt = app._create_reply_payload()
 
         print(opt)
         assert (
@@ -28,10 +26,10 @@ class Test1:  # ================================================================
 
     def test_stream(_, app_skip_cf1):
         app = app_skip_cf1
-        msg = "USER MESSAGE"
-        enable_stream = True
+        app.current_user_msg_content = "USER MESSAGE"
+        app.current_enable_stream = True
 
-        opt = app._create_reply_payload(msg, enable_stream=enable_stream)
+        opt = app._create_reply_payload()
 
         print(opt)
         assert (

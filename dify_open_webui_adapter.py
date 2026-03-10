@@ -410,7 +410,7 @@ class WorkflowApp(BaseDifyApp):
     def main_url(self):
         return "{}/workflows/run".format(self.base_url)
 
-    # Todo unit tests private function
+    # TODO unit tests private function
 
     def _reply_blocking(self, newest_msg):
         """
@@ -486,7 +486,7 @@ class ChatflowApp(BaseDifyApp):
     def main_url(self):
         return "{}/chat-messages".format(self.base_url)
 
-    # Todo unit tests these functions
+    # TODO unit tests these functions
 
     def _reply_blocking(self, newest_msg):
         """

@@ -22,8 +22,8 @@ class TestGet:
             "name": "example-workflow-model",
         }
 
-    def test_wf2(_, wf_provide_name_model1):
-        model = wf_provide_name_model1
+    def test_wf2(_, model_wf_provide_name):
+        model = model_wf_provide_name
 
         opt = model.get_model_id_and_name()
 
@@ -44,8 +44,8 @@ class TestGet:
             "name": "example-chatflow-model",
         }
 
-    def test_cf2(_, cf_provide_name_model1):
-        model = cf_provide_name_model1
+    def test_cf2(_, model_cf_provide_name):
+        model = model_cf_provide_name
 
         opt = model.get_model_id_and_name()
 

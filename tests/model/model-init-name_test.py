@@ -21,38 +21,25 @@ from dify_open_webui_adapter import (
 import pytest
 
 
-# pytest fixtures  #############################################################
-@pytest.fixture(scope="session")
-def cf_no_name_model1(base_url, chatflow_config1):
-    config = chatflow_config1.copy()
-    del config["name"]
-    return OWUModel(
-        base_url,
-        config,
-        skip_get_app_type_and_name=True,
-        app_type_override=DifyAppType.WORKFLOW,
-    )
-
-
 # provided
 class TestProvided:  ###########################################################
 
-    def test1(_, wf_provide_name_model1):
-        opt = wf_provide_name_model1.name
+    def test1(_, model_wf_provide_name):
+        opt = model_wf_provide_name.name
 
         print(opt)
         assert isinstance(opt, str)
         assert opt == "My Workflow Name"
 
-    def test2(_, cf_provide_name_model1):
-        opt = cf_provide_name_model1.name
+    def test2(_, model_cf_provide_name):
+        opt = model_cf_provide_name.name
 
         print(opt)
         assert isinstance(opt, str)
         assert opt == "Example Chatflow Model/App"
 
-    def test3(_, cf_model_skip2):
-        opt = cf_model_skip2.name
+    def test3(_, model_skip_cf2):
+        opt = model_skip_cf2.name
 
         print(opt)
         assert isinstance(opt, str)
@@ -60,8 +47,8 @@ class TestProvided:  ###########################################################
 
     # err handling  ------------------------------------------------------------
 
-    def test_empty_name(_, base_url, workflow_config1):
-        config = workflow_config1.copy()
+    def test_empty_name(_, base_url, config_wf1):
+        config = config_wf1.copy()
 
         config["name"] = ""
 
@@ -77,8 +64,8 @@ class TestProvided:  ###########################################################
         print(opt)
         assert opt == "entry in APP_MODEL_CONFIGS must have non-empty 'name'"
 
-    def test_bad_type(_, base_url, workflow_config1):
-        config = workflow_config1.copy()
+    def test_bad_type(_, base_url, config_wf1):
+        config = config_wf1.copy()
 
         config["name"] = 123
 
@@ -100,15 +87,17 @@ class TestProvided:  ###########################################################
 
 class TestResponse:  ###########################################################
 
+    # BUG BUG
+
     def test1(
         _,
         base_url,
-        workflow_config1,
+        config_wf1,
         patch_and_result_cf1,
         patch_target,
         info_endpoint,
     ):
-        config = workflow_config1.copy()
+        config = config_wf1.copy()
         mock_resp, assert_kwargs = patch_and_result_cf1
 
         with patch(patch_target, return_value=mock_resp) as mock_get:
@@ -124,12 +113,12 @@ class TestResponse:  ###########################################################
     def test2(
         _,
         base_url,
-        chatflow_config1,
+        config_cf1,
         patch_and_result_wf1,
         patch_target,
         info_endpoint,
     ):
-        config = chatflow_config1.copy()
+        config = config_cf1.copy()
         mock_resp, assert_kwargs = patch_and_result_wf1
 
         with patch(patch_target, return_value=mock_resp) as mock_get:
@@ -145,8 +134,8 @@ class TestResponse:  ###########################################################
 
 class TestModelId:  ############################################################
 
-    def test1(_, base_url, workflow_config1, patch_target, info_endpoint):
-        config = workflow_config1.copy()
+    def test1(_, base_url, config_wf1, patch_target, info_endpoint):
+        config = config_wf1.copy()
         mock_resp = Mock()
         mock_resp.json.return_value = {
             "mode": "workflow",
@@ -169,8 +158,8 @@ class TestModelId:  ############################################################
                 timeout=30,
             )
 
-    def test2(_, base_url, chatflow_config1, patch_target, info_endpoint):
-        config = chatflow_config1.copy()
+    def test2(_, base_url, config_cf1, patch_target, info_endpoint):
+        config = config_cf1.copy()
         mock_resp = Mock()
         mock_resp.json.return_value = {
             "mode": "advanced-chat",

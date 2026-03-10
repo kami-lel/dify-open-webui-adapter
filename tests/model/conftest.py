@@ -1,6 +1,5 @@
 import pytest
 
-from unittest.mock import Mock
 
 from dify_open_webui_adapter import (
     OWUModel,
@@ -11,8 +10,8 @@ from dify_open_webui_adapter import (
 
 
 @pytest.fixture(scope="session")
-def wf_provide_name_model1(base_url, workflow_config1):
-    config = workflow_config1.copy()
+def model_wf_provide_name(base_url, config_wf1):
+    config = config_wf1.copy()
     config["name"] = "My Workflow Name"
     return OWUModel(
         base_url,
@@ -23,8 +22,8 @@ def wf_provide_name_model1(base_url, workflow_config1):
 
 
 @pytest.fixture(scope="session")
-def cf_provide_name_model1(base_url, chatflow_config1):
-    config = chatflow_config1.copy()
+def model_cf_provide_name(base_url, config_cf1):
+    config = config_cf1.copy()
     config["name"] = "Example Chatflow Model/App"
     return OWUModel(
         base_url,

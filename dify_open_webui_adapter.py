@@ -751,7 +751,7 @@ class Pipe:  # pylint: disable=missing-class-docstring
         :return: replied message by the model
         :rtype: str
         """
-        if DEBUG_PIPE_DIRECT_RESPONSE:  # Todo make json literal
+        if DEBUG_PIPE_DIRECT_RESPONSE:  # TODO make json literal
             return """## `body`
 
 {}
@@ -791,3 +791,7 @@ def _check_app_model_configs_structure(app_model_configs):
         raise ValueError(
             "APP_MODEL_CONFIGS must contains only dicts: {}".format(bads)
         )
+
+
+def _generate_pipe_direct_responsep(body, user, metadata):
+    pass  # TODO

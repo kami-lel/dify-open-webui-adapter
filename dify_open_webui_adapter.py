@@ -297,10 +297,11 @@ class BaseDifyApp:
             else self._reply_blocking()
         )
 
-    def http_header(
-        self, enable_stream=False
-    ):  # pylint: disable=missing-function-docstring
-        return create_http_header(self.key, enable_stream=enable_stream)
+    @property
+    def http_header(self):  # pylint: disable=missing-function-docstring
+        return create_http_header(
+            self.key, enable_stream=self.current_enable_stream
+        )
 
     # abstract methods  ========================================================
 
@@ -354,7 +355,7 @@ class BaseDifyApp:
 
     # private methods  =========================================================
 
-    def _open_reply_response(self, last_user_msg_content, enable_stream=False):
+    def _open_reply_response(self):
         """
         open a `Response` object connecting to Dify during .reply()
 
@@ -365,14 +366,16 @@ class BaseDifyApp:
         """
         try:
             data = self._create_reply_payload()
-            headers = self.http_header(enable_stream)
+            headers = self.http_header
             response_obj = requests.post(
                 self.main_url,
                 headers=headers,
                 data=data,
-                stream=enable_stream,
+                stream=self.current_enable_stream,
                 timeout=(
-                    STREAM_REQUEST_TIMEOUT if enable_stream else REQUEST_TIMEOUT
+                    STREAM_REQUEST_TIMEOUT
+                    if self.current_enable_stream
+                    else REQUEST_TIMEOUT
                 ),
             )
             response_obj.raise_for_status()

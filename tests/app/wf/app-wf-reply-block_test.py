@@ -6,6 +6,7 @@ Unit Tests (using pytest) for:
 WorkflowApp._reply_blocking()
 """
 
+import json
 from unittest.mock import Mock, patch
 
 
@@ -32,7 +33,28 @@ class TestBlock:
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
-    # TODO alt input field
+    def test_changed(_, app_changed_input, patch_reply_no_stream):
+        app = app_changed_input
+        app.current_user_msg_content = "PRIMARY"
+        app.current_enable_stream = False
+
+        patch_target, mock_resp, assert_args, assert_kwargs = (
+            patch_reply_no_stream
+        )
+
+        assert_kwargs["data"] = json.dumps({
+            "inputs": {"Input": "PRIMARY"},
+            "response_mode": "blocking",
+            "user": "user",
+        })
+
+        with patch(patch_target, return_value=mock_resp) as mock_post:
+            opt = app._reply_blocking()
+
+            print(opt)
+            assert opt == "DIFY REPLIED MESSAGE"
+
+            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
     # err handling  ============================================================
 

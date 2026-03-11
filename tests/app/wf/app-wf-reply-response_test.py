@@ -14,37 +14,67 @@ import pytest
 class TestResponse:
 
     def test1_no_stream(_, app_skip_wf1, patch_target_post, wf_endpoint):
-        # BUG BUG
-        replied = "Pseudo Message"
-
         app = app_skip_wf1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = False
 
         mock_resp = Mock()
-        mock_resp.return_value = {"a": "b", "replied": replied}
+        mock_resp.status_code = 201
+        mock_resp.json.return_value = {"ok": True}
+        mock_resp.text = "Pseudo Message"
 
-        assert_kwargs = {
-            "headers": {
-                "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
-                "Content-Type": "application/json",
-            },
-            "timeout": 30,
-        }
-
-        with patch(patch_target_post, return_value=mock_resp) as mock_get:
+        with patch(patch_target_post, return_value=mock_resp) as mock_post:
             opt = app._open_reply_response()
 
             print(opt)
-            assert opt == {}
+            assert opt == mock_resp
 
-            mock_get.assert_called_once_with(wf_endpoint, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                wf_endpoint,
+                headers={
+                    "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
+                    "Content-Type": "application/json",
+                },
+                data=(
+                    '{"inputs": {"query": "PRIMARY"}, '
+                    '"response_mode": "blocking", '
+                    '"user": "user"}'
+                ),
+                stream=False,
+                timeout=30,
+            )
 
-        opt = app._open_reply_response()
-        print(opt)
-        assert opt == {}
+    def test1_stream(_, app_skip_wf1, patch_target_post, wf_endpoint):
+        app = app_skip_wf1
+        app.current_user_msg_content = "PRIMARY"
+        app.current_enable_stream = True
 
-    # TODO stream
+        mock_resp = Mock()
+        mock_resp.status_code = 201
+        mock_resp.json.return_value = {"ok": True}
+        mock_resp.text = "Pseudo Message"
+
+        with patch(patch_target_post, return_value=mock_resp) as mock_post:
+            opt = app._open_reply_response()
+
+            print(opt)
+            assert opt == mock_resp
+
+            mock_post.assert_called_once_with(
+                wf_endpoint,
+                headers={
+                    "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
+                    "Content-Type": "application/json",
+                    "Accept": "text/event-stream",
+                },
+                data=(
+                    '{"inputs": {"query": "PRIMARY"}, '
+                    '"response_mode": "streaming", '
+                    '"user": "user"}'
+                ),
+                stream=True,
+                timeout=300,
+            )
 
     # err handling  ============================================================
 

@@ -15,7 +15,7 @@ import pytest
 # pytest  ######################################################################
 class TestBlock:
 
-    def test_no_stream(_, app_skip_wf1, patch_reply_no_stream):
+    def test_dft(_, app_skip_wf1, patch_reply_no_stream):
         app = app_skip_wf1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = False
@@ -31,6 +31,8 @@ class TestBlock:
             assert opt == "DIFY REPLIED MESSAGE"
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+
+    # TODO alt input field
 
     # err handling  ============================================================
 

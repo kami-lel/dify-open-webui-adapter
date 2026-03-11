@@ -30,8 +30,9 @@ def patch_reply_no_stream(patch_target_post, wf_endpoint):
 
     mock_resp = Mock()
     mock_resp.status_code = 201
-    mock_resp.json.return_value = {"ok": True}
-    mock_resp.text = "APP REPLIED MESSAGE"
+    mock_resp.json.return_value = {
+        "data": {"outputs": {"answer": "DIFY REPLIED MESSAGE"}}
+    }
 
     assert_args = [wf_endpoint]
 

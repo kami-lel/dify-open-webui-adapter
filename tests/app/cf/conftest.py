@@ -10,7 +10,7 @@ def patch_reply_no_stream(patch_target_post, cf_endpoint):
 
     mock_resp = Mock()
     mock_resp.status_code = 201
-    mock_resp.json.return_value = {"ok": True}
+    mock_resp.json.return_value = {"conversation_id": "dc12"}
     mock_resp.text = "APP REPLIED MESSAGE"
 
     assert_args = [cf_endpoint]

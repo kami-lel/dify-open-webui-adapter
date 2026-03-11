@@ -28,7 +28,7 @@ class TestResponse:
             opt = app._open_reply_response()
 
             print(opt)
-            assert opt == mock_resp
+            assert opt is mock_resp
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
@@ -43,7 +43,7 @@ class TestResponse:
             opt = app._open_reply_response()
 
             print(opt)
-            assert opt == mock_resp
+            assert opt is mock_resp
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 

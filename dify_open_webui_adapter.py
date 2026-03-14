@@ -25,7 +25,6 @@ APP_MODEL_CONFIGS = []
 # end of config  ###############################################################
 
 # pylint: disable=wrong-import-position
-import uuid
 from enum import Enum, Flag, auto
 import json
 from json import JSONDecodeError

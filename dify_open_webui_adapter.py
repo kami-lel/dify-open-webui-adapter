@@ -545,7 +545,7 @@ def create_http_header(key, enable_stream=False):
     return header_dict
 
 
-class _SSE(Flag):
+class _SSEType(Flag):
     """
     represent a single **relevant** SSE specified by Dify Backend API
     """
@@ -588,7 +588,7 @@ class _StreamingConversationRound:
         self.iter_lines = self.response.iter_lines()
         self._debug_stop_on_next = False
 
-    # implemetn iter()  ========================================================
+    # implement iter()  ========================================================
 
     def __iter__(self):
         return self  # make self an Iterator
@@ -600,7 +600,7 @@ class _StreamingConversationRound:
         debug_lines = ["\n"]
 
         text = None
-        event = _SSE.IRRELEVANT  # default
+        event = _SSEType.IRRELEVANT  # default
 
         # consume self.iter_lines until find relevant events
         while not event:
@@ -621,14 +621,14 @@ class _StreamingConversationRound:
 
                 # deal with only relevant types of SSE
                 try:
-                    event = _SSE[event_value]
+                    event = _SSEType[event_value]
                 except KeyError:  # not a relevant event
                     continue
 
                 # extract text
-                if event is _SSE.message:
+                if event is _SSEType.message:
                     text = data["answer"]
-                elif event is _SSE.text_chunk:
+                elif event is _SSEType.text_chunk:
                     text = data["data"]["text"]
 
                 # extract conversation_id for Chatflow, if it's empty
@@ -666,7 +666,7 @@ class _StreamingConversationRound:
                 ) from err
 
         # an relevant event is found
-        if event in _SSE.IS_END:  # end of current respond
+        if event in _SSEType.IS_END:  # end of current respond
             if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
                 self._debug_stop_on_next = True
                 debug_lines.insert(1, "# LAST PASS")

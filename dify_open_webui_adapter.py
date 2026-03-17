@@ -312,16 +312,17 @@ class BaseDifyApp:
         :raises ConnectionError:
         """
         try:
+            timeout = (
+                STREAM_REQUEST_TIMEOUT
+                if self.current_enable_stream
+                else REQUEST_TIMEOUT
+            )
             response_obj = requests.post(
                 self.main_url,
                 headers=self.http_header,
                 data=self._create_reply_payload(),
                 stream=self.current_enable_stream,
-                timeout=(
-                    STREAM_REQUEST_TIMEOUT
-                    if self.current_enable_stream
-                    else REQUEST_TIMEOUT
-                ),
+                timeout=timeout,
             )
             response_obj.raise_for_status()
             return response_obj

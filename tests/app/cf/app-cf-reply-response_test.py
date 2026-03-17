@@ -3,7 +3,7 @@ app-cf-reply-response_test.py
 
 Unit Tests (using pytest) for:
 
-ChatflowApp._open_reply_response()
+ChatflowApp.open_reply_response()
 """
 
 from unittest.mock import patch
@@ -25,7 +25,7 @@ class TestResponse:
         )
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
-            opt = app._open_reply_response()
+            opt = app.open_reply_response()
 
             print(opt)
             assert opt is mock_resp
@@ -40,7 +40,7 @@ class TestResponse:
         patch_target, mock_resp, assert_args, assert_kwargs = patch_reply_stream
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
-            opt = app._open_reply_response()
+            opt = app.open_reply_response()
 
             print(opt)
             assert opt is mock_resp
@@ -57,7 +57,7 @@ class TestResponse:
             app = app_skip_cf1
 
             with pytest.raises(ConnectionError) as exec_info:
-                app._open_reply_response()
+                app.open_reply_response()
             opt = exec_info.value.args[0]
 
             print(opt)

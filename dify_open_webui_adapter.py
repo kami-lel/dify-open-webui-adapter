@@ -302,6 +302,36 @@ class BaseDifyApp:
             self.key, enable_stream=self.current_enable_stream
         )
 
+    def open_reply_response(self):
+        """
+        open a `Response` object connecting to Dify
+
+
+        :return: Response object
+        :rtype: requests.Response
+        :raises ConnectionError:
+        """
+        try:
+            response_obj = requests.post(
+                self.main_url,
+                headers=self.http_header,
+                data=self._create_reply_payload(),
+                stream=self.current_enable_stream,
+                timeout=(
+                    STREAM_REQUEST_TIMEOUT
+                    if self.current_enable_stream
+                    else REQUEST_TIMEOUT
+                ),
+            )
+            response_obj.raise_for_status()
+            return response_obj
+
+        # handle network errors
+        except requests.exceptions.RequestException as err:
+            raise ConnectionError(
+                "fail request to Dify: {}".format(err.args[0])
+            ) from err
+
     # abstract methods  ========================================================
 
     @property
@@ -352,38 +382,6 @@ class BaseDifyApp:
         self.current_user_msg_content = ""
         self.current_enable_stream = False
 
-    # private methods  =========================================================
-
-    def _open_reply_response(self):
-        """
-        open a `Response` object connecting to Dify during .reply()
-
-
-        :return:
-        :rtype: requests.Response
-        :raises ConnectionError:
-        """
-        try:
-            response_obj = requests.post(
-                self.main_url,
-                headers=self.http_header,
-                data=self._create_reply_payload(),
-                stream=self.current_enable_stream,
-                timeout=(
-                    STREAM_REQUEST_TIMEOUT
-                    if self.current_enable_stream
-                    else REQUEST_TIMEOUT
-                ),
-            )
-            response_obj.raise_for_status()
-            return response_obj
-
-        # handle network errors
-        except requests.exceptions.RequestException as err:
-            raise ConnectionError(
-                "fail request to Dify: {}".format(err.args[0])
-            ) from err
-
 
 class WorkflowApp(BaseDifyApp):
     """
@@ -420,7 +418,7 @@ class WorkflowApp(BaseDifyApp):
         :raises ConnectionError:
         :raises KeyError:
         """
-        response_object = self._open_reply_response()
+        response_object = self.open_reply_response()
         response = response_object.json()
 
         try:
@@ -491,7 +489,7 @@ class ChatflowApp(BaseDifyApp):
         :raises ConnectionError:
         :raises KeyError:
         """
-        response_object = self._open_reply_response()
+        response_object = self.open_reply_response()
         response = response_object.json()
 
         try:

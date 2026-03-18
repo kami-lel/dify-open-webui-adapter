@@ -6,6 +6,42 @@ Unit Tests (using pytest) for:
 - _StreamingConversationRound.__init__()
 """
 
+import pytest
+
+
+# pytest fixtures  #############################################################
+@pytest.fixture(scope="class")
+def round_wf():
+    return None  # TODO
+
+
+# pytest  ######################################################################
+
+
+class TestWf:
+
+    def test_app(_, round_wf):
+        round = round_wf
+        opt = round.app
+
+        print(opt)
+        assert opt == ""
+
+    def test_response(_, round_wf):
+        round = round_wf
+        opt = round.response
+
+        print(opt)
+        assert opt == ""
+
+    def test_iter_lines(_, round_wf):
+        round = round_wf
+        opt = round.iter_lines
+
+        print(opt)
+        assert opt == ""
+
+
 # TODO
 
 # ENCODING = "utf-8"

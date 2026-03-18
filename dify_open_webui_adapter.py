@@ -562,6 +562,13 @@ class _SSEType(Flag):
     # events which indicate end of  current round response
     IS_END = workflow_finished | message_end
 
+    def __bool__(self):
+        """
+        :return: whether event is a relevant event
+        :rtype: bool
+        """
+        return self != self.IRRELEVANT
+
 
 class _StreamingConversationRound:
     """
@@ -657,7 +664,8 @@ class _StreamingConversationRound:
                     "miss key in text/event-stream content: {}".format(str(err))
                 ) from err
 
-        # an relevant event is found
+        # an relevant event is found  ------------------------------------------
+
         if event in _SSEType.IS_END:  # end of current respond
             if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
                 debug_lines.insert(1, "# LAST PASS")

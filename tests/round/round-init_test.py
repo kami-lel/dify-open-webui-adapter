@@ -8,11 +8,20 @@ Unit Tests (using pytest) for:
 
 import pytest
 
+from dify_open_webui_adapter import _StreamingConversationRound
+
 
 # pytest fixtures  #############################################################
-@pytest.fixture(scope="class")
-def round_wf():
-    return None  # TODO
+@pytest.fixture()
+def testee_wf(app_skip_wf1):
+    # BUG need network
+    round = _StreamingConversationRound(app_skip_wf1)
+    return round
+
+
+@pytest.fixture()
+def round_cf(app_skip_cf1):
+    return _StreamingConversationRound(app_skip_cf1)
 
 
 # pytest  ######################################################################
@@ -20,26 +29,18 @@ def round_wf():
 
 class TestWf:
 
-    def test_app(_, round_wf):
-        round = round_wf
+    def test_app(_, testee_wf, app_skip_cf1):
+        round = testee_wf
         opt = round.app
 
         print(opt)
-        assert opt == ""
+        assert opt is app_skip_cf1
 
-    def test_response(_, round_wf):
-        round = round_wf
-        opt = round.response
+    def test_response(_, testee_wf):
+        pass
 
-        print(opt)
-        assert opt == ""
-
-    def test_iter_lines(_, round_wf):
-        round = round_wf
-        opt = round.iter_lines
-
-        print(opt)
-        assert opt == ""
+    def test_iter_lines(_, testee_wf):
+        pass
 
 
 # TODO

@@ -576,7 +576,6 @@ class _StreamingConversationRound:
 
     _TEXT_STREAM_ENCODING = "utf-8"
     _STREAM_PREFIX = "data: "
-    # enable debug mode such it returns text-stream directly
 
     def __init__(self, app):
         self.app = app

@@ -639,8 +639,7 @@ class _StreamingConversationRound:
 
             except StopIteration as err:
                 raise ValueError(
-                    "exhaust text/event-stream "
-                    "but detect no events indicating finishing"
+                    "exhaust text/event-stream without ending event"
                 ) from err
 
             except UnicodeDecodeError as err:

@@ -240,7 +240,7 @@ class BaseDifyApp:
     @staticmethod
     def get_app_type_and_name(base_url, key):
         """
-        get Dify App's Type & Name, by GET /info of Dicy Backend API
+        get Dify App's Type & Name, by GET /info of Dify Backend API
 
 
         :param base_url:
@@ -290,11 +290,10 @@ class BaseDifyApp:
         :return: the response
         :rtype: str or Iterable
         """
-        return (
-            _StreamingConversationRound(self, self.current_user_msg_content)
-            if not self.disallows_streaming and self.current_enable_stream
-            else self._reply_blocking()
-        )
+        if not self.disallows_streaming and self.current_enable_stream:
+            return _StreamingConversationRound(self)
+        else:
+            return self._reply_blocking()
 
     @property
     def http_header(self):  # pylint: disable=missing-function-docstring
@@ -304,7 +303,7 @@ class BaseDifyApp:
 
     def open_reply_response(self):
         """
-        open a `Response` object connecting to Dify
+        open a `Response` object connecting to Dify for replying
 
 
         :return: Response object
@@ -579,11 +578,10 @@ class _StreamingConversationRound:
     _STREAM_PREFIX = "data: "
     # enable debug mode such it returns text-stream directly
 
-    def __init__(self, app, last_user_msg_content):
+    def __init__(self, app):
         self.app = app
-        self.response = self.app._open_reply_response(
-            last_user_msg_content, True
-        )
+        # cache the response for closing when finished this round
+        self.response = self.app.open_reply_response()
         self.iter_lines = self.response.iter_lines()
         self._debug_stop_on_next = False
 

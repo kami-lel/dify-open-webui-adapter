@@ -583,7 +583,6 @@ class _StreamingConversationRound:
         # cache the response for closing when finished this round
         self.response = self.app.open_reply_response()
         self.iter_lines = self.response.iter_lines()
-        self._debug_stop_on_next = False
 
     # implement iter()  ========================================================
 
@@ -591,9 +590,6 @@ class _StreamingConversationRound:
         return self  # make self an Iterator
 
     def __next__(self):
-        if self._debug_stop_on_next:
-            raise StopIteration
-
         debug_lines = ["\n"]
 
         text = None
@@ -665,7 +661,6 @@ class _StreamingConversationRound:
         # an relevant event is found
         if event in _SSEType.IS_END:  # end of current respond
             if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
-                self._debug_stop_on_next = True
                 debug_lines.insert(1, "# LAST PASS")
                 return "\n\n".join(debug_lines)
 

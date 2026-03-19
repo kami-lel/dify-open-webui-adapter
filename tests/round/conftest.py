@@ -75,7 +75,42 @@ def testee_cf(app_skip_cf1, patch_target_post):
 def mock_wf():
     mock_resp = Mock()
     mock_resp.status_code = 201
-    mock_resp.iter_lines.return_value = []  # TODO
+    mock_resp.iter_lines.return_value = [
+        {
+            "event": "text_chunk",
+            "workflow_run_id": "b790",
+            "task_id": "04db",
+            "data": {
+                "text": "FIRST RESPONSE MESSAGE",
+                "from_variable_selector": ["4502", "output"],
+            },
+        },
+        {
+            "event": "text_chunk",
+            "workflow_run_id": "b790",
+            "task_id": "04db",
+            "data": {
+                "text": "SECOND RESPONSE MESSAGE",
+                "from_variable_selector": ["4502", "output"],
+            },
+        },
+        {
+            "event": "text_chunk",
+            "workflow_run_id": "b790",
+            "task_id": "04db",
+            "data": {
+                "text": "THIRD RESPONSE MESSAGE",
+                "from_variable_selector": ["4502", "output"],
+            },
+        },
+        {
+            "event": "workflow_finished",
+            "workflow_run_id": "b790",
+            "task_id": "04db",
+            "data": {},
+        },
+    ]
+    # BUG
     return mock_resp
 
 

@@ -1,8 +1,9 @@
 from unittest.mock import Mock
-import json
 
 
 import pytest
+
+from tests.round import _convert_entries2data_lines
 
 
 # pytest fixtures  #############################################################
@@ -69,11 +70,6 @@ def testee_cf(app_skip_cf1, patch_target_post):
 
 
 # mocks  =======================================================================
-# helpers  ---------------------------------------------------------------------
-def _convert_entries2data_lines(entries):
-    for e in entries:
-        yield ("data: " + json.dumps(e)).encode(encoding="utf-8")
-
 
 # wf mocks  --------------------------------------------------------------------
 

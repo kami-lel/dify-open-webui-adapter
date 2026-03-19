@@ -7,10 +7,13 @@ Unit Tests (using pytest) for: _StreamingConversationRound:
 - .__iter__()
 """
 
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 
 from dify_open_webui_adapter import _StreamingConversationRound
+
+
+from tests.round import _convert_entries2data_lines
 
 
 # tests  #######################################################################
@@ -31,6 +34,27 @@ class TestWf:  # ===============================================================
     def test1(_, testee_wf, mock_wf1):
         app, patch_target, assert_args, assert_kwargs = testee_wf
         mock_resp = mock_wf1
+
+        with patch(patch_target, return_value=mock_resp) as mock_post:
+            round = _StreamingConversationRound(app)
+
+            opt = list(round)
+            print(opt)
+            assert opt == [
+                "FIRST RESPONSE MESSAGE",
+                "SECOND RESPONSE MESSAGE",
+                "THIRD RESPONSE MESSAGE",
+            ]
+
+            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+
+    def test1_ping(_, testee_wf, mock_wf1):
+        app, patch_target, assert_args, assert_kwargs = testee_wf
+        mock_resp = mock_wf1
+
+        lines = list(mock_resp.iter_lines.return_value)
+        lines.insert(0, "event: ping".encode("utf-8"))
+        mock_resp.iter_lines.return_value = iter(lines)
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             round = _StreamingConversationRound(app)
@@ -161,6 +185,27 @@ class TestCf:  # ===============================================================
     def test1(_, testee_cf, mock_cf1):
         app, patch_target, assert_args, assert_kwargs = testee_cf
         mock_resp = mock_cf1
+
+        with patch(patch_target, return_value=mock_resp) as mock_post:
+            round = _StreamingConversationRound(app)
+
+            opt = list(round)
+            print(opt)
+            assert opt == [
+                "FIRST RESPONSE MESSAGE",
+                "SECOND RESPONSE MESSAGE",
+                "THIRD RESPONSE MESSAGE",
+            ]
+
+            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+
+    def test1_ping(_, testee_cf, mock_cf1):
+        app, patch_target, assert_args, assert_kwargs = testee_cf
+        mock_resp = mock_cf1
+
+        lines = list(mock_resp.iter_lines.return_value)
+        lines.insert(0, "event: ping".encode("utf-8"))
+        mock_resp.iter_lines.return_value = iter(lines)
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             round = _StreamingConversationRound(app)

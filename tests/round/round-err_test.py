@@ -11,177 +11,9 @@ errs handling in _StreamingConversationRound.__next__()
 # pytest  ######################################################################
 
 
-class TestWf:  # ===============================================================
+class TestExhaust:  # ==========================================================
     pass
 
-
-class TestCf:  # ===============================================================
-    pass
-
-
-# HACK
-# class TestWorkflow:
-
-#     def test1(_):
-#         text_streams = convert_bytes_generator_from_lines(
-#             convert_lines_from_data_dicts(WORKFLOW_DATA1)
-#         )
-#         answer = [
-#             "FIRST RESPONSE MESSAGE",
-#             "SECOND RESPONSE MESSAGE",
-#             "THIRD RESPONSE MESSAGE",
-#         ]
-
-#         for opt, answer in zip(
-#             _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ),
-#             answer,
-#         ):
-#             print(opt)
-#             assert opt == answer
-
-#     def test2(_):
-#         text_streams = convert_bytes_generator_from_lines(
-#             convert_lines_from_data_dicts(WORKFLOW_DATA2)
-#         )
-#         answer = ["FIRST RESPONSE MESSAGE"]
-
-#         for opt, answer in zip(
-#             _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ),
-#             answer,
-#         ):
-#             print(opt)
-#             assert opt == answer
-
-#     def test3(_):
-#         text_streams = convert_bytes_generator_from_lines(
-#             convert_lines_from_data_dicts(WORKFLOW_DATA3)
-#         )
-#         answer = ["FIRST RESPONSE MESSAGE"]
-
-#         for opt, answer in zip(
-#             _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ),
-#             answer,
-#         ):
-#             print(opt)
-#             assert opt == answer
-
-#     def test4(_):
-#         text_streams = convert_bytes_generator_from_lines(
-#             convert_lines_from_data_dicts(WORKFLOW_DATA4)
-#         )
-#         answer = WORKFLOW_ANSWER4
-
-#         for opt, answer in zip(
-#             _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ),
-#             answer,
-#         ):
-#             print(opt)
-#             assert opt == answer
-
-
-# class TestChatflow:
-
-#     def test1(_):
-#         text_streams = convert_bytes_generator_from_lines(
-#             convert_lines_from_data_dicts(CHATFLOW_DATA1)
-#         )
-#         answer = [
-#             "FIRST RESPONSE MESSAGE",
-#             "SECOND RESPONSE MESSAGE",
-#             "THIRD RESPONSE MESSAGE",
-#         ]
-
-#         for opt, answer in zip(
-#             _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ),
-#             answer,
-#         ):
-#             print(opt)
-#             assert opt == answer
-
-#     def test2(_):
-#         text_streams = convert_bytes_generator_from_lines(
-#             convert_lines_from_data_dicts(CHATFLOW_DATA2)
-#         )
-#         answer = CHATFLOW_ANSWER2
-
-#         for opt, answer in zip(
-#             _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ),
-#             answer,
-#         ):
-#             print(opt)
-#             assert opt == answer
-
-#     def test3(_):
-#         text_streams = convert_bytes_generator_from_lines(
-#             convert_lines_from_data_dicts(CHATFLOW_DATA3)
-#         )
-#         answer = CHATFLOW_ANSWER3
-
-#         for opt, answer in zip(
-#             _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ),
-#             answer,
-#         ):
-#             print(opt)
-#             assert opt == answer
-
-
-# class TestPingEvent:
-
-#     def test_workflow(_):
-#         lines = convert_lines_from_data_dicts(WORKFLOW_DATA1)
-#         lines.insert(0, "event: ping")
-#         text_streams = convert_bytes_generator_from_lines(lines)
-#         answer = [
-#             "FIRST RESPONSE MESSAGE",
-#             "SECOND RESPONSE MESSAGE",
-#             "THIRD RESPONSE MESSAGE",
-#         ]
-
-#         for opt, answer in zip(
-#             _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ),
-#             answer,
-#         ):
-#             print(opt)
-#             assert opt == answer
-
-#     def test_chatflow(_):
-#         lines = convert_lines_from_data_dicts(CHATFLOW_DATA1)
-#         lines.insert(0, "event: ping")
-#         text_streams = convert_bytes_generator_from_lines(lines)
-
-#         answer = [
-#             "FIRST RESPONSE MESSAGE",
-#             "SECOND RESPONSE MESSAGE",
-#             "THIRD RESPONSE MESSAGE",
-#         ]
-
-#         for opt, answer in zip(
-#             _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ),
-#             answer,
-#         ):
-#             print(opt)
-#             assert opt == answer
-
-
-# class TestExhaust:
 
 #     def test_workflow1(_):
 #         data_dicts = WORKFLOW_DATA1[:2]
@@ -224,7 +56,9 @@ class TestCf:  # ===============================================================
 #         )
 
 
-# class TestUnicode:
+class TestUnicode:  # ==========================================================
+    pass
+
 
 #     def test_workflow1(_):
 #         lines = convert_lines_from_data_dicts(WORKFLOW_DATA1)
@@ -267,7 +101,9 @@ class TestCf:  # ===============================================================
 #         )
 
 
-# class TestJSONDecode:
+class TestJSONDecode:  # =======================================================
+    pass
+
 
 #     def test1(_):
 #         bad_json = 'data: {"text": "value'
@@ -284,7 +120,9 @@ class TestCf:  # ===============================================================
 #         assert opt.startswith("fail to parse text/event-stream as JSON")
 
 
-# class TestKeyErrWorkflow:
+class TestKeyErrWorkflow:  # ===================================================
+    pass
+
 
 #     def test_event(_):
 #         data = {
@@ -353,7 +191,9 @@ class TestCf:  # ===============================================================
 #         assert opt == "missing key in text/event-stream content: 'text'"
 
 
-# class TestKeyErrChatflow:
+class TestKeyErrChatflow:  # ===================================================
+    pass
+
 
 #     def test_event(_):
 #         data = {

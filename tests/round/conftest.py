@@ -89,6 +89,7 @@ def mock_base():
 @pytest.fixture
 def mock_wf1(mock_base):
     mock_resp = mock_base
+    # BUG
     mock_resp.iter_lines.return_value = _convert_entries2data_lines([
         {
             "event": "text_chunk",

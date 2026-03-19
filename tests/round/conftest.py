@@ -14,10 +14,6 @@ def testee_wf(app_skip_wf1, patch_target_post):
 
     patch_target = patch_target_post
 
-    mock_resp = Mock()
-    mock_resp.status_code = 201
-    mock_resp.iter_lines.return_value = []  # TODO
-
     data = (
         '{"inputs": {"query": "PRIMARY"}, '
         '"response_mode": "streaming", '
@@ -36,7 +32,7 @@ def testee_wf(app_skip_wf1, patch_target_post):
         "timeout": 300,
     }
 
-    return app, patch_target, mock_resp, assert_args, assert_kwargs
+    return app, patch_target, assert_args, assert_kwargs
 
 
 @pytest.fixture
@@ -46,10 +42,6 @@ def testee_cf(app_skip_cf1, patch_target_post):
     app.current_user_msg_content = "PRIMARY"
 
     patch_target = patch_target_post
-
-    mock_resp = Mock()
-    mock_resp.status_code = 201
-    mock_resp.iter_lines.return_value = []  # TODO
 
     data = (
         '{"query": "PRIMARY", '
@@ -72,7 +64,23 @@ def testee_cf(app_skip_cf1, patch_target_post):
         "timeout": 300,
     }
 
-    return app, patch_target, mock_resp, assert_args, assert_kwargs
+    return app, patch_target, assert_args, assert_kwargs
+
+
+@pytest.fixture
+def mock_wf():
+    mock_resp = Mock()
+    mock_resp.status_code = 201
+    mock_resp.iter_lines.return_value = []  # TODO
+    return mock_resp
+
+
+@pytest.fixture
+def mock_cf():
+    mock_resp = Mock()
+    mock_resp.status_code = 201
+    mock_resp.iter_lines.return_value = []  # TODO
+    return mock_resp
 
 
 # WORKFLOW_DATA1 = [

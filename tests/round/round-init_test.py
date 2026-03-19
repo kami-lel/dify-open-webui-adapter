@@ -16,8 +16,9 @@ from dify_open_webui_adapter import _StreamingConversationRound
 
 class TestWf:
 
-    def test_app(_, testee_wf):
-        app, patch_target, mock_resp, assert_args, assert_kwargs = testee_wf
+    def test_app(_, testee_wf, mock_wf):
+        app, patch_target, assert_args, assert_kwargs = testee_wf
+        mock_resp = mock_wf
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             round = _StreamingConversationRound(app)
@@ -28,8 +29,9 @@ class TestWf:
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
-    def test_response(_, testee_wf):
-        app, patch_target, mock_resp, assert_args, assert_kwargs = testee_wf
+    def test_response(_, testee_wf, mock_wf):
+        app, patch_target, assert_args, assert_kwargs = testee_wf
+        mock_resp = mock_wf
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             round = _StreamingConversationRound(app)
@@ -40,8 +42,9 @@ class TestWf:
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
-    def test_iter_lines(_, testee_wf):
-        app, patch_target, mock_resp, assert_args, assert_kwargs = testee_wf
+    def test_iter_lines(_, testee_wf, mock_wf):
+        app, patch_target, assert_args, assert_kwargs = testee_wf
+        mock_resp = mock_wf
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             round = _StreamingConversationRound(app)
@@ -55,8 +58,9 @@ class TestWf:
 
 class TestCf:
 
-    def test_app(_, testee_cf):
-        app, patch_target, mock_resp, assert_args, assert_kwargs = testee_cf
+    def test_app(_, testee_cf, mock_cf):
+        app, patch_target, assert_args, assert_kwargs = testee_cf
+        mock_resp = mock_cf
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             round = _StreamingConversationRound(app)
@@ -67,8 +71,9 @@ class TestCf:
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
-    def test_response(_, testee_cf):
-        app, patch_target, mock_resp, assert_args, assert_kwargs = testee_cf
+    def test_response(_, testee_cf, mock_cf):
+        app, patch_target, assert_args, assert_kwargs = testee_cf
+        mock_resp = mock_cf
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             round = _StreamingConversationRound(app)
@@ -79,8 +84,9 @@ class TestCf:
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
-    def test_iter_lines(_, testee_cf):
-        app, patch_target, mock_resp, assert_args, assert_kwargs = testee_cf
+    def test_iter_lines(_, testee_cf, mock_cf):
+        app, patch_target, assert_args, assert_kwargs = testee_cf
+        mock_resp = mock_cf
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             round = _StreamingConversationRound(app)

@@ -5,13 +5,6 @@ import json
 import pytest
 
 
-# helpers  #####################################################################
-def _convert_entries2data_lines(entries):
-    return [
-        json.dumps("data: " + str(e)).encode(encoding="utf-8") for e in entries
-    ]
-
-
 # pytest fixtures  #############################################################
 # testees  =====================================================================
 @pytest.fixture
@@ -76,6 +69,12 @@ def testee_cf(app_skip_cf1, patch_target_post):
 
 
 # mocks  =======================================================================
+# helpers  ---------------------------------------------------------------------
+def _convert_entries2data_lines(entries):
+    return [
+        json.dumps("data: " + str(e)).encode(encoding="utf-8") for e in entries
+    ]
+
 
 # wf mocks  --------------------------------------------------------------------
 

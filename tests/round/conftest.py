@@ -694,6 +694,7 @@ def mock_wf3(mock_base):
             },
         },
     ])
+    return mock_resp
 
 
 @pytest.fixture
@@ -1499,6 +1500,7 @@ def mock_wf4(mock_base):
             },
         },
     ])
+    return mock_resp
 
 
 # cf mocks  --------------------------------------------------------------------
@@ -2096,6 +2098,7 @@ def mock_cf2(mock_base):
             },
         },
     ])
+    return mock_resp
 
 
 @pytest.fixture
@@ -2764,3 +2767,4 @@ def mock_cf3(mock_base):
             },
         },
     ])
+    return mock_resp

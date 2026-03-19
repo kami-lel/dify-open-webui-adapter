@@ -67,7 +67,7 @@ class TestWf:  # ===============================================================
 
             opt = list(round)
             print(opt)
-            assert opt == []  # BUG
+            assert opt == ["FIRST RESPONSE MESSAGE"]
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
@@ -210,7 +210,6 @@ class TestCf:  # ===============================================================
                 "",
                 "",
             ]
-            # BUG
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
@@ -250,6 +249,5 @@ class TestCf:  # ===============================================================
                 " insert",
                 " node",
             ]
-            # BUG
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)

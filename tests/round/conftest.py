@@ -79,7 +79,7 @@ def testee_cf(app_skip_cf1, patch_target_post):
 
 
 @pytest.fixture
-def mock_wf():
+def mock_wf1():
     mock_resp = Mock()
     mock_resp.status_code = 201
     mock_resp.iter_lines.return_value = _convert_entries2data_lines([
@@ -121,7 +121,7 @@ def mock_wf():
 
 
 @pytest.fixture
-def mock_cf():
+def mock_cf1():
     mock_resp = Mock()
     mock_resp.status_code = 201
     mock_resp.iter_lines.return_value = []  # TODO

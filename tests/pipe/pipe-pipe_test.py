@@ -24,6 +24,3 @@ class TestErr:  # ==============================================================
 
         print(opt)
         assert opt == "missing entry 'model' in body"
-
-
-# TODO additional tests

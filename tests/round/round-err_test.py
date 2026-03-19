@@ -69,7 +69,7 @@ class TestUnicode:  # ==========================================================
             for ll in _convert_entries2lines(stream_entries_wf1)
         ])
 
-        with pytest.raises(ValueError) as exec_info:
+        with pytest.raises(UnicodeDecodeError) as exec_info:
             with patch(patch_target, return_value=mock_resp):
                 round = _StreamingConversationRound(app)
                 list(round)
@@ -92,7 +92,7 @@ class TestUnicode:  # ==========================================================
             for ll in _convert_entries2lines(stream_entries_cf1)
         ])
 
-        with pytest.raises(ValueError) as exec_info:
+        with pytest.raises(UnicodeDecodeError) as exec_info:
             with patch(patch_target, return_value=mock_resp):
                 round = _StreamingConversationRound(app)
                 list(round)

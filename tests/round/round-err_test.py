@@ -160,7 +160,6 @@ class TestJSONDecode:  # =======================================================
 
 
 # key err  =====================================================================
-# BUG
 class TestKeyErrWorkflow:  # ***************************************************
 
     def test_event(_, testee_wf, mock_wf1, stream_entries_wf1):
@@ -168,7 +167,7 @@ class TestKeyErrWorkflow:  # ***************************************************
         mock_resp = mock_wf1
 
         entries = [
-            *stream_entries_wf1,
+            *stream_entries_wf1[:-1],
             {
                 "workflow_run_id": "b790",
                 "task_id": "04db",
@@ -187,14 +186,14 @@ class TestKeyErrWorkflow:  # ***************************************************
 
         opt = exec_info.value.args[0]
         print(opt)
-        assert opt == ""
+        assert opt == "miss key in text/event-stream content: 'event'"
 
     def test_data(_, testee_wf, mock_wf1, stream_entries_wf1):
         app, patch_target, _, _ = testee_wf
         mock_resp = mock_wf1
 
         entries = [
-            *stream_entries_wf1,
+            *stream_entries_wf1[:-1],
             {
                 "event": "text_chunk",
                 "workflow_run_id": "b790",
@@ -210,14 +209,14 @@ class TestKeyErrWorkflow:  # ***************************************************
 
         opt = exec_info.value.args[0]
         print(opt)
-        assert opt == ""
+        assert opt == "miss key in text/event-stream content: 'data'"
 
     def test_data_text(_, testee_wf, mock_wf1, stream_entries_wf1):
         app, patch_target, _, _ = testee_wf
         mock_resp = mock_wf1
 
         entries = [
-            *stream_entries_wf1,
+            *stream_entries_wf1[:-1],
             {
                 "event": "text_chunk",
                 "workflow_run_id": "b790",
@@ -236,7 +235,7 @@ class TestKeyErrWorkflow:  # ***************************************************
 
         opt = exec_info.value.args[0]
         print(opt)
-        assert opt == ""
+        assert opt == "miss key in text/event-stream content: 'text'"
 
 
 class TestKeyErrChatflow:  # ***************************************************
@@ -246,7 +245,7 @@ class TestKeyErrChatflow:  # ***************************************************
         mock_resp = mock_cf1
 
         entries = [
-            *stream_entries_cf1,
+            *stream_entries_cf1[:-1],
             {
                 "conversation_id": "c0cf",
                 "message_id": "ff06",
@@ -266,14 +265,14 @@ class TestKeyErrChatflow:  # ***************************************************
 
         opt = exec_info.value.args[0]
         print(opt)
-        assert opt == ""
+        assert opt == "miss key in text/event-stream content: 'event'"
 
     def test_answer(_, testee_cf, mock_cf1, stream_entries_cf1):
         app, patch_target, _, _ = testee_cf
         mock_resp = mock_cf1
 
         entries = [
-            *stream_entries_cf1,
+            *stream_entries_cf1[:-1],
             {
                 "event": "message",
                 "conversation_id": "c0cf",
@@ -293,4 +292,4 @@ class TestKeyErrChatflow:  # ***************************************************
 
         opt = exec_info.value.args[0]
         print(opt)
-        assert opt == ""
+        assert opt == "miss key in text/event-stream content: 'answer'"

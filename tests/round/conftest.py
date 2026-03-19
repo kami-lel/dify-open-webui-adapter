@@ -69,22 +69,10 @@ def testee_cf(app_skip_cf1, patch_target_post):
     return app, patch_target, assert_args, assert_kwargs
 
 
-# mocks  =======================================================================
-
-# wf mocks  --------------------------------------------------------------------
-
-
+# stream entries  ==============================================================
 @pytest.fixture
-def mock_base():
-    mock_resp = Mock()
-    mock_resp.status_code = 200
-    return mock_resp
-
-
-@pytest.fixture
-def mock_wf1(mock_base):
-    mock_resp = mock_base
-    mock_resp.iter_lines.return_value = _convert_entries2data_lines([
+def stream_entries_wf1():
+    return [
         {
             "event": "text_chunk",
             "workflow_run_id": "b790",
@@ -118,7 +106,72 @@ def mock_wf1(mock_base):
             "task_id": "04db",
             "data": {},
         },
-    ])
+    ]
+
+
+@pytest.fixture
+def stream_entries_cf1():
+    return [
+        {
+            "event": "message",
+            "conversation_id": "c0cf",
+            "message_id": "ff06",
+            "created_at": 1768046345,
+            "task_id": "5863",
+            "id": "ff06",
+            "answer": "FIRST RESPONSE MESSAGE",
+            "from_variable_selector": ["llm", "text"],
+        },
+        {
+            "event": "message",
+            "conversation_id": "c0cf",
+            "message_id": "ff06",
+            "created_at": 1768046345,
+            "task_id": "5863",
+            "id": "ff06",
+            "answer": "SECOND RESPONSE MESSAGE",
+            "from_variable_selector": ["llm", "text"],
+        },
+        {
+            "event": "message",
+            "conversation_id": "c0cf",
+            "message_id": "ff06",
+            "created_at": 1768046345,
+            "task_id": "5863",
+            "id": "ff06",
+            "answer": "THIRD RESPONSE MESSAGE",
+            "from_variable_selector": ["llm", "text"],
+        },
+        {
+            "event": "workflow_finished",
+            "conversation_id": "c0cf",
+            "message_id": "ff06",
+            "created_at": 1768046345,
+            "task_id": "5863",
+            "workflow_run_id": "561d",
+            "data": {},
+        },
+    ]
+
+
+# mocks  =======================================================================
+
+# wf mocks  --------------------------------------------------------------------
+
+
+@pytest.fixture
+def mock_base():
+    mock_resp = Mock()
+    mock_resp.status_code = 200
+    return mock_resp
+
+
+@pytest.fixture
+def mock_wf1(mock_base, stream_entries_wf1):
+    mock_resp = mock_base
+    mock_resp.iter_lines.return_value = _convert_entries2data_lines(
+        stream_entries_wf1
+    )
     return mock_resp
 
 
@@ -1503,49 +1556,11 @@ def mock_wf4(mock_base):
 
 
 @pytest.fixture
-def mock_cf1(mock_base):
+def mock_cf1(mock_base, stream_entries_cf1):
     mock_resp = mock_base
-    mock_resp.iter_lines.return_value = _convert_entries2data_lines([
-        {
-            "event": "message",
-            "conversation_id": "c0cf",
-            "message_id": "ff06",
-            "created_at": 1768046345,
-            "task_id": "5863",
-            "id": "ff06",
-            "answer": "FIRST RESPONSE MESSAGE",
-            "from_variable_selector": ["llm", "text"],
-        },
-        {
-            "event": "message",
-            "conversation_id": "c0cf",
-            "message_id": "ff06",
-            "created_at": 1768046345,
-            "task_id": "5863",
-            "id": "ff06",
-            "answer": "SECOND RESPONSE MESSAGE",
-            "from_variable_selector": ["llm", "text"],
-        },
-        {
-            "event": "message",
-            "conversation_id": "c0cf",
-            "message_id": "ff06",
-            "created_at": 1768046345,
-            "task_id": "5863",
-            "id": "ff06",
-            "answer": "THIRD RESPONSE MESSAGE",
-            "from_variable_selector": ["llm", "text"],
-        },
-        {
-            "event": "workflow_finished",
-            "conversation_id": "c0cf",
-            "message_id": "ff06",
-            "created_at": 1768046345,
-            "task_id": "5863",
-            "workflow_run_id": "561d",
-            "data": {},
-        },
-    ])
+    mock_resp.iter_lines.return_value = _convert_entries2data_lines(
+        stream_entries_cf1
+    )
     return mock_resp
 
 

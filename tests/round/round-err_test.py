@@ -10,6 +10,8 @@ errs handling in _StreamingConversationRound.__next__()
 
 # pytest  ######################################################################
 
+# FIXME update tests
+
 
 class TestExhaust:  # ==========================================================
     pass

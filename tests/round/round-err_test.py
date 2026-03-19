@@ -15,7 +15,11 @@ import pytest
 from dify_open_webui_adapter import _StreamingConversationRound
 
 
-from tests.round import _convert_lines2list, _convert_entries2lines
+from tests.round import (
+    _convert_lines2list,
+    _convert_entries2lines,
+    _convert_entries2iter,
+)
 
 # pytest fixtures  #############################################################
 
@@ -156,127 +160,137 @@ class TestJSONDecode:  # =======================================================
 
 
 # key err  =====================================================================
+# BUG
 class TestKeyErrWorkflow:  # ***************************************************
-    pass  # FIXME
 
+    def test_event(_, testee_wf, mock_wf1, stream_entries_wf1):
+        app, patch_target, _, _ = testee_wf
+        mock_resp = mock_wf1
 
-#     def test_event(_):
-#         data = {
-#             "workflow_run_id": "b790",
-#             "task_id": "04db",
-#             "data": {
-#                 "text": "FIRST RESPONSE MESSAGE",
-#                 "from_variable_selector": ["4502", "output"],
-#             },
-#         }
-#         text_streams = convert_bytes_generator_from_lines(
-#             convert_lines_from_data_dicts([data])
-#         )
+        entries = [
+            *stream_entries_wf1,
+            {
+                "workflow_run_id": "b790",
+                "task_id": "04db",
+                "data": {
+                    "text": "FIRST RESPONSE MESSAGE",
+                    "from_variable_selector": ["4502", "output"],
+                },
+            },
+        ]
+        mock_resp.iter_lines.return_value = _convert_entries2iter(entries)
 
-#         with pytest.raises(KeyError) as exec_info:
-#             for _ in _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ):
-#                 pass
-#         opt = exec_info.value.args[0]
+        with pytest.raises(KeyError) as exec_info:
+            with patch(patch_target, return_value=mock_resp):
+                round = _StreamingConversationRound(app)
+                list(round)
 
-#         print(opt)
-#         assert opt == "missing key in text/event-stream content: 'event'"
+        opt = exec_info.value.args[0]
+        print(opt)
+        assert opt == ""
 
-#     def test_data(_):
-#         data = {
-#             "event": "text_chunk",
-#             "workflow_run_id": "b790",
-#             "task_id": "04db",
-#         }
-#         text_streams = convert_bytes_generator_from_lines(
-#             convert_lines_from_data_dicts([data])
-#         )
+    def test_data(_, testee_wf, mock_wf1, stream_entries_wf1):
+        app, patch_target, _, _ = testee_wf
+        mock_resp = mock_wf1
 
-#         with pytest.raises(KeyError) as exec_info:
-#             for _ in _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ):
-#                 pass
-#         opt = exec_info.value.args[0]
+        entries = [
+            *stream_entries_wf1,
+            {
+                "event": "text_chunk",
+                "workflow_run_id": "b790",
+                "task_id": "04db",
+            },
+        ]
+        mock_resp.iter_lines.return_value = _convert_entries2iter(entries)
 
-#         print(opt)
-#         assert opt == "missing key in text/event-stream content: 'data'"
+        with pytest.raises(KeyError) as exec_info:
+            with patch(patch_target, return_value=mock_resp):
+                round = _StreamingConversationRound(app)
+                list(round)
 
-#     def test_data_text(_):
-#         data = {
-#             "event": "text_chunk",
-#             "workflow_run_id": "b790",
-#             "task_id": "04db",
-#             "data": {
-#                 "from_variable_selector": ["4502", "output"],
-#             },
-#         }
-#         text_streams = convert_bytes_generator_from_lines(
-#             convert_lines_from_data_dicts([data])
-#         )
+        opt = exec_info.value.args[0]
+        print(opt)
+        assert opt == ""
 
-#         with pytest.raises(KeyError) as exec_info:
-#             for _ in _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ):
-#                 pass
-#         opt = exec_info.value.args[0]
+    def test_data_text(_, testee_wf, mock_wf1, stream_entries_wf1):
+        app, patch_target, _, _ = testee_wf
+        mock_resp = mock_wf1
 
-#         print(opt)
-#         assert opt == "missing key in text/event-stream content: 'text'"
+        entries = [
+            *stream_entries_wf1,
+            {
+                "event": "text_chunk",
+                "workflow_run_id": "b790",
+                "task_id": "04db",
+                "data": {
+                    "from_variable_selector": ["4502", "output"],
+                },
+            },
+        ]
+        mock_resp.iter_lines.return_value = _convert_entries2iter(entries)
+
+        with pytest.raises(KeyError) as exec_info:
+            with patch(patch_target, return_value=mock_resp):
+                round = _StreamingConversationRound(app)
+                list(round)
+
+        opt = exec_info.value.args[0]
+        print(opt)
+        assert opt == ""
 
 
 class TestKeyErrChatflow:  # ***************************************************
-    pass
 
+    def test_event(_, testee_cf, mock_cf1, stream_entries_cf1):
+        app, patch_target, _, _ = testee_cf
+        mock_resp = mock_cf1
 
-#     def test_event(_):
-#         data = {
-#             "conversation_id": "c0cf",
-#             "message_id": "ff06",
-#             "created_at": 1768046345,
-#             "task_id": "5863",
-#             "id": "ff06",
-#             "answer": "FIRST RESPONSE MESSAGE",
-#             "from_variable_selector": ["llm", "text"],
-#         }
+        entries = [
+            *stream_entries_cf1,
+            {
+                "conversation_id": "c0cf",
+                "message_id": "ff06",
+                "created_at": 1768046345,
+                "task_id": "5863",
+                "id": "ff06",
+                "answer": "FIRST RESPONSE MESSAGE",
+                "from_variable_selector": ["llm", "text"],
+            },
+        ]
+        mock_resp.iter_lines.return_value = _convert_entries2iter(entries)
 
-#         text_streams = convert_bytes_generator_from_lines(
-#             convert_lines_from_data_dicts([data])
-#         )
+        with pytest.raises(KeyError) as exec_info:
+            with patch(patch_target, return_value=mock_resp):
+                round = _StreamingConversationRound(app)
+                list(round)
 
-#         with pytest.raises(KeyError) as exec_info:
-#             for _ in _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ):
-#                 pass
-#         opt = exec_info.value.args[0]
+        opt = exec_info.value.args[0]
+        print(opt)
+        assert opt == ""
 
-#         print(opt)
-#         assert opt == "missing key in text/event-stream content: 'event'"
+    def test_answer(_, testee_cf, mock_cf1, stream_entries_cf1):
+        app, patch_target, _, _ = testee_cf
+        mock_resp = mock_cf1
 
-#     def test_answer(_):
-#         data = {
-#             "event": "message",
-#             "conversation_id": "c0cf",
-#             "message_id": "ff06",
-#             "created_at": 1768046345,
-#             "task_id": "5863",
-#             "id": "ff06",
-#             "from_variable_selector": ["llm", "text"],
-#         }
+        entries = [
+            *stream_entries_cf1,
+            {
+                "event": "message",
+                "conversation_id": "c0cf",
+                "message_id": "ff06",
+                "created_at": 1768046345,
+                "task_id": "5863",
+                "id": "ff06",
+                "from_variable_selector": ["llm", "text"],
+            },
+        ]
+        mock_resp.iter_lines.return_value = _convert_entries2iter(entries)
 
-#         text_streams = convert_bytes_generator_from_lines(
-#             convert_lines_from_data_dicts([data])
-#         )
+        with pytest.raises(KeyError) as exec_info:
+            with patch(patch_target, return_value=mock_resp):
+                round = _StreamingConversationRound(app)
+                list(round)
 
-#         with pytest.raises(KeyError) as exec_info:
-#             for _ in _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ):
-#                 pass
-#         opt = exec_info.value.args[0]
-
-#         print(opt)
-#         assert opt == "missing key in text/event-stream content: 'answer'"
+        opt = exec_info.value.args[0]
+        print(opt)
+        assert opt == ""

@@ -7,6 +7,7 @@ errs handling in _StreamingConversationRound.__next__()
 """
 
 from unittest.mock import patch
+from json import JSONDecodeError
 
 import pytest
 
@@ -108,25 +109,54 @@ class TestUnicode:  # ==========================================================
 
 
 class TestJSONDecode:  # =======================================================
-    pass  # FIXME
+
+    def test_wf(_, testee_wf, mock_wf1, stream_entries_wf1):
+        app, patch_target, _, _ = testee_wf
+        mock_resp = mock_wf1
+
+        bad_json = 'data: {"text": "value'
+
+        lines = _convert_lines2list(stream_entries_wf1)
+        lines.insert(0, bad_json.encode("utf-8"))
+        mock_resp.iter_lines.return_value = iter(lines)
+
+        with pytest.raises(JSONDecodeError) as exec_info:
+            with patch(patch_target, return_value=mock_resp):
+                round = _StreamingConversationRound(app)
+                list(round)
+
+        opt = exec_info.value.args[0]
+        print(opt)
+        assert (
+            opt
+            == """fail to parse text/event-stream as JSON: Unterminated string starting at: line 1 column 10 (char 9): b'data: {"text": "value'"""
+        )
+
+    def test_cf(_, testee_cf, mock_cf1, stream_entries_cf1):
+        app, patch_target, _, _ = testee_cf
+        mock_resp = mock_cf1
+
+        bad_json = 'data: {"text": "value'
+
+        lines = _convert_lines2list(stream_entries_cf1)
+        lines.insert(0, bad_json.encode("utf-8"))
+        mock_resp.iter_lines.return_value = iter(lines)
+
+        with pytest.raises(JSONDecodeError) as exec_info:
+            with patch(patch_target, return_value=mock_resp):
+                round = _StreamingConversationRound(app)
+                list(round)
+
+        opt = exec_info.value.args[0]
+        print(opt)
+        assert (
+            opt
+            == """fail to parse text/event-stream as JSON: Unterminated string starting at: line 1 column 10 (char 9): b'data: {"text": "value'"""
+        )
 
 
-#     def test1(_):
-#         bad_json = 'data: {"text": "value'
-#         text_streams = convert_bytes_generator_from_lines([bad_json])
-
-#         with pytest.raises(JSONDecodeError) as exec_info:
-#             for _ in _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ):
-#                 pass
-#         opt = exec_info.value.args[0]
-
-#         print(opt)
-#         assert opt.startswith("fail to parse text/event-stream as JSON")
-
-
-class TestKeyErrWorkflow:  # ===================================================
+# key err  =====================================================================
+class TestKeyErrWorkflow:  # ***************************************************
     pass  # FIXME
 
 
@@ -197,7 +227,7 @@ class TestKeyErrWorkflow:  # ===================================================
 #         assert opt == "missing key in text/event-stream content: 'text'"
 
 
-class TestKeyErrChatflow:  # ===================================================
+class TestKeyErrChatflow:  # ***************************************************
     pass
 
 

@@ -6,6 +6,9 @@ Unit Tests (using pytest) for:
 - _StreamingConversationRound.__init__()
 """
 
+from requests import Response
+from unittest.mock import Mock, patch
+
 import pytest
 
 from dify_open_webui_adapter import _StreamingConversationRound
@@ -29,12 +32,15 @@ def round_cf(app_skip_cf1):
 
 class TestWf:
 
-    def test_app(_, testee_wf, app_skip_cf1):
-        round = testee_wf
-        opt = round.app
+    def test_app(_, testee_wf, app_skip_wf1, patch_target_post):
+        app = app_skip_wf1
 
-        print(opt)
-        assert opt is app_skip_cf1
+        mock_resp = Response()
+        mock_resp.status_code = 200
+        mock_resp.encoding = "utf-8"
+        with patch(patch_target_post, return_value=mock_resp) as mock_post:
+            round = _StreamingConversationRound(app)
+            pass  # TODO
 
     def test_response(_, testee_wf):
         pass

@@ -6,103 +6,109 @@ Unit Tests (using pytest) for:
 errs handling in _StreamingConversationRound.__next__()
 """
 
+from unittest.mock import patch
+
+import pytest
+
+
+from dify_open_webui_adapter import _StreamingConversationRound
+
+
+from tests.round import _convert_lines2list, _convert_entries2lines
+
 # pytest fixtures  #############################################################
 
 # pytest  ######################################################################
 
 
 class TestExhaust:  # ==========================================================
-    pass
 
+    def test_wf(_, testee_wf, mock_wf1, stream_entries_wf1):
+        app, patch_target, _, _ = testee_wf
+        mock_resp = mock_wf1
 
-#     def test_workflow1(_):
-#         data_dicts = WORKFLOW_DATA1[:2]
-#         text_streams = convert_bytes_generator_from_lines(
-#             convert_lines_from_data_dicts(data_dicts)
-#         )
+        lines = _convert_lines2list(stream_entries_wf1)
+        lines = lines[:-1]
+        mock_resp.iter_lines.return_value = iter(lines)
 
-#         with pytest.raises(ValueError) as exec_info:
-#             for _ in _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ):
-#                 pass
-#         opt = exec_info.value.args[0]
+        with pytest.raises(ValueError) as exec_info:
+            with patch(patch_target, return_value=mock_resp):
+                round = _StreamingConversationRound(app)
+                list(round)
 
-#         print(opt)
-#         assert (
-#             opt
-#             == "exhaust text/event-stream "
-#             "but detect no events indicating finishing"
-#         )
+        opt = exec_info.value.args[0]
+        print(opt)
+        assert opt == "exhaust text/event-stream without ending event"
 
-#     def test_chatflow1(_):
-#         data_dicts = CHATFLOW_DATA1[:2]
-#         text_streams = convert_bytes_generator_from_lines(
-#             convert_lines_from_data_dicts(data_dicts)
-#         )
+    def test_cf(_, testee_cf, mock_cf1, stream_entries_cf1):
+        app, patch_target, _, _ = testee_cf
+        mock_resp = mock_cf1
 
-#         with pytest.raises(ValueError) as exec_info:
-#             for _ in _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ):
-#                 pass
-#         opt = exec_info.value.args[0]
+        lines = _convert_lines2list(stream_entries_cf1)
+        lines = lines[:-2]
+        mock_resp.iter_lines.return_value = iter(lines)
 
-#         print(opt)
-#         assert (
-#             opt
-#             == "exhaust text/event-stream "
-#             "but detect no events indicating finishing"
-#         )
+        with pytest.raises(ValueError) as exec_info:
+            with patch(patch_target, return_value=mock_resp):
+                round = _StreamingConversationRound(app)
+                list(round)
+
+        opt = exec_info.value.args[0]
+        print(opt)
+        assert opt == "exhaust text/event-stream without ending event"
 
 
 class TestUnicode:  # ==========================================================
-    pass
 
+    def test_wf(_, testee_wf, mock_wf1, stream_entries_wf1):
+        app, patch_target, _, _ = testee_wf
+        mock_resp = mock_wf1
 
-#     def test_workflow1(_):
-#         lines = convert_lines_from_data_dicts(WORKFLOW_DATA1)
-#         bytes_obj = [bytearray(line, "utf_16") for line in lines]
-#         text_streams = iter(bytes_obj)
+        mock_resp.iter_lines.return_value = iter([
+            ll.encode(encoding="utf-16")
+            for ll in _convert_entries2lines(stream_entries_wf1)
+        ])
 
-#         with pytest.raises(UnicodeDecodeError) as exec_info:
-#             for _ in _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ):
-#                 pass
-#         opt = exec_info.value.args[0]
+        with pytest.raises(ValueError) as exec_info:
+            with patch(patch_target, return_value=mock_resp):
+                round = _StreamingConversationRound(app)
+                list(round)
 
-#         print(opt)
-#         assert (
-#             opt
-#             == "fail to decode text/event-stream: "
-#             "'utf-8' codec can't decode byte 0xff in position 0: "
-#             "invalid start byte"
-#         )
+        opt = exec_info.value.args[0]
+        print(opt)
+        assert (
+            opt
+            == "fail to decode text/event-stream: "
+            "'utf-8' codec can't decode byte 0xff in position 0: "
+            "invalid start byte"
+        )
 
-#     def test_chatflow1(_):
-#         lines = convert_lines_from_data_dicts(CHATFLOW_DATA1)
-#         bytes_obj = [bytearray(line, "utf_16") for line in lines]
-#         text_streams = iter(bytes_obj)
+    def test_cf(_, testee_cf, mock_cf1, stream_entries_cf1):
+        app, patch_target, _, _ = testee_cf
+        mock_resp = mock_cf1
 
-#         with pytest.raises(UnicodeDecodeError) as exec_info:
-#             for _ in _StreamingConversationRound(
-#                 _create_simulated_app(text_streams), None
-#             ):
-#                 pass
-#         opt = exec_info.value.args[0]
+        mock_resp.iter_lines.return_value = iter([
+            ll.encode(encoding="utf-16")
+            for ll in _convert_entries2lines(stream_entries_cf1)
+        ])
 
-#         print(opt)
-#         assert (
-#             opt
-#             == "fail to decode text/event-stream: "
-#             "'utf-8' codec can't decode byte 0xff in position 0: "
-#             "invalid start byte"
-#         )
+        with pytest.raises(ValueError) as exec_info:
+            with patch(patch_target, return_value=mock_resp):
+                round = _StreamingConversationRound(app)
+                list(round)
+
+        opt = exec_info.value.args[0]
+        print(opt)
+        assert (
+            opt
+            == "fail to decode text/event-stream: "
+            "'utf-8' codec can't decode byte 0xff in position 0: "
+            "invalid start byte"
+        )
 
 
 class TestJSONDecode:  # =======================================================
-    pass
+    pass  # FIXME
 
 
 #     def test1(_):
@@ -121,7 +127,7 @@ class TestJSONDecode:  # =======================================================
 
 
 class TestKeyErrWorkflow:  # ===================================================
-    pass
+    pass  # FIXME
 
 
 #     def test_event(_):

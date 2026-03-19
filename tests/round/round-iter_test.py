@@ -7,13 +7,13 @@ Unit Tests (using pytest) for: _StreamingConversationRound:
 - .__iter__()
 """
 
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 
 
 from dify_open_webui_adapter import _StreamingConversationRound
 
 
-from tests.round import _convert_entries2list
+from tests.round import _convert_lines2list
 
 
 # tests  #######################################################################
@@ -52,7 +52,7 @@ class TestWf:  # ===============================================================
         app, patch_target, assert_args, assert_kwargs = testee_wf
         mock_resp = mock_wf1
 
-        lines = _convert_entries2list(stream_entries_wf1)
+        lines = _convert_lines2list(stream_entries_wf1)
         lines.insert(0, "event: ping".encode("utf-8"))
         mock_resp.iter_lines.return_value = iter(lines)
 
@@ -202,7 +202,7 @@ class TestCf:  # ===============================================================
         app, patch_target, assert_args, assert_kwargs = testee_cf
         mock_resp = mock_cf1
 
-        lines = _convert_entries2list(stream_entries_cf1)
+        lines = _convert_lines2list(stream_entries_cf1)
         lines.insert(0, "event: ping".encode("utf-8"))
         mock_resp.iter_lines.return_value = iter(lines)
 

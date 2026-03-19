@@ -615,8 +615,6 @@ class _StreamingConversationRound:
                     continue  # not start w/ "data: ", skip
                 line = line[len(self._STREAM_PREFIX) :]
 
-                print(line)  # HACK
-
                 # parse data as JSON
                 data = json.loads(line)
                 event_value = data["event"]

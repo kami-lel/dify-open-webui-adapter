@@ -49,10 +49,37 @@ class TestWf:
         with patch(patch_target, return_value=mock_resp) as mock_post:
             round = _StreamingConversationRound(app)
 
-            opt = round.iter_lines
+            opt = list(round.iter_lines)
             print(opt)
-            # BUG
-            # assert opt == []
+            assert opt == [
+                (
+                    b'data: {"event": "text_chunk", '
+                    b'"workflow_run_id": "b790", '
+                    b'"task_id": "04db", '
+                    b'"data": {"text": "FIRST RESPONSE MESSAGE", '
+                    b'"from_variable_selector": ["4502", "output"]}}'
+                ),
+                (
+                    b'data: {"event": "text_chunk", '
+                    b'"workflow_run_id": "b790", '
+                    b'"task_id": "04db", '
+                    b'"data": {"text": "SECOND RESPONSE MESSAGE", '
+                    b'"from_variable_selector": ["4502", "output"]}}'
+                ),
+                (
+                    b'data: {"event": "text_chunk", '
+                    b'"workflow_run_id": "b790", '
+                    b'"task_id": "04db", '
+                    b'"data": {"text": "THIRD RESPONSE MESSAGE", '
+                    b'"from_variable_selector": ["4502", "output"]}}'
+                ),
+                (
+                    b'data: {"event": "workflow_finished", '
+                    b'"workflow_run_id": "b790", '
+                    b'"task_id": "04db", '
+                    b'"data": {}}'
+                ),
+            ]
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
@@ -92,9 +119,49 @@ class TestCf:
         with patch(patch_target, return_value=mock_resp) as mock_post:
             round = _StreamingConversationRound(app)
 
-            opt = round.iter_lines
+            opt = list(round.iter_lines)
             print(opt)
-            # BUG
-            # assert opt == []
+            assert opt == [
+                (
+                    b'data: {"event": "message", '
+                    b'"conversation_id": "c0cf", '
+                    b'"message_id": "ff06", '
+                    b'"created_at": 1768046345,'
+                    b' "task_id": "5863", '
+                    b'"id": "ff06", '
+                    b'"answer": "FIRST '
+                    b'RESPONSE MESSAGE", '
+                    b'"from_variable_selector": ["llm", "text"]}'
+                ),
+                (
+                    b'data: {"event": "message", '
+                    b'"conversation_id": "c0cf", '
+                    b'"message_id": "ff06", '
+                    b'"created_at": 1768046345, '
+                    b'"task_id": "5863", '
+                    b'"id": "ff06", '
+                    b'"answer": "SECOND RESPONSE MESSAGE", '
+                    b'"from_variable_selector": ["llm", "text"]}'
+                ),
+                (
+                    b'data: {"event": "message", '
+                    b'"conversation_id": "c0cf", '
+                    b'"message_id": "ff06", '
+                    b'"created_at": 1768046345, '
+                    b'"task_id": "5863", '
+                    b'"id": "ff06", '
+                    b'"answer": "THIRD RESPONSE MESSAGE", '
+                    b'"from_variable_selector": ["llm", "text"]}'
+                ),
+                (
+                    b'data: {"event": "workflow_finished", '
+                    b'"conversation_id": "c0cf", '
+                    b'"message_id": "ff06", '
+                    b'"created_at": 1768046345, '
+                    b'"task_id": "5863", '
+                    b'"workflow_run_id": "561d", '
+                    b'"data": {}}'
+                ),
+            ]
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)

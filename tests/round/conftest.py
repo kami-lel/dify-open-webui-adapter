@@ -1,5 +1,3 @@
-# HACK
-
 from unittest.mock import Mock
 import json
 

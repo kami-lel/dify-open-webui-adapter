@@ -605,6 +605,7 @@ class _StreamingConversationRound:
         while not event:
             try:
                 raw = next(self.iter_lines)
+
                 line = raw.decode(self._TEXT_STREAM_ENCODING)
                 if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
                     debug_lines.append(line)
@@ -613,6 +614,8 @@ class _StreamingConversationRound:
                 if not line.startswith(self._STREAM_PREFIX):
                     continue  # not start w/ "data: ", skip
                 line = line[len(self._STREAM_PREFIX) :]
+
+                print(line)  # HACK
 
                 # parse data as JSON
                 data = json.loads(line)

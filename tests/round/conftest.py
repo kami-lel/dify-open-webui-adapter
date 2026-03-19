@@ -71,9 +71,8 @@ def testee_cf(app_skip_cf1, patch_target_post):
 # mocks  =======================================================================
 # helpers  ---------------------------------------------------------------------
 def _convert_entries2data_lines(entries):
-    return [
-        json.dumps("data: " + str(e)).encode(encoding="utf-8") for e in entries
-    ]
+    for e in entries:
+        yield json.dumps("data: " + str(e)).encode(encoding="utf-8")
 
 
 # wf mocks  --------------------------------------------------------------------
@@ -82,14 +81,13 @@ def _convert_entries2data_lines(entries):
 @pytest.fixture
 def mock_base():
     mock_resp = Mock()
-    mock_resp.status_code = 201
+    mock_resp.status_code = 200
     return mock_resp
 
 
 @pytest.fixture
 def mock_wf1(mock_base):
     mock_resp = mock_base
-    # BUG
     mock_resp.iter_lines.return_value = _convert_entries2data_lines([
         {
             "event": "text_chunk",
@@ -1507,7 +1505,7 @@ def mock_wf4(mock_base):
 
 
 @pytest.fixture
-def mock_cf1():
+def mock_cf1(mock_base):
     mock_resp = mock_base
     mock_resp.iter_lines.return_value = _convert_entries2data_lines([
         {

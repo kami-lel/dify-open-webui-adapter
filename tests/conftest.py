@@ -31,6 +31,16 @@ def info_endpoint():
     return "https://api.dify.ai/v1/info"
 
 
+@pytest.fixture
+def wf_endpoint(base_url):
+    return base_url + "/workflows/run"
+
+
+@pytest.fixture
+def cf_endpoint(base_url):
+    return base_url + "/chat-messages"
+
+
 # configs  =====================================================================
 @pytest.fixture(scope="session")
 def config_wf1():
@@ -69,7 +79,7 @@ def configs1(config_wf1, config_cf1, config_cf2):
 
 
 # model  =======================================================================
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def model_skip_wf1(base_url, config_wf1):
     return OWUModel(
         base_url,
@@ -79,7 +89,7 @@ def model_skip_wf1(base_url, config_wf1):
     )
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def model_skip_cf1(base_url, config_cf1):
     return OWUModel(
         base_url,
@@ -89,7 +99,7 @@ def model_skip_cf1(base_url, config_cf1):
     )
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def model_skip_cf2(base_url, config_cf2):
     return OWUModel(
         base_url,
@@ -100,25 +110,30 @@ def model_skip_cf2(base_url, config_cf2):
 
 
 # app  =========================================================================
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def app_skip_wf1(model_skip_wf1):
     return model_skip_wf1.app
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def app_skip_cf1(model_skip_cf1):
     return model_skip_cf1.app
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def app_skip_cf2(model_skip_cf2):
     return model_skip_cf2.app
 
 
 # mocks  =======================================================================
 @pytest.fixture
-def patch_target():
+def patch_target_get():
     return "dify_open_webui_adapter.requests.get"
+
+
+@pytest.fixture
+def patch_target_post():
+    return "dify_open_webui_adapter.requests.post"
 
 
 @pytest.fixture

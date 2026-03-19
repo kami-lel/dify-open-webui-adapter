@@ -21,7 +21,7 @@
 
 ### Added
 
-- more completed set of *unit tests*
+- exhaustive set of *unit tests*
 
 ### Changed
 

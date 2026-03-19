@@ -12,22 +12,8 @@ from dify_open_webui_adapter import OWUModel, DifyAppType
 
 # pytest fixtures  #############################################################
 
+
 # models  ======================================================================
-
-
-@pytest.fixture
-def model_local1(base_url, config_wf1):
-    config = config_wf1.copy()
-    config["query_input_field_identifier"] = "aaaaaa"
-    model = OWUModel(
-        base_url,
-        config,
-        skip_get_app_type_and_name=True,
-        app_type_override=DifyAppType.WORKFLOW,
-    )
-    return model
-
-
 @pytest.fixture
 def model_local2(base_url, config_wf1):
     config = config_wf1.copy()
@@ -44,11 +30,6 @@ def model_local2(base_url, config_wf1):
 
 
 # apps  ========================================================================
-
-
-@pytest.fixture
-def app_local1(model_local1):
-    return model_local1.app
 
 
 @pytest.fixture
@@ -88,24 +69,24 @@ class Test1:  # ================================================================
 
 class TestLocal1:  # ===========================================================
 
-    def test_query(_, app_local1):
-        app = app_local1
+    def test_query(_, app_changed_input):
+        app = app_changed_input
         opt = app.query_identifier
 
         print(opt)
         assert isinstance(opt, str)
-        assert opt == "aaaaaa"
+        assert opt == "Input"
 
-    def test_repply(_, app_local1):
-        app = app_local1
+    def test_repply(_, app_changed_input):
+        app = app_changed_input
         opt = app.reply_identifier
 
         print(opt)
         assert isinstance(opt, str)
         assert opt == "answer"
 
-    def test_fields(_, app_local1):
-        app = app_local1
+    def test_fields(_, app_changed_input):
+        app = app_changed_input
         opt = app.input_fields
 
         print(opt)

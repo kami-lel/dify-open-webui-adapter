@@ -24,14 +24,14 @@ class TestGet:
         base_url,
         config_wf1,
         patch_and_result_wf1,
-        patch_target,
+        patch_target_get,
         info_endpoint,
     ):
         config = config_wf1
         key = config["key"]
         mock_resp, assert_kwargs = patch_and_result_wf1
 
-        with patch(patch_target, return_value=mock_resp) as mock_get:
+        with patch(patch_target_get, return_value=mock_resp) as mock_get:
             opt = BaseDifyApp.get_app_type_and_name(base_url, key)
 
             print(opt)
@@ -50,14 +50,14 @@ class TestGet:
         base_url,
         config_cf1,
         patch_and_result_cf1,
-        patch_target,
+        patch_target_get,
         info_endpoint,
     ):
         config = config_cf1
         key = config["key"]
         mock_resp, assert_kwargs = patch_and_result_cf1
 
-        with patch(patch_target, return_value=mock_resp) as mock_get:
+        with patch(patch_target_get, return_value=mock_resp) as mock_get:
             opt = BaseDifyApp.get_app_type_and_name(base_url, key)
 
             print(opt)
@@ -74,7 +74,7 @@ class TestGet:
 
     # err handling  ============================================================
 
-    def test_no_type(_, base_url, config_wf1, patch_target):
+    def test_no_type(_, base_url, config_wf1, patch_target_get):
         config = config_wf1
         key = config["key"]
         mock_resp = Mock()
@@ -82,7 +82,7 @@ class TestGet:
             "name": "Some Names",
         }
 
-        with patch(patch_target, return_value=mock_resp):
+        with patch(patch_target_get, return_value=mock_resp):
             with pytest.raises(ValueError) as exec_info:
                 BaseDifyApp.get_app_type_and_name(base_url, key)
             opt = exec_info.value.args[0]
@@ -90,12 +90,12 @@ class TestGet:
             print(opt)
             assert opt == "fail to get App Type from Dify"
 
-    def test_bad_conncetion(_, base_url, config_wf1, patch_target):
+    def test_bad_connections(_, base_url, config_wf1, patch_target_get):
         config = config_wf1
         key = config["key"]
 
         with patch(
-            patch_target,
+            patch_target_get,
             side_effect=requests.exceptions.ConnectionError("Bad Connection"),
         ):
             with pytest.raises(ConnectionError) as exec_info:

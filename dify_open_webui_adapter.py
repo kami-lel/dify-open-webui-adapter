@@ -25,7 +25,6 @@ APP_MODEL_CONFIGS = []
 # end of config  ###############################################################
 
 # pylint: disable=wrong-import-position
-import uuid
 from enum import Enum, Flag, auto
 import json
 from json import JSONDecodeError
@@ -34,7 +33,6 @@ from pydantic import BaseModel
 import requests
 
 # constants  ===================================================================
-# Todo read user role from metadata
 OWU_USER_ROLE = "user"
 REQUEST_TIMEOUT = 30
 STREAM_REQUEST_TIMEOUT = 300
@@ -48,7 +46,7 @@ DEFINED_APP_MODEL_CONFIG_KEYS = (
 )
 
 # Dify constants  **************************************************************
-DIFY_USER_ROLE = "user"
+DIFY_USER_ROLE = "user"  # Todo read user role from metadata
 DEFAULT_QUERY_INPUT_FIELD_IDENTIFIER = "query"
 DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER = "answer"
 
@@ -113,12 +111,15 @@ class OWUModel:
         """
 
         # OWU side  ------------------------------------------------------------
-        newest_msg_content = self._get_last_user_msg_content(body)
+        last_user_msg_content_content = self._get_last_user_msg_content(body)
         enable_stream = "stream" in body and bool(body["stream"])
         # Todo extract custom para from body
 
         # Dify side  -----------------------------------------------------------
-        opt = self.app.reply(newest_msg_content, enable_stream)
+        self.app.current_user_msg_content = last_user_msg_content_content
+        self.app.current_enable_stream = enable_stream
+
+        opt = self.app.reply()
 
         return opt
 
@@ -239,7 +240,7 @@ class BaseDifyApp:
     @staticmethod
     def get_app_type_and_name(base_url, key):
         """
-        get Dify App's Type & Name, by GET /info of Dicy Backend API
+        get Dify App's Type & Name, by GET /info of Dify Backend API
 
 
         :param base_url:
@@ -278,7 +279,7 @@ class BaseDifyApp:
 
         return app_type, response_name
 
-    def reply(self, newest_msg, enable_stream):
+    def reply(self):
         """
         handle Dify side of processing per-round response of conversation,
         by requesting Dify Backend API
@@ -289,16 +290,47 @@ class BaseDifyApp:
         :return: the response
         :rtype: str or Iterable
         """
-        return (
-            self._reply_streaming(newest_msg)
-            if not self.disallows_streaming and enable_stream
-            else self._reply_blocking(newest_msg)
+        if not self.disallows_streaming and self.current_enable_stream:
+            return _StreamingConversationRound(self)
+        else:
+            return self._reply_blocking()
+
+    @property
+    def http_header(self):  # pylint: disable=missing-function-docstring
+        return create_http_header(
+            self.key, enable_stream=self.current_enable_stream
         )
 
-    def http_header(
-        self, enable_stream=False
-    ):  # pylint: disable=missing-function-docstring
-        return create_http_header(self.key, enable_stream=enable_stream)
+    def open_reply_response(self):
+        """
+        open a `Response` object connecting to Dify for replying
+
+
+        :return: Response object
+        :rtype: requests.Response
+        :raises ConnectionError:
+        """
+        try:
+            timeout = (
+                STREAM_REQUEST_TIMEOUT
+                if self.current_enable_stream
+                else REQUEST_TIMEOUT
+            )
+            response_obj = requests.post(
+                self.main_url,
+                headers=self.http_header,
+                data=self._create_reply_payload(),
+                stream=self.current_enable_stream,
+                timeout=timeout,
+            )
+            response_obj.raise_for_status()
+            return response_obj
+
+        # handle network errors
+        except requests.exceptions.RequestException as err:
+            raise ConnectionError(
+                "fail request to Dify: {}".format(err.args[0])
+            ) from err
 
     # abstract methods  ========================================================
 
@@ -310,22 +342,18 @@ class BaseDifyApp:
         """
         raise NotImplementedError
 
-    def _reply_blocking(self, newest_msg):
+    def _reply_blocking(self):
         """
         :return: the response
         :rtype: str
         """
         raise NotImplementedError
 
-    def _reply_streaming(self, newest_msg):
+    def _create_reply_payload(self):
         """
-        :return: response
-        :rtype: Iterable
-        """
-        raise NotImplementedError
+        generate payload during .reply()
 
-    def _create_post_request_payload(self, newest_msg, enable_stream=False):
-        """
+
         :return: JSON-formatted request payload data,
                 e.g. it can be feed to ``requests.post(data=~)``
         :rtype: str
@@ -350,34 +378,9 @@ class BaseDifyApp:
                     )
                 )
 
-    # private methods  =========================================================
-
-    def _open_reply_response(self, newest_msg, enable_stream=False):
-        """
-        :return: per-round response connecting to Dify
-        :rtype: requests.Response
-        :raises ConnectionError:
-        """
-        try:
-            data = self._create_post_request_payload(newest_msg, enable_stream)
-            headers = self.http_header(enable_stream)
-            response_obj = requests.post(
-                self.main_url,
-                headers=headers,
-                data=data,
-                stream=enable_stream,
-                timeout=(
-                    STREAM_REQUEST_TIMEOUT if enable_stream else REQUEST_TIMEOUT
-                ),
-            )
-            response_obj.raise_for_status()
-            return response_obj
-
-        # handle network errors
-        except requests.exceptions.RequestException as err:
-            raise ConnectionError(
-                "fail request to Dify: {}\n{}".format(err.args[0], data)
-            ) from err
+        # current conversations  -----------------------------------------------
+        self.current_user_msg_content = ""
+        self.current_enable_stream = False
 
 
 class WorkflowApp(BaseDifyApp):
@@ -410,14 +413,12 @@ class WorkflowApp(BaseDifyApp):
     def main_url(self):
         return "{}/workflows/run".format(self.base_url)
 
-    # Todo unit tests private function
-
-    def _reply_blocking(self, newest_msg):
+    def _reply_blocking(self):
         """
         :raises ConnectionError:
         :raises KeyError:
         """
-        response_object = self._open_reply_response(newest_msg, False)
+        response_object = self.open_reply_response()
         response = response_object.json()
 
         try:
@@ -425,24 +426,21 @@ class WorkflowApp(BaseDifyApp):
 
         except KeyError as err:
             raise KeyError(
-                "fail to parse Dify response, missing key: {}".format(
-                    err.args[0]
-                )
+                "miss key in Dify response: {}".format(err.args[0])
             ) from err
 
         finally:
             response_object.close()
 
-    def _reply_streaming(self, newest_msg):
-        """
-        :raises ValueError:
-        """
-        return _StreamingConversationRound(self, newest_msg)
-
-    def _create_post_request_payload(self, newest_msg, enable_stream=False):
+    def _create_reply_payload(self):
         payload_dict = {
-            "inputs": {self.query_identifier: newest_msg, **self.input_fields},
-            "response_mode": "streaming" if enable_stream else "blocking",
+            "inputs": {
+                self.query_identifier: self.current_user_msg_content,
+                **self.input_fields,
+            },
+            "response_mode": (
+                "streaming" if self.current_enable_stream else "blocking"
+            ),
             "user": DIFY_USER_ROLE,
         }
 
@@ -486,14 +484,12 @@ class ChatflowApp(BaseDifyApp):
     def main_url(self):
         return "{}/chat-messages".format(self.base_url)
 
-    # Todo unit tests these functions
-
-    def _reply_blocking(self, newest_msg):
+    def _reply_blocking(self):
         """
         :raises ConnectionError:
         :raises KeyError:
         """
-        response_object = self._open_reply_response(newest_msg, False)
+        response_object = self.open_reply_response()
         response = response_object.json()
 
         try:
@@ -504,24 +500,18 @@ class ChatflowApp(BaseDifyApp):
 
         except KeyError as err:
             raise KeyError(
-                "fail to parse Dify response, missing key: {}".format(
-                    err.args[0]
-                )
+                "miss key in Dify response: {}".format(err.args[0])
             ) from err
 
         finally:
             response_object.close()
 
-    def _reply_streaming(self, newest_msg):
-        """
-        :raises ValueError:
-        """
-        return _StreamingConversationRound(self, newest_msg)
-
-    def _create_post_request_payload(self, newest_msg, enable_stream=False):
+    def _create_reply_payload(self):
         payload_dict = {
-            "query": newest_msg,
-            "response_mode": "streaming" if enable_stream else "blocking",
+            "query": self.current_user_msg_content,
+            "response_mode": (
+                "streaming" if self.current_enable_stream else "blocking"
+            ),
             "user": DIFY_USER_ROLE,
             "conversation_id": self.conversation_id,
             "auto_generate_name": False,
@@ -553,7 +543,7 @@ def create_http_header(key, enable_stream=False):
     return header_dict
 
 
-class _SSE(Flag):
+class _SSEType(Flag):
     """
     represent a single **relevant** SSE specified by Dify Backend API
     """
@@ -572,6 +562,13 @@ class _SSE(Flag):
     # events which indicate end of  current round response
     IS_END = workflow_finished | message_end
 
+    def __bool__(self):
+        """
+        :return: whether event is a relevant event
+        :rtype: bool
+        """
+        return self != self.IRRELEVANT
+
 
 class _StreamingConversationRound:
     """
@@ -586,32 +583,29 @@ class _StreamingConversationRound:
 
     _TEXT_STREAM_ENCODING = "utf-8"
     _STREAM_PREFIX = "data: "
-    # enable debug mode such it returns text-stream directly
 
-    def __init__(self, app, newest_msg):
+    def __init__(self, app):
         self.app = app
-        self.response = self.app._open_reply_response(newest_msg, True)
+        # cache the response for closing when finished this round
+        self.response = self.app.open_reply_response()
         self.iter_lines = self.response.iter_lines()
-        self._debug_stop_on_next = False
 
-    # implemetn iter()  ========================================================
+    # implement iter()  ========================================================
 
     def __iter__(self):
         return self  # make self an Iterator
 
     def __next__(self):
-        if self._debug_stop_on_next:
-            raise StopIteration
-
         debug_lines = ["\n"]
 
         text = None
-        event = _SSE.IRRELEVANT  # default
+        event = _SSEType.IRRELEVANT  # default
 
         # consume self.iter_lines until find relevant events
         while not event:
             try:
                 raw = next(self.iter_lines)
+
                 line = raw.decode(self._TEXT_STREAM_ENCODING)
                 if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
                     debug_lines.append(line)
@@ -627,14 +621,14 @@ class _StreamingConversationRound:
 
                 # deal with only relevant types of SSE
                 try:
-                    event = _SSE[event_value]
+                    event = _SSEType[event_value]
                 except KeyError:  # not a relevant event
                     continue
 
                 # extract text
-                if event is _SSE.message:
+                if event is _SSEType.message:
                     text = data["answer"]
-                elif event is _SSE.text_chunk:
+                elif event is _SSEType.text_chunk:
                     text = data["data"]["text"]
 
                 # extract conversation_id for Chatflow, if it's empty
@@ -646,8 +640,7 @@ class _StreamingConversationRound:
 
             except StopIteration as err:
                 raise ValueError(
-                    "exhaust text/event-stream "
-                    "but detect no events indicating finishing"
+                    "exhaust text/event-stream without ending event"
                 ) from err
 
             except UnicodeDecodeError as err:
@@ -668,15 +661,13 @@ class _StreamingConversationRound:
 
             except KeyError as err:
                 raise KeyError(
-                    "missing key in text/event-stream content: {}".format(
-                        str(err)
-                    )
+                    "miss key in text/event-stream content: {}".format(str(err))
                 ) from err
 
-        # an relevant event is found
-        if event in _SSE.IS_END:  # end of current respond
+        # an relevant event is found  ------------------------------------------
+
+        if event in _SSEType.IS_END:  # end of current respond
             if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
-                self._debug_stop_on_next = True
                 debug_lines.insert(1, "# LAST PASS")
                 return "\n\n".join(debug_lines)
 

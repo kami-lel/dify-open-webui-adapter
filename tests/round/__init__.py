@@ -1,6 +1,11 @@
 import json
 
 
-def _convert_entries2data_lines(entries):
-    for e in entries:
-        yield ("data: " + json.dumps(e)).encode(encoding="utf-8")
+def _convert_entries2list(entries):
+    return [
+        ("data: " + json.dumps(e)).encode(encoding="utf-8") for e in entries
+    ]
+
+
+def _convert_entries2iter(entries):
+    return iter(_convert_entries2list(entries))

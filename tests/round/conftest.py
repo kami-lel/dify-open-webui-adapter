@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from tests.round import _convert_entries2data_lines
+from tests.round import _convert_entries2iter
 
 
 # pytest fixtures  #############################################################
@@ -169,7 +169,7 @@ def mock_base():
 @pytest.fixture
 def mock_wf1(mock_base, stream_entries_wf1):
     mock_resp = mock_base
-    mock_resp.iter_lines.return_value = _convert_entries2data_lines(
+    mock_resp.iter_lines.return_value = _convert_entries2iter(
         stream_entries_wf1
     )
     return mock_resp
@@ -178,7 +178,7 @@ def mock_wf1(mock_base, stream_entries_wf1):
 @pytest.fixture
 def mock_wf2(mock_base):
     mock_resp = mock_base
-    mock_resp.iter_lines.return_value = _convert_entries2data_lines([
+    mock_resp.iter_lines.return_value = _convert_entries2iter([
         {
             "event": "workflow_started",
             "workflow_run_id": "b790",
@@ -318,7 +318,7 @@ def mock_wf2(mock_base):
 @pytest.fixture
 def mock_wf3(mock_base):
     mock_resp = mock_base
-    mock_resp.iter_lines.return_value = _convert_entries2data_lines([
+    mock_resp.iter_lines.return_value = _convert_entries2iter([
         {
             "event": "workflow_started",
             "workflow_run_id": "eb77",
@@ -749,7 +749,7 @@ def mock_wf3(mock_base):
 @pytest.fixture
 def mock_wf4(mock_base):
     mock_resp = mock_base
-    mock_resp.iter_lines.return_value = _convert_entries2data_lines([
+    mock_resp.iter_lines.return_value = _convert_entries2iter([
         {
             "event": "workflow_started",
             "workflow_run_id": "c653",
@@ -1558,7 +1558,7 @@ def mock_wf4(mock_base):
 @pytest.fixture
 def mock_cf1(mock_base, stream_entries_cf1):
     mock_resp = mock_base
-    mock_resp.iter_lines.return_value = _convert_entries2data_lines(
+    mock_resp.iter_lines.return_value = _convert_entries2iter(
         stream_entries_cf1
     )
     return mock_resp
@@ -1567,7 +1567,7 @@ def mock_cf1(mock_base, stream_entries_cf1):
 @pytest.fixture
 def mock_cf2(mock_base):
     mock_resp = mock_base
-    mock_resp.iter_lines.return_value = _convert_entries2data_lines([
+    mock_resp.iter_lines.return_value = _convert_entries2iter([
         {
             "event": "workflow_started",
             "conversation_id": "c0cf",
@@ -2115,7 +2115,7 @@ def mock_cf2(mock_base):
 @pytest.fixture
 def mock_cf3(mock_base):
     mock_resp = mock_base
-    mock_resp.iter_lines.return_value = _convert_entries2data_lines([
+    mock_resp.iter_lines.return_value = _convert_entries2iter([
         {
             "event": "workflow_started",
             "conversation_id": "8b3b",

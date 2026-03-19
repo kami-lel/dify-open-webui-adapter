@@ -13,7 +13,7 @@ from unittest.mock import patch, Mock
 from dify_open_webui_adapter import _StreamingConversationRound
 
 
-from tests.round import _convert_entries2data_lines
+from tests.round import _convert_entries2list
 
 
 # tests  #######################################################################
@@ -48,11 +48,11 @@ class TestWf:  # ===============================================================
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
-    def test1_ping(_, testee_wf, mock_wf1):
+    def test1_ping(_, testee_wf, mock_wf1, stream_entries_wf1):
         app, patch_target, assert_args, assert_kwargs = testee_wf
         mock_resp = mock_wf1
 
-        lines = list(mock_resp.iter_lines.return_value)
+        lines = _convert_entries2list(stream_entries_wf1)
         lines.insert(0, "event: ping".encode("utf-8"))
         mock_resp.iter_lines.return_value = iter(lines)
 
@@ -163,7 +163,6 @@ class TestWf:  # ===============================================================
                 " garden",
                 ".",
             ]
-            # BUG
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
@@ -199,11 +198,11 @@ class TestCf:  # ===============================================================
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
-    def test1_ping(_, testee_cf, mock_cf1):
+    def test1_ping(_, testee_cf, mock_cf1, stream_entries_cf1):
         app, patch_target, assert_args, assert_kwargs = testee_cf
         mock_resp = mock_cf1
 
-        lines = list(mock_resp.iter_lines.return_value)
+        lines = _convert_entries2list(stream_entries_cf1)
         lines.insert(0, "event: ping".encode("utf-8"))
         mock_resp.iter_lines.return_value = iter(lines)
 

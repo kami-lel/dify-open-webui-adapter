@@ -6,6 +6,7 @@ import pytest
 
 
 # pytest fixtures  #############################################################
+# testees  =====================================================================
 @pytest.fixture
 def testee_wf(app_skip_wf1, patch_target_post):
     app = app_skip_wf1
@@ -65,6 +66,9 @@ def testee_cf(app_skip_cf1, patch_target_post):
     }
 
     return app, patch_target, assert_args, assert_kwargs
+
+
+# mocks  =======================================================================
 
 
 @pytest.fixture

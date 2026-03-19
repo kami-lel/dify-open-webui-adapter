@@ -1,8 +1,17 @@
 # HACK
 
 from unittest.mock import Mock
+import json
+
 
 import pytest
+
+
+# helpers  #####################################################################
+def _convert_entries2data_lines(entries):
+    return [
+        json.dumps("data: " + str(e)).encode(encoding="utf-8") for e in entries
+    ]
 
 
 # pytest fixtures  #############################################################
@@ -75,7 +84,7 @@ def testee_cf(app_skip_cf1, patch_target_post):
 def mock_wf():
     mock_resp = Mock()
     mock_resp.status_code = 201
-    mock_resp.iter_lines.return_value = [
+    mock_resp.iter_lines.return_value = _convert_entries2data_lines([
         {
             "event": "text_chunk",
             "workflow_run_id": "b790",
@@ -109,8 +118,7 @@ def mock_wf():
             "task_id": "04db",
             "data": {},
         },
-    ]
-    # BUG
+    ])
     return mock_resp
 
 

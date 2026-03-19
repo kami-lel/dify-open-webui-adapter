@@ -6,6 +6,19 @@ Unit Tests (using pytest) for:
 errs handling in _StreamingConversationRound.__next__()
 """
 
+# pytest fixtures  #############################################################
+
+# pytest  ######################################################################
+
+
+class TestWf:  # ===============================================================
+    pass
+
+
+class TestCf:  # ===============================================================
+    pass
+
+
 # HACK
 # class TestWorkflow:
 

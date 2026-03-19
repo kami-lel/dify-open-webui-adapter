@@ -45,35 +45,35 @@ class TestWf:  # ===============================================================
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
-    def test2(_, testee_wf, mock_wf1):
+    def test2(_, testee_wf, mock_wf2):
         app, patch_target, assert_args, assert_kwargs = testee_wf
-        mock_resp = mock_wf1
+        mock_resp = mock_wf2
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             round = _StreamingConversationRound(app)
 
             opt = list(round)
             print(opt)
-            assert opt == []  # HACK
+            assert opt == ["FIRST RESPONSE MESSAGE"]
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
-    def test3(_, testee_wf, mock_wf1):
+    def test3(_, testee_wf, mock_wf3):
         app, patch_target, assert_args, assert_kwargs = testee_wf
-        mock_resp = mock_wf1
+        mock_resp = mock_wf3
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             round = _StreamingConversationRound(app)
 
             opt = list(round)
             print(opt)
-            assert opt == []  # HACK
+            assert opt == []  # BUG
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
-    def test4(_, testee_wf, mock_wf1):
+    def test4(_, testee_wf, mock_wf4):
         app, patch_target, assert_args, assert_kwargs = testee_wf
-        mock_resp = mock_wf1
+        mock_resp = mock_wf4
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             round = _StreamingConversationRound(app)
@@ -139,6 +139,7 @@ class TestWf:  # ===============================================================
                 " garden",
                 ".",
             ]
+            # BUG
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
@@ -174,9 +175,9 @@ class TestCf:  # ===============================================================
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
-    def test2(_, testee_cf, mock_cf1):
+    def test2(_, testee_cf, mock_cf2):
         app, patch_target, assert_args, assert_kwargs = testee_cf
-        mock_resp = mock_cf1
+        mock_resp = mock_cf2
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             round = _StreamingConversationRound(app)
@@ -209,12 +210,13 @@ class TestCf:  # ===============================================================
                 "",
                 "",
             ]
+            # BUG
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
-    def test3(_, testee_cf, mock_cf1):
+    def test3(_, testee_cf, mock_cf3):
         app, patch_target, assert_args, assert_kwargs = testee_cf
-        mock_resp = mock_cf1
+        mock_resp = mock_cf3
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             round = _StreamingConversationRound(app)
@@ -248,5 +250,6 @@ class TestCf:  # ===============================================================
                 " insert",
                 " node",
             ]
+            # BUG
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)

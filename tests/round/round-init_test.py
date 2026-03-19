@@ -13,20 +13,6 @@ import pytest
 
 from dify_open_webui_adapter import _StreamingConversationRound
 
-
-# pytest fixtures  #############################################################
-@pytest.fixture()
-def testee_wf(app_skip_wf1):
-    # BUG need network
-    round = _StreamingConversationRound(app_skip_wf1)
-    return round
-
-
-@pytest.fixture()
-def round_cf(app_skip_cf1):
-    return _StreamingConversationRound(app_skip_cf1)
-
-
 # pytest  ######################################################################
 
 
@@ -39,8 +25,7 @@ class TestWf:
         mock_resp.status_code = 200
         mock_resp.encoding = "utf-8"
         with patch(patch_target_post, return_value=mock_resp) as mock_post:
-            round = _StreamingConversationRound(app)
-            pass  # TODO
+            app.open_reply_response()  # BUG
 
     def test_response(_, testee_wf):
         pass

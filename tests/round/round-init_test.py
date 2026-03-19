@@ -8,25 +8,35 @@ Unit Tests (using pytest) for:
 
 from unittest.mock import Mock, patch
 
+import pytest
 
 from dify_open_webui_adapter import _StreamingConversationRound
 
+
 # pytest fixtures  #############################################################
-# TODO
+@pytest.fixture
+def testee_wf(app_skip_cf1, patch_target_post):
+    app = app_skip_cf1
+    patch_target = patch_target_post
+
+    mock_resp = Mock()
+    mock_resp.status_code = 201
+
+    return app, patch_target, mock_resp
+
+
 # pytest  ######################################################################
 
 
 class TestWf:
 
-    def test_app(_, app_skip_wf1, patch_target_post):
-        app = app_skip_wf1
+    def test_app(_, testee_wf):
+        app, patch_target, mock_resp = testee_wf
+
         app.current_enable_stream = True
         app.current_user_msg_content = "PRIMARY"
 
-        mock_resp = Mock()
-        mock_resp.status_code = 201
-
-        with patch(patch_target_post, return_value=mock_resp) as mock_post:
+        with patch(patch_target, return_value=mock_resp) as mock_post:
             round = _StreamingConversationRound(app)
 
             opt = round.app

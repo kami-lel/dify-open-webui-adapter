@@ -6,31 +6,53 @@ Unit Tests (using pytest) for:
 - _StreamingConversationRound.__init__()
 """
 
-from requests import Response
 from unittest.mock import Mock, patch
 
-import pytest
 
 from dify_open_webui_adapter import _StreamingConversationRound
 
+# pytest fixtures  #############################################################
+# TODO
 # pytest  ######################################################################
 
 
 class TestWf:
 
-    def test_app(_, testee_wf, app_skip_wf1, patch_target_post):
+    def test_app(_, app_skip_wf1, patch_target_post):
         app = app_skip_wf1
+        app.current_enable_stream = True
+        app.current_user_msg_content = "PRIMARY"
 
-        mock_resp = Response()
-        mock_resp.status_code = 200
-        mock_resp.encoding = "utf-8"
+        mock_resp = Mock()
+        mock_resp.status_code = 201
+
         with patch(patch_target_post, return_value=mock_resp) as mock_post:
-            app.open_reply_response()  # BUG
+            round = _StreamingConversationRound(app)
 
-    def test_response(_, testee_wf):
+            opt = round.app
+            print(opt)
+            assert opt is app
+
+            mock_post.assert_called_once_with(
+                "https://api.dify.ai/v1/workflows/run",
+                headers={
+                    "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
+                    "Content-Type": "application/json",
+                    "Accept": "text/event-stream",
+                },
+                data=(
+                    '{"inputs": {"query": "PRIMARY"}, '
+                    '"response_mode": "streaming", '
+                    '"user": "user"}'
+                ),
+                stream=True,
+                timeout=300,
+            )
+
+    def test_response(_):
         pass
 
-    def test_iter_lines(_, testee_wf):
+    def test_iter_lines(_):
         pass
 
 

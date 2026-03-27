@@ -126,10 +126,16 @@ class TestResponse:  ###########################################################
             mock_get.assert_called_once_with(endpoint_info, **assert_kwargs)
 
 
-# FIXME FIXME header
 class TestModelId:  ############################################################
 
-    def test1(_, base_url, config_wf1, patch_target_get, endpoint_info):
+    def test1(
+        _,
+        base_url,
+        config_wf1,
+        patch_target_get,
+        endpoint_info,
+        authorization_wf1,
+    ):
         config = config_wf1.copy()
         mock_resp = Mock()
         mock_resp.json.return_value = {
@@ -147,13 +153,20 @@ class TestModelId:  ############################################################
             mock_get.assert_called_once_with(
                 endpoint_info,
                 headers={
-                    "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
+                    "Authorization": authorization_wf1,
                     "Content-Type": "application/json",
                 },
                 timeout=30,
             )
 
-    def test2(_, base_url, config_cf1, patch_target_get, endpoint_info):
+    def test2(
+        _,
+        base_url,
+        config_cf1,
+        patch_target_get,
+        endpoint_info,
+        authorization_cf1,
+    ):
         config = config_cf1.copy()
         mock_resp = Mock()
         mock_resp.json.return_value = {
@@ -171,7 +184,7 @@ class TestModelId:  ############################################################
             mock_get.assert_called_once_with(
                 endpoint_info,
                 headers={
-                    "Authorization": "Bearer f2277b0e16154cba981c866bdc124386",
+                    "Authorization": authorization_cf1,
                     "Content-Type": "application/json",
                 },
                 timeout=30,

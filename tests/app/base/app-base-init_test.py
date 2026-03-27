@@ -29,13 +29,13 @@ class TestWf1:  # ==============================================================
         assert isinstance(opt, str)
         assert opt == base_url
 
-    def test_key(_, app_wf_skip1):
+    def test_key(_, app_wf_skip1, auth_key_wf1):
         app = app_wf_skip1
         opt = app.key
 
         print(opt)
         assert isinstance(opt, str)
-        assert opt == "068937402cc741689986cc5b6ed433a"
+        assert opt == auth_key_wf1
 
     def test_disallows(_, app_wf_skip1):
         app = app_wf_skip1
@@ -78,13 +78,13 @@ class TestLocalWf1:  # =========================================================
         assert isinstance(opt, str)
         assert opt == base_url2
 
-    def test_key(_, app_wf_alt_url):
+    def test_key(_, app_wf_alt_url, auth_key_wf1):
         app = app_wf_alt_url
         opt = app.key
 
         print(opt)
         assert isinstance(opt, str)
-        assert opt == "068937402cc741689986cc5b6ed433a"
+        assert opt == auth_key_wf1
 
     def test_disallows(_, app_wf_alt_url):
         app = app_wf_alt_url

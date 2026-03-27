@@ -1,11 +1,10 @@
 import pytest
 
 
-# FIXME FIXME header
 # pytest fixtures  #############################################################
 # testees  =====================================================================
 @pytest.fixture
-def testee_wf(app_wf_skip1, patch_target_post):
+def testee_wf(app_wf_skip1, patch_target_post, authorization_wf1):
     app = app_wf_skip1
     app.current_enable_stream = True
     app.current_user_msg_content = "PRIMARY"
@@ -21,7 +20,7 @@ def testee_wf(app_wf_skip1, patch_target_post):
     assert_args = ["https://api.dify.ai/v1/workflows/run"]
     assert_kwargs = {
         "headers": {
-            "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
+            "Authorization": authorization_wf1,
             "Content-Type": "application/json",
             "Accept": "text/event-stream",
         },
@@ -34,7 +33,7 @@ def testee_wf(app_wf_skip1, patch_target_post):
 
 
 @pytest.fixture
-def testee_cf(app_cf_skip1, patch_target_post):
+def testee_cf(app_cf_skip1, patch_target_post, authorization_cf1):
     app = app_cf_skip1
     app.current_enable_stream = True
     app.current_user_msg_content = "PRIMARY"
@@ -53,7 +52,7 @@ def testee_cf(app_cf_skip1, patch_target_post):
     assert_args = ["https://api.dify.ai/v1/chat-messages"]
     assert_kwargs = {
         "headers": {
-            "Authorization": "Bearer f2277b0e16154cba981c866bdc124386",
+            "Authorization": authorization_cf1,
             "Content-Type": "application/json",
             "Accept": "text/event-stream",
         },

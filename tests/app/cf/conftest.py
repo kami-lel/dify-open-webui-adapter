@@ -3,6 +3,8 @@ from unittest.mock import Mock
 
 import pytest
 
+# Pytest fixtures  #############################################################
+
 
 @pytest.fixture
 def testee_block(patch_target_post, endpoint_cf):

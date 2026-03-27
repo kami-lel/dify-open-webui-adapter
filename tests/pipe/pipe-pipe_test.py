@@ -8,8 +8,21 @@ Pipe.pipe()
 
 import pytest
 
+# Pytest fixtures  #############################################################
 
-# pytest  ######################################################################
+# HACK HACK
+
+
+@pytest.fixture
+def pipe_args_no_stream1(pipe_body1):
+    body = pipe_body1
+    user = {}
+    metadata = {}
+
+    return body, user, metadata
+
+
+# Pytest unit tests  ###########################################################
 class TestErr:  # ==============================================================
 
     @pytest.mark.asyncio

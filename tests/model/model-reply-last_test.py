@@ -9,7 +9,27 @@ OWUModel._get_last_user_msg_content()
 
 import pytest
 
+# Pytest fixtures  #############################################################
 
+# HACK HACK
+
+
+@pytest.fixture
+def pipe_body2():
+    return {
+        "stream": False,
+        "model": "dify_open_webui_adapter.example-chatflow-model",
+        "messages": [
+            {"role": "user", "content": "FIRST USER MESSAGE"},
+            {"role": "assistant", "content": "FIRST BOT REPLY"},
+            {"role": "user", "content": "SECOND USER MESSAGE"},
+            {"role": "assistant", "content": "SECOND BOT REPLY"},
+            {"role": "user", "content": "THIRD USER MESSAGE"},
+        ],
+    }
+
+
+# Pytest unit tests  ###########################################################
 class TestGet:
 
     def test1(_, model_wf_skip1, pipe_body1):

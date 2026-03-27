@@ -152,10 +152,9 @@ def app_cf_skip2(model_cf_skip2):
     return model_cf_skip2.app
 
 
-# FIXME FIXME refactor of testees
+# patch targets  ===============================================================
 
 
-# mocks  =======================================================================
 @pytest.fixture
 def patch_target_get():
     return "dify_open_webui_adapter.requests.get"
@@ -166,34 +165,43 @@ def patch_target_post():
     return "dify_open_webui_adapter.requests.post"
 
 
+# info tests  ==================================================================
+
+
 @pytest.fixture
-def patch_and_result_wf1():
+def mock_info_wf():
     mock_resp = Mock()
     mock_resp.json.return_value = {
         "mode": "workflow",
         "name": "My Workflow App",
     }
-
-    assert_kwargs = {
-        "headers": {
-            "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
-            "Content-Type": "application/json",
-        },
-        "timeout": 30,
-    }
-
-    return mock_resp, assert_kwargs
+    return mock_resp
 
 
 @pytest.fixture
-def patch_and_result_cf1(authorization_cf1):
+def mock_info_cf():
     mock_resp = Mock()
     mock_resp.json.return_value = {
         "mode": "advanced-chat",
         "name": "My Chatflow App",
     }
+    return mock_resp
 
-    assert_kwargs = {
+
+@pytest.fixture
+def assert_kwargs_info_wf(authorization_wf1):
+    return {
+        "headers": {
+            "Authorization": authorization_wf1,
+            "Content-Type": "application/json",
+        },
+        "timeout": 30,
+    }
+
+
+@pytest.fixture
+def assert_kwargs_info_cf(authorization_cf1):
+    return {
         "headers": {
             "Authorization": authorization_cf1,
             "Content-Type": "application/json",
@@ -201,9 +209,8 @@ def patch_and_result_cf1(authorization_cf1):
         "timeout": 30,
     }
 
-    return mock_resp, assert_kwargs
 
-
+# FIXME FIXME refactor of testees
 # .pipe() args  ================================================================
 
 

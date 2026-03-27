@@ -44,19 +44,32 @@ def endpoint_cf(base_url):
     return base_url + "/chat-messages"
 
 
-# config  ======================================================================
+# configurations  ==============================================================
+
+
 @pytest.fixture(scope="session")
-def config_wf1():
+def auth_key_wf1():
+    return "068937402cc741689986cc5b6ed433a"
+
+
+@pytest.fixture(scope="session")
+def auth_key_cf1():
+    return "f2277b0e16154cba981c866bdc124386"
+
+
+# config  ----------------------------------------------------------------------
+@pytest.fixture(scope="session")
+def config_wf1(auth_key_wf1):
     return {
-        "key": "068937402cc741689986cc5b6ed433a",
+        "key": auth_key_wf1,
         "model_id": "example-workflow-model",
     }
 
 
 @pytest.fixture(scope="session")
-def config_cf1():
+def config_cf1(auth_key_cf1):
     return {
-        "key": "f2277b0e16154cba981c866bdc124386",
+        "key": auth_key_cf1,
         "model_id": "example-chatflow-model",
     }
 
@@ -71,14 +84,14 @@ def config_cf2():
     }
 
 
-# configs  =====================================================================
+# configs  ---------------------------------------------------------------------
 @pytest.fixture(scope="session")
-def configs0(config_cf1):
+def configs_single(config_cf1):
     return [config_cf1]
 
 
 @pytest.fixture(scope="session")
-def configs1(config_wf1, config_cf1, config_cf2):
+def configs_mux(config_wf1, config_cf1, config_cf2):
     return [config_wf1, config_cf1, config_cf2]
 
 

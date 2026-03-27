@@ -28,8 +28,15 @@ from tests import (
 
 class TestExhaust:  # ==========================================================
 
-    def test_wf(_, testee_wf, mock_wf1, stream_entries_wf1):
-        app, patch_target, _, _ = testee_wf
+    def test_wf(
+        _,
+        app_wf_skip1,
+        patch_target_post,
+        mock_wf1,
+        stream_entries_wf1,
+    ):
+        app = app_wf_skip1
+        patch_target = patch_target_post
         mock_resp = mock_wf1
 
         lines = _convert_lines2list(stream_entries_wf1)
@@ -45,8 +52,15 @@ class TestExhaust:  # ==========================================================
         print(opt)
         assert opt == "exhaust text/event-stream without ending event"
 
-    def test_cf(_, testee_cf, mock_cf1, stream_entries_cf1):
-        app, patch_target, _, _ = testee_cf
+    def test_cf(
+        _,
+        app_cf_skip1,
+        patch_target_post,
+        mock_cf1,
+        stream_entries_cf1,
+    ):
+        app = app_cf_skip1
+        patch_target = patch_target_post
         mock_resp = mock_cf1
 
         lines = _convert_lines2list(stream_entries_cf1)
@@ -65,8 +79,11 @@ class TestExhaust:  # ==========================================================
 
 class TestUnicode:  # ==========================================================
 
-    def test_wf(_, testee_wf, mock_wf1, stream_entries_wf1):
-        app, patch_target, _, _ = testee_wf
+    def test_wf(
+        _, app_wf_skip1, patch_target_post, mock_wf1, stream_entries_wf1
+    ):
+        app = app_wf_skip1
+        patch_target = patch_target_post
         mock_resp = mock_wf1
 
         mock_resp.iter_lines.return_value = iter([
@@ -88,8 +105,11 @@ class TestUnicode:  # ==========================================================
             "invalid start byte"
         )
 
-    def test_cf(_, testee_cf, mock_cf1, stream_entries_cf1):
-        app, patch_target, _, _ = testee_cf
+    def test_cf(
+        _, app_cf_skip1, patch_target_post, mock_cf1, stream_entries_cf1
+    ):
+        app = app_cf_skip1
+        patch_target = patch_target_post
         mock_resp = mock_cf1
 
         mock_resp.iter_lines.return_value = iter([
@@ -114,8 +134,11 @@ class TestUnicode:  # ==========================================================
 
 class TestJSONDecode:  # =======================================================
 
-    def test_wf(_, testee_wf, mock_wf1, stream_entries_wf1):
-        app, patch_target, _, _ = testee_wf
+    def test_wf(
+        _, app_wf_skip1, patch_target_post, mock_wf1, stream_entries_wf1
+    ):
+        app = app_wf_skip1
+        patch_target = patch_target_post
         mock_resp = mock_wf1
 
         bad_json = 'data: {"text": "value'
@@ -136,8 +159,11 @@ class TestJSONDecode:  # =======================================================
             == """fail to parse text/event-stream as JSON: Unterminated string starting at: line 1 column 10 (char 9): b'data: {"text": "value'"""
         )
 
-    def test_cf(_, testee_cf, mock_cf1, stream_entries_cf1):
-        app, patch_target, _, _ = testee_cf
+    def test_cf(
+        _, app_cf_skip1, patch_target_post, mock_cf1, stream_entries_cf1
+    ):
+        app = app_cf_skip1
+        patch_target = patch_target_post
         mock_resp = mock_cf1
 
         bad_json = 'data: {"text": "value'
@@ -162,8 +188,11 @@ class TestJSONDecode:  # =======================================================
 # key err  =====================================================================
 class TestKeyErrWorkflow:  # ***************************************************
 
-    def test_event(_, testee_wf, mock_wf1, stream_entries_wf1):
-        app, patch_target, _, _ = testee_wf
+    def test_event(
+        _, app_wf_skip1, patch_target_post, mock_wf1, stream_entries_wf1
+    ):
+        app = app_wf_skip1
+        patch_target = patch_target_post
         mock_resp = mock_wf1
 
         entries = [
@@ -188,8 +217,11 @@ class TestKeyErrWorkflow:  # ***************************************************
         print(opt)
         assert opt == "miss key in text/event-stream content: 'event'"
 
-    def test_data(_, testee_wf, mock_wf1, stream_entries_wf1):
-        app, patch_target, _, _ = testee_wf
+    def test_data(
+        _, app_wf_skip1, patch_target_post, mock_wf1, stream_entries_wf1
+    ):
+        app = app_wf_skip1
+        patch_target = patch_target_post
         mock_resp = mock_wf1
 
         entries = [
@@ -211,8 +243,11 @@ class TestKeyErrWorkflow:  # ***************************************************
         print(opt)
         assert opt == "miss key in text/event-stream content: 'data'"
 
-    def test_data_text(_, testee_wf, mock_wf1, stream_entries_wf1):
-        app, patch_target, _, _ = testee_wf
+    def test_data_text(
+        _, app_wf_skip1, patch_target_post, mock_wf1, stream_entries_wf1
+    ):
+        app = app_wf_skip1
+        patch_target = patch_target_post
         mock_resp = mock_wf1
 
         entries = [
@@ -240,8 +275,11 @@ class TestKeyErrWorkflow:  # ***************************************************
 
 class TestKeyErrChatflow:  # ***************************************************
 
-    def test_event(_, testee_cf, mock_cf1, stream_entries_cf1):
-        app, patch_target, _, _ = testee_cf
+    def test_event(
+        _, app_cf_skip1, patch_target_post, mock_cf1, stream_entries_cf1
+    ):
+        app = app_cf_skip1
+        patch_target = patch_target_post
         mock_resp = mock_cf1
 
         entries = [
@@ -267,8 +305,11 @@ class TestKeyErrChatflow:  # ***************************************************
         print(opt)
         assert opt == "miss key in text/event-stream content: 'event'"
 
-    def test_answer(_, testee_cf, mock_cf1, stream_entries_cf1):
-        app, patch_target, _, _ = testee_cf
+    def test_answer(
+        _, app_cf_skip1, patch_target_post, mock_cf1, stream_entries_cf1
+    ):
+        app = app_cf_skip1
+        patch_target = patch_target_post
         mock_resp = mock_cf1
 
         entries = [

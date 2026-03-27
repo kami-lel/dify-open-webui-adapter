@@ -25,7 +25,7 @@ def app_changed_input(model_changed_input):
 
 
 @pytest.fixture
-def patch_reply_no_stream(patch_target_post, wf_endpoint):
+def patch_reply_no_stream(patch_target_post, endpoint_wf):
     patch_target = patch_target_post
 
     mock_resp = Mock()
@@ -34,7 +34,7 @@ def patch_reply_no_stream(patch_target_post, wf_endpoint):
         "data": {"outputs": {"answer": "DIFY REPLIED MESSAGE"}}
     }
 
-    assert_args = [wf_endpoint]
+    assert_args = [endpoint_wf]
 
     assert_kwargs = {
         "headers": {
@@ -54,7 +54,7 @@ def patch_reply_no_stream(patch_target_post, wf_endpoint):
 
 
 @pytest.fixture
-def patch_reply_stream(patch_target_post, wf_endpoint):
+def patch_reply_stream(patch_target_post, endpoint_wf):
     patch_target = patch_target_post
 
     mock_resp = Mock()
@@ -62,7 +62,7 @@ def patch_reply_stream(patch_target_post, wf_endpoint):
     mock_resp.json.return_value = {"ok": True}
     mock_resp.text = "APP REPLIED MESSAGE"
 
-    assert_args = [wf_endpoint]
+    assert_args = [endpoint_wf]
 
     assert_kwargs = {
         "headers": {

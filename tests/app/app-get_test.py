@@ -25,7 +25,7 @@ class TestGet:
         config_wf1,
         patch_and_result_wf1,
         patch_target_get,
-        info_endpoint,
+        endpoint_info,
     ):
         config = config_wf1
         key = config["key"]
@@ -43,7 +43,7 @@ class TestGet:
             assert isinstance(response_name, str)
             assert response_name == "My Workflow App"
 
-            mock_get.assert_called_once_with(info_endpoint, **assert_kwargs)
+            mock_get.assert_called_once_with(endpoint_info, **assert_kwargs)
 
     def test_cf(
         _,
@@ -51,7 +51,7 @@ class TestGet:
         config_cf1,
         patch_and_result_cf1,
         patch_target_get,
-        info_endpoint,
+        endpoint_info,
     ):
         config = config_cf1
         key = config["key"]
@@ -70,7 +70,7 @@ class TestGet:
             assert isinstance(response_name, str)
             assert response_name == "My Chatflow App"
 
-            mock_get.assert_called_once_with(info_endpoint, **assert_kwargs)
+            mock_get.assert_called_once_with(endpoint_info, **assert_kwargs)
 
     # err handling  ============================================================
 

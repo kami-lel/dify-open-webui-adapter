@@ -24,22 +24,23 @@ def base_url():
 
 
 @pytest.fixture(scope="session")
-def base_url_alt():
+def base_url2():
     return "https://55.44.33.22/v1"
 
 
+# endpoints  -------------------------------------------------------------------
 @pytest.fixture
-def info_endpoint():
+def endpoint_info():
     return "https://api.dify.ai/v1/info"
 
 
 @pytest.fixture
-def wf_endpoint(base_url):
+def endpoint_wf(base_url):
     return base_url + "/workflows/run"
 
 
 @pytest.fixture
-def cf_endpoint(base_url):
+def endpoint_cf(base_url):
     return base_url + "/chat-messages"
 
 

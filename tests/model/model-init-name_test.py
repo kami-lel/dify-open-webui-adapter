@@ -89,7 +89,7 @@ class TestResponse:  ###########################################################
         config_wf1,
         patch_and_result_wf1,
         patch_target_get,
-        info_endpoint,
+        endpoint_info,
     ):
         config = config_wf1.copy()
         mock_resp, assert_kwargs = patch_and_result_wf1
@@ -102,7 +102,7 @@ class TestResponse:  ###########################################################
             assert isinstance(opt, str)
             assert opt == "My Workflow App"
 
-            mock_get.assert_called_once_with(info_endpoint, **assert_kwargs)
+            mock_get.assert_called_once_with(endpoint_info, **assert_kwargs)
 
     def test2(
         _,
@@ -110,7 +110,7 @@ class TestResponse:  ###########################################################
         config_cf1,
         patch_and_result_cf1,
         patch_target_get,
-        info_endpoint,
+        endpoint_info,
     ):
         config = config_cf1.copy()
         mock_resp, assert_kwargs = patch_and_result_cf1
@@ -123,12 +123,12 @@ class TestResponse:  ###########################################################
             assert isinstance(opt, str)
             assert opt == "My Chatflow App"
 
-            mock_get.assert_called_once_with(info_endpoint, **assert_kwargs)
+            mock_get.assert_called_once_with(endpoint_info, **assert_kwargs)
 
 
 class TestModelId:  ############################################################
 
-    def test1(_, base_url, config_wf1, patch_target_get, info_endpoint):
+    def test1(_, base_url, config_wf1, patch_target_get, endpoint_info):
         config = config_wf1.copy()
         mock_resp = Mock()
         mock_resp.json.return_value = {
@@ -144,7 +144,7 @@ class TestModelId:  ############################################################
             assert opt == "example-workflow-model"
 
             mock_get.assert_called_once_with(
-                info_endpoint,
+                endpoint_info,
                 headers={
                     "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
                     "Content-Type": "application/json",
@@ -152,7 +152,7 @@ class TestModelId:  ############################################################
                 timeout=30,
             )
 
-    def test2(_, base_url, config_cf1, patch_target_get, info_endpoint):
+    def test2(_, base_url, config_cf1, patch_target_get, endpoint_info):
         config = config_cf1.copy()
         mock_resp = Mock()
         mock_resp.json.return_value = {
@@ -168,7 +168,7 @@ class TestModelId:  ############################################################
             assert opt == "example-chatflow-model"
 
             mock_get.assert_called_once_with(
-                info_endpoint,
+                endpoint_info,
                 headers={
                     "Authorization": "Bearer f2277b0e16154cba981c866bdc124386",
                     "Content-Type": "application/json",

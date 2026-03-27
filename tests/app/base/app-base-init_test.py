@@ -70,13 +70,13 @@ class TestLocalWf1:  # =========================================================
 
         assert app.model is model
 
-    def test_base_url(_, app_wf_alt_url, base_url_alt):
+    def test_base_url(_, app_wf_alt_url, base_url2):
         app = app_wf_alt_url
 
         opt = app.base_url
         print(opt)
         assert isinstance(opt, str)
-        assert opt == base_url_alt
+        assert opt == base_url2
 
     def test_key(_, app_wf_alt_url):
         app = app_wf_alt_url

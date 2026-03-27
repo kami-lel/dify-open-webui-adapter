@@ -26,7 +26,7 @@ class TestApp:
         config_wf1,
         patch_and_result_wf1,
         patch_target_get,
-        info_endpoint,
+        endpoint_info,
     ):
         config = config_wf1
         mock_resp, assert_kwargs = patch_and_result_wf1
@@ -43,7 +43,7 @@ class TestApp:
             print(app)
             assert isinstance(app, WorkflowApp)
 
-            mock_get.assert_called_once_with(info_endpoint, **assert_kwargs)
+            mock_get.assert_called_once_with(endpoint_info, **assert_kwargs)
 
     def test_cf(
         _,
@@ -51,7 +51,7 @@ class TestApp:
         config_cf1,
         patch_and_result_cf1,
         patch_target_get,
-        info_endpoint,
+        endpoint_info,
     ):
         config = config_cf1
         mock_resp, assert_kwargs = patch_and_result_cf1
@@ -68,4 +68,4 @@ class TestApp:
             print(app)
             assert isinstance(app, ChatflowApp)
 
-            mock_get.assert_called_once_with(info_endpoint, **assert_kwargs)
+            mock_get.assert_called_once_with(endpoint_info, **assert_kwargs)

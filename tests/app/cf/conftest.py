@@ -5,7 +5,7 @@ import pytest
 
 
 @pytest.fixture
-def patch_reply_no_stream(patch_target_post, cf_endpoint):
+def patch_reply_no_stream(patch_target_post, endpoint_cf):
     patch_target = patch_target_post
 
     mock_resp = Mock()
@@ -15,7 +15,7 @@ def patch_reply_no_stream(patch_target_post, cf_endpoint):
         "answer": "DIFY REPLIED MESSAGE",
     }
 
-    assert_args = [cf_endpoint]
+    assert_args = [endpoint_cf]
 
     assert_kwargs = {
         "headers": {
@@ -38,7 +38,7 @@ def patch_reply_no_stream(patch_target_post, cf_endpoint):
 
 
 @pytest.fixture
-def patch_reply_stream(patch_target_post, cf_endpoint):
+def patch_reply_stream(patch_target_post, endpoint_cf):
     patch_target = patch_target_post
 
     mock_resp = Mock()
@@ -46,7 +46,7 @@ def patch_reply_stream(patch_target_post, cf_endpoint):
     mock_resp.json.return_value = {"ok": True}
     mock_resp.text = "APP REPLIED MESSAGE"
 
-    assert_args = [cf_endpoint]
+    assert_args = [endpoint_cf]
 
     assert_kwargs = {
         "headers": {

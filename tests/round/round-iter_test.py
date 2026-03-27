@@ -13,7 +13,7 @@ from unittest.mock import patch
 from dify_open_webui_adapter import _StreamingConversationRound
 
 
-from tests.round import _convert_lines2list
+from tests import _convert_lines2list
 
 
 # tests  #######################################################################

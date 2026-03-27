@@ -15,7 +15,7 @@ import pytest
 from dify_open_webui_adapter import _StreamingConversationRound
 
 
-from tests.round import (
+from tests import (
     _convert_lines2list,
     _convert_entries2lines,
     _convert_entries2iter,

@@ -161,7 +161,9 @@ def app_cf_skip2(model_cf_skip2):
     return model_cf_skip2.app
 
 
-# patch targets  ===============================================================
+# mocks  =======================================================================
+
+# patch targets  ---------------------------------------------------------------
 
 
 @pytest.fixture
@@ -172,6 +174,14 @@ def patch_target_get():
 @pytest.fixture
 def patch_target_post():
     return "dify_open_webui_adapter.requests.post"
+
+
+# mock  ------------------------------------------------------------------------
+@pytest.fixture
+def mock_base():
+    mock_resp = Mock()
+    mock_resp.status_code = 201
+    return mock_resp
 
 
 # info tests  ==================================================================
@@ -223,42 +233,6 @@ def assertee_info_cf(endpoint_info, authorization_cf1):
     return args, kwargs
 
 
-# FIXME FIXME refactor of testees
-# .pipe() args  ================================================================
-
-
-@pytest.fixture
-def pipe_body1():
-    return {
-        "stream": False,
-        "model": "dify_open_webui_adapter.example-chatflow-model",
-        "messages": [{"role": "user", "content": "FIRST USER MESSAGE"}],
-    }
-
-
-@pytest.fixture
-def pipe_args_stream1(pipe_body1, pipe_args_no_stream1):
-    _, user, metadata = pipe_args_no_stream1
-    body = pipe_body1
-    body["stream"] = True
-    return body, user, metadata
-
-
-@pytest.fixture
-def pipe_args_no_stream2(pipe_body2):
-    body = pipe_body2
-    user = {}
-    metadata = {}
-    return body, user, metadata
-
-
-def pipe_args_stream2(pipe_body2, pipe_args_no_stream2):
-    _, user, metadata = pipe_args_no_stream2
-    body = pipe_body2
-    body["stream"] = True
-    return body, user, metadata
-
-
 # streaming  ===================================================================
 
 
@@ -274,13 +248,6 @@ def stream_entries_cf1():
 
 
 # wf mocks  --------------------------------------------------------------------
-
-
-@pytest.fixture
-def mock_base():
-    mock_resp = Mock()
-    mock_resp.status_code = 200
-    return mock_resp
 
 
 @pytest.fixture
@@ -348,3 +315,40 @@ def mock_cf3(mock_base):
         STREAM_ENTRIES_CF3
     )
     return mock_resp
+
+
+# .pipe() args  ================================================================
+
+# HACK HACK pipe functions
+
+
+@pytest.fixture
+def pipe_body1():
+    return {
+        "stream": False,
+        "model": "dify_open_webui_adapter.example-chatflow-model",
+        "messages": [{"role": "user", "content": "FIRST USER MESSAGE"}],
+    }
+
+
+@pytest.fixture
+def pipe_args_stream1(pipe_body1, pipe_args_no_stream1):
+    _, user, metadata = pipe_args_no_stream1
+    body = pipe_body1
+    body["stream"] = True
+    return body, user, metadata
+
+
+@pytest.fixture
+def pipe_args_no_stream2(pipe_body2):
+    body = pipe_body2
+    user = {}
+    metadata = {}
+    return body, user, metadata
+
+
+def pipe_args_stream2(pipe_body2, pipe_args_no_stream2):
+    _, user, metadata = pipe_args_no_stream2
+    body = pipe_body2
+    body["stream"] = True
+    return body, user, metadata

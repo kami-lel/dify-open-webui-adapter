@@ -1,5 +1,4 @@
 import json
-from unittest.mock import Mock
 
 import pytest
 
@@ -24,13 +23,6 @@ def model_changed_input(base_url, config_wf1):
 @pytest.fixture
 def app_changed_input(model_changed_input):
     return model_changed_input.app
-
-
-@pytest.fixture
-def mock_base():
-    mock_resp = Mock()
-    mock_resp.status_code = 201
-    return mock_resp
 
 
 @pytest.fixture

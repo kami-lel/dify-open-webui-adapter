@@ -186,7 +186,7 @@ def patch_and_result_wf1():
 
 
 @pytest.fixture
-def patch_and_result_cf1():
+def patch_and_result_cf1(authorization_cf1):
     mock_resp = Mock()
     mock_resp.json.return_value = {
         "mode": "advanced-chat",
@@ -195,7 +195,7 @@ def patch_and_result_cf1():
 
     assert_kwargs = {
         "headers": {
-            "Authorization": "Bearer f2277b0e16154cba981c866bdc124386",
+            "Authorization": authorization_cf1,
             "Content-Type": "application/json",
         },
         "timeout": 30,

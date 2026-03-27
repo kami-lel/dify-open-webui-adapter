@@ -23,8 +23,8 @@ def app_cf_alt_url(base_url2, config_cf1):
 
 class Test1:
 
-    def test1(_, app_skip_cf1, endpoint_cf):
-        opt = app_skip_cf1.main_url
+    def test1(_, app_cf_skip1, endpoint_cf):
+        opt = app_cf_skip1.main_url
 
         print(opt)
         assert isinstance(opt, str)

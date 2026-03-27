@@ -50,8 +50,8 @@ def testee_stream(patch_target_post, endpoint_cf):
 # Pytest unit tests  ###########################################################
 class TestResponse:
 
-    def test_no_stream(_, app_skip_cf1, testee_block):
-        app = app_skip_cf1
+    def test_no_stream(_, app_cf_skip1, testee_block):
+        app = app_cf_skip1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = False
 
@@ -65,8 +65,8 @@ class TestResponse:
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
-    def test_stream(_, app_skip_cf1, testee_stream):
-        app = app_skip_cf1
+    def test_stream(_, app_cf_skip1, testee_stream):
+        app = app_cf_skip1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = True
 
@@ -82,12 +82,12 @@ class TestResponse:
 
     # err handling  ============================================================
 
-    def test_bad_connection(_, app_skip_cf1, patch_target_post):
+    def test_bad_connection(_, app_cf_skip1, patch_target_post):
         with patch(
             patch_target_post,
             side_effect=requests.exceptions.ConnectionError("Bad Connection"),
         ):
-            app = app_skip_cf1
+            app = app_cf_skip1
 
             with pytest.raises(ConnectionError) as exec_info:
                 app.open_reply_response()

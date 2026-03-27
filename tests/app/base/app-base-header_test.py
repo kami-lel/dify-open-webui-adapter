@@ -9,8 +9,8 @@ BaseDifyApp.http_header
 
 class Test1:  # ================================================================
 
-    def test_no_stream(_, app_skip_wf1):
-        app = app_skip_wf1
+    def test_no_stream(_, app_wf_skip1):
+        app = app_wf_skip1
         app.current_enable_stream = False
         opt = app.http_header
 
@@ -20,8 +20,8 @@ class Test1:  # ================================================================
             "Content-Type": "application/json",
         }
 
-    def test_stream(_, app_skip_wf1):
-        app = app_skip_wf1
+    def test_stream(_, app_wf_skip1):
+        app = app_wf_skip1
         app.current_enable_stream = True
         opt = app.http_header
 
@@ -35,8 +35,8 @@ class Test1:  # ================================================================
 
 class Test2:  # ================================================================
 
-    def test_no_stream(_, app_skip_cf1):
-        app = app_skip_cf1
+    def test_no_stream(_, app_cf_skip1):
+        app = app_cf_skip1
         app.current_enable_stream = False
         opt = app.http_header
 
@@ -46,8 +46,8 @@ class Test2:  # ================================================================
             "Content-Type": "application/json",
         }
 
-    def test_stream(_, app_skip_cf1):
-        app = app_skip_cf1
+    def test_stream(_, app_cf_skip1):
+        app = app_cf_skip1
         app.current_enable_stream = True
         opt = app.http_header
 

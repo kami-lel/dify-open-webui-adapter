@@ -4,8 +4,8 @@ import pytest
 # pytest fixtures  #############################################################
 # testees  =====================================================================
 @pytest.fixture
-def testee_wf(app_skip_wf1, patch_target_post):
-    app = app_skip_wf1
+def testee_wf(app_wf_skip1, patch_target_post):
+    app = app_wf_skip1
     app.current_enable_stream = True
     app.current_user_msg_content = "PRIMARY"
 
@@ -33,8 +33,8 @@ def testee_wf(app_skip_wf1, patch_target_post):
 
 
 @pytest.fixture
-def testee_cf(app_skip_cf1, patch_target_post):
-    app = app_skip_cf1
+def testee_cf(app_cf_skip1, patch_target_post):
+    app = app_cf_skip1
     app.current_enable_stream = True
     app.current_user_msg_content = "PRIMARY"
 

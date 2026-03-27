@@ -16,8 +16,8 @@ import pytest
 # pytest  ######################################################################
 class TestBlock:
 
-    def test_dft(_, app_skip_wf1, patch_reply_no_stream):
-        app = app_skip_wf1
+    def test_dft(_, app_wf_skip1, patch_reply_no_stream):
+        app = app_wf_skip1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = False
 
@@ -58,8 +58,8 @@ class TestBlock:
 
     # err handling  ============================================================
 
-    def test_bad_key1(_, app_skip_wf1, patch_target_post):
-        app = app_skip_wf1
+    def test_bad_key1(_, app_wf_skip1, patch_target_post):
+        app = app_wf_skip1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = False
 
@@ -75,8 +75,8 @@ class TestBlock:
             print(opt)
             assert opt == "miss key in Dify response: data"
 
-    def test_bad_key2(_, app_skip_wf1, patch_target_post):
-        app = app_skip_wf1
+    def test_bad_key2(_, app_wf_skip1, patch_target_post):
+        app = app_wf_skip1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = False
 
@@ -92,8 +92,8 @@ class TestBlock:
             print(opt)
             assert opt == "miss key in Dify response: outputs"
 
-    def test_bad_key3(_, app_skip_wf1, patch_target_post):
-        app = app_skip_wf1
+    def test_bad_key3(_, app_wf_skip1, patch_target_post):
+        app = app_wf_skip1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = False
 

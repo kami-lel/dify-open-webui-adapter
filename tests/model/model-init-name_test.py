@@ -34,8 +34,8 @@ class TestProvided:  ###########################################################
         assert isinstance(opt, str)
         assert opt == "Example Chatflow Model/App"
 
-    def test3(_, model_skip_cf2):
-        opt = model_skip_cf2.name
+    def test3(_, model_cf_skip2):
+        opt = model_cf_skip2.name
 
         print(opt)
         assert isinstance(opt, str)

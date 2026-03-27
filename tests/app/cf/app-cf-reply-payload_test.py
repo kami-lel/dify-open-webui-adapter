@@ -9,8 +9,8 @@ ChatflowApp._create_reply_payload()
 
 class Test1:  # ================================================================
 
-    def test_no_stream(_, app_skip_cf1):
-        app = app_skip_cf1
+    def test_no_stream(_, app_cf_skip1):
+        app = app_cf_skip1
         app.current_user_msg_content = "USER MESSAGE"
         app.current_enable_stream = False
 
@@ -24,8 +24,8 @@ class Test1:  # ================================================================
             '"auto_generate_name": false, "inputs": {}}'
         )
 
-    def test_stream(_, app_skip_cf1):
-        app = app_skip_cf1
+    def test_stream(_, app_cf_skip1):
+        app = app_cf_skip1
         app.current_user_msg_content = "USER MESSAGE"
         app.current_enable_stream = True
 

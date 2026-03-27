@@ -15,8 +15,8 @@ import pytest
 
 class TestResponse:
 
-    def test_no_stream(_, app_skip_wf1, patch_reply_no_stream):
-        app = app_skip_wf1
+    def test_no_stream(_, app_wf_skip1, patch_reply_no_stream):
+        app = app_wf_skip1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = False
 
@@ -32,8 +32,8 @@ class TestResponse:
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
-    def test_stream(_, app_skip_wf1, patch_reply_stream):
-        app = app_skip_wf1
+    def test_stream(_, app_wf_skip1, patch_reply_stream):
+        app = app_wf_skip1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = True
 
@@ -54,12 +54,12 @@ class TestResponse:
 
     # err handling  ============================================================
 
-    def test_bad_connection(_, app_skip_wf1, patch_target_post):
+    def test_bad_connection(_, app_wf_skip1, patch_target_post):
         with patch(
             patch_target_post,
             side_effect=requests.exceptions.ConnectionError("Bad Connection"),
         ):
-            app = app_skip_wf1
+            app = app_wf_skip1
 
             with pytest.raises(ConnectionError) as exec_info:
                 app.open_reply_response()

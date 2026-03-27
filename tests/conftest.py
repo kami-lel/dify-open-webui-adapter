@@ -17,7 +17,7 @@ from dify_open_webui_adapter import OWUModel, DifyAppType
 # pytest fixtures  #############################################################
 
 
-# urls  ------------------------------------------------------------------------
+# base urls  -------------------------------------------------------------------
 @pytest.fixture(scope="session")
 def base_url():
     return "https://api.dify.ai/v1"
@@ -30,8 +30,8 @@ def base_url2():
 
 # endpoints  -------------------------------------------------------------------
 @pytest.fixture
-def endpoint_info():
-    return "https://api.dify.ai/v1/info"
+def endpoint_info(base_url):
+    return base_url + "/info"
 
 
 @pytest.fixture
@@ -44,7 +44,7 @@ def endpoint_cf(base_url):
     return base_url + "/chat-messages"
 
 
-# configs  =====================================================================
+# config  ======================================================================
 @pytest.fixture(scope="session")
 def config_wf1():
     return {
@@ -71,6 +71,7 @@ def config_cf2():
     }
 
 
+# configs  =====================================================================
 @pytest.fixture(scope="session")
 def configs0(config_cf1):
     return [config_cf1]
@@ -83,7 +84,7 @@ def configs1(config_wf1, config_cf1, config_cf2):
 
 # model  =======================================================================
 @pytest.fixture()
-def model_skip_wf1(base_url, config_wf1):
+def model_wf_skip1(base_url, config_wf1):
     return OWUModel(
         base_url,
         config_wf1,
@@ -93,7 +94,7 @@ def model_skip_wf1(base_url, config_wf1):
 
 
 @pytest.fixture()
-def model_skip_cf1(base_url, config_cf1):
+def model_cf_skip1(base_url, config_cf1):
     return OWUModel(
         base_url,
         config_cf1,
@@ -103,7 +104,7 @@ def model_skip_cf1(base_url, config_cf1):
 
 
 @pytest.fixture()
-def model_skip_cf2(base_url, config_cf2):
+def model_cf_skip2(base_url, config_cf2):
     return OWUModel(
         base_url,
         config_cf2,
@@ -114,18 +115,21 @@ def model_skip_cf2(base_url, config_cf2):
 
 # app  =========================================================================
 @pytest.fixture()
-def app_skip_wf1(model_skip_wf1):
-    return model_skip_wf1.app
+def app_wf_skip1(model_wf_skip1):
+    return model_wf_skip1.app
 
 
 @pytest.fixture()
-def app_skip_cf1(model_skip_cf1):
-    return model_skip_cf1.app
+def app_cf_skip1(model_cf_skip1):
+    return model_cf_skip1.app
 
 
 @pytest.fixture()
-def app_skip_cf2(model_skip_cf2):
-    return model_skip_cf2.app
+def app_cf_skip2(model_cf_skip2):
+    return model_cf_skip2.app
+
+
+# FIXME refactor of testees
 
 
 # mocks  =======================================================================

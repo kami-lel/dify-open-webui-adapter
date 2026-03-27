@@ -11,8 +11,8 @@ WorkflowApp.main_url
 
 class Test1:
 
-    def test1(_, app_skip_wf1, endpoint_wf):
-        opt = app_skip_wf1.main_url
+    def test1(_, app_wf_skip1, endpoint_wf):
+        opt = app_wf_skip1.main_url
 
         print(opt)
         assert isinstance(opt, str)

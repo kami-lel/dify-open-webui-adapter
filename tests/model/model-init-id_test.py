@@ -14,22 +14,22 @@ from dify_open_webui_adapter import OWUModel, DifyAppType
 # pytest  ######################################################################
 class TestModelId:
 
-    def test_wf1(_, model_skip_wf1):
-        opt = model_skip_wf1.model_id
+    def test_wf1(_, model_wf_skip1):
+        opt = model_wf_skip1.model_id
 
         print(opt)
         assert isinstance(opt, str)
         assert opt == "example-workflow-model"
 
-    def test_cf1(_, model_skip_cf1):
-        opt = model_skip_cf1.model_id
+    def test_cf1(_, model_cf_skip1):
+        opt = model_cf_skip1.model_id
 
         print(opt)
         assert isinstance(opt, str)
         assert opt == "example-chatflow-model"
 
-    def test_cf2(_, model_skip_cf2):
-        opt = model_skip_cf2.model_id
+    def test_cf2(_, model_cf_skip2):
+        opt = model_cf_skip2.model_id
 
         print(opt)
         assert isinstance(opt, str)

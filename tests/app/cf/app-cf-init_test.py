@@ -11,16 +11,16 @@ Unit Tests (using pytest) for:
 
 class Test1:  # ================================================================
 
-    def test_chat_id(_, app_skip_cf1):
-        app = app_skip_cf1
+    def test_chat_id(_, app_cf_skip1):
+        app = app_cf_skip1
         opt = app.current_chat_id
 
         print(opt)
         assert isinstance(opt, str)
         assert opt == ""
 
-    def test_ids(_, app_skip_cf1):
-        app = app_skip_cf1
+    def test_ids(_, app_cf_skip1):
+        app = app_cf_skip1
         opt = app.chat2conversation_ids
 
         print(opt)

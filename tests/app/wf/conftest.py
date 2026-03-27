@@ -27,7 +27,7 @@ def app_changed_input(model_changed_input):
 
 
 @pytest.fixture
-def patch_reply_no_stream(patch_target_post, endpoint_wf):
+def patch_reply_no_stream(patch_target_post, endpoint_wf, authorization_wf1):
     patch_target = patch_target_post
 
     mock_resp = Mock()
@@ -40,7 +40,7 @@ def patch_reply_no_stream(patch_target_post, endpoint_wf):
 
     assert_kwargs = {
         "headers": {
-            "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
+            "Authorization": authorization_wf1,
             "Content-Type": "application/json",
         },
         "data": json.dumps({

@@ -16,7 +16,7 @@ import pytest
 
 # Pytest fixtures  #############################################################
 @pytest.fixture
-def testee_stream(patch_target_post, endpoint_cf):
+def testee_stream(patch_target_post, endpoint_cf, authorization_cf1):
     patch_target = patch_target_post
 
     mock_resp = Mock()
@@ -28,7 +28,7 @@ def testee_stream(patch_target_post, endpoint_cf):
 
     assert_kwargs = {
         "headers": {
-            "Authorization": "Bearer f2277b0e16154cba981c866bdc124386",
+            "Authorization": authorization_cf1,
             "Content-Type": "application/json",
             "Accept": "text/event-stream",
         },

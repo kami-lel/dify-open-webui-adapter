@@ -126,13 +126,13 @@ class TestCf1:  # ==============================================================
         assert isinstance(opt, str)
         assert opt == base_url
 
-    def test_key(_, app_cf_skip1):
+    def test_key(_, app_cf_skip1, auth_key_cf1):
         app = app_cf_skip1
         opt = app.key
 
         print(opt)
         assert isinstance(opt, str)
-        assert opt == "f2277b0e16154cba981c866bdc124386"
+        assert opt == auth_key_cf1
 
     def test_disallows(_, app_cf_skip1):
         app = app_cf_skip1

@@ -9,25 +9,25 @@ BaseDifyApp.http_header
 
 class Test1:  # ================================================================
 
-    def test_no_stream(_, app_wf_skip1):
+    def test_no_stream(_, app_wf_skip1, authorization_wf1):
         app = app_wf_skip1
         app.current_enable_stream = False
         opt = app.http_header
 
         print(opt)
         assert opt == {
-            "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
+            "Authorization": authorization_wf1,
             "Content-Type": "application/json",
         }
 
-    def test_stream(_, app_wf_skip1):
+    def test_stream(_, app_wf_skip1, authorization_wf1):
         app = app_wf_skip1
         app.current_enable_stream = True
         opt = app.http_header
 
         print(opt)
         assert opt == {
-            "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
+            "Authorization": authorization_wf1,
             "Content-Type": "application/json",
             "Accept": "text/event-stream",
         }
@@ -35,25 +35,25 @@ class Test1:  # ================================================================
 
 class Test2:  # ================================================================
 
-    def test_no_stream(_, app_cf_skip1):
+    def test_no_stream(_, app_cf_skip1, authorization_cf1):
         app = app_cf_skip1
         app.current_enable_stream = False
         opt = app.http_header
 
         print(opt)
         assert opt == {
-            "Authorization": "Bearer f2277b0e16154cba981c866bdc124386",
+            "Authorization": authorization_cf1,
             "Content-Type": "application/json",
         }
 
-    def test_stream(_, app_cf_skip1):
+    def test_stream(_, app_cf_skip1, authorization_cf1):
         app = app_cf_skip1
         app.current_enable_stream = True
         opt = app.http_header
 
         print(opt)
         assert opt == {
-            "Authorization": "Bearer f2277b0e16154cba981c866bdc124386",
+            "Authorization": authorization_cf1,
             "Content-Type": "application/json",
             "Accept": "text/event-stream",
         }

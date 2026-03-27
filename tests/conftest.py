@@ -57,6 +57,16 @@ def auth_key_cf1():
     return "f2277b0e16154cba981c866bdc124386"
 
 
+@pytest.fixture(scope="session")
+def authorization_wf1(auth_key_wf1):
+    return "Bearer " + auth_key_wf1
+
+
+@pytest.fixture(scope="session")
+def authorization_cf1(auth_key_cf1):
+    return "Bearer " + auth_key_cf1
+
+
 # config  ----------------------------------------------------------------------
 @pytest.fixture(scope="session")
 def config_wf1(auth_key_wf1):

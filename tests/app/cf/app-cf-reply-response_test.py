@@ -6,23 +6,56 @@ Unit Tests (using pytest) for:
 ChatflowApp.open_reply_response()
 """
 
-from unittest.mock import patch
+from unittest.mock import patch, Mock
+import json
 import requests
 
 
 import pytest
 
 
+# Pytest fixtures  #############################################################
+@pytest.fixture
+def testee_stream(patch_target_post, endpoint_cf):
+    patch_target = patch_target_post
+
+    mock_resp = Mock()
+    mock_resp.status_code = 201
+    mock_resp.json.return_value = {"ok": True}
+    mock_resp.text = "APP REPLIED MESSAGE"
+
+    assert_args = [endpoint_cf]
+
+    assert_kwargs = {
+        "headers": {
+            "Authorization": "Bearer f2277b0e16154cba981c866bdc124386",
+            "Content-Type": "application/json",
+            "Accept": "text/event-stream",
+        },
+        "data": json.dumps({
+            "query": "PRIMARY",
+            "response_mode": "streaming",
+            "user": "user",
+            "conversation_id": "",
+            "auto_generate_name": False,
+            "inputs": {},
+        }),
+        "stream": True,
+        "timeout": 300,
+    }
+
+    return patch_target, mock_resp, assert_args, assert_kwargs
+
+
+# Pytest unit tests  ###########################################################
 class TestResponse:
 
-    def test_no_stream(_, app_skip_cf1, patch_reply_no_stream):
+    def test_no_stream(_, app_skip_cf1, testee_block):
         app = app_skip_cf1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = False
 
-        patch_target, mock_resp, assert_args, assert_kwargs = (
-            patch_reply_no_stream
-        )
+        patch_target, mock_resp, assert_args, assert_kwargs = testee_block
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             opt = app.open_reply_response()
@@ -32,12 +65,12 @@ class TestResponse:
 
             mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
-    def test_stream(_, app_skip_cf1, patch_reply_stream):
+    def test_stream(_, app_skip_cf1, testee_stream):
         app = app_skip_cf1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = True
 
-        patch_target, mock_resp, assert_args, assert_kwargs = patch_reply_stream
+        patch_target, mock_resp, assert_args, assert_kwargs = testee_stream
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             opt = app.open_reply_response()

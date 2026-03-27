@@ -14,14 +14,12 @@ import pytest
 # pytest  ######################################################################
 class TestBlock:
 
-    def test_no_stream(_, app_skip_cf1, patch_reply_no_stream):
+    def test_no_stream(_, app_skip_cf1, testee_block):
         app = app_skip_cf1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = False
 
-        patch_target, mock_resp, assert_args, assert_kwargs = (
-            patch_reply_no_stream
-        )
+        patch_target, mock_resp, assert_args, assert_kwargs = testee_block
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             opt = app._reply_blocking()

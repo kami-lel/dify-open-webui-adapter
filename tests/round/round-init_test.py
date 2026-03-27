@@ -16,8 +16,11 @@ from dify_open_webui_adapter import _StreamingConversationRound
 
 class TestWf:
 
-    def test_app(_, testee_wf, mock_wf1):
-        app, patch_target, assert_args, assert_kwargs = testee_wf
+    def test_app(
+        _, app_wf_stream, patch_target_post, assertee_wf_stream, mock_wf1
+    ):
+        app = app_wf_stream
+        patch_target = patch_target_post
         mock_resp = mock_wf1
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
@@ -27,10 +30,15 @@ class TestWf:
             print(opt)
             assert opt is app
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_wf_stream[0]), **(assertee_wf_stream[1])
+            )
 
-    def test_response(_, testee_wf, mock_wf1):
-        app, patch_target, assert_args, assert_kwargs = testee_wf
+    def test_response(
+        _, app_wf_stream, patch_target_post, assertee_wf_stream, mock_wf1
+    ):
+        app = app_wf_stream
+        patch_target = patch_target_post
         mock_resp = mock_wf1
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
@@ -40,10 +48,15 @@ class TestWf:
             print(opt)
             assert opt == mock_resp
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_wf_stream[0]), **(assertee_wf_stream[1])
+            )
 
-    def test_iter_lines(_, testee_wf, mock_wf1):
-        app, patch_target, assert_args, assert_kwargs = testee_wf
+    def test_iter_lines(
+        _, app_wf_stream, patch_target_post, assertee_wf_stream, mock_wf1
+    ):
+        app = app_wf_stream
+        patch_target = patch_target_post
         mock_resp = mock_wf1
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
@@ -81,13 +94,18 @@ class TestWf:
                 ),
             ]
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_wf_stream[0]), **(assertee_wf_stream[1])
+            )
 
 
 class TestCf:
 
-    def test_app(_, testee_cf, mock_cf1):
-        app, patch_target, assert_args, assert_kwargs = testee_cf
+    def test_app(
+        _, app_cf_stream, patch_target_post, assertee_cf_stream, mock_cf1
+    ):
+        app = app_cf_stream
+        patch_target = patch_target_post
         mock_resp = mock_cf1
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
@@ -97,10 +115,15 @@ class TestCf:
             print(opt)
             assert opt is app
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_cf_stream[0]), **(assertee_cf_stream[1])
+            )
 
-    def test_response(_, testee_cf, mock_cf1):
-        app, patch_target, assert_args, assert_kwargs = testee_cf
+    def test_response(
+        _, app_cf_stream, patch_target_post, assertee_cf_stream, mock_cf1
+    ):
+        app = app_cf_stream
+        patch_target = patch_target_post
         mock_resp = mock_cf1
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
@@ -110,10 +133,15 @@ class TestCf:
             print(opt)
             assert opt == mock_resp
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_cf_stream[0]), **(assertee_cf_stream[1])
+            )
 
-    def test_iter_lines(_, testee_cf, mock_cf1):
-        app, patch_target, assert_args, assert_kwargs = testee_cf
+    def test_iter_lines(
+        _, app_cf_stream, patch_target_post, assertee_cf_stream, mock_cf1
+    ):
+        app = app_cf_stream
+        patch_target = patch_target_post
         mock_resp = mock_cf1
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
@@ -164,4 +192,6 @@ class TestCf:
                 ),
             ]
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_cf_stream[0]), **(assertee_cf_stream[1])
+            )

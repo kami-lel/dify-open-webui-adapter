@@ -3,15 +3,25 @@ import pytest
 # pytest fixtures  #############################################################
 
 
-# HACK HACK break down
-# testees  =====================================================================
 @pytest.fixture
-def testee_wf(app_wf_skip1, patch_target_post, authorization_wf1):
+def app_wf_stream(app_wf_skip1):
     app = app_wf_skip1
     app.current_enable_stream = True
     app.current_user_msg_content = "PRIMARY"
+    return app
 
-    patch_target = patch_target_post
+
+@pytest.fixture
+def app_cf_stream(app_cf_skip1):
+    app = app_cf_skip1
+    app.current_enable_stream = True
+    app.current_user_msg_content = "PRIMARY"
+    return app
+
+
+@pytest.fixture
+def assertee_wf_stream(endpoint_wf, authorization_wf1):
+    assert_args = [endpoint_wf]
 
     data = (
         '{"inputs": {"query": "PRIMARY"}, '
@@ -19,7 +29,6 @@ def testee_wf(app_wf_skip1, patch_target_post, authorization_wf1):
         '"user": "user"}'
     )
 
-    assert_args = ["https://api.dify.ai/v1/workflows/run"]
     assert_kwargs = {
         "headers": {
             "Authorization": authorization_wf1,
@@ -30,17 +39,11 @@ def testee_wf(app_wf_skip1, patch_target_post, authorization_wf1):
         "stream": True,
         "timeout": 300,
     }
-
-    return app, patch_target, assert_args, assert_kwargs
+    return assert_args, assert_kwargs
 
 
 @pytest.fixture
-def testee_cf(app_cf_skip1, patch_target_post, authorization_cf1):
-    app = app_cf_skip1
-    app.current_enable_stream = True
-    app.current_user_msg_content = "PRIMARY"
-
-    patch_target = patch_target_post
+def assertee_cf_stream(endpoint_cf, authorization_cf1):
 
     data = (
         '{"query": "PRIMARY", '
@@ -51,7 +54,7 @@ def testee_cf(app_cf_skip1, patch_target_post, authorization_cf1):
         '"inputs": {}}'
     )
 
-    assert_args = ["https://api.dify.ai/v1/chat-messages"]
+    assert_args = [endpoint_cf]
     assert_kwargs = {
         "headers": {
             "Authorization": authorization_cf1,
@@ -63,4 +66,4 @@ def testee_cf(app_cf_skip1, patch_target_post, authorization_cf1):
         "timeout": 300,
     }
 
-    return app, patch_target, assert_args, assert_kwargs
+    return assert_args, assert_kwargs

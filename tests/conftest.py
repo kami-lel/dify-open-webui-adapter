@@ -189,25 +189,29 @@ def mock_info_cf():
 
 
 @pytest.fixture
-def assert_kwargs_info_wf(authorization_wf1):
-    return {
+def assertee_info_wf(endpoint_info, authorization_wf1):
+    args = [endpoint_info]
+    kwargs = {
         "headers": {
             "Authorization": authorization_wf1,
             "Content-Type": "application/json",
         },
         "timeout": 30,
     }
+    return args, kwargs
 
 
 @pytest.fixture
-def assert_kwargs_info_cf(authorization_cf1):
-    return {
+def assertee_info_cf(endpoint_info, authorization_cf1):
+    args = [endpoint_info]
+    kwargs = {
         "headers": {
             "Authorization": authorization_cf1,
             "Content-Type": "application/json",
         },
         "timeout": 30,
     }
+    return args, kwargs
 
 
 # FIXME FIXME refactor of testees

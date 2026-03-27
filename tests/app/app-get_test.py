@@ -24,14 +24,12 @@ class TestGet:
         base_url,
         config_wf1,
         mock_info_wf,
-        assert_kwargs_info_wf,
+        assertee_info_wf,
         patch_target_get,
-        endpoint_info,
     ):
         config = config_wf1
         key = config["key"]
         mock_resp = mock_info_wf
-        assert_kwargs = assert_kwargs_info_wf
 
         with patch(patch_target_get, return_value=mock_resp) as mock_get:
             opt = BaseDifyApp.get_app_type_and_name(base_url, key)
@@ -45,21 +43,21 @@ class TestGet:
             assert isinstance(response_name, str)
             assert response_name == "My Workflow App"
 
-            mock_get.assert_called_once_with(endpoint_info, **assert_kwargs)
+            mock_get.assert_called_once_with(
+                *(assertee_info_wf[0]), **(assertee_info_wf[1])
+            )
 
     def test_cf(
         _,
         base_url,
         config_cf1,
         mock_info_cf,
-        assert_kwargs_info_cf,
+        assertee_info_cf,
         patch_target_get,
-        endpoint_info,
     ):
         config = config_cf1
         key = config["key"]
         mock_resp = mock_info_cf
-        assert_kwargs = assert_kwargs_info_cf
 
         with patch(patch_target_get, return_value=mock_resp) as mock_get:
             opt = BaseDifyApp.get_app_type_and_name(base_url, key)
@@ -74,7 +72,9 @@ class TestGet:
             assert isinstance(response_name, str)
             assert response_name == "My Chatflow App"
 
-            mock_get.assert_called_once_with(endpoint_info, **assert_kwargs)
+            mock_get.assert_called_once_with(
+                *(assertee_info_cf[0]), **(assertee_info_cf[1])
+            )
 
     # err handling  ============================================================
 

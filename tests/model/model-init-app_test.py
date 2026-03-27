@@ -25,13 +25,13 @@ class TestApp:
         base_url,
         config_wf1,
         mock_info_wf,
-        assert_kwargs_info_wf,
+        assertee_info_wf,
         patch_target_get,
         endpoint_info,
     ):
         config = config_wf1
         mock_resp = mock_info_wf
-        assert_kwargs = assert_kwargs_info_wf
+        assert_kwargs = assertee_info_wf
 
         with patch(patch_target_get, return_value=mock_resp) as mock_get:
             model = OWUModel(base_url, config)
@@ -52,13 +52,13 @@ class TestApp:
         base_url,
         config_cf1,
         mock_info_cf,
-        assert_kwargs_info_cf,
+        assertee_info_cf,
         patch_target_get,
         endpoint_info,
     ):
         config = config_cf1
         mock_resp = mock_info_cf
-        assert_kwargs = assert_kwargs_info_cf
+        assert_kwargs = assertee_info_cf
 
         with patch(patch_target_get, return_value=mock_resp) as mock_get:
             model = OWUModel(base_url, config)

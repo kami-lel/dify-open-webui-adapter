@@ -27,14 +27,26 @@ def app_changed_input(model_changed_input):
 
 
 @pytest.fixture
-def patch_reply_no_stream(patch_target_post, endpoint_wf, authorization_wf1):
-    patch_target = patch_target_post
-
+def mock_base():
     mock_resp = Mock()
     mock_resp.status_code = 201
+    return mock_resp
+
+
+@pytest.fixture
+def mock_block_wf(mock_base):
+    mock_resp = mock_base
     mock_resp.json.return_value = {
         "data": {"outputs": {"answer": "DIFY REPLIED MESSAGE"}}
     }
+    return mock_resp
+
+
+# HACK HACK rm
+@pytest.fixture
+def patch_reply_no_stream(
+    mock_base, patch_target_post, endpoint_wf, authorization_wf1
+):
 
     assert_args = [endpoint_wf]
 

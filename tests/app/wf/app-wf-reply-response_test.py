@@ -48,14 +48,15 @@ def testee_reply_block(patch_target_post, endpoint_wf, authorization_wf1):
 # Pytest unit tests  ###########################################################
 class TestResponse:
 
-    def test_no_stream(_, app_wf_skip1, patch_reply_no_stream):
+    def test_no_stream(
+        _, app_wf_skip1, patch_target_post, mock_block_wf, assertee_wf_block
+    ):
         app = app_wf_skip1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = False
 
-        patch_target, mock_resp, assert_args, assert_kwargs = (
-            patch_reply_no_stream
-        )
+        patch_target = patch_target_post
+        mock_resp = mock_block_wf
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             opt = app.open_reply_response()
@@ -63,7 +64,9 @@ class TestResponse:
             print(opt)
             assert opt is mock_resp
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_wf_block[0]), **(assertee_wf_block[1])
+            )
 
     def test_stream(_, app_wf_skip1, testee_reply_block):
         app = app_wf_skip1

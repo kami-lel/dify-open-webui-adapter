@@ -16,14 +16,14 @@ import pytest
 # pytest  ######################################################################
 class TestBlock:
 
-    def test_dft(_, app_wf_skip1, patch_reply_no_stream):
+    def test_dft(
+        _, app_wf_skip1, patch_target_post, mock_block_wf, assertee_wf_block
+    ):
         app = app_wf_skip1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = False
-
-        patch_target, mock_resp, assert_args, assert_kwargs = (
-            patch_reply_no_stream
-        )
+        patch_target = patch_target_post
+        mock_resp = mock_block_wf
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             opt = app._reply_blocking()
@@ -31,17 +31,25 @@ class TestBlock:
             print(opt)
             assert opt == "DIFY REPLIED MESSAGE"
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_wf_block[0]), **(assertee_wf_block[1])
+            )
 
-    def test_changed(_, app_changed_input, patch_reply_no_stream):
+    def test_changed(
+        _,
+        app_changed_input,
+        patch_target_post,
+        mock_block_wf,
+        assertee_wf_block,
+    ):
         app = app_changed_input
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = False
 
-        patch_target, mock_resp, assert_args, assert_kwargs = (
-            patch_reply_no_stream
-        )
+        patch_target = patch_target_post
+        mock_resp = mock_block_wf
 
+        assert_kwargs = assertee_wf_block[1]
         assert_kwargs["data"] = json.dumps({
             "inputs": {"Input": "PRIMARY"},
             "response_mode": "blocking",
@@ -54,7 +62,9 @@ class TestBlock:
             print(opt)
             assert opt == "DIFY REPLIED MESSAGE"
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_wf_block[0]), **assert_kwargs
+            )
 
     # err handling  ============================================================
 

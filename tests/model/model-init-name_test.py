@@ -90,11 +90,9 @@ class TestResponse:  ###########################################################
         mock_info_wf,
         assertee_info_wf,
         patch_target_get,
-        endpoint_info,
     ):
         config = config_wf1.copy()
         mock_resp = mock_info_wf
-        assert_kwargs = assertee_info_wf
 
         with patch(patch_target_get, return_value=mock_resp) as mock_get:
             model = OWUModel(base_url, config)
@@ -104,7 +102,9 @@ class TestResponse:  ###########################################################
             assert isinstance(opt, str)
             assert opt == "My Workflow App"
 
-            mock_get.assert_called_once_with(endpoint_info, **assert_kwargs)
+            mock_get.assert_called_once_with(
+                *(assertee_info_wf[0]), **(assertee_info_wf[1])
+            )
 
     def test2(
         _,
@@ -113,11 +113,9 @@ class TestResponse:  ###########################################################
         mock_info_cf,
         assertee_info_cf,
         patch_target_get,
-        endpoint_info,
     ):
         config = config_cf1.copy()
         mock_resp = mock_info_cf
-        assert_kwargs = assertee_info_cf
 
         with patch(patch_target_get, return_value=mock_resp) as mock_get:
             model = OWUModel(base_url, config)
@@ -127,7 +125,9 @@ class TestResponse:  ###########################################################
             assert isinstance(opt, str)
             assert opt == "My Chatflow App"
 
-            mock_get.assert_called_once_with(endpoint_info, **assert_kwargs)
+            mock_get.assert_called_once_with(
+                *(assertee_info_cf[0]), **(assertee_info_cf[1])
+            )
 
 
 class TestModelId:  ############################################################

@@ -42,15 +42,11 @@ def mock_block_wf(mock_base):
     return mock_resp
 
 
-# HACK HACK rm
 @pytest.fixture
-def patch_reply_no_stream(
-    mock_base, patch_target_post, endpoint_wf, authorization_wf1
-):
+def assertee_wf_block(endpoint_wf, authorization_wf1):
+    args = [endpoint_wf]
 
-    assert_args = [endpoint_wf]
-
-    assert_kwargs = {
+    kwargs = {
         "headers": {
             "Authorization": authorization_wf1,
             "Content-Type": "application/json",
@@ -64,4 +60,4 @@ def patch_reply_no_stream(
         "timeout": 30,
     }
 
-    return patch_target, mock_resp, assert_args, assert_kwargs
+    return args, kwargs

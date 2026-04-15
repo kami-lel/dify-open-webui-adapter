@@ -149,10 +149,10 @@ sequenceDiagram
     OWU->>pipe: initialize function
     note over OWU,pipe: pipe.__init__()
 
-    pipe->>model: create model
+    pipe->>model: create model by:
     note over pipe,model: model.__init__()
 
-    model->>app: create app
+    model->>app: create app by:
     note over model,app: app.__init__()
 
     app->>model: save app into:
@@ -180,10 +180,10 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    OWU->>pipe: get list of models
+    OWU->>pipe: get list of models by:
     note over OWU,pipe: pipe.pipes()
 
-    pipe->>model: per model in pipe.model_containers
+    pipe->>model: per model in pipe.model_containers:
     note over pipe,model: model.get_model_id_and_name()
 
     model->>pipe: return model id & name

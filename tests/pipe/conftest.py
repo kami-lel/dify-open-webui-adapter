@@ -3,7 +3,7 @@ import pytest
 
 from dify_open_webui_adapter import Pipe
 
-# Hack pipe fixtures
+# HACK pipe fixtures
 
 
 # pytest fixtures  #############################################################

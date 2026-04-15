@@ -11,7 +11,7 @@ import pytest
 
 # Pytest fixtures  #############################################################
 
-# Hack pipe fixtures
+# HACK pipe fixtures
 
 
 @pytest.fixture

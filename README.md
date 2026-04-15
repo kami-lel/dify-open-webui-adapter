@@ -120,8 +120,6 @@ APP_MODEL_CONFIGS = [
 
 ## Control Flow
 
-<!-- TODO working on data structure -->
-
 Entities Relationships:
 
 ```mermaid
@@ -144,6 +142,8 @@ erDiagram
 
 #### function initialization
 
+<!-- TODO add dify -->
+
 ```mermaid
 sequenceDiagram
     OWU->>pipe: initialize function
@@ -151,6 +151,11 @@ sequenceDiagram
 
     pipe->>model: create model by:
     note over pipe,model: model.__init__()
+
+    model->>Dify: get app type & name by
+    note over model,Dify: BaseDifyAPp.get_app_type_and_name()
+
+    Dify->>model: return app type & name
 
     model->>app: create app by:
     note over model,app: app.__init__()

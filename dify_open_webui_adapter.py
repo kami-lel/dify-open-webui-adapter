@@ -146,6 +146,7 @@ class OWUModel:
         # set self.name
         self.name = provided_name or response_name or self.model_id
 
+        # FIXME use a static/classmethod
         # create app
         if self.app_type == DifyAppType.WORKFLOW:
             self.app = WorkflowApp(self, base_url, app_model_config)
@@ -379,6 +380,7 @@ class BaseDifyApp:
                 )
 
         # current conversations  -----------------------------------------------
+        # FIXME write public function to update this
         self.current_user_msg_content = ""
         self.current_enable_stream = False
 

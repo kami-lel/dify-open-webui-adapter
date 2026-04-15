@@ -100,3 +100,9 @@ APP_MODEL_CONFIGS = [
 ## Control Flow
 
 <!-- TODO -->
+
+```mermaid
+erDiagram
+    Pipe ||--o{ Model: contains
+    Model ||--|| App: contains
+```

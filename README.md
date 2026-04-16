@@ -212,3 +212,20 @@ sequenceDiagram
 #### replying
 
 <!-- TODO -->
+
+```mermaid
+sequenceDiagram
+    OWU->>pipe: ask for reply
+    note over OWU,pipe: pipe.pipe()
+
+    pipe->>model: find model by model id, then:
+    note over pipe,model: model.reply()
+
+    model->>app:
+    note over model,app: app.reply()
+
+    app->>model:
+    model->>pipe:
+    pipe->>OWU:
+```
+

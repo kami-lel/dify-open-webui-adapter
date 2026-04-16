@@ -153,10 +153,11 @@ sequenceDiagram
     model->>app: get app type & name by
     note over model,app: BaseDifyAPp.get_app_type_and_name()
 
-    app->>Dify: get app type & name
-    Dify->>app:
+    app->>Dify: request by providing
+    note over app,Dify: key
+    Dify->>app: return app type & name
 
-    app->>model: return app type & name
+    app->>model:
 
     model->>app: create app by:
     note over model,app: app.__init__()
@@ -167,7 +168,7 @@ sequenceDiagram
     model->>pipe: save model into:
     note over pipe,model: pipe.model_containers
 
-    pipe->>OWU:finish
+    pipe->>OWU:
 ```
 
 

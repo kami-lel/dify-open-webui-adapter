@@ -211,8 +211,6 @@ sequenceDiagram
 
 #### replying
 
-<!-- TODO -->
-
 ```mermaid
 sequenceDiagram
     OWU->>pipe: ask for reply
@@ -221,8 +219,19 @@ sequenceDiagram
     pipe->>model: find model by model id, then:
     note over pipe,model: model.reply()
 
+    model->>app: update:
+    note over model,app: app.current_user_msg_content()
+    app->>model:
+
+    model->>app: update:
+    note over model,app: app.current_enable_stream()
+    app->>model:
+
     model->>app:
     note over model,app: app.reply()
+
+    app->>Dify:
+    Dify->>app:
 
     app->>model:
     model->>pipe:

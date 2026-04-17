@@ -1,33 +1,8 @@
-"""
-Integrate Open WebUI and Dify by exposing a Dify App
-(Workflow or Chatflow) as Open WebUI model using Open WebUI's Pipe Functions.
-
-Supported Open WebUI Version:   v0.7.1
-Supported Dify Version:         1.11.2
-
-Q.v. ``https://github.com/kami-lel/dify-open-webui-adapter``
-"""
-
 # Hack rm
 
 # Bug keeps sending chat to the same chat id, when use from continue
 # Bug fail to do pass thru
 # Todo make file upload
-
-# adapter version
-__version__ = "2.2.1-alpha"
-__author__ = "kamiLeL"
-
-
-# config  ######################################################################
-DIFY_BACKEND_API_BASE_URL = "https://api.dify.ai/v1"
-
-APP_MODEL_CONFIGS = []
-
-
-# debug flags  =================================================================
-DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
-DEBUG_PIPE_DIRECT_RESPONSE = False
 
 
 # end of config  ###############################################################
@@ -42,8 +17,6 @@ import requests
 
 # constants  ===================================================================
 OWU_USER_ROLE = "user"
-REQUEST_TIMEOUT = 30
-STREAM_REQUEST_TIMEOUT = 300
 DEFINED_APP_MODEL_CONFIG_KEYS = (
     "key",
     "model_id",
@@ -57,6 +30,8 @@ DEFINED_APP_MODEL_CONFIG_KEYS = (
 DIFY_USER_ROLE = "user"  # Todo read user role from metadata
 DEFAULT_QUERY_INPUT_FIELD_IDENTIFIER = "query"
 DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER = "answer"
+REQUEST_TIMEOUT = 30
+STREAM_REQUEST_TIMEOUT = 300
 
 
 # helper Enum  =================================================================

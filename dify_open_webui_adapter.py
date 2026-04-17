@@ -76,6 +76,7 @@ class Pipe:  # =================================================================
         pass
 
     async def pipe(self, body, __user__, __metadata__):
+        owu_request = OWURequest(body, __user__, __metadata__)
         pass
 
 
@@ -96,4 +97,4 @@ class OWURequest:
     metadata: dict
 
     def __post_init__(self):
-        pass
+        pass  # Todo round data validation

@@ -319,7 +319,7 @@ def mock_cf3(mock_base):
 
 # .pipe() args  ================================================================
 
-# HACK pipe fixtures
+# Hack pipe fixtures
 
 
 @pytest.fixture

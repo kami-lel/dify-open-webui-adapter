@@ -54,6 +54,12 @@ class DifyAppType(Enum):
 
 class BaseDifyApp:  # ==========================================================
 
+    # Public Methods  **********************************************************
+
+    @staticmethod
+    def create_app():
+        pass
+
     pass
 
 

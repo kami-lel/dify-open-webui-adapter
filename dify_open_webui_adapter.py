@@ -29,12 +29,27 @@ DEBUG_PIPE_DIRECT_RESPONSE = False
 # pylint: disable=wrong-import-position
 
 
+from enum import Enum
 from dataclasses import dataclass
 
 from pydantic import BaseModel
 
 # Dify side  ###################################################################
 # Dify constants  ==============================================================
+
+# helpers  =====================================================================
+
+
+class DifyAppType(Enum):
+    """
+    type of Dify App, either Workflow or Chatflow (multi-round)
+
+    value of enums are identical to
+    those appear in /info response of Dify Backend API
+    """
+
+    WORKFLOW = "workflow"
+    CHATFLOW = "advanced-chat"  # multi-turn chats
 
 
 class BaseDifyApp:  # ==========================================================
@@ -54,6 +69,25 @@ class ChatflowApp(BaseDifyApp):  # =============================================
 
 # OWU side  ####################################################################
 # OWU constants  ===============================================================
+
+# helpers  =====================================================================
+
+
+@dataclass
+class OWURequest:
+    """
+    a wrapper class containing all infos of a single OWU Pipe Function request,
+    i.e. a single call from Pipe.pipe()
+    """
+
+    # fields  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    body: dict
+    user: dict
+    metadata: dict
+
+    def __post_init__(self):
+        pass  # Todo round data validation
 
 
 class OWUModel:  # =============================================================
@@ -78,23 +112,3 @@ class Pipe:  # =================================================================
     async def pipe(self, body, __user__, __metadata__):
         owu_request = OWURequest(body, __user__, __metadata__)
         pass
-
-
-# helpers  =====================================================================
-
-
-@dataclass
-class OWURequest:
-    """
-    a wrapper class containing all infos of a single OWU Pipe Function request,
-    i.e. a single call from Pipe.pipe()
-    """
-
-    # fields  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    body: dict
-    user: dict
-    metadata: dict
-
-    def __post_init__(self):
-        pass  # Todo round data validation

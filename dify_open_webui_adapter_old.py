@@ -34,18 +34,6 @@ REQUEST_TIMEOUT = 30
 STREAM_REQUEST_TIMEOUT = 300
 
 
-# helper Enum  =================================================================
-class DifyAppType(Enum):
-    """
-    type of Dify App, either Workflow or Chatflow (multi-round)
-    """
-
-    # value of enums are identical to them appearing
-    # in Dify Backend API's /info response
-    WORKFLOW = "workflow"
-    CHATFLOW = "advanced-chat"  # multi-turn chats
-
-
 # Open WebUI side  #############################################################
 class OWUModel:
     """

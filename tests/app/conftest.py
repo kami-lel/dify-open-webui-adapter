@@ -4,9 +4,9 @@ from dify_open_webui_adapter import OWUModel, DifyAppType
 
 
 @pytest.fixture(scope="session")
-def model_wf_alt_url(base_url_alt, config_wf1):
+def model_wf_alt_url(base_url2, config_wf1):
     return OWUModel(
-        base_url_alt,
+        base_url2,
         config_wf1,
         skip_get_app_type_and_name=True,
         app_type_override=DifyAppType.WORKFLOW,

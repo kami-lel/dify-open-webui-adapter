@@ -84,3 +84,157 @@ APP_MODEL_CONFIGS = [
     # more apps
 ]
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Control Flow
+
+Entities Relationships:
+
+```mermaid
+erDiagram
+    Pipe ||--o{ Model: contains
+    Model ||--|| App: contains
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### function initialization
+
+```mermaid
+sequenceDiagram
+    OWU->>pipe: initialize function
+    note over OWU,pipe: pipe.__init__()
+
+    pipe->>model: create model by:
+    note over pipe,model: model.__init__()
+
+    model->>app: get app type & name by
+    note over model,app: BaseDifyAPp.get_app_type_and_name()
+
+    app->>Dify: request by providing
+    note over app,Dify: key
+    Dify->>app: return app type & name
+
+    app->>model:
+
+    model->>app: create app by:
+    note over model,app: app.__init__()
+
+    app->>model: save app into:
+    note over app,model: model.app
+
+    model->>pipe: save model into:
+    note over pipe,model: pipe.model_containers
+
+    pipe->>OWU:
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### models listing
+
+```mermaid
+sequenceDiagram
+    OWU->>pipe: get list of models by:
+    note over OWU,pipe: pipe.pipes()
+
+    pipe->>model: per model in pipe.model_containers:
+    note over pipe,model: model.get_model_id_and_name()
+
+    model->>pipe: return model id & name
+
+    pipe->>OWU:return model infos
+```
+
+
+
+
+
+
+
+
+
+
+
+
+#### replying
+
+```mermaid
+sequenceDiagram
+    OWU->>pipe: ask for reply
+    note over OWU,pipe: pipe.pipe()
+
+    pipe->>model: find model by model id, then:
+    note over pipe,model: model.reply()
+
+    model->>app: update:
+    note over model,app: app.current_user_msg_content()
+    app->>model:
+
+    model->>app: update:
+    note over model,app: app.current_enable_stream()
+    app->>model:
+
+    model->>app:
+    note over model,app: app.reply()
+
+    app->>Dify:
+    Dify->>app:
+
+    app->>model:
+    model->>pipe:
+    pipe->>OWU:
+```
+

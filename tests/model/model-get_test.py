@@ -9,8 +9,8 @@ OWUModel.get_model_id_and_name()
 
 class TestGet:
 
-    def test_wf1(_, model_skip_wf1):
-        model = model_skip_wf1
+    def test_wf1(_, model_wf_skip1):
+        model = model_wf_skip1
 
         opt = model.get_model_id_and_name()
 
@@ -31,8 +31,8 @@ class TestGet:
             "name": "My Workflow Name",
         }
 
-    def test_cf1(_, model_skip_cf1):
-        model = model_skip_cf1
+    def test_cf1(_, model_cf_skip1):
+        model = model_cf_skip1
 
         opt = model.get_model_id_and_name()
 

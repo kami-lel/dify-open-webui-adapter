@@ -15,46 +15,46 @@ from dify_open_webui_adapter import WorkflowApp
 
 class TestWf1:  # ==============================================================
 
-    def test_model(_, app_skip_wf1, model_skip_wf1):
-        app = app_skip_wf1
-        model = model_skip_wf1
+    def test_model(_, app_wf_skip1, model_wf_skip1):
+        app = app_wf_skip1
+        model = model_wf_skip1
 
         assert app.model is model
 
-    def test_base_url(_, app_skip_wf1, base_url):
-        app = app_skip_wf1
+    def test_base_url(_, app_wf_skip1, base_url):
+        app = app_wf_skip1
 
         opt = app.base_url
         print(opt)
         assert isinstance(opt, str)
         assert opt == base_url
 
-    def test_key(_, app_skip_wf1):
-        app = app_skip_wf1
+    def test_key(_, app_wf_skip1, auth_key_wf1):
+        app = app_wf_skip1
         opt = app.key
 
         print(opt)
         assert isinstance(opt, str)
-        assert opt == "068937402cc741689986cc5b6ed433a"
+        assert opt == auth_key_wf1
 
-    def test_disallows(_, app_skip_wf1):
-        app = app_skip_wf1
+    def test_disallows(_, app_wf_skip1):
+        app = app_wf_skip1
         opt = app.disallows_streaming
 
         print(opt)
         assert isinstance(opt, bool)
         assert not opt
 
-    def test_msg(_, app_skip_wf1):
-        app = app_skip_wf1
+    def test_msg(_, app_wf_skip1):
+        app = app_wf_skip1
         opt = app.current_user_msg_content
 
         print(opt)
         assert isinstance(opt, str)
         assert opt == ""
 
-    def test_enables(_, app_skip_wf1):
-        app = app_skip_wf1
+    def test_enables(_, app_wf_skip1):
+        app = app_wf_skip1
         opt = app.current_enable_stream
 
         print(opt)
@@ -70,21 +70,21 @@ class TestLocalWf1:  # =========================================================
 
         assert app.model is model
 
-    def test_base_url(_, app_wf_alt_url, base_url_alt):
+    def test_base_url(_, app_wf_alt_url, base_url2):
         app = app_wf_alt_url
 
         opt = app.base_url
         print(opt)
         assert isinstance(opt, str)
-        assert opt == base_url_alt
+        assert opt == base_url2
 
-    def test_key(_, app_wf_alt_url):
+    def test_key(_, app_wf_alt_url, auth_key_wf1):
         app = app_wf_alt_url
         opt = app.key
 
         print(opt)
         assert isinstance(opt, str)
-        assert opt == "068937402cc741689986cc5b6ed433a"
+        assert opt == auth_key_wf1
 
     def test_disallows(_, app_wf_alt_url):
         app = app_wf_alt_url
@@ -113,45 +113,45 @@ class TestLocalWf1:  # =========================================================
 
 class TestCf1:  # ==============================================================
 
-    def test_model(_, app_skip_cf1, model_skip_cf1):
-        app = app_skip_cf1
-        model = model_skip_cf1
+    def test_model(_, app_cf_skip1, model_cf_skip1):
+        app = app_cf_skip1
+        model = model_cf_skip1
         assert app.model is model
 
-    def test_base_url(_, app_skip_cf1, base_url):
-        app = app_skip_cf1
+    def test_base_url(_, app_cf_skip1, base_url):
+        app = app_cf_skip1
 
         opt = app.base_url
         print(opt)
         assert isinstance(opt, str)
         assert opt == base_url
 
-    def test_key(_, app_skip_cf1):
-        app = app_skip_cf1
+    def test_key(_, app_cf_skip1, auth_key_cf1):
+        app = app_cf_skip1
         opt = app.key
 
         print(opt)
         assert isinstance(opt, str)
-        assert opt == "f2277b0e16154cba981c866bdc124386"
+        assert opt == auth_key_cf1
 
-    def test_disallows(_, app_skip_cf1):
-        app = app_skip_cf1
+    def test_disallows(_, app_cf_skip1):
+        app = app_cf_skip1
         opt = app.disallows_streaming
 
         print(opt)
         assert isinstance(opt, bool)
         assert not opt
 
-    def test_msg(_, app_skip_cf1):
-        app = app_skip_cf1
+    def test_msg(_, app_cf_skip1):
+        app = app_cf_skip1
         opt = app.current_user_msg_content
 
         print(opt)
         assert isinstance(opt, str)
         assert opt == ""
 
-    def test_enables(_, app_skip_cf1):
-        app = app_skip_cf1
+    def test_enables(_, app_cf_skip1):
+        app = app_cf_skip1
         opt = app.current_enable_stream
 
         print(opt)

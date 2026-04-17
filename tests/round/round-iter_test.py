@@ -13,14 +13,21 @@ from unittest.mock import patch
 from dify_open_webui_adapter import _StreamingConversationRound
 
 
-from tests.round import _convert_lines2list
+from tests import _convert_lines2list
 
 
 # tests  #######################################################################
 class TestWf:  # ===============================================================
 
-    def test_iter(_, testee_wf, mock_wf1):
-        app, patch_target, assert_args, assert_kwargs = testee_wf
+    def test_iter(
+        _,
+        app_wf_stream,
+        patch_target_post,
+        assertee_wf_stream,
+        mock_wf1,
+    ):
+        app = app_wf_stream
+        patch_target = patch_target_post
         mock_resp = mock_wf1
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
@@ -29,10 +36,15 @@ class TestWf:  # ===============================================================
             opt = iter(round)
             assert opt is round
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_wf_stream[0]), **(assertee_wf_stream[1])
+            )
 
-    def test1(_, testee_wf, mock_wf1):
-        app, patch_target, assert_args, assert_kwargs = testee_wf
+    def test1(
+        _, app_wf_stream, patch_target_post, assertee_wf_stream, mock_wf1
+    ):
+        app = app_wf_stream
+        patch_target = patch_target_post
         mock_resp = mock_wf1
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
@@ -46,10 +58,20 @@ class TestWf:  # ===============================================================
                 "THIRD RESPONSE MESSAGE",
             ]
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_wf_stream[0]), **(assertee_wf_stream[1])
+            )
 
-    def test1_ping(_, testee_wf, mock_wf1, stream_entries_wf1):
-        app, patch_target, assert_args, assert_kwargs = testee_wf
+    def test1_ping(
+        _,
+        app_wf_stream,
+        patch_target_post,
+        assertee_wf_stream,
+        mock_wf1,
+        stream_entries_wf1,
+    ):
+        app = app_wf_stream
+        patch_target = patch_target_post
         mock_resp = mock_wf1
 
         lines = _convert_lines2list(stream_entries_wf1)
@@ -67,10 +89,15 @@ class TestWf:  # ===============================================================
                 "THIRD RESPONSE MESSAGE",
             ]
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_wf_stream[0]), **(assertee_wf_stream[1])
+            )
 
-    def test2(_, testee_wf, mock_wf2):
-        app, patch_target, assert_args, assert_kwargs = testee_wf
+    def test2(
+        _, app_wf_stream, patch_target_post, assertee_wf_stream, mock_wf2
+    ):
+        app = app_wf_stream
+        patch_target = patch_target_post
         mock_resp = mock_wf2
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
@@ -80,10 +107,15 @@ class TestWf:  # ===============================================================
             print(opt)
             assert opt == ["FIRST RESPONSE MESSAGE"]
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_wf_stream[0]), **(assertee_wf_stream[1])
+            )
 
-    def test3(_, testee_wf, mock_wf3):
-        app, patch_target, assert_args, assert_kwargs = testee_wf
+    def test3(
+        _, app_wf_stream, patch_target_post, assertee_wf_stream, mock_wf3
+    ):
+        app = app_wf_stream
+        patch_target = patch_target_post
         mock_resp = mock_wf3
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
@@ -93,10 +125,15 @@ class TestWf:  # ===============================================================
             print(opt)
             assert opt == ["FIRST RESPONSE MESSAGE"]
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_wf_stream[0]), **(assertee_wf_stream[1])
+            )
 
-    def test4(_, testee_wf, mock_wf4):
-        app, patch_target, assert_args, assert_kwargs = testee_wf
+    def test4(
+        _, app_wf_stream, patch_target_post, assertee_wf_stream, mock_wf4
+    ):
+        app = app_wf_stream
+        patch_target = patch_target_post
         mock_resp = mock_wf4
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
@@ -164,13 +201,19 @@ class TestWf:  # ===============================================================
                 ".",
             ]
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_wf_stream[0]), **(assertee_wf_stream[1])
+            )
 
 
 class TestCf:  # ===============================================================
 
-    def test_iter(_, testee_cf, mock_cf1):
-        app, patch_target, assert_args, assert_kwargs = testee_cf
+    def test_iter(
+        _, app_cf_stream, patch_target_post, assertee_cf_stream, mock_cf1
+    ):
+        app = app_cf_stream
+        patch_target = patch_target_post
+
         mock_resp = mock_cf1
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
@@ -179,10 +222,15 @@ class TestCf:  # ===============================================================
             opt = iter(round)
             assert opt is round
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_cf_stream[0]), **(assertee_cf_stream[1])
+            )
 
-    def test1(_, testee_cf, mock_cf1):
-        app, patch_target, assert_args, assert_kwargs = testee_cf
+    def test1(
+        _, app_cf_stream, patch_target_post, assertee_cf_stream, mock_cf1
+    ):
+        app = app_cf_stream
+        patch_target = patch_target_post
         mock_resp = mock_cf1
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
@@ -196,10 +244,20 @@ class TestCf:  # ===============================================================
                 "THIRD RESPONSE MESSAGE",
             ]
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_cf_stream[0]), **(assertee_cf_stream[1])
+            )
 
-    def test1_ping(_, testee_cf, mock_cf1, stream_entries_cf1):
-        app, patch_target, assert_args, assert_kwargs = testee_cf
+    def test1_ping(
+        _,
+        app_cf_stream,
+        patch_target_post,
+        assertee_cf_stream,
+        mock_cf1,
+        stream_entries_cf1,
+    ):
+        app = app_cf_stream
+        patch_target = patch_target_post
         mock_resp = mock_cf1
 
         lines = _convert_lines2list(stream_entries_cf1)
@@ -217,10 +275,15 @@ class TestCf:  # ===============================================================
                 "THIRD RESPONSE MESSAGE",
             ]
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_cf_stream[0]), **(assertee_cf_stream[1])
+            )
 
-    def test2(_, testee_cf, mock_cf2):
-        app, patch_target, assert_args, assert_kwargs = testee_cf
+    def test2(
+        _, app_cf_stream, patch_target_post, assertee_cf_stream, mock_cf2
+    ):
+        app = app_cf_stream
+        patch_target = patch_target_post
         mock_resp = mock_cf2
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
@@ -255,10 +318,15 @@ class TestCf:  # ===============================================================
                 "",
             ]
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_cf_stream[0]), **(assertee_cf_stream[1])
+            )
 
-    def test3(_, testee_cf, mock_cf3):
-        app, patch_target, assert_args, assert_kwargs = testee_cf
+    def test3(
+        _, app_cf_stream, patch_target_post, assertee_cf_stream, mock_cf3
+    ):
+        app = app_cf_stream
+        patch_target = patch_target_post
         mock_resp = mock_cf3
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
@@ -294,4 +362,6 @@ class TestCf:  # ===============================================================
                 " node",
             ]
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+            mock_post.assert_called_once_with(
+                *(assertee_cf_stream[0]), **(assertee_cf_stream[1])
+            )

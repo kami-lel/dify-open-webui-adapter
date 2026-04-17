@@ -14,14 +14,12 @@ import pytest
 # pytest  ######################################################################
 class TestBlock:
 
-    def test_no_stream(_, app_skip_cf1, patch_reply_no_stream):
-        app = app_skip_cf1
+    def test_no_stream(_, app_cf_skip1, testee_block):
+        app = app_cf_skip1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = False
 
-        patch_target, mock_resp, assert_args, assert_kwargs = (
-            patch_reply_no_stream
-        )
+        patch_target, mock_resp, assert_args, assert_kwargs = testee_block
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             opt = app._reply_blocking()
@@ -33,8 +31,8 @@ class TestBlock:
 
     # err handling  ============================================================
 
-    def test_no_conversation_id(_, app_skip_cf1, patch_target_post):
-        app = app_skip_cf1
+    def test_no_conversation_id(_, app_cf_skip1, patch_target_post):
+        app = app_cf_skip1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = False
 
@@ -55,8 +53,8 @@ class TestBlock:
             print(opt)
             assert opt == "miss key in Dify response: conversation_id"
 
-    def test_answer(_, app_skip_cf1, patch_target_post):
-        app = app_skip_cf1
+    def test_answer(_, app_cf_skip1, patch_target_post):
+        app = app_cf_skip1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = False
 

@@ -9,8 +9,8 @@ WorkflowApp._create_reply_payload()
 
 class Test1:  # ================================================================
 
-    def test_no_stream(_, app_skip_wf1):
-        app = app_skip_wf1
+    def test_no_stream(_, app_wf_skip1):
+        app = app_wf_skip1
         app.current_user_msg_content = "USER MESSAGE"
         app.current_enable_stream = False
 
@@ -23,8 +23,8 @@ class Test1:  # ================================================================
             '"response_mode": "blocking", "user": "user"}'
         )
 
-    def test_stream(_, app_skip_wf1):
-        app = app_skip_wf1
+    def test_stream(_, app_wf_skip1):
+        app = app_wf_skip1
         app.current_user_msg_content = "USER MESSAGE"
         app.current_enable_stream = True
 

@@ -146,6 +146,7 @@ class OWUModel:
         # set self.name
         self.name = provided_name or response_name or self.model_id
 
+        # Fixme use a create() static/classmethod
         # create app
         if self.app_type == DifyAppType.WORKFLOW:
             self.app = WorkflowApp(self, base_url, app_model_config)
@@ -682,8 +683,10 @@ class _StreamingConversationRound:
         return text
 
 
-# Pipe class required by OWU  ##################################################
-class Pipe:  # pylint: disable=missing-class-docstring
+# Pipe class required by OWU
+class Pipe:  ###################################################################
+
+    # pylint: disable=missing-class-docstring
 
     class Valves(BaseModel):
         pass  # configuration via Python constants

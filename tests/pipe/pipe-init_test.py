@@ -83,8 +83,8 @@ class TestErr:
 
         assert msg == "APP_MODEL_CONFIGS must contain at least one App/Model"
 
-    def test_bad_type1(_, configs1, base_url):
-        ipt = configs1.copy()
+    def test_bad_type1(_, configs_mux, base_url):
+        ipt = configs_mux.copy()
         ipt.append(123)
 
         with pytest.raises(ValueError) as exec_info:
@@ -99,8 +99,8 @@ class TestErr:
 
         assert msg == "APP_MODEL_CONFIGS must contains only dicts: (123,)"
 
-    def test_bad_type2(_, configs1, base_url):
-        ipt = configs1.copy()
+    def test_bad_type2(_, configs_mux, base_url):
+        ipt = configs_mux.copy()
         ipt.append([1, 2, 3])
         ipt.append("abc")
 

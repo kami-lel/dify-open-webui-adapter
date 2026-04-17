@@ -42,24 +42,24 @@ def app_local2(model_local2):
 
 class Test1:  # ================================================================
 
-    def test_query(_, app_skip_wf1):
-        app = app_skip_wf1
+    def test_query(_, app_wf_skip1):
+        app = app_wf_skip1
         opt = app.query_identifier
 
         print(opt)
         assert isinstance(opt, str)
         assert opt == "query"
 
-    def test_repply(_, app_skip_wf1):
-        app = app_skip_wf1
+    def test_repply(_, app_wf_skip1):
+        app = app_wf_skip1
         opt = app.reply_identifier
 
         print(opt)
         assert isinstance(opt, str)
         assert opt == "answer"
 
-    def test_fields(_, app_skip_wf1):
-        app = app_skip_wf1
+    def test_fields(_, app_wf_skip1):
+        app = app_wf_skip1
         opt = app.input_fields
 
         print(opt)

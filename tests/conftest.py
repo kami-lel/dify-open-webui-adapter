@@ -4,6 +4,17 @@ from unittest.mock import Mock
 
 import pytest
 
+from tests import (
+    _convert_entries2iter,
+    STREAM_ENTRIES_WF1,
+    STREAM_ENTRIES_WF2,
+    STREAM_ENTRIES_WF3,
+    STREAM_ENTRIES_WF4,
+    STREAM_ENTRIES_CF1,
+    STREAM_ENTRIES_CF2,
+    STREAM_ENTRIES_CF3,
+)
+
 # set up  ######################################################################
 # to allows importing from dify_open_webui_adapter.py
 project_root_path = str(Path(__file__).resolve().parents[1])
@@ -15,45 +26,69 @@ from dify_open_webui_adapter import OWUModel, DifyAppType
 # pytest fixtures  #############################################################
 
 
-# urls  ------------------------------------------------------------------------
+# base urls  -------------------------------------------------------------------
 @pytest.fixture(scope="session")
 def base_url():
     return "https://api.dify.ai/v1"
 
 
 @pytest.fixture(scope="session")
-def base_url_alt():
+def base_url2():
     return "https://55.44.33.22/v1"
 
 
+# endpoints  -------------------------------------------------------------------
 @pytest.fixture
-def info_endpoint():
-    return "https://api.dify.ai/v1/info"
+def endpoint_info(base_url):
+    return base_url + "/info"
 
 
 @pytest.fixture
-def wf_endpoint(base_url):
+def endpoint_wf(base_url):
     return base_url + "/workflows/run"
 
 
 @pytest.fixture
-def cf_endpoint(base_url):
+def endpoint_cf(base_url):
     return base_url + "/chat-messages"
 
 
-# configs  =====================================================================
+# configurations  ==============================================================
+
+
 @pytest.fixture(scope="session")
-def config_wf1():
+def auth_key_wf1():
+    return "068937402cc741689986cc5b6ed433a"
+
+
+@pytest.fixture(scope="session")
+def auth_key_cf1():
+    return "f2277b0e16154cba981c866bdc124386"
+
+
+@pytest.fixture(scope="session")
+def authorization_wf1(auth_key_wf1):
+    return "Bearer " + auth_key_wf1
+
+
+@pytest.fixture(scope="session")
+def authorization_cf1(auth_key_cf1):
+    return "Bearer " + auth_key_cf1
+
+
+# config  ----------------------------------------------------------------------
+@pytest.fixture(scope="session")
+def config_wf1(auth_key_wf1):
     return {
-        "key": "068937402cc741689986cc5b6ed433a",
+        "key": auth_key_wf1,
         "model_id": "example-workflow-model",
     }
 
 
 @pytest.fixture(scope="session")
-def config_cf1():
+def config_cf1(auth_key_cf1):
     return {
-        "key": "f2277b0e16154cba981c866bdc124386",
+        "key": auth_key_cf1,
         "model_id": "example-chatflow-model",
     }
 
@@ -68,19 +103,20 @@ def config_cf2():
     }
 
 
+# configs  ---------------------------------------------------------------------
 @pytest.fixture(scope="session")
-def configs0(config_cf1):
+def configs_single(config_cf1):
     return [config_cf1]
 
 
 @pytest.fixture(scope="session")
-def configs1(config_wf1, config_cf1, config_cf2):
+def configs_mux(config_wf1, config_cf1, config_cf2):
     return [config_wf1, config_cf1, config_cf2]
 
 
 # model  =======================================================================
 @pytest.fixture()
-def model_skip_wf1(base_url, config_wf1):
+def model_wf_skip1(base_url, config_wf1):
     return OWUModel(
         base_url,
         config_wf1,
@@ -90,7 +126,7 @@ def model_skip_wf1(base_url, config_wf1):
 
 
 @pytest.fixture()
-def model_skip_cf1(base_url, config_cf1):
+def model_cf_skip1(base_url, config_cf1):
     return OWUModel(
         base_url,
         config_cf1,
@@ -100,7 +136,7 @@ def model_skip_cf1(base_url, config_cf1):
 
 
 @pytest.fixture()
-def model_skip_cf2(base_url, config_cf2):
+def model_cf_skip2(base_url, config_cf2):
     return OWUModel(
         base_url,
         config_cf2,
@@ -111,21 +147,25 @@ def model_skip_cf2(base_url, config_cf2):
 
 # app  =========================================================================
 @pytest.fixture()
-def app_skip_wf1(model_skip_wf1):
-    return model_skip_wf1.app
+def app_wf_skip1(model_wf_skip1):
+    return model_wf_skip1.app
 
 
 @pytest.fixture()
-def app_skip_cf1(model_skip_cf1):
-    return model_skip_cf1.app
+def app_cf_skip1(model_cf_skip1):
+    return model_cf_skip1.app
 
 
 @pytest.fixture()
-def app_skip_cf2(model_skip_cf2):
-    return model_skip_cf2.app
+def app_cf_skip2(model_cf_skip2):
+    return model_cf_skip2.app
 
 
 # mocks  =======================================================================
+
+# patch targets  ---------------------------------------------------------------
+
+
 @pytest.fixture
 def patch_target_get():
     return "dify_open_webui_adapter.requests.get"
@@ -136,45 +176,150 @@ def patch_target_post():
     return "dify_open_webui_adapter.requests.post"
 
 
+# mock  ------------------------------------------------------------------------
 @pytest.fixture
-def patch_and_result_wf1():
+def mock_base():
+    mock_resp = Mock()
+    mock_resp.status_code = 201
+    return mock_resp
+
+
+# info tests  ==================================================================
+
+
+@pytest.fixture
+def mock_info_wf():
     mock_resp = Mock()
     mock_resp.json.return_value = {
         "mode": "workflow",
         "name": "My Workflow App",
     }
-
-    assert_kwargs = {
-        "headers": {
-            "Authorization": "Bearer 068937402cc741689986cc5b6ed433a",
-            "Content-Type": "application/json",
-        },
-        "timeout": 30,
-    }
-
-    return mock_resp, assert_kwargs
+    return mock_resp
 
 
 @pytest.fixture
-def patch_and_result_cf1():
+def mock_info_cf():
     mock_resp = Mock()
     mock_resp.json.return_value = {
         "mode": "advanced-chat",
         "name": "My Chatflow App",
     }
+    return mock_resp
 
-    assert_kwargs = {
+
+@pytest.fixture
+def assertee_info_wf(endpoint_info, authorization_wf1):
+    args = [endpoint_info]
+    kwargs = {
         "headers": {
-            "Authorization": "Bearer f2277b0e16154cba981c866bdc124386",
+            "Authorization": authorization_wf1,
             "Content-Type": "application/json",
         },
         "timeout": 30,
     }
+    return args, kwargs
 
-    return mock_resp, assert_kwargs
+
+@pytest.fixture
+def assertee_info_cf(endpoint_info, authorization_cf1):
+    args = [endpoint_info]
+    kwargs = {
+        "headers": {
+            "Authorization": authorization_cf1,
+            "Content-Type": "application/json",
+        },
+        "timeout": 30,
+    }
+    return args, kwargs
+
+
+# streaming  ===================================================================
+
+
+# stream entries  --------------------------------------------------------------
+@pytest.fixture
+def stream_entries_wf1():
+    return STREAM_ENTRIES_WF1
+
+
+@pytest.fixture
+def stream_entries_cf1():
+    return STREAM_ENTRIES_CF1
+
+
+# wf mocks  --------------------------------------------------------------------
+
+
+@pytest.fixture
+def mock_wf1(mock_base, stream_entries_wf1):
+    mock_resp = mock_base
+    mock_resp.iter_lines.return_value = _convert_entries2iter(
+        stream_entries_wf1
+    )
+    return mock_resp
+
+
+@pytest.fixture
+def mock_wf2(mock_base):
+    mock_resp = mock_base
+    mock_resp.iter_lines.return_value = _convert_entries2iter(
+        STREAM_ENTRIES_WF2
+    )
+
+    return mock_resp
+
+
+@pytest.fixture
+def mock_wf3(mock_base):
+    mock_resp = mock_base
+    mock_resp.iter_lines.return_value = _convert_entries2iter(
+        STREAM_ENTRIES_WF3
+    )
+    return mock_resp
+
+
+@pytest.fixture
+def mock_wf4(mock_base):
+    mock_resp = mock_base
+    mock_resp.iter_lines.return_value = _convert_entries2iter(
+        STREAM_ENTRIES_WF4
+    )
+    return mock_resp
+
+
+# cf mocks  --------------------------------------------------------------------
+
+
+@pytest.fixture
+def mock_cf1(mock_base, stream_entries_cf1):
+    mock_resp = mock_base
+    mock_resp.iter_lines.return_value = _convert_entries2iter(
+        stream_entries_cf1
+    )
+    return mock_resp
+
+
+@pytest.fixture
+def mock_cf2(mock_base):
+    mock_resp = mock_base
+    mock_resp.iter_lines.return_value = _convert_entries2iter(
+        STREAM_ENTRIES_CF2
+    )
+    return mock_resp
+
+
+@pytest.fixture
+def mock_cf3(mock_base):
+    mock_resp = mock_base
+    mock_resp.iter_lines.return_value = _convert_entries2iter(
+        STREAM_ENTRIES_CF3
+    )
+    return mock_resp
 
 
 # .pipe() args  ================================================================
+
+# HACK pipe fixtures
 
 
 @pytest.fixture
@@ -184,30 +329,6 @@ def pipe_body1():
         "model": "dify_open_webui_adapter.example-chatflow-model",
         "messages": [{"role": "user", "content": "FIRST USER MESSAGE"}],
     }
-
-
-@pytest.fixture
-def pipe_body2():
-    return {
-        "stream": False,
-        "model": "dify_open_webui_adapter.example-chatflow-model",
-        "messages": [
-            {"role": "user", "content": "FIRST USER MESSAGE"},
-            {"role": "assistant", "content": "FIRST BOT REPLY"},
-            {"role": "user", "content": "SECOND USER MESSAGE"},
-            {"role": "assistant", "content": "SECOND BOT REPLY"},
-            {"role": "user", "content": "THIRD USER MESSAGE"},
-        ],
-    }
-
-
-@pytest.fixture
-def pipe_args_no_stream1(pipe_body1):
-    body = pipe_body1
-    user = {}
-    metadata = {}
-
-    return body, user, metadata
 
 
 @pytest.fixture

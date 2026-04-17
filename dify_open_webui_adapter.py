@@ -241,7 +241,7 @@ class BaseDifyApp:
 
     @staticmethod
     def create():
-        pass  # TODO TODO
+        pass  # Todo
 
     @staticmethod
     def get_app_type_and_name(base_url, key):

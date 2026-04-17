@@ -22,6 +22,12 @@ DIFY_BACKEND_API_BASE_URL = "https://api.dify.ai/v1"
 
 APP_MODEL_CONFIGS = []
 
+
+# debug flags  =================================================================
+DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
+DEBUG_PIPE_DIRECT_RESPONSE = False
+
+
 # end of config  ###############################################################
 
 # pylint: disable=wrong-import-position
@@ -49,10 +55,6 @@ DEFINED_APP_MODEL_CONFIG_KEYS = (
 DIFY_USER_ROLE = "user"  # Todo read user role from metadata
 DEFAULT_QUERY_INPUT_FIELD_IDENTIFIER = "query"
 DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER = "answer"
-
-# debug flags  *****************************************************************
-DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
-DEBUG_PIPE_DIRECT_RESPONSE = False
 
 
 # helper Enum  =================================================================
@@ -146,7 +148,6 @@ class OWUModel:
         # set self.name
         self.name = provided_name or response_name or self.model_id
 
-        # FIXME use a create() static/classmethod
         # create app
         if self.app_type == DifyAppType.WORKFLOW:
             self.app = WorkflowApp(self, base_url, app_model_config)

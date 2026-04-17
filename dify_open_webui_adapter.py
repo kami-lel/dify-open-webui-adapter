@@ -239,6 +239,10 @@ class BaseDifyApp:
     # public methods  ==========================================================
 
     @staticmethod
+    def create():
+        pass  # TODO TODO
+
+    @staticmethod
     def get_app_type_and_name(base_url, key):
         """
         get Dify App's Type & Name, by GET /info of Dify Backend API

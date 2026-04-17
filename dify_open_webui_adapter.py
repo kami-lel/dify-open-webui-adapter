@@ -28,6 +28,7 @@ DEBUG_PIPE_DIRECT_RESPONSE = False
 
 # pylint: disable=wrong-import-position
 
+from pydantic import BaseModel
 
 # Dify side  ###################################################################
 # Dify constants  ==============================================================
@@ -58,5 +59,18 @@ class OWUModel:  # =============================================================
 
 
 class Pipe:  # =================================================================
+    """
+    Pipe class required by OWU Pipe Function
+    """
 
-    pass
+    class Valves(BaseModel):  # pylint: disable=missing-class-docstring
+        pass  # configuration via Python constants
+
+    def __init__(self):
+        pass
+
+    def pipes(self):
+        pass
+
+    async def pipe(self, body, __user__, __metadata__):
+        pass

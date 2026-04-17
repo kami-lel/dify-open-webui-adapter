@@ -665,13 +665,7 @@ class _StreamingConversationRound:
         return text
 
 
-# Pipe class required by OWU
 class Pipe:  ###################################################################
-
-    # pylint: disable=missing-class-docstring
-
-    class Valves(BaseModel):
-        pass  # configuration via Python constants
 
     def __init__(
         self,

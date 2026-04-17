@@ -146,7 +146,7 @@ class OWUModel:
         # set self.name
         self.name = provided_name or response_name or self.model_id
 
-        # Fixme use a create() static/classmethod
+        # FIXME use a create() static/classmethod
         # create app
         if self.app_type == DifyAppType.WORKFLOW:
             self.app = WorkflowApp(self, base_url, app_model_config)

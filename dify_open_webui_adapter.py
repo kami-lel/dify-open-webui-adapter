@@ -28,6 +28,9 @@ DEBUG_PIPE_DIRECT_RESPONSE = False
 
 # pylint: disable=wrong-import-position
 
+
+from dataclasses import dataclass
+
 from pydantic import BaseModel
 
 # Dify side  ###################################################################
@@ -73,4 +76,24 @@ class Pipe:  # =================================================================
         pass
 
     async def pipe(self, body, __user__, __metadata__):
+        pass
+
+
+# helpers  =====================================================================
+
+
+@dataclass
+class OWURequest:
+    """
+    a wrapper class containing all infos of a single OWU Pipe Function request,
+    i.e. a single call from Pipe.pipe()
+    """
+
+    # fields  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    body: dict
+    user: dict
+    metadata: dict
+
+    def __post_init__(self):
         pass

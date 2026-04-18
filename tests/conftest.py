@@ -26,6 +26,9 @@ from dify_open_webui_adapter import OWUModel, DifyAppType
 # pytest fixtures  #############################################################
 
 
+# Hack rm below  ###############################################################
+
+
 # base urls  -------------------------------------------------------------------
 @pytest.fixture(scope="session")
 def base_url():

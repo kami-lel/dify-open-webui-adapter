@@ -60,8 +60,6 @@ class BaseDifyApp:  # ==========================================================
     def create_app():
         pass
 
-    pass
-
 
 class WorkflowApp(BaseDifyApp):  # =============================================
 

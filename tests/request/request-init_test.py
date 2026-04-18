@@ -14,8 +14,8 @@ from dify_open_webui_adapter import OWURequest
 
 
 @pytest.fixture(scope="class")
-def request1(request_args1):
-    args = request_args1
+def request1(pipe_args1):
+    args = pipe_args1
     return OWURequest(*args)
 
 

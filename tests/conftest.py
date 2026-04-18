@@ -28,7 +28,11 @@ from dify_open_webui_adapter import OWUModel, DifyAppType
 
 @pytest.fixture()
 def request_args1():
-    return {}  # TODO
+    # Todo
+    body = {}
+    user = {}
+    metadata = {}
+    return body, user, metadata
 
 
 # Hack rm below  ###############################################################

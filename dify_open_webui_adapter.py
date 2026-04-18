@@ -117,4 +117,3 @@ class Pipe:  # =================================================================
 
     async def pipe(self, body, __user__, __metadata__):
         owu_request = OWURequest(body, __user__, __metadata__)
-        pass

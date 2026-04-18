@@ -26,8 +26,17 @@ from dify_open_webui_adapter import OWUModel, DifyAppType
 # pytest fixtures  #############################################################
 
 
-@pytest.fixture()
+@pytest.fixture(scope="class")
 def request_args1():
+    # Todo
+    body = {}
+    user = {}
+    metadata = {}
+    return body, user, metadata
+
+
+@pytest.fixture()
+def request_args2():
     # Todo
     body = {}
     user = {}

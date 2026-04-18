@@ -50,9 +50,23 @@ class AppModelConfig(BaseModel):  # ============================================
 
     @staticmethod
     def validate_app_model_configs(app_model_configs):
-        pass
+        """
+        validate basic structure of ``APP_MODEL_CONFIGS``
+        """
+        if len(app_model_configs) == 0:
+            raise ValueError(
+                "APP_MODEL_CONFIGS must contain at least one App/Model"
+            )
 
-    pass  # TODO
+        bads = tuple(
+            config
+            for config in app_model_configs
+            if not isinstance(config, dict)
+        )
+        if bads:
+            raise ValueError(
+                "APP_MODEL_CONFIGS must contains only dicts: {}".format(bads)
+            )
 
 
 @dataclass

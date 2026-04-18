@@ -723,19 +723,6 @@ class Pipe:  ###################################################################
 
 
 # helper methods  ==============================================================
-def _check_app_model_configs_structure(app_model_configs):
-    if len(app_model_configs) == 0:
-        raise ValueError(
-            "APP_MODEL_CONFIGS must contain at least one App/Model"
-        )
-
-    bads = tuple(
-        config for config in app_model_configs if not isinstance(config, dict)
-    )
-    if bads:
-        raise ValueError(
-            "APP_MODEL_CONFIGS must contains only dicts: {}".format(bads)
-        )
 
 
 def _generate_pipe_direct_response(body, user, metadata):

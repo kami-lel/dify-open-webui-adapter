@@ -34,6 +34,36 @@ from dataclasses import dataclass
 
 from pydantic import BaseModel
 
+
+# helpers  #####################################################################
+class AppModelConfig:  # =======================================================
+    """
+    data structure to contain & validate configuration related to
+    a single connection between Dify App and OWU Model
+
+    i.e. a single entry in ``APP_MODEL_CONFIGS``
+    """
+
+    pass  # TODO
+
+
+@dataclass
+class PipeRequest:  # ==========================================================
+    """
+    a wrapper class containing all infos of a single OWU Pipe Function request,
+    i.e. a single call from Pipe.pipe()
+    """
+
+    # fields  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    body: dict
+    user: dict
+    metadata: dict
+
+    def __post_init__(self):
+        pass  # Todo various data validation
+
+
 # Dify side  ###################################################################
 # Dify constants  ==============================================================
 
@@ -74,25 +104,6 @@ class ChatflowApp(BaseDifyApp):  # =============================================
 # OWU side  ####################################################################
 # OWU constants  ===============================================================
 
-# OWU helpers  =================================================================
-
-
-@dataclass
-class OWURequest:
-    """
-    a wrapper class containing all infos of a single OWU Pipe Function request,
-    i.e. a single call from Pipe.pipe()
-    """
-
-    # fields  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    body: dict
-    user: dict
-    metadata: dict
-
-    def __post_init__(self):
-        pass  # Todo various data validation
-
 
 class OWUModel:  # =============================================================
 
@@ -114,4 +125,4 @@ class Pipe:  # =================================================================
         pass
 
     async def pipe(self, body, __user__, __metadata__):
-        owu_request = OWURequest(body, __user__, __metadata__)
+        owu_request = PipeRequest(body, __user__, __metadata__)

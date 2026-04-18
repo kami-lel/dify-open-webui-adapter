@@ -91,7 +91,7 @@ class OWURequest:
     metadata: dict
 
     def __post_init__(self):
-        pass  # Todo round data validation
+        pass  # Todo various data validation
 
 
 class OWUModel:  # =============================================================

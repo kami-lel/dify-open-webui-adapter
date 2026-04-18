@@ -36,7 +36,7 @@ from pydantic import BaseModel
 
 
 # helpers  #####################################################################
-class AppModelConfig:  # =======================================================
+class AppModelConfig(BaseModel):  # ============================================
     """
     data structure to contain & validate configuration related to
     a single connection between Dify App and OWU Model

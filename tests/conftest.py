@@ -26,6 +26,11 @@ from dify_open_webui_adapter import OWUModel, DifyAppType
 # pytest fixtures  #############################################################
 
 
+@pytest.fixture()
+def request_args1():
+    return {}  # TODO
+
+
 # Hack rm below  ###############################################################
 
 

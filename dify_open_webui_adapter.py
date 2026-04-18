@@ -44,6 +44,14 @@ class AppModelConfig(BaseModel):  # ============================================
     i.e. a single entry in ``APP_MODEL_CONFIGS``
     """
 
+    # fields  ******************************************************************
+
+    # Public Methods ***********************************************************
+
+    @staticmethod
+    def validate_app_model_configs(app_model_configs):
+        pass
+
     pass  # TODO
 
 

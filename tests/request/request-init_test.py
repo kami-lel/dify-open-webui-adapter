@@ -8,7 +8,7 @@ OWURequest.__init__()
 
 import pytest
 
-from dify_open_webui_adapter import PipeArg
+from dify_open_webui_adapter import PipeRequest
 
 # Pytest fixtures  #############################################################
 
@@ -16,7 +16,7 @@ from dify_open_webui_adapter import PipeArg
 @pytest.fixture(scope="class")
 def request1(pipe_args1):
     args = pipe_args1
-    return PipeArg(*args)
+    return PipeRequest(*args)
 
 
 # Pytest unit tests  ###########################################################

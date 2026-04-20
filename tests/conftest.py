@@ -35,13 +35,46 @@ def pipe_args1():
     return body, user, metadata
 
 
-@pytest.fixture()
-def request_args2():
-    # Todo
-    body = {}
-    user = {}
-    metadata = {}
-    return body, user, metadata
+# app/model configuration  =====================================================
+
+
+@pytest.fixture(scope="session")
+def config_wf1(auth_key_wf1):
+    return {
+        "key": auth_key_wf1,
+        "model_id": "example-workflow-model",
+    }
+
+
+@pytest.fixture(scope="session")
+def config_cf1(auth_key_cf1):
+    return {
+        "key": auth_key_cf1,
+        "model_id": "example-chatflow-model",
+    }
+
+
+@pytest.fixture(scope="session")
+def config_cf2():
+    return {
+        "key": "820ab10b649b4c748513cb8e7a628063",
+        "model_id": "example-chatflow-model-2",
+        "name": "Aux Example Chatflow Model/App",
+        "disallows_streaming": True,
+    }
+
+
+# config list  -----------------------------------------------------------------
+
+
+@pytest.fixture(scope="session")
+def configs_single(config_cf1):
+    return [config_cf1]
+
+
+@pytest.fixture(scope="session")
+def configs_mux(config_wf1, config_cf1, config_cf2):
+    return [config_wf1, config_cf1, config_cf2]
 
 
 # Hack rm below  ###############################################################
@@ -95,44 +128,6 @@ def authorization_wf1(auth_key_wf1):
 @pytest.fixture(scope="session")
 def authorization_cf1(auth_key_cf1):
     return "Bearer " + auth_key_cf1
-
-
-# config  ----------------------------------------------------------------------
-@pytest.fixture(scope="session")
-def config_wf1(auth_key_wf1):
-    return {
-        "key": auth_key_wf1,
-        "model_id": "example-workflow-model",
-    }
-
-
-@pytest.fixture(scope="session")
-def config_cf1(auth_key_cf1):
-    return {
-        "key": auth_key_cf1,
-        "model_id": "example-chatflow-model",
-    }
-
-
-@pytest.fixture(scope="session")
-def config_cf2():
-    return {
-        "key": "820ab10b649b4c748513cb8e7a628063",
-        "model_id": "example-chatflow-model-2",
-        "name": "Aux Example Chatflow Model/App",
-        "disallows_streaming": True,
-    }
-
-
-# configs  ---------------------------------------------------------------------
-@pytest.fixture(scope="session")
-def configs_single(config_cf1):
-    return [config_cf1]
-
-
-@pytest.fixture(scope="session")
-def configs_mux(config_wf1, config_cf1, config_cf2):
-    return [config_wf1, config_cf1, config_cf2]
 
 
 # model  =======================================================================

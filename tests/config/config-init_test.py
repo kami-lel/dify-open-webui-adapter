@@ -14,29 +14,21 @@ import pytest
 
 from dify_open_webui_adapter import AppModelConfig
 
-
-# Pytest fixtures  #############################################################
-@pytest.fixture(scope="class")
-def testee_wf1(config_wf1):
-    raw = config_wf1
-    return AppModelConfig(**raw)
-
-
 # Pytest unit tests  ###########################################################
 
 
 class TestWf1:  # ==============================================================
 
-    def test_key(_, testee_wf1):
-        opt = testee_wf1
+    def test_key(_, config_wf1):
+        opt = config_wf1
         print(opt)
         assert hasattr(opt, "key")
         value = opt.key
         assert isinstance(value, str)
         assert len(value) != 0
 
-    def test_model_id(_, testee_wf1):
-        opt = testee_wf1
+    def test_model_id(_, config_wf1):
+        opt = config_wf1
         print(opt)
 
         assert hasattr(opt, "model_id")
@@ -50,8 +42,8 @@ class TestWf1:  # ==============================================================
 
 class TestKey:  # ==============================================================
 
-    def test_miss(_, config_wf1):
-        raw = copy.copy(config_wf1)
+    def test_miss(_, config_raw_wf1):
+        raw = copy.copy(config_raw_wf1)
         del raw["key"]
 
         with pytest.raises(ValidationError) as exec_info:
@@ -63,8 +55,8 @@ class TestKey:  # ==============================================================
         assert opt[0]["loc"] == ("key",)
         assert opt[0]["msg"] == "Field required"
 
-    def test_type(_, config_wf1):
-        raw = copy.copy(config_wf1)
+    def test_type(_, config_raw_wf1):
+        raw = copy.copy(config_raw_wf1)
         raw["key"] = 123
 
         with pytest.raises(ValidationError) as exec_info:
@@ -76,8 +68,8 @@ class TestKey:  # ==============================================================
         assert opt[0]["loc"] == ("key",)
         assert opt[0]["msg"] == "Input should be a valid string"
 
-    def test_empty(_, config_wf1):
-        raw = copy.copy(config_wf1)
+    def test_empty(_, config_raw_wf1):
+        raw = copy.copy(config_raw_wf1)
         raw["key"] = ""
 
         with pytest.raises(ValidationError) as exec_info:
@@ -92,8 +84,8 @@ class TestKey:  # ==============================================================
 
 class TestId:  # ===============================================================
 
-    def test_miss(_, config_wf1):
-        raw = copy.copy(config_wf1)
+    def test_miss(_, config_raw_wf1):
+        raw = copy.copy(config_raw_wf1)
         del raw["model_id"]
 
         with pytest.raises(ValidationError) as exec_info:
@@ -105,8 +97,8 @@ class TestId:  # ===============================================================
         assert opt[0]["loc"] == ("model_id",)
         assert opt[0]["msg"] == "Field required"
 
-    def test_type(_, config_wf1):
-        raw = copy.copy(config_wf1)
+    def test_type(_, config_raw_wf1):
+        raw = copy.copy(config_raw_wf1)
         raw["model_id"] = 123
 
         with pytest.raises(ValidationError) as exec_info:
@@ -118,8 +110,8 @@ class TestId:  # ===============================================================
         assert opt[0]["loc"] == ("model_id",)
         assert opt[0]["msg"] == "Input should be a valid string"
 
-    def test_empty(_, config_wf1):
-        raw = copy.copy(config_wf1)
+    def test_empty(_, config_raw_wf1):
+        raw = copy.copy(config_raw_wf1)
         raw["model_id"] = ""
 
         with pytest.raises(ValidationError) as exec_info:

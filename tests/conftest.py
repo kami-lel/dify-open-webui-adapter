@@ -21,7 +21,7 @@ project_root_path = str(Path(__file__).resolve().parents[1])
 if project_root_path not in sys.path:
     sys.path.insert(0, project_root_path)
 
-from dify_open_webui_adapter import OWUModel, DifyAppType
+from dify_open_webui_adapter import OWUModel, DifyAppType, AppModelConfig
 
 # Hack remove test ignoring
 collect_ignore_glob = [
@@ -56,9 +56,11 @@ def pipe_args1():
 
 # app/model configuration  =====================================================
 
+# raw dicts  -------------------------------------------------------------------
+
 
 @pytest.fixture(scope="session")
-def config_wf1(auth_key_wf1):
+def config_raw_wf1(auth_key_wf1):
     return {
         "key": auth_key_wf1,
         "model_id": "example-workflow-model",
@@ -66,7 +68,7 @@ def config_wf1(auth_key_wf1):
 
 
 @pytest.fixture(scope="session")
-def config_cf1(auth_key_cf1):
+def config_raw_cf1(auth_key_cf1):
     return {
         "key": auth_key_cf1,
         "model_id": "example-chatflow-model",
@@ -74,7 +76,7 @@ def config_cf1(auth_key_cf1):
 
 
 @pytest.fixture(scope="session")
-def config_cf2():
+def config_raw_cf2():
     return {
         "key": "820ab10b649b4c748513cb8e7a628063",
         "model_id": "example-chatflow-model-2",
@@ -83,17 +85,38 @@ def config_cf2():
     }
 
 
+# config obj  ------------------------------------------------------------------
+
+
+@pytest.fixture(scope="session")
+def config_wf1(config_raw_wf1):
+    raw = config_raw_wf1
+    return AppModelConfig(**raw)
+
+
+@pytest.fixture(scope="session")
+def config_cf1(config_raw_cf1):
+    raw = config_raw_cf1
+    return AppModelConfig(**raw)
+
+
+@pytest.fixture(scope="session")
+def config_cf2(config_raw_cf2):
+    raw = config_raw_cf2
+    return AppModelConfig(**raw)
+
+
 # config list  -----------------------------------------------------------------
 
 
 @pytest.fixture(scope="session")
-def configs_single(config_cf1):
-    return [config_cf1]
+def configs_single(config_raw_cf1):
+    return [config_raw_cf1]
 
 
 @pytest.fixture(scope="session")
-def configs_mux(config_wf1, config_cf1, config_cf2):
-    return [config_wf1, config_cf1, config_cf2]
+def configs_mux(config_raw_wf1, config_raw_cf1, config_raw_cf2):
+    return [config_raw_wf1, config_raw_cf1, config_raw_cf2]
 
 
 # Hack rm below  ###############################################################
@@ -151,30 +174,30 @@ def authorization_cf1(auth_key_cf1):
 
 # model  =======================================================================
 @pytest.fixture()
-def model_wf_skip1(base_url, config_wf1):
+def model_wf_skip1(base_url, config_raw_wf1):
     return OWUModel(
         base_url,
-        config_wf1,
+        config_raw_wf1,
         skip_get_app_type_and_name=True,
         app_type_override=DifyAppType.WORKFLOW,
     )
 
 
 @pytest.fixture()
-def model_cf_skip1(base_url, config_cf1):
+def model_cf_skip1(base_url, config_raw_cf1):
     return OWUModel(
         base_url,
-        config_cf1,
+        config_raw_cf1,
         skip_get_app_type_and_name=True,
         app_type_override=DifyAppType.CHATFLOW,
     )
 
 
 @pytest.fixture()
-def model_cf_skip2(base_url, config_cf2):
+def model_cf_skip2(base_url, config_raw_cf2):
     return OWUModel(
         base_url,
-        config_cf2,
+        config_raw_cf2,
         skip_get_app_type_and_name=True,
         app_type_override=DifyAppType.CHATFLOW,
     )

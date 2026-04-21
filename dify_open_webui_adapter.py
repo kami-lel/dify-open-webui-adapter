@@ -104,6 +104,15 @@ class DifyAppType(Enum):
 
 
 class BaseDifyApp:  # ==========================================================
+    """
+    logic container representing an **App** in Dify,
+    handling Dify Backend API side's logic
+    (create payload satisfying Dify's syntax, etc.)
+
+
+    :param config:
+    :type config: AppModelConfig
+    """
 
     # Public Methods  **********************************************************
 
@@ -132,7 +141,15 @@ class ChatflowApp(BaseDifyApp):  # =============================================
 # OWU constants  ===============================================================
 
 
-class OWUModel:  # ===========================================================o 'Search Highlight OFF'=
+class OWUModel:  # =============================================================
+    """
+    logic & data container representing a single pipe **model** in Open WebUI,
+    handling OWU side's logic (parse `body`, etc.)
+
+
+    :param config:
+    :type config: AppModelConfig
+    """
 
     # constructor  *************************************************************
 

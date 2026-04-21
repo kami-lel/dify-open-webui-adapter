@@ -1,1 +1,605 @@
-[{"event": "workflow_started", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "workflow_run_id": "561d", "data": {"id": "561d", "workflow_id": "6d8e", "inputs": {"sys.files": [], "sys.user_id": "user", "sys.app_id": "bee4", "sys.workflow_id": "6d8e", "sys.workflow_run_id": "561d", "sys.query": "FIRST USER REQUEST", "sys.dialogue_count": 1}, "created_at": 1768046345}}, {"event": "node_started", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "workflow_run_id": "561d", "data": {"id": "5368", "node_id": "1768045547362", "node_type": "start", "title": "User Input", "index": 1, "predecessor_node_id": null, "inputs": null, "inputs_truncated": false, "created_at": 1768046345, "extras": {}, "iteration_id": null, "loop_id": null, "agent_strategy": null}}, {"event": "node_finished", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "workflow_run_id": "561d", "data": {"id": "5368", "node_id": "1768045547362", "node_type": "start", "title": "User Input", "index": 1, "predecessor_node_id": null, "inputs": {"sys.files": [], "sys.user_id": "user", "sys.app_id": "bee4", "sys.workflow_id": "6d8e", "sys.workflow_run_id": "561d", "sys.query": "Give Me A Short Introduction", "sys.conversation_id": "c0cf", "sys.dialogue_count": 1}, "inputs_truncated": false, "process_data": {}, "process_data_truncated": false, "outputs": {"sys.files": [], "sys.user_id": "user", "sys.app_id": "bee4", "sys.workflow_id": "6d8e", "sys.workflow_run_id": "561d", "sys.query": "Give Me A Short Introduction", "sys.conversation_id": "c0cf", "sys.dialogue_count": 1}, "outputs_truncated": false, "status": "succeeded", "error": null, "elapsed_time": 0.008951, "execution_metadata": null, "created_at": 1768046345, "finished_at": 1768046345, "files": [], "iteration_id": null, "loop_id": null}}, {"event": "node_started", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "workflow_run_id": "561d", "data": {"id": "8c24", "node_id": "llm", "node_type": "llm", "title": "LLM", "index": 1, "predecessor_node_id": null, "inputs": null, "inputs_truncated": false, "created_at": 1768046345, "extras": {}, "iteration_id": null, "loop_id": null, "agent_strategy": null}}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": "Hello", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": "!", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": " I'm", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": " here", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": " to", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": " assist", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": " you", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": " with", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": " any", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": " questions", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": " or", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": " tasks", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": " you", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": " have", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": ".", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": " Feel", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": " free", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": " to", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": " ask", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": " me", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": " anything", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": "!", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": "", "from_variable_selector": ["llm", "text"]}, {"event": "message", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "id": "ff06", "answer": "", "from_variable_selector": ["llm", "text"]}, {"event": "node_finished", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "workflow_run_id": "561d", "data": {"id": "8c24", "node_id": "llm", "node_type": "llm", "title": "LLM", "index": 1, "predecessor_node_id": null, "inputs": {}, "inputs_truncated": false, "process_data": {"model_mode": "chat", "prompts": [{"role": "user", "text": "Give Me A Short Introduction", "files": []}, {"role": "user", "text": "Give Me A Short Introduction\n\n", "files": []}], "usage": {"prompt_tokens": 26, "prompt_unit_price": "0.1", "prompt_price_unit": "0.000001", "prompt_price": "0.0000026", "completion_tokens": 22, "completion_unit_price": "0.4", "completion_price_unit": "0.000001", "completion_price": "0.0000088", "total_tokens": 48, "total_price": "0.0000114", "currency": "USD", "latency": 0.487, "time_to_first_token": 0.372, "time_to_generate": 0.115}, "finish_reason": "stop", "model_provider": "langgenius/openai/openai", "model_name": "gpt-4.1-nano"}, "process_data_truncated": false, "outputs": {"text": "Hello! I'm here to assist you with any questions or tasks you have. Feel free to ask me anything!", "reasoning_content": "", "usage": {"prompt_tokens": 26, "prompt_unit_price": "0.1", "prompt_price_unit": "0.000001", "prompt_price": "0.0000026", "completion_tokens": 22, "completion_unit_price": "0.4", "completion_price_unit": "0.000001", "completion_price": "0.0000088", "total_tokens": 48, "total_price": "0.0000114", "currency": "USD", "latency": 0.487, "time_to_first_token": 0.372, "time_to_generate": 0.115}, "finish_reason": "stop"}, "outputs_truncated": false, "status": "succeeded", "error": null, "elapsed_time": 0.632794, "execution_metadata": {"total_tokens": 48, "total_price": "0.0000114", "currency": "USD"}, "created_at": 1768046345, "finished_at": 1768046345, "files": [], "iteration_id": null, "loop_id": null}}, {"event": "node_started", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "workflow_run_id": "561d", "data": {"id": "19f7", "node_id": "answer", "node_type": "answer", "title": "Answer", "index": 1, "predecessor_node_id": null, "inputs": null, "inputs_truncated": false, "created_at": 1768046345, "extras": {}, "iteration_id": null, "loop_id": null, "agent_strategy": null}}, {"event": "node_finished", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "workflow_run_id": "561d", "data": {"id": "19f7", "node_id": "answer", "node_type": "answer", "title": "Answer", "index": 1, "predecessor_node_id": null, "inputs": {}, "inputs_truncated": false, "process_data": {}, "process_data_truncated": false, "outputs": {"answer": "Hello! I'm here to assist you with any questions or tasks you have. Feel free to ask me anything!", "files": []}, "outputs_truncated": false, "status": "succeeded", "error": null, "elapsed_time": 0.018595, "execution_metadata": null, "created_at": 1768046345, "finished_at": 1768046345, "files": [], "iteration_id": null, "loop_id": null}}, {"event": "workflow_finished", "conversation_id": "c0cf", "message_id": "ff06", "created_at": 1768046345, "task_id": "5863", "workflow_run_id": "561d", "data": {"id": "561d", "workflow_id": "6d8e", "status": "succeeded", "outputs": {"answer": "Hello! I'm here to assist you with any questions or tasks you have. Feel free to ask me anything!", "files": []}, "error": null, "elapsed_time": 0.667895, "total_tokens": 48, "total_steps": 3, "created_by": {"id": "929b", "user": "user"}, "created_at": 1768046345, "finished_at": 1768046345, "exceptions_count": 0, "files": []}}]
+[
+  {
+    "event": "workflow_started",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "workflow_run_id": "561d",
+    "data": {
+      "id": "561d",
+      "workflow_id": "6d8e",
+      "inputs": {
+        "sys.files": [],
+        "sys.user_id": "user",
+        "sys.app_id": "bee4",
+        "sys.workflow_id": "6d8e",
+        "sys.workflow_run_id": "561d",
+        "sys.query": "FIRST USER REQUEST",
+        "sys.dialogue_count": 1
+      },
+      "created_at": 1768046345
+    }
+  },
+  {
+    "event": "node_started",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "workflow_run_id": "561d",
+    "data": {
+      "id": "5368",
+      "node_id": "1768045547362",
+      "node_type": "start",
+      "title": "User Input",
+      "index": 1,
+      "predecessor_node_id": null,
+      "inputs": null,
+      "inputs_truncated": false,
+      "created_at": 1768046345,
+      "extras": {},
+      "iteration_id": null,
+      "loop_id": null,
+      "agent_strategy": null
+    }
+  },
+  {
+    "event": "node_finished",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "workflow_run_id": "561d",
+    "data": {
+      "id": "5368",
+      "node_id": "1768045547362",
+      "node_type": "start",
+      "title": "User Input",
+      "index": 1,
+      "predecessor_node_id": null,
+      "inputs": {
+        "sys.files": [],
+        "sys.user_id": "user",
+        "sys.app_id": "bee4",
+        "sys.workflow_id": "6d8e",
+        "sys.workflow_run_id": "561d",
+        "sys.query": "Give Me A Short Introduction",
+        "sys.conversation_id": "c0cf",
+        "sys.dialogue_count": 1
+      },
+      "inputs_truncated": false,
+      "process_data": {},
+      "process_data_truncated": false,
+      "outputs": {
+        "sys.files": [],
+        "sys.user_id": "user",
+        "sys.app_id": "bee4",
+        "sys.workflow_id": "6d8e",
+        "sys.workflow_run_id": "561d",
+        "sys.query": "Give Me A Short Introduction",
+        "sys.conversation_id": "c0cf",
+        "sys.dialogue_count": 1
+      },
+      "outputs_truncated": false,
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.008951,
+      "execution_metadata": null,
+      "created_at": 1768046345,
+      "finished_at": 1768046345,
+      "files": [],
+      "iteration_id": null,
+      "loop_id": null
+    }
+  },
+  {
+    "event": "node_started",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "workflow_run_id": "561d",
+    "data": {
+      "id": "8c24",
+      "node_id": "llm",
+      "node_type": "llm",
+      "title": "LLM",
+      "index": 1,
+      "predecessor_node_id": null,
+      "inputs": null,
+      "inputs_truncated": false,
+      "created_at": 1768046345,
+      "extras": {},
+      "iteration_id": null,
+      "loop_id": null,
+      "agent_strategy": null
+    }
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": "Hello",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": "!",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": " I'm",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": " here",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": " to",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": " assist",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": " you",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": " with",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": " any",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": " questions",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": " or",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": " tasks",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": " you",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": " have",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": ".",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": " Feel",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": " free",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": " to",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": " ask",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": " me",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": " anything",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": "!",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": "",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "message",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "id": "ff06",
+    "answer": "",
+    "from_variable_selector": [
+      "llm",
+      "text"
+    ]
+  },
+  {
+    "event": "node_finished",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "workflow_run_id": "561d",
+    "data": {
+      "id": "8c24",
+      "node_id": "llm",
+      "node_type": "llm",
+      "title": "LLM",
+      "index": 1,
+      "predecessor_node_id": null,
+      "inputs": {},
+      "inputs_truncated": false,
+      "process_data": {
+        "model_mode": "chat",
+        "prompts": [
+          {
+            "role": "user",
+            "text": "Give Me A Short Introduction",
+            "files": []
+          },
+          {
+            "role": "user",
+            "text": "Give Me A Short Introduction\n\n",
+            "files": []
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 26,
+          "prompt_unit_price": "0.1",
+          "prompt_price_unit": "0.000001",
+          "prompt_price": "0.0000026",
+          "completion_tokens": 22,
+          "completion_unit_price": "0.4",
+          "completion_price_unit": "0.000001",
+          "completion_price": "0.0000088",
+          "total_tokens": 48,
+          "total_price": "0.0000114",
+          "currency": "USD",
+          "latency": 0.487,
+          "time_to_first_token": 0.372,
+          "time_to_generate": 0.115
+        },
+        "finish_reason": "stop",
+        "model_provider": "langgenius/openai/openai",
+        "model_name": "gpt-4.1-nano"
+      },
+      "process_data_truncated": false,
+      "outputs": {
+        "text": "Hello! I'm here to assist you with any questions or tasks you have. Feel free to ask me anything!",
+        "reasoning_content": "",
+        "usage": {
+          "prompt_tokens": 26,
+          "prompt_unit_price": "0.1",
+          "prompt_price_unit": "0.000001",
+          "prompt_price": "0.0000026",
+          "completion_tokens": 22,
+          "completion_unit_price": "0.4",
+          "completion_price_unit": "0.000001",
+          "completion_price": "0.0000088",
+          "total_tokens": 48,
+          "total_price": "0.0000114",
+          "currency": "USD",
+          "latency": 0.487,
+          "time_to_first_token": 0.372,
+          "time_to_generate": 0.115
+        },
+        "finish_reason": "stop"
+      },
+      "outputs_truncated": false,
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.632794,
+      "execution_metadata": {
+        "total_tokens": 48,
+        "total_price": "0.0000114",
+        "currency": "USD"
+      },
+      "created_at": 1768046345,
+      "finished_at": 1768046345,
+      "files": [],
+      "iteration_id": null,
+      "loop_id": null
+    }
+  },
+  {
+    "event": "node_started",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "workflow_run_id": "561d",
+    "data": {
+      "id": "19f7",
+      "node_id": "answer",
+      "node_type": "answer",
+      "title": "Answer",
+      "index": 1,
+      "predecessor_node_id": null,
+      "inputs": null,
+      "inputs_truncated": false,
+      "created_at": 1768046345,
+      "extras": {},
+      "iteration_id": null,
+      "loop_id": null,
+      "agent_strategy": null
+    }
+  },
+  {
+    "event": "node_finished",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "workflow_run_id": "561d",
+    "data": {
+      "id": "19f7",
+      "node_id": "answer",
+      "node_type": "answer",
+      "title": "Answer",
+      "index": 1,
+      "predecessor_node_id": null,
+      "inputs": {},
+      "inputs_truncated": false,
+      "process_data": {},
+      "process_data_truncated": false,
+      "outputs": {
+        "answer": "Hello! I'm here to assist you with any questions or tasks you have. Feel free to ask me anything!",
+        "files": []
+      },
+      "outputs_truncated": false,
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.018595,
+      "execution_metadata": null,
+      "created_at": 1768046345,
+      "finished_at": 1768046345,
+      "files": [],
+      "iteration_id": null,
+      "loop_id": null
+    }
+  },
+  {
+    "event": "workflow_finished",
+    "conversation_id": "c0cf",
+    "message_id": "ff06",
+    "created_at": 1768046345,
+    "task_id": "5863",
+    "workflow_run_id": "561d",
+    "data": {
+      "id": "561d",
+      "workflow_id": "6d8e",
+      "status": "succeeded",
+      "outputs": {
+        "answer": "Hello! I'm here to assist you with any questions or tasks you have. Feel free to ask me anything!",
+        "files": []
+      },
+      "error": null,
+      "elapsed_time": 0.667895,
+      "total_tokens": 48,
+      "total_steps": 3,
+      "created_by": {
+        "id": "929b",
+        "user": "user"
+      },
+      "created_at": 1768046345,
+      "finished_at": 1768046345,
+      "exceptions_count": 0,
+      "files": []
+    }
+  }
+]

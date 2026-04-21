@@ -1,1 +1,141 @@
-[{"event": "workflow_started", "workflow_run_id": "b790", "task_id": "04db", "data": {"id": "b790", "workflow_id": "1454", "inputs": {"input": "USER REQUEST MESSAGE", "sys.files": [], "sys.user_id": "user", "sys.app_id": "4143", "sys.workflow_id": "1454", "sys.workflow_run_id": "b790"}, "created_at": 1768039728}}, {"event": "node_started", "workflow_run_id": "b790", "task_id": "04db", "data": {"id": "e2c9", "node_id": "9657", "node_type": "start", "title": "User Input", "index": 1, "predecessor_node_id": null, "inputs": null, "inputs_truncated": false, "created_at": 1768039728, "extras": {}, "iteration_id": null, "loop_id": null, "agent_strategy": null}}, {"event": "node_finished", "workflow_run_id": "b790", "task_id": "04db", "data": {"id": "e2c9", "node_id": "9657", "node_type": "start", "title": "User Input", "index": 1, "predecessor_node_id": null, "inputs": {"input": "test", "sys.files": [], "sys.user_id": "user", "sys.app_id": "4143", "sys.workflow_id": "1454", "sys.workflow_run_id": "b790", "sys.timestamp": 1768039728}, "inputs_truncated": false, "process_data": {}, "process_data_truncated": false, "outputs": {"input": "test", "sys.files": [], "sys.user_id": "user", "sys.app_id": "4143", "sys.workflow_id": "1454", "sys.workflow_run_id": "b790", "sys.timestamp": 1768039728}, "outputs_truncated": false, "status": "succeeded", "error": null, "elapsed_time": 0.009636, "execution_metadata": null, "created_at": 1768039728, "finished_at": 1768039728, "files": [], "iteration_id": null, "loop_id": null}}, {"event": "node_started", "workflow_run_id": "b790", "task_id": "04db", "data": {"id": "51f130d4-b073-4b5c-bf80-eb36ffbf336e", "node_id": "4502", "node_type": "template-transform", "title": "Template", "index": 1, "predecessor_node_id": null, "inputs": null, "inputs_truncated": false, "created_at": 1768039728, "extras": {}, "iteration_id": null, "loop_id": null, "agent_strategy": null}}, {"event": "text_chunk", "workflow_run_id": "b790", "task_id": "04db", "data": {"text": "FIRST RESPONSE MESSAGE", "from_variable_selector": ["4502", "output"]}}, {"event": "workflow_finished", "workflow_run_id": "b790", "task_id": "04db", "data": {"id": "a792", "workflow_id": "1454", "status": "succeeded", "outputs": {"output": "FIRST RESPONSE MESSAGE"}, "error": null, "elapsed_time": 0.158589, "total_tokens": 0, "total_steps": 3, "created_by": {"id": "438b", "user": "user"}, "created_at": 1768041225, "finished_at": 1768041225, "exceptions_count": 0, "files": []}}]
+[
+  {
+    "event": "workflow_started",
+    "workflow_run_id": "b790",
+    "task_id": "04db",
+    "data": {
+      "id": "b790",
+      "workflow_id": "1454",
+      "inputs": {
+        "input": "USER REQUEST MESSAGE",
+        "sys.files": [],
+        "sys.user_id": "user",
+        "sys.app_id": "4143",
+        "sys.workflow_id": "1454",
+        "sys.workflow_run_id": "b790"
+      },
+      "created_at": 1768039728
+    }
+  },
+  {
+    "event": "node_started",
+    "workflow_run_id": "b790",
+    "task_id": "04db",
+    "data": {
+      "id": "e2c9",
+      "node_id": "9657",
+      "node_type": "start",
+      "title": "User Input",
+      "index": 1,
+      "predecessor_node_id": null,
+      "inputs": null,
+      "inputs_truncated": false,
+      "created_at": 1768039728,
+      "extras": {},
+      "iteration_id": null,
+      "loop_id": null,
+      "agent_strategy": null
+    }
+  },
+  {
+    "event": "node_finished",
+    "workflow_run_id": "b790",
+    "task_id": "04db",
+    "data": {
+      "id": "e2c9",
+      "node_id": "9657",
+      "node_type": "start",
+      "title": "User Input",
+      "index": 1,
+      "predecessor_node_id": null,
+      "inputs": {
+        "input": "test",
+        "sys.files": [],
+        "sys.user_id": "user",
+        "sys.app_id": "4143",
+        "sys.workflow_id": "1454",
+        "sys.workflow_run_id": "b790",
+        "sys.timestamp": 1768039728
+      },
+      "inputs_truncated": false,
+      "process_data": {},
+      "process_data_truncated": false,
+      "outputs": {
+        "input": "test",
+        "sys.files": [],
+        "sys.user_id": "user",
+        "sys.app_id": "4143",
+        "sys.workflow_id": "1454",
+        "sys.workflow_run_id": "b790",
+        "sys.timestamp": 1768039728
+      },
+      "outputs_truncated": false,
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.009636,
+      "execution_metadata": null,
+      "created_at": 1768039728,
+      "finished_at": 1768039728,
+      "files": [],
+      "iteration_id": null,
+      "loop_id": null
+    }
+  },
+  {
+    "event": "node_started",
+    "workflow_run_id": "b790",
+    "task_id": "04db",
+    "data": {
+      "id": "51f130d4-b073-4b5c-bf80-eb36ffbf336e",
+      "node_id": "4502",
+      "node_type": "template-transform",
+      "title": "Template",
+      "index": 1,
+      "predecessor_node_id": null,
+      "inputs": null,
+      "inputs_truncated": false,
+      "created_at": 1768039728,
+      "extras": {},
+      "iteration_id": null,
+      "loop_id": null,
+      "agent_strategy": null
+    }
+  },
+  {
+    "event": "text_chunk",
+    "workflow_run_id": "b790",
+    "task_id": "04db",
+    "data": {
+      "text": "FIRST RESPONSE MESSAGE",
+      "from_variable_selector": [
+        "4502",
+        "output"
+      ]
+    }
+  },
+  {
+    "event": "workflow_finished",
+    "workflow_run_id": "b790",
+    "task_id": "04db",
+    "data": {
+      "id": "a792",
+      "workflow_id": "1454",
+      "status": "succeeded",
+      "outputs": {
+        "output": "FIRST RESPONSE MESSAGE"
+      },
+      "error": null,
+      "elapsed_time": 0.158589,
+      "total_tokens": 0,
+      "total_steps": 3,
+      "created_by": {
+        "id": "438b",
+        "user": "user"
+      },
+      "created_at": 1768041225,
+      "finished_at": 1768041225,
+      "exceptions_count": 0,
+      "files": []
+    }
+  }
+]

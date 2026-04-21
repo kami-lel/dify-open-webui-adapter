@@ -33,7 +33,7 @@ from enum import Enum
 from typing import Optional
 import requests
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, computed_field
 
 
 # helpers  #####################################################################
@@ -98,7 +98,11 @@ class _PipeCallBody(BaseModel):
 
 
 class _PipeCallUser(BaseModel):
-    pass
+
+    id: Optional[str] = Field(default="user")
+    email: Optional[str] = Field(default="")
+    username: Optional[str] = Field(default="")
+    name: Optional[str] = Field(default="")
 
 
 class _PipeCallMetadata(BaseModel):
@@ -116,14 +120,28 @@ class PipeCall(BaseModel):
     metadata: _PipeCallMetadata
     newest_message: str = ""  # placeholder
 
+    @computed_field
     @property
     def enable_stream(self):
         """
         :return: whether current call allows streaming
         :rtype: bool
         """
-        # TODO need unit test
         return self.body.stream
+
+    @computed_field
+    @property
+    def username(self):
+        """
+        :return:
+        :rtype: str
+        """
+        return (
+            self.user.name
+            or self.user.name.username
+            or self.user.email
+            or self.user.id
+        )
 
     def model_post_init(self, __context):
         # TODO need unit test

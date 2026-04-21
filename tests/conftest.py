@@ -229,7 +229,6 @@ def mock_assertee_info_cf(endpoint_info, auth_key_cf1):
 
 @pytest.fixture(scope="class")
 def pipe_args1():
-    # Todo
     body = {}
     user = {}
     metadata = {}
@@ -406,8 +405,6 @@ def mock_cf3(mock_base):
 
 
 # .pipe() args  ================================================================
-
-# Hack pipe fixtures
 
 
 @pytest.fixture

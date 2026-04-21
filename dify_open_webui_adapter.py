@@ -14,6 +14,11 @@ __version__ = "3.0.0-alpha"
 __author__ = "kamiLeL"
 
 
+# Bug keeps sending chat to the same chat id, when use from continue
+# Bug fail to do pass thru
+# Todo make file upload
+
+
 # config  ######################################################################
 DIFY_BACKEND_API_BASE_URL = "https://api.dify.ai/v1"
 APP_MODEL_CONFIGS = []

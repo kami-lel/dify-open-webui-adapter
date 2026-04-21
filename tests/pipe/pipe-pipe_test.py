@@ -10,8 +10,6 @@ import pytest
 
 # Pytest fixtures  #############################################################
 
-# Hack pipe fixtures
-
 
 @pytest.fixture
 def pipe_args_no_stream1(pipe_body1):

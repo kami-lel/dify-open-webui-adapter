@@ -11,8 +11,6 @@ import pytest
 
 # Pytest fixtures  #############################################################
 
-# Hack pipe fixtures
-
 
 @pytest.fixture
 def pipe_body2():

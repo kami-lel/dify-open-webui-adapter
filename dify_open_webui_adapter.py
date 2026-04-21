@@ -89,6 +89,7 @@ class AppModelConfig(BaseModel):  # ============================================
 
 
 # pipe call  ===================================================================
+OWU_USER_ROLE = "user"
 
 
 class _PipeCallBody(BaseModel):
@@ -113,6 +114,7 @@ class PipeCall(BaseModel):
     body: _PipeCallBody
     user: _PipeCallUser
     metadata: _PipeCallMetadata
+    newest_message: str = ""  # placeholder
 
     @property
     def enable_stream(self):
@@ -120,7 +122,16 @@ class PipeCall(BaseModel):
         :return: whether current call allows streaming
         :rtype: bool
         """
+        # TODO need unit test
         return self.body.stream
+
+    def model_post_init(self, __context):
+        # TODO need unit test
+        for section in reversed(self.body["messages"]):
+            if section["role"] == OWU_USER_ROLE:
+                return section["content"]
+
+        raise ValueError("missing {} message in body".format(OWU_USER_ROLE))
 
 
 # Dify side  ###################################################################

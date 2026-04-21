@@ -15,7 +15,6 @@ from json import JSONDecodeError
 from pydantic import BaseModel
 
 # constants  ===================================================================
-OWU_USER_ROLE = "user"
 DEFINED_APP_MODEL_CONFIG_KEYS = (
     "key",
     "model_id",
@@ -76,12 +75,10 @@ class OWUModel:
 
         # OWU side  ------------------------------------------------------------
         last_user_msg_content_content = self._get_last_user_msg_content(body)
-        enable_stream = "stream" in body and bool(body["stream"])
         # Todo extract custom para from body
 
         # Dify side  -----------------------------------------------------------
         self.app.current_user_msg_content = last_user_msg_content_content
-        self.app.current_enable_stream = enable_stream
 
         opt = self.app.reply()
 
@@ -163,13 +160,6 @@ class OWUModel:
                 )
 
         return key, model_id, name
-
-    def _get_last_user_msg_content(self, body):
-        for section in reversed(body["messages"]):
-            if section["role"] == OWU_USER_ROLE:
-                return section["content"]
-
-        raise ValueError("missing {} message in body".format(OWU_USER_ROLE))
 
     # magic methods  ===========================================================
 
@@ -284,7 +274,6 @@ class BaseDifyApp:
 
         # current conversations  -----------------------------------------------
         self.current_user_msg_content = ""
-        self.current_enable_stream = False
 
 
 class WorkflowApp(BaseDifyApp):

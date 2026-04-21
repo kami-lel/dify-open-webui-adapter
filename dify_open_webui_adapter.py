@@ -149,7 +149,6 @@ class PipeCall(BaseModel):
         )
 
     def model_post_init(self, __context):
-        # TODO need unit test
         for section in reversed(self.body["messages"]):
             if section["role"] == OWU_USER_ROLE:
                 return section["content"]

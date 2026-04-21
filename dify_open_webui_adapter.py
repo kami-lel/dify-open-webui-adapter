@@ -46,9 +46,12 @@ class AppModelConfig(BaseModel):  # ============================================
     """
 
     # fields  ******************************************************************
+    # required
     key: str = Field(..., min_length=1)
     model_id: str = Field(..., min_length=1)
+    # optional
     name: Optional[str] = Field(default=None, min_length=1)
+    disallows_streaming: Optional[bool] = Field(default=False)
 
     # Public Methods ***********************************************************
 

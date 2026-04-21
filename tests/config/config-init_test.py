@@ -39,6 +39,15 @@ class TestWf1:  # ==============================================================
         assert isinstance(value, str)
         assert value == app_name_wf1
 
+    def test_stream(_, config_wf1):
+        opt = config_wf1
+        print(opt)
+
+        assert hasattr(opt, "disallows_streaming")
+        value = opt.disallows_streaming
+        assert isinstance(value, bool)
+        assert not value
+
 
 class TestCf1:  # ==============================================================
 
@@ -70,6 +79,15 @@ class TestCf1:  # ==============================================================
         assert isinstance(value, str)
         assert value == app_name_cf1
 
+    def test_stream(_, config_cf1):
+        opt = config_cf1
+        print(opt)
+
+        assert hasattr(opt, "disallows_streaming")
+        value = opt.disallows_streaming
+        assert isinstance(value, bool)
+        assert not value
+
 
 class TestCf2:  # ==============================================================
 
@@ -99,3 +117,12 @@ class TestCf2:  # ==============================================================
         assert hasattr(opt, "name")
         value = opt.name
         assert value is None
+
+    def test_stream(_, config_cf2):
+        opt = config_cf2
+        print(opt)
+
+        assert hasattr(opt, "disallows_streaming")
+        value = opt.disallows_streaming
+        assert isinstance(value, bool)
+        assert value

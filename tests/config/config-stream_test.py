@@ -1,18 +1,34 @@
+"""
+config-stream_test.py
+
+Unit Tests (using pytest) for:
+
+AppModelConfig validation of ``disallows_streaming``
+"""
+
+import copy
+
+from pydantic import ValidationError
+import pytest
+
+
+from dify_open_webui_adapter import AppModelConfig
+
+
 class TestErr:  #  =============================================================
-    # TODO implement
 
-    def test_disallow_type(_, base_url, config_wf1):
-        config = config_wf1.copy()
+    def test_type(_, config_raw_wf1):
+        raw = copy.copy(config_raw_wf1)
+        raw["disallows_streaming"] = 123
 
-        config["disallows_streaming"] = 123
+        with pytest.raises(ValidationError) as exec_info:
+            AppModelConfig(**raw)
 
-        with pytest.raises(TypeError) as exec_info:
-            WorkflowApp(None, base_url, config)
-        opt = exec_info.value.args[0]
-
+        opt = exec_info.value.errors()
         print(opt)
+        assert len(opt) == 1
+        assert opt[0]["loc"] == ("disallows_streaming",)
         assert (
-            opt
-            == "entry in APP_MODEL_CONFIGS, value of 'disallows_streaming' "
-            "must be bool: 123"
+            opt[0]["msg"]
+            == "Input should be a valid boolean, unable to interpret input"
         )

@@ -8,9 +8,18 @@ BaseDifyApp.__init__()
 
 import pytest
 
-from dify_open_webui_adapter import WorkflowApp
+from dify_open_webui_adapter import WorkflowApp, ChatflowApp
 
-# pytest  ######################################################################
+
+# Pytest fixtures  #############################################################
+@pytest.fixture(scope="class")
+def app_wf1(config_wf1):
+    return WorkflowApp(config_wf1, {"name": ""})
+
+
+# Pytest unit tests  ###########################################################
+
+# FIXME adapt
 
 
 class TestWf1:  # ==============================================================

@@ -72,22 +72,35 @@ def auth_key_cf2():
     return "820ab10b649b4c748513cb8e7a628063"
 
 
+# app names  -------------------------------------------------------------------
+@pytest.fixture(scope="session")
+def app_name_wf1():
+    return "My Workflow App"
+
+
+@pytest.fixture(scope="session")
+def app_name_cf1():
+    return "My Chatflow App"
+
+
 # raw dicts  -------------------------------------------------------------------
 
 
 @pytest.fixture(scope="session")
-def config_raw_wf1(auth_key_wf1):
+def config_raw_wf1(auth_key_wf1, app_name_wf1):
     return {
         "key": auth_key_wf1,
         "model_id": "example-workflow-model",
+        "name": app_name_wf1,
     }
 
 
 @pytest.fixture(scope="session")
-def config_raw_cf1(auth_key_cf1):
+def config_raw_cf1(auth_key_cf1, app_name_cf1):
     return {
         "key": auth_key_cf1,
         "model_id": "example-chatflow-model",
+        "name": app_name_cf1,
     }
 
 

@@ -31,7 +31,7 @@ DEBUG_PIPE_DIRECT_RESPONSE = False
 
 from enum import Enum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 # helpers  #####################################################################
@@ -44,8 +44,8 @@ class AppModelConfig(BaseModel):  # ============================================
     """
 
     # fields  ******************************************************************
-    key: str
-    model_id: str
+    key: str = Field(..., min_length=1)
+    model_id: str = Field(..., min_length=1)
 
     # Public Methods ***********************************************************
 

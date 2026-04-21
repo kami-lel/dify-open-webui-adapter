@@ -26,7 +26,14 @@ from dify_open_webui_adapter import OWUModel, DifyAppType
 # Hack remove test ignoring
 collect_ignore_glob = [
     "app/*",
-    "model/*",
+    "model/model-get_test.py",
+    "model/model-init-app_test.py",
+    "model/model-init-id_test.py",
+    "model/model-init-key_test.py",
+    "model/model-init-name_test.py",
+    "model/model-reply-block_test.py",
+    "model/model-reply-last_test.py",
+    "model/model-reply-stream_test.py",
     "pipe/*",
     "round/*",
     "http_test.py",

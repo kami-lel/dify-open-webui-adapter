@@ -116,6 +116,8 @@ class BaseDifyApp:  # ==========================================================
 
     :param config:
     :type config: AppModelConfig
+    :param info_response:
+    :type info_response: dict
     """
 
     # Public Methods  **********************************************************
@@ -166,15 +168,13 @@ class BaseDifyApp:  # ==========================================================
     # constructor  *************************************************************
 
     def __init__(self, config, info_response):
-        # TODO
         self.config = config
 
-        response_name = (
+        self.response_name = (
             info_response["name"] if "name" in info_response else None
         )
 
-        self.response_name = response_name
-        self.model = None  # to be assigned
+        self.model = None  # must to be assigned
 
     # private method  **********************************************************
 

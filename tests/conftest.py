@@ -32,7 +32,7 @@ def pipe_args1():
     body = {}
     user = {}
     metadata = {}
-    return body, user, metadata
+    return {"body": body, "user": user, "metadata": metadata}
 
 
 # app/model configuration  =====================================================

@@ -16,7 +16,7 @@ from dify_open_webui_adapter import PipeRequest
 @pytest.fixture(scope="class")
 def request1(pipe_args1):
     args = pipe_args1
-    return PipeRequest(*args)
+    return PipeRequest(**args)
 
 
 # Pytest unit tests  ###########################################################

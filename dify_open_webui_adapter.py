@@ -30,7 +30,6 @@ DEBUG_PIPE_DIRECT_RESPONSE = False
 
 
 from enum import Enum
-from dataclasses import dataclass
 
 from pydantic import BaseModel
 
@@ -73,8 +72,7 @@ class AppModelConfig(BaseModel):  # ============================================
             )
 
 
-@dataclass
-class PipeRequest:  # ==========================================================
+class PipeRequest(BaseModel):  # ===============================================
     """
     a wrapper class containing all infos of a single OWU Pipe Function request,
     i.e. a single call from Pipe.pipe()
@@ -137,7 +135,7 @@ class ChatflowApp(BaseDifyApp):  # =============================================
 # OWU constants  ===============================================================
 
 
-class OWUModel:  # =============================================================
+class OWUModel:  # ===========================================================o 'Search Highlight OFF'=
 
     # constructor  *************************************************************
 
@@ -180,4 +178,6 @@ class Pipe:  # =================================================================
         pass
 
     async def pipe(self, body, __user__, __metadata__):
-        owu_request = PipeRequest(body, __user__, __metadata__)
+        owu_request = PipeRequest(
+            body=body, user=__user__, metadata=__metadata__
+        )

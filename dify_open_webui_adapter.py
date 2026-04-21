@@ -105,6 +105,7 @@ class PipeRequest(BaseModel):  # ===============================================
 # Dify constants  ==============================================================
 REQUEST_TIMEOUT = 30
 STREAM_REQUEST_TIMEOUT = 300
+CONNECTION_ERR_MSG = "fail to connect Dify: "
 
 
 # Dify helpers  ================================================================
@@ -154,7 +155,6 @@ class BaseDifyApp:  # ==========================================================
         # by accessing Dify /info
         info_url = DIFY_BACKEND_API_BASE_URL + "/info"
 
-        # TODO better working err
         try:
             response_object = requests.get(
                 info_url,
@@ -165,15 +165,15 @@ class BaseDifyApp:  # ==========================================================
             info_response = response_object.json()
 
         except requests.exceptions.RequestException as err:
-            raise ConnectionError(
-                "fail request to Dify: {}".format(err.args[0])
-            ) from err
+            raise ConnectionError(CONNECTION_ERR_MSG + err.args[0]) from err
 
         # parse App type  ------------------------------------------------------
         try:
             app_type = DifyAppType(info_response["mode"])
         except (KeyError, ValueError) as err:
-            raise ValueError("fail to get App Type from Dify") from err
+            raise ValueError(
+                "missing App Type ('mode') from Dify: {}".format(info_response)
+            ) from err
 
         # create app  ----------------------------------------------------------
         if app_type == DifyAppType.WORKFLOW:

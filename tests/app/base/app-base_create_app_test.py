@@ -9,6 +9,7 @@ BaseDifyApp.create_app()
 import requests
 from unittest.mock import patch, Mock
 
+
 import pytest
 
 
@@ -118,7 +119,10 @@ class TestErr:  # ==============================================================
             opt = exec_info.value.args[0]
 
             print(opt)
-            assert opt == "fail to get App Type from Dify"
+            assert (
+                opt
+                == "missing App Type ('mode') from Dify: {'name': 'Some Names'}"
+            )
 
     def test_bad_connections(_, config_wf1, patch_target_get):
         config = config_wf1
@@ -132,4 +136,4 @@ class TestErr:  # ==============================================================
             opt = exec_info.value.args[0]
 
             print(opt)
-            assert opt == "fail request to Dify: Bad Connection"
+            assert opt == "fail to connect Dify: Bad Connection"

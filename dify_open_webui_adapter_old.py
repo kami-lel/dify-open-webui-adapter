@@ -21,7 +21,6 @@ DEFINED_APP_MODEL_CONFIG_KEYS = (
 )
 
 # Dify constants  **************************************************************
-DIFY_USER_ROLE = "user"  # TODO read user role from metadata
 DEFAULT_QUERY_INPUT_FIELD_IDENTIFIER = "query"
 DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER = "answer"
 
@@ -68,13 +67,6 @@ class OWUModel:
         :return: the response
         :rtype: str
         """
-
-        # OWU side  ------------------------------------------------------------
-        last_user_msg_content_content = self._get_last_user_msg_content(body)
-        # TODO extract custom para from body
-
-        # Dify side  -----------------------------------------------------------
-        self.app.current_user_msg_content = last_user_msg_content_content
 
         opt = self.app.reply()
 

@@ -141,13 +141,14 @@ class BaseDifyApp:  # ==========================================================
     @classmethod
     def create_app(cls, config):
         """
-        TODO
-
-        get Dify App's Type & Name, by GET /info of Dify Backend API
+        create an app of ``WorkflowApp`` or ``ChatflowApp``,
+        getting app type and name by GET /info of Dify Backend API
 
 
         :param config:
-        :type config:
+        :type config: AppModelConfig
+        :return: created app
+        :rtype: WorkflowApp or ChatflowApp
         :raises ConnectionError:
         :raises ValueError:
         """

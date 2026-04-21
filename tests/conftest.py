@@ -175,6 +175,11 @@ def info_response_cf1(app_response_name_cf1):
     return {"mode": "advanced-chat", "name": app_response_name_cf1}
 
 
+@pytest.fixture
+def info_response_cf2():
+    return {"mode": "advanced-chat"}
+
+
 # mock obj  --------------------------------------------------------------------
 @pytest.fixture
 def mock_info_wf(info_response_wf1):

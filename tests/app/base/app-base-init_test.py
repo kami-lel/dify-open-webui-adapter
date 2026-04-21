@@ -23,8 +23,8 @@ def local_app_cf1(config_cf1, info_response_cf1):
 
 
 @pytest.fixture(scope="class")
-def local_app_cf2(config_cf2):
-    return ChatflowApp(config_cf2, {})
+def local_app_cf2(config_cf2, info_response_cf2):
+    return ChatflowApp(config_cf2, info_response_cf2)
 
 
 # Pytest unit tests  ###########################################################

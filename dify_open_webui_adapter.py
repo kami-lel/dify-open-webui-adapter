@@ -30,6 +30,7 @@ DEBUG_PIPE_DIRECT_RESPONSE = False
 
 
 from enum import Enum
+from typing import Optional
 import requests
 
 from pydantic import BaseModel, Field
@@ -47,6 +48,7 @@ class AppModelConfig(BaseModel):  # ============================================
     # fields  ******************************************************************
     key: str = Field(..., min_length=1)
     model_id: str = Field(..., min_length=1)
+    name: Optional[str] = Field(default=None, min_length=1)
 
     # Public Methods ***********************************************************
 

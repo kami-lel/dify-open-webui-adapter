@@ -6,7 +6,8 @@ Unit Tests (using pytest) for:
 BaseDifyApp.create_app()
 """
 
-from unittest.mock import patch
+import requests
+from unittest.mock import patch, Mock
 
 import pytest
 
@@ -100,3 +101,35 @@ class TestCf1:  # ==============================================================
         args, kwargs = mock_assertee_info_cf
 
         mock_get.assert_called_once_with(*args, **kwargs)
+
+
+class TestErr:  # ==============================================================
+
+    def test_no_type(_, config_wf1, patch_target_get):
+        config = config_wf1
+        mock_resp = Mock()
+        mock_resp.json.return_value = {
+            "name": "Some Names",
+        }
+
+        with patch(patch_target_get, return_value=mock_resp):
+            with pytest.raises(ValueError) as exec_info:
+                BaseDifyApp.create_app(config)
+            opt = exec_info.value.args[0]
+
+            print(opt)
+            assert opt == "fail to get App Type from Dify"
+
+    def test_bad_connections(_, config_wf1, patch_target_get):
+        config = config_wf1
+
+        with patch(
+            patch_target_get,
+            side_effect=requests.exceptions.ConnectionError("Bad Connection"),
+        ):
+            with pytest.raises(ConnectionError) as exec_info:
+                BaseDifyApp.create_app(config)
+            opt = exec_info.value.args[0]
+
+            print(opt)
+            assert opt == "fail request to Dify: Bad Connection"

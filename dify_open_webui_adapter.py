@@ -154,6 +154,7 @@ class BaseDifyApp:  # ==========================================================
         # by accessing Dify /info
         info_url = DIFY_BACKEND_API_BASE_URL + "/info"
 
+        # TODO better working err
         try:
             response_object = requests.get(
                 info_url,

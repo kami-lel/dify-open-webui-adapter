@@ -63,6 +63,19 @@ class TestKey:  # ==============================================================
         assert opt[0]["loc"] == ("key",)
         assert opt[0]["msg"] == "Field required"
 
+    def test_type(_, config_wf1):
+        raw = copy.copy(config_wf1)
+        raw["key"] = 123
+
+        with pytest.raises(ValidationError) as exec_info:
+            AppModelConfig(**raw)
+
+        opt = exec_info.value.errors()
+        print(opt)
+        assert len(opt) == 1
+        assert opt[0]["loc"] == ("key",)
+        assert opt[0]["msg"] == "Input should be a valid string"
+
     def test_empty(_, config_wf1):
         raw = copy.copy(config_wf1)
         raw["key"] = ""
@@ -91,6 +104,19 @@ class TestId:  # ===============================================================
         assert len(opt) == 1
         assert opt[0]["loc"] == ("model_id",)
         assert opt[0]["msg"] == "Field required"
+
+    def test_type(_, config_wf1):
+        raw = copy.copy(config_wf1)
+        raw["model_id"] = 123
+
+        with pytest.raises(ValidationError) as exec_info:
+            AppModelConfig(**raw)
+
+        opt = exec_info.value.errors()
+        print(opt)
+        assert len(opt) == 1
+        assert opt[0]["loc"] == ("model_id",)
+        assert opt[0]["msg"] == "Input should be a valid string"
 
     def test_empty(_, config_wf1):
         raw = copy.copy(config_wf1)

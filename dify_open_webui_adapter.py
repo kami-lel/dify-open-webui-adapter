@@ -332,6 +332,7 @@ class Pipe:  # =================================================================
     def __init__(self):
         AppModelConfig.validate_app_model_configs(APP_MODEL_CONFIGS)
 
+        # TODO need unit test
         # create models & apps  ------------------------------------------------
         self.models = {}
         self.apps = {}

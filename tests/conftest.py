@@ -193,19 +193,9 @@ def info_response_cf1(app_response_name_cf1):
     return {"mode": "advanced-chat", "name": app_response_name_cf1}
 
 
-# mock obj  --------------------------------------------------------------------
 @pytest.fixture(scope="class")
-def mock_info_wf(info_response_wf1):
-    mock_resp = Mock()
-    mock_resp.json.return_value = info_response_wf1
-    return mock_resp
-
-
-@pytest.fixture(scope="class")
-def mock_info_cf(info_response_cf1):
-    mock_resp = Mock()
-    mock_resp.json.return_value = info_response_cf1
-    return mock_resp
+def info_response_cf2():
+    return {"mode": "advanced-chat"}
 
 
 # mock assert  -----------------------------------------------------------------
@@ -251,8 +241,8 @@ def app_direct_cf1(config_cf1, info_response_cf1):
 
 
 @pytest.fixture(scope="class")
-def app_direct_cf2(config_cf2):
-    return ChatflowApp(config_cf2, {"mode": "advanced-chat"})
+def app_direct_cf2(config_cf2, info_response_cf2):
+    return ChatflowApp(config_cf2, info_response_cf2)
 
 
 # replies  =====================================================================

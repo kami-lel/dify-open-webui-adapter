@@ -30,6 +30,7 @@ DEBUG_PIPE_DIRECT_RESPONSE = False
 
 
 from enum import Enum
+import requests
 
 from pydantic import BaseModel, Field
 
@@ -87,6 +88,9 @@ class PipeRequest(BaseModel):  # ===============================================
 
 # Dify side  ###################################################################
 # Dify constants  ==============================================================
+REQUEST_TIMEOUT = 30
+STREAM_REQUEST_TIMEOUT = 300
+
 
 # Dify helpers  ================================================================
 
@@ -116,15 +120,92 @@ class BaseDifyApp:  # ==========================================================
 
     # Public Methods  **********************************************************
 
-    @staticmethod
-    def create_app(config):
-        pass
+    @classmethod
+    def create_app(cls, config):
+        """
+        TODO
+
+        get Dify App's Type & Name, by GET /info of Dify Backend API
+
+
+        :param config:
+        :type config:
+        :raises ConnectionError:
+        :raises ValueError:
+        """
+        # get app type & name  -------------------------------------------------
+        # by accessing Dify /info
+        info_url = DIFY_BACKEND_API_BASE_URL + "/info"
+
+        try:
+            response_object = requests.get(
+                info_url,
+                headers=cls._create_http_header(config.key),
+                timeout=REQUEST_TIMEOUT,
+            )
+            response_object.raise_for_status()
+            info_response = response_object.json()
+
+        except requests.exceptions.RequestException as err:
+            raise ConnectionError(
+                "fail request to Dify: {}".format(err.args[0])
+            ) from err
+
+        # parse App type  ------------------------------------------------------
+        try:
+            app_type = DifyAppType(info_response["mode"])
+        except (KeyError, ValueError) as err:
+            raise ValueError("fail to get App Type from Dify") from err
+
+        # create app  ----------------------------------------------------------
+        if app_type == DifyAppType.WORKFLOW:
+            return WorkflowApp(config, info_response)
+        else:
+            return ChatflowApp(config, info_response)
 
     # constructor  *************************************************************
 
-    def __init__(self, config):
+    def __init__(self, config, info_response):
+        # TODO
         self.config = config
+
+        response_name = (
+            info_response["name"] if "name" in info_response else None
+        )
+
+        self.response_name = response_name
         self.model = None  # to be assigned
+
+    # private method  **********************************************************
+
+    @staticmethod
+    def _create_http_header(key, enable_stream=False):
+        """
+        FIXME FIXME docstring
+        TODO TODO unit tests
+
+        :param key:
+        :type key: str
+        :param enable_stream:
+        :type enable_stream: bool, optional
+        :return: http header object provided to `requests.get`
+        :rtype: dict
+        """
+        header_dict = {
+            "Authorization": "Bearer {}".format(key),
+            "Content-Type": "application/json",
+        }
+
+        if enable_stream:
+            header_dict["Accept"] = "text/event-stream"
+
+        return header_dict
+
+    @property
+    def _http_header(self):
+        return self._create_http_header(
+            self.config.key, enable_stream=self.current_enable_stream
+        )
 
 
 class WorkflowApp(BaseDifyApp):  # =============================================
@@ -175,9 +256,10 @@ class Pipe:  # =================================================================
         for config_dict in APP_MODEL_CONFIGS:
             # create config
             config = AppModelConfig.model_validate(config_dict)
+
             # create model & app
-            model = OWUModel(config)
             app = BaseDifyApp.create_app(config)
+            model = OWUModel(config)
 
             # connect model & app
             model.app = app

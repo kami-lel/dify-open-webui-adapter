@@ -13,7 +13,6 @@ import json
 from json import JSONDecodeError
 
 from pydantic import BaseModel
-import requests
 
 # constants  ===================================================================
 OWU_USER_ROLE = "user"
@@ -30,8 +29,6 @@ DEFINED_APP_MODEL_CONFIG_KEYS = (
 DIFY_USER_ROLE = "user"  # Todo read user role from metadata
 DEFAULT_QUERY_INPUT_FIELD_IDENTIFIER = "query"
 DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER = "answer"
-REQUEST_TIMEOUT = 30
-STREAM_REQUEST_TIMEOUT = 300
 
 
 # Open WebUI side  #############################################################
@@ -99,16 +96,6 @@ class OWUModel:
         skip_get_app_type_and_name=False,  # for debug & testing
         app_type_override=None,  # for debug & testing
     ):
-        key, self.model_id, provided_name = self._parse_app_model_config_arg(
-            app_model_config
-        )
-
-        if skip_get_app_type_and_name:
-            self.app_type, response_name = app_type_override, None
-        else:
-            self.app_type, response_name = BaseDifyApp.get_app_type_and_name(
-                base_url, key
-            )
 
         # set self.name
         self.name = provided_name or response_name or self.model_id
@@ -202,54 +189,6 @@ class BaseDifyApp:
     :type model: OWUModel
     """
 
-    # public methods  ==========================================================
-
-    @staticmethod
-    def create():
-        pass  # Todo
-
-    @staticmethod
-    def get_app_type_and_name(base_url, key):
-        """
-        get Dify App's Type & Name, by GET /info of Dify Backend API
-
-
-        :param base_url:
-        :type base_url: str
-        :param key:
-        :type key: str
-        :raises ConnectionError:
-        :raises ValueError:
-        :return: type & name of Dify App
-        :rtype: tuple(str, DifyAppType)
-        """
-        info_url = "{}/info".format(base_url)
-
-        # GET /info  -----------------------------------------------------------
-        try:
-            response_object = requests.get(
-                info_url,
-                headers=create_http_header(key, enable_stream=False),
-                timeout=REQUEST_TIMEOUT,
-            )
-            response_object.raise_for_status()
-            response = response_object.json()
-
-        except requests.exceptions.RequestException as err:
-            raise ConnectionError(
-                "fail request to Dify: {}".format(err.args[0])
-            ) from err
-
-        # parse App type  ------------------------------------------------------
-        try:
-            app_type = DifyAppType(response["mode"])
-        except (KeyError, ValueError) as err:
-            raise ValueError("fail to get App Type from Dify") from err
-
-        response_name = response["name"] if "name" in response else None
-
-        return app_type, response_name
-
     def reply(self):
         """
         handle Dify side of processing per-round response of conversation,
@@ -265,12 +204,6 @@ class BaseDifyApp:
             return _StreamingConversationRound(self)
         else:
             return self._reply_blocking()
-
-    @property
-    def http_header(self):  # pylint: disable=missing-function-docstring
-        return create_http_header(
-            self.key, enable_stream=self.current_enable_stream
-        )
 
     def open_reply_response(self):
         """
@@ -492,26 +425,6 @@ class ChatflowApp(BaseDifyApp):
 
 
 # helper class  ================================================================
-
-
-def create_http_header(key, enable_stream=False):
-    """
-    :param key:
-    :type key: str
-    :param enable_stream:
-    :type enable_stream: bool, optional
-    :return: http header object provided to `requests.get`
-    :rtype: dict
-    """
-    header_dict = {
-        "Authorization": "Bearer {}".format(key),
-        "Content-Type": "application/json",
-    }
-
-    if enable_stream:
-        header_dict["Accept"] = "text/event-stream"
-
-    return header_dict
 
 
 class _SSEType(Flag):

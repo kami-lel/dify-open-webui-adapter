@@ -84,9 +84,6 @@ class PipeRequest(BaseModel):  # ===============================================
     user: dict
     metadata: dict
 
-    def __post_init__(self):
-        pass  # Todo various data validation
-
 
 # Dify side  ###################################################################
 # Dify constants  ==============================================================

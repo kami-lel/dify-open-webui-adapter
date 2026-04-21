@@ -88,17 +88,39 @@ class AppModelConfig(BaseModel):  # ============================================
             )
 
 
-class PipeCall(BaseModel):  # ===============================================
+# pipe call  ===================================================================
+
+
+class _PipeCallBody(BaseModel):
+
+    stream: Optional[bool] = Field(default=False)
+
+
+class _PipeCallUser(BaseModel):
+    pass
+
+
+class _PipeCallMetadata(BaseModel):
+    pass
+
+
+class PipeCall(BaseModel):
     """
     a wrapper class containing all infos of a single OWU Pipe Function request,
     i.e. a single call from Pipe.pipe()
     """
 
-    # fields  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    body: _PipeCallBody
+    user: _PipeCallUser
+    metadata: _PipeCallMetadata
 
-    body: dict
-    user: dict
-    metadata: dict
+    @property
+    def enable_stream(self):
+        """
+        :return: whether current call allows streaming
+        :rtype: bool
+        """
+        return self.body.stream
 
 
 # Dify side  ###################################################################
@@ -222,7 +244,7 @@ class BaseDifyApp:  # ==========================================================
         :rtype: dict
         """
         return self._create_http_header(
-            self.config.key, enable_stream=self.current_enable_stream
+            self.config.key, enable_stream=self.model.current_call.enable_stream
         )
 
 
@@ -255,7 +277,9 @@ class OWUModel:  # =============================================================
     def __init__(self, config):
         self.config = config
 
-        self.app = None  # to be assigned
+        # to be assigned
+        self.app = None
+        self.current_call = None
 
 
 class Pipe:  # =================================================================

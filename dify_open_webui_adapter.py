@@ -303,17 +303,20 @@ class OWUModel:  # =============================================================
 
     :param config:
     :type config: AppModelConfig
+    :param app:
+    :type app: Workflow or Chatflow
     """
 
     # constructor  *************************************************************
 
-    def __init__(self, config):
+    def __init__(self, config, app):
+        # TODO need unit test
         self.config = config
+        self.app = app
 
-        self.name = provided_name or response_name or self.model_id
+        self.name = config.name or app.response_name or config.model_id
 
         # to be assigned
-        self.app = None
         self.call = None
 
 
@@ -337,10 +340,9 @@ class Pipe:  # =================================================================
 
             # create model & app
             app = BaseDifyApp.create_app(config)
-            model = OWUModel(config)
+            model = OWUModel(config, app)
 
             # connect model & app
-            model.app = app
             app.model = model
 
             # save model & app

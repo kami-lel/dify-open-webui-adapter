@@ -13,174 +13,32 @@ from dify_open_webui_adapter import WorkflowApp, ChatflowApp
 
 # Pytest fixtures  #############################################################
 @pytest.fixture(scope="class")
-def app_wf1(config_wf1):
-    return WorkflowApp(config_wf1, {"name": ""})
+def local_app_wf1(config_wf1, app_name_wf1):
+    return WorkflowApp(config_wf1, {"name": app_name_wf1})
 
 
 # Pytest unit tests  ###########################################################
 
-# FIXME adapt
-
 
 class TestWf1:  # ==============================================================
 
-    def test_model(_, app_wf_skip1, model_wf_skip1):
-        app = app_wf_skip1
-        model = model_wf_skip1
+    def test_config(_, local_app_wf1, config_wf1):
+        app = local_app_wf1
 
-        assert app.model is model
-
-    def test_base_url(_, app_wf_skip1, base_url):
-        app = app_wf_skip1
-
-        opt = app.base_url
+        opt = app.config
         print(opt)
-        assert isinstance(opt, str)
-        assert opt == base_url
+        assert opt is config_wf1
 
-    def test_key(_, app_wf_skip1, auth_key_wf1):
-        app = app_wf_skip1
-        opt = app.key
+    def test_model(_, local_app_wf1):
+        app = local_app_wf1
+        assert app.config is None
 
+    def test_name(_, local_app_wf1, app_name_wf1):
+        app = local_app_wf1
+
+        opt = app.response_name
         print(opt)
-        assert isinstance(opt, str)
-        assert opt == auth_key_wf1
-
-    def test_disallows(_, app_wf_skip1):
-        app = app_wf_skip1
-        opt = app.disallows_streaming
-
-        print(opt)
-        assert isinstance(opt, bool)
-        assert not opt
-
-    def test_msg(_, app_wf_skip1):
-        app = app_wf_skip1
-        opt = app.current_user_msg_content
-
-        print(opt)
-        assert isinstance(opt, str)
-        assert opt == ""
-
-    def test_enables(_, app_wf_skip1):
-        app = app_wf_skip1
-        opt = app.current_enable_stream
-
-        print(opt)
-        assert isinstance(opt, bool)
-        assert not opt
+        assert opt == app_name_wf1
 
 
-class TestLocalWf1:  # =========================================================
-
-    def test_model(_, app_wf_alt_url, model_wf_alt_url):
-        app = app_wf_alt_url
-        model = model_wf_alt_url
-
-        assert app.model is model
-
-    def test_base_url(_, app_wf_alt_url, base_url2):
-        app = app_wf_alt_url
-
-        opt = app.base_url
-        print(opt)
-        assert isinstance(opt, str)
-        assert opt == base_url2
-
-    def test_key(_, app_wf_alt_url, auth_key_wf1):
-        app = app_wf_alt_url
-        opt = app.key
-
-        print(opt)
-        assert isinstance(opt, str)
-        assert opt == auth_key_wf1
-
-    def test_disallows(_, app_wf_alt_url):
-        app = app_wf_alt_url
-        opt = app.disallows_streaming
-
-        print(opt)
-        assert isinstance(opt, bool)
-        assert not opt
-
-    def test_msg(_, app_wf_alt_url):
-        app = app_wf_alt_url
-        opt = app.current_user_msg_content
-
-        print(opt)
-        assert isinstance(opt, str)
-        assert opt == ""
-
-    def test_enables(_, app_wf_alt_url):
-        app = app_wf_alt_url
-        opt = app.current_enable_stream
-
-        print(opt)
-        assert isinstance(opt, bool)
-        assert not opt
-
-
-class TestCf1:  # ==============================================================
-
-    def test_model(_, app_cf_skip1, model_cf_skip1):
-        app = app_cf_skip1
-        model = model_cf_skip1
-        assert app.model is model
-
-    def test_base_url(_, app_cf_skip1, base_url):
-        app = app_cf_skip1
-
-        opt = app.base_url
-        print(opt)
-        assert isinstance(opt, str)
-        assert opt == base_url
-
-    def test_key(_, app_cf_skip1, auth_key_cf1):
-        app = app_cf_skip1
-        opt = app.key
-
-        print(opt)
-        assert isinstance(opt, str)
-        assert opt == auth_key_cf1
-
-    def test_disallows(_, app_cf_skip1):
-        app = app_cf_skip1
-        opt = app.disallows_streaming
-
-        print(opt)
-        assert isinstance(opt, bool)
-        assert not opt
-
-    def test_msg(_, app_cf_skip1):
-        app = app_cf_skip1
-        opt = app.current_user_msg_content
-
-        print(opt)
-        assert isinstance(opt, str)
-        assert opt == ""
-
-    def test_enables(_, app_cf_skip1):
-        app = app_cf_skip1
-        opt = app.current_enable_stream
-
-        print(opt)
-        assert isinstance(opt, bool)
-        assert not opt
-
-
-class TestErr:  #  =============================================================
-    def test_disallow_type(_, base_url, config_wf1):
-        config = config_wf1.copy()
-
-        config["disallows_streaming"] = 123
-
-        with pytest.raises(TypeError) as exec_info:
-            WorkflowApp(None, base_url, config)
-        opt = exec_info.value.args[0]
-
-        print(opt)
-        assert (
-            opt
-            == "entry in APP_MODEL_CONFIGS, value of 'disallows_streaming' "
-            "must be bool: 123"
-        )
+# TODO

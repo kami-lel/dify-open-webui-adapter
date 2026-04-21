@@ -6,18 +6,6 @@ Unit Tests (using pytest) for:
 BaseDifyApp.__init__()
 """
 
-import pytest
-
-from dify_open_webui_adapter import ChatflowApp
-
-# Pytest fixtures  #############################################################
-
-
-@pytest.fixture(scope="class")
-def app_direct_cf2(config_cf2):
-    return ChatflowApp(config_cf2, {})
-
-
 # Pytest unit tests  ###########################################################
 
 

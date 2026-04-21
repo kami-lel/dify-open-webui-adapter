@@ -314,7 +314,7 @@ class OWUModel:  # =============================================================
         self.config = config
         self.app = app
 
-        self.name = config.name or app.response_name or config.model_id
+        self.display_name = config.name or app.response_name or config.model_id
 
         # to be assigned
         self.call = None

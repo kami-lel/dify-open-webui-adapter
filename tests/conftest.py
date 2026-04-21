@@ -236,6 +236,11 @@ def app_direct_cf1(config_cf1, info_response_cf1):
     return ChatflowApp(config_cf1, info_response_cf1)
 
 
+@pytest.fixture(scope="class")
+def app_direct_cf2(config_cf2):
+    return ChatflowApp(config_cf2, {"mode": "advanced-chat"})
+
+
 # replies  =====================================================================
 
 

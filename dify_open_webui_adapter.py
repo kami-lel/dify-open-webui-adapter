@@ -94,7 +94,7 @@ class AppModelConfig(BaseModel):  # ============================================
 
 
 # pipe call  ===================================================================
-OWU_USER_ROLE = "user"
+OWU_USER_ROLE = "user"  # key in body
 
 
 class _PipeCallBody(BaseModel):
@@ -123,9 +123,9 @@ class PipeCall(BaseModel):
     body: _PipeCallBody
     user: _PipeCallUser
     metadata: _PipeCallMetadata
-    newest_message: str = ""  # placeholder
+    message: str = ""  # placeholder
 
-    @computed_field
+    @computed_field(return_type=bool)
     @property
     def enable_stream(self):
         """
@@ -134,7 +134,7 @@ class PipeCall(BaseModel):
         """
         return self.body.stream
 
-    @computed_field
+    @computed_field(return_type=str)
     @property
     def username(self):
         """
@@ -143,12 +143,13 @@ class PipeCall(BaseModel):
         """
         return (
             self.user.name
-            or self.user.name.username
+            or self.user.username
             or self.user.email
             or self.user.id
         )
 
     def model_post_init(self, __context):
+        return  # Hack
         for section in reversed(self.body["messages"]):
             if section["role"] == OWU_USER_ROLE:
                 return section["content"]

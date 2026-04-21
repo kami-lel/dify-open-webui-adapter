@@ -3,7 +3,7 @@ call-msg_test.py
 
 Unit Tests (using pytest) for:
 
-PipeCall.newest_message
+PipeCall.message
 """
 
-# TODO unit test
+# Todo unit test

@@ -15,26 +15,26 @@ import pytest
 
 from dify_open_webui_adapter import BaseDifyApp, WorkflowApp, ChatflowApp
 
+from tests import mock_sefx_info
+
 # Pytest fixtures  #############################################################
 
 
 @pytest.fixture(scope="class")
-def testee_wf1(config_wf1, patch_target_get, mock_info_wf):
+def testee_wf1(config_wf1, patch_target_get):
     config = config_wf1
-    mock = mock_info_wf
 
-    with patch(patch_target_get, return_value=mock) as mock_get:
+    with patch(patch_target_get, side_effect=mock_sefx_info) as mock_get:
         app = BaseDifyApp.create_app(config)
 
     return app, mock_get
 
 
 @pytest.fixture(scope="class")
-def testee_cf1(config_cf1, patch_target_get, mock_info_cf):
+def testee_cf1(config_cf1, patch_target_get):
     config = config_cf1
-    mock = mock_info_cf
 
-    with patch(patch_target_get, return_value=mock) as mock_get:
+    with patch(patch_target_get, side_effect=mock_sefx_info) as mock_get:
         app = BaseDifyApp.create_app(config)
 
     return app, mock_get

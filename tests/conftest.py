@@ -4,17 +4,6 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from tests import (
-    _convert_entries2iter,
-    STREAM_ENTRIES_WF1,
-    STREAM_ENTRIES_WF2,
-    STREAM_ENTRIES_WF3,
-    STREAM_ENTRIES_WF4,
-    STREAM_ENTRIES_CF1,
-    STREAM_ENTRIES_CF2,
-    STREAM_ENTRIES_CF3,
-)
-
 # set up  ######################################################################
 # to allows importing from dify_open_webui_adapter.py
 project_root_path = str(Path(__file__).resolve().parents[1])
@@ -345,84 +334,84 @@ def mock_base():
 
 
 # stream entries  --------------------------------------------------------------
-@pytest.fixture
-def stream_entries_wf1():
-    return STREAM_ENTRIES_WF1
+# @pytest.fixture
+# def stream_entries_wf1():
+#     return STREAM_ENTRIES_WF1
 
 
-@pytest.fixture
-def stream_entries_cf1():
-    return STREAM_ENTRIES_CF1
+# @pytest.fixture
+# def stream_entries_cf1():
+#     return STREAM_ENTRIES_CF1
 
 
-# wf mocks  --------------------------------------------------------------------
+# # wf mocks  --------------------------------------------------------------------
 
 
-@pytest.fixture
-def mock_wf1(mock_base, stream_entries_wf1):
-    mock_resp = mock_base
-    mock_resp.iter_lines.return_value = _convert_entries2iter(
-        stream_entries_wf1
-    )
-    return mock_resp
+# @pytest.fixture
+# def mock_wf1(mock_base, stream_entries_wf1):
+#     mock_resp = mock_base
+#     mock_resp.iter_lines.return_value = _convert_entries2iter(
+#         stream_entries_wf1
+#     )
+#     return mock_resp
 
 
-@pytest.fixture
-def mock_wf2(mock_base):
-    mock_resp = mock_base
-    mock_resp.iter_lines.return_value = _convert_entries2iter(
-        STREAM_ENTRIES_WF2
-    )
+# @pytest.fixture
+# def mock_wf2(mock_base):
+#     mock_resp = mock_base
+#     mock_resp.iter_lines.return_value = _convert_entries2iter(
+#         STREAM_ENTRIES_WF2
+#     )
 
-    return mock_resp
-
-
-@pytest.fixture
-def mock_wf3(mock_base):
-    mock_resp = mock_base
-    mock_resp.iter_lines.return_value = _convert_entries2iter(
-        STREAM_ENTRIES_WF3
-    )
-    return mock_resp
+#     return mock_resp
 
 
-@pytest.fixture
-def mock_wf4(mock_base):
-    mock_resp = mock_base
-    mock_resp.iter_lines.return_value = _convert_entries2iter(
-        STREAM_ENTRIES_WF4
-    )
-    return mock_resp
+# @pytest.fixture
+# def mock_wf3(mock_base):
+#     mock_resp = mock_base
+#     mock_resp.iter_lines.return_value = _convert_entries2iter(
+#         STREAM_ENTRIES_WF3
+#     )
+#     return mock_resp
 
 
-# cf mocks  --------------------------------------------------------------------
+# @pytest.fixture
+# def mock_wf4(mock_base):
+#     mock_resp = mock_base
+#     mock_resp.iter_lines.return_value = _convert_entries2iter(
+#         STREAM_ENTRIES_WF4
+#     )
+#     return mock_resp
 
 
-@pytest.fixture
-def mock_cf1(mock_base, stream_entries_cf1):
-    mock_resp = mock_base
-    mock_resp.iter_lines.return_value = _convert_entries2iter(
-        stream_entries_cf1
-    )
-    return mock_resp
+# # cf mocks  --------------------------------------------------------------------
 
 
-@pytest.fixture
-def mock_cf2(mock_base):
-    mock_resp = mock_base
-    mock_resp.iter_lines.return_value = _convert_entries2iter(
-        STREAM_ENTRIES_CF2
-    )
-    return mock_resp
+# @pytest.fixture
+# def mock_cf1(mock_base, stream_entries_cf1):
+#     mock_resp = mock_base
+#     mock_resp.iter_lines.return_value = _convert_entries2iter(
+#         stream_entries_cf1
+#     )
+#     return mock_resp
 
 
-@pytest.fixture
-def mock_cf3(mock_base):
-    mock_resp = mock_base
-    mock_resp.iter_lines.return_value = _convert_entries2iter(
-        STREAM_ENTRIES_CF3
-    )
-    return mock_resp
+# @pytest.fixture
+# def mock_cf2(mock_base):
+#     mock_resp = mock_base
+#     mock_resp.iter_lines.return_value = _convert_entries2iter(
+#         STREAM_ENTRIES_CF2
+#     )
+#     return mock_resp
+
+
+# @pytest.fixture
+# def mock_cf3(mock_base):
+#     mock_resp = mock_base
+#     mock_resp.iter_lines.return_value = _convert_entries2iter(
+#         STREAM_ENTRIES_CF3
+#     )
+#     return mock_resp
 
 
 # .pipe() args  ================================================================

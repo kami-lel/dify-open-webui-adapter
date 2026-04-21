@@ -19,7 +19,7 @@ from dify_open_webui_adapter import (
     Pipe,
 )
 
-from tests import mock_sefx_info
+from tests import mock_sefx_get
 
 # Hack remove test ignoring
 collect_ignore_glob = [
@@ -41,7 +41,7 @@ collect_ignore_glob = [
 def pipe_obj(configs_mux, patch_target_configs, patch_target_get):
     with (
         patch(patch_target_configs, configs_mux),
-        patch(patch_target_get, side_effect=mock_sefx_info),
+        patch(patch_target_get, side_effect=mock_sefx_get),
     ):
         return Pipe()
 

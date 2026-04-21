@@ -1,21 +1,25 @@
 import json
 
-
 # mock obj  --------------------------------------------------------------------
-def mock_info_wf(info_response_wf1):
-    mock_resp = Mock()
-    mock_resp.json.return_value = info_response_wf1
-    return mock_resp
+# def mock_info_wf(info_response_wf1):
+#     mock_resp = Mock()
+#     mock_resp.json.return_value = info_response_wf1
+#     return mock_resp
 
 
-def mock_info_cf(info_response_cf1):
-    mock_resp = Mock()
-    mock_resp.json.return_value = info_response_cf1
-    return mock_resp
+# def mock_info_cf(info_response_cf1):
+#     mock_resp = Mock()
+#     mock_resp.json.return_value = info_response_cf1
+#     return mock_resp
 
 
-def mock_sefx_info(url, **kwargs):
+def mock_sefx_get(url, **kwargs):
+    print(kwargs)
     pass  # TODO
+
+
+def mock_sefx_post(self, **kwargs):
+    pass  # Todo
 
 
 def _convert_entries2lines(entries):

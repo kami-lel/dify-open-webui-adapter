@@ -88,7 +88,7 @@ class AppModelConfig(BaseModel):  # ============================================
             )
 
 
-class PipeRequest(BaseModel):  # ===============================================
+class PipeCall(BaseModel):  # ===============================================
     """
     a wrapper class containing all infos of a single OWU Pipe Function request,
     i.e. a single call from Pipe.pipe()
@@ -254,6 +254,7 @@ class OWUModel:  # =============================================================
 
     def __init__(self, config):
         self.config = config
+
         self.app = None  # to be assigned
 
 
@@ -284,7 +285,7 @@ class Pipe:  # =================================================================
             app.model = model
 
             # save model & app
-            model_id = model.model_id
+            model_id = config.model_id
             self.models[model_id] = model
             self.apps[model_id] = app
 
@@ -292,6 +293,4 @@ class Pipe:  # =================================================================
         pass
 
     async def pipe(self, body, __user__, __metadata__):
-        owu_request = PipeRequest(
-            body=body, user=__user__, metadata=__metadata__
-        )
+        owu_call = PipeCall(body=body, user=__user__, metadata=__metadata__)

@@ -1,5 +1,5 @@
 """
-request-init_test.py
+call-init_test.py
 
 Unit Tests (using pytest) for:
 
@@ -8,7 +8,7 @@ OWURequest creation
 
 import pytest
 
-from dify_open_webui_adapter import PipeRequest
+from dify_open_webui_adapter import PipeCall
 
 # Pytest fixtures  #############################################################
 
@@ -16,7 +16,7 @@ from dify_open_webui_adapter import PipeRequest
 @pytest.fixture(scope="class")
 def request1(pipe_args1):
     args = pipe_args1
-    return PipeRequest(**args)
+    return PipeCall(**args)
 
 
 # Pytest unit tests  ###########################################################

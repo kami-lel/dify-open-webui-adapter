@@ -311,7 +311,6 @@ class OWUModel:  # =============================================================
     # constructor  *************************************************************
 
     def __init__(self, config, app):
-        # TODO need unit test
         self.config = config
         self.app = app
 

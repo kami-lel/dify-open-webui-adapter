@@ -21,7 +21,13 @@ project_root_path = str(Path(__file__).resolve().parents[1])
 if project_root_path not in sys.path:
     sys.path.insert(0, project_root_path)
 
-from dify_open_webui_adapter import OWUModel, DifyAppType, AppModelConfig
+from dify_open_webui_adapter import (
+    OWUModel,
+    DifyAppType,
+    AppModelConfig,
+    WorkflowApp,
+    ChatflowApp,
+)
 
 # Hack remove test ignoring
 collect_ignore_glob = [
@@ -188,7 +194,7 @@ def mock_info_cf(info_response_cf1):
     return mock_resp
 
 
-# configurations  ==============================================================
+# mock assert  -----------------------------------------------------------------
 
 
 @pytest.fixture
@@ -215,6 +221,19 @@ def mock_assertee_info_cf(endpoint_info, auth_key_cf1):
         "timeout": 30,
     }
     return args, kwargs
+
+
+# directly app  ----------------------------------------------------------------
+
+
+@pytest.fixture(scope="class")
+def app_direct_wf1(config_wf1, info_response_wf1):
+    return WorkflowApp(config_wf1, info_response_wf1)
+
+
+@pytest.fixture(scope="class")
+def app_direct_cf1(config_cf1, info_response_cf1):
+    return ChatflowApp(config_cf1, info_response_cf1)
 
 
 # replies  =====================================================================

@@ -46,12 +46,22 @@ class AppModelConfig(BaseModel):  # ============================================
     """
 
     # fields  ******************************************************************
+
     # required
     key: str = Field(..., min_length=1)
     model_id: str = Field(..., min_length=1)
+
     # optional
     name: Optional[str] = Field(default=None, min_length=1)
     disallows_streaming: Optional[bool] = Field(default=False)
+
+    # relevant only to Workflow
+    query_input_field_identifier: Optional[str] = Field(
+        default="query", min_length=1
+    )
+    reply_output_variable_identifier: Optional[str] = Field(
+        default="answer", min_length=1
+    )
 
     # Public Methods ***********************************************************
 

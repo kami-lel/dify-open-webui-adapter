@@ -6,6 +6,8 @@ Unit Tests (using pytest) for: class Pipe initialization
 
 # Pytest unit tests  ###########################################################
 
+# BUG must mock by different functions
+
 
 class TestPipe:  # =============================================================
 

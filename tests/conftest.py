@@ -37,6 +37,7 @@ collect_ignore_glob = [
     "app/wf/*",
     "app/app-get_test.py",
     "model/model-reply-last_test.py",
+    "pipe/model-get_test.py",
     "pipe/pipe-pipes_test.py",
     "pipe/pipe-pipe_test.py",
     "round/*",

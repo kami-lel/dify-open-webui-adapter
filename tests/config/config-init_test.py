@@ -30,14 +30,14 @@ class TestWf1:  # ==============================================================
         assert isinstance(value, str)
         assert value == "example-workflow-model"
 
-    def test_name(_, config_wf1, app_name_wf1):
+    def test_name(_, config_wf1, app_given_name_wf1):
         opt = config_wf1
         print(opt)
 
         assert hasattr(opt, "name")
         value = opt.name
         assert isinstance(value, str)
-        assert value == app_name_wf1
+        assert value == app_given_name_wf1
 
     def test_stream(_, config_wf1):
         opt = config_wf1
@@ -70,14 +70,14 @@ class TestCf1:  # ==============================================================
         assert isinstance(value, str)
         assert value == "example-chatflow-model"
 
-    def test_name(_, config_cf1, app_name_cf1):
+    def test_name(_, config_cf1, app_given_name_cf1):
         opt = config_cf1
         print(opt)
 
         assert hasattr(opt, "name")
         value = opt.name
         assert isinstance(value, str)
-        assert value == app_name_cf1
+        assert value == app_given_name_cf1
 
     def test_stream(_, config_cf1):
         opt = config_cf1

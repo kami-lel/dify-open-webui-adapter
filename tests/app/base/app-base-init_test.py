@@ -13,13 +13,13 @@ from dify_open_webui_adapter import WorkflowApp, ChatflowApp
 
 # Pytest fixtures  #############################################################
 @pytest.fixture(scope="class")
-def local_app_wf1(config_wf1, app_name_wf1):
-    return WorkflowApp(config_wf1, {"name": app_name_wf1})
+def local_app_wf1(config_wf1, info_response_wf1):
+    return WorkflowApp(config_wf1, info_response_wf1)
 
 
 @pytest.fixture(scope="class")
-def local_app_cf1(config_cf1):
-    return ChatflowApp(config_cf1, {"name": "Dify Chatflow App"})
+def local_app_cf1(config_cf1, info_response_cf1):
+    return ChatflowApp(config_cf1, info_response_cf1)
 
 
 @pytest.fixture(scope="class")
@@ -43,12 +43,12 @@ class TestWf1:  # ==============================================================
         app = local_app_wf1
         assert app.model is None
 
-    def test_name(_, local_app_wf1, app_name_wf1):
+    def test_name(_, local_app_wf1, app_response_name_wf1):
         app = local_app_wf1
 
         opt = app.response_name
         print(opt)
-        assert opt == app_name_wf1
+        assert opt == app_response_name_wf1
 
 
 class TestCf1:  # ==============================================================
@@ -64,12 +64,12 @@ class TestCf1:  # ==============================================================
         app = local_app_cf1
         assert app.model is None
 
-    def test_name(_, local_app_cf1):
+    def test_name(_, local_app_cf1, app_response_name_cf1):
         app = local_app_cf1
 
         opt = app.response_name
         print(opt)
-        assert opt == "Dify Chatflow App"
+        assert opt == app_response_name_cf1
 
 
 class TestCf2:  # ==============================================================

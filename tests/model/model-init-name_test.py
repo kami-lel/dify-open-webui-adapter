@@ -90,7 +90,7 @@ class TestResponse:  ###########################################################
         base_url,
         config_wf1,
         mock_info_wf,
-        assertee_info_wf,
+        mock_assertee_info_wf,
         patch_target_get,
     ):
         config = config_wf1.copy()
@@ -105,7 +105,7 @@ class TestResponse:  ###########################################################
             assert opt == "My Workflow App"
 
             mock_get.assert_called_once_with(
-                *(assertee_info_wf[0]), **(assertee_info_wf[1])
+                *(mock_assertee_info_wf[0]), **(mock_assertee_info_wf[1])
             )
 
     def test2(
@@ -113,7 +113,7 @@ class TestResponse:  ###########################################################
         base_url,
         config_cf1,
         mock_info_cf,
-        assertee_info_cf,
+        mock_assertee_info_cf,
         patch_target_get,
     ):
         config = config_cf1.copy()
@@ -128,7 +128,7 @@ class TestResponse:  ###########################################################
             assert opt == "My Chatflow App"
 
             mock_get.assert_called_once_with(
-                *(assertee_info_cf[0]), **(assertee_info_cf[1])
+                *(mock_assertee_info_cf[0]), **(mock_assertee_info_cf[1])
             )
 
 

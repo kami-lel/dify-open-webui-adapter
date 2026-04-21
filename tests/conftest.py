@@ -25,7 +25,7 @@ from dify_open_webui_adapter import OWUModel, DifyAppType, AppModelConfig
 
 # Hack remove test ignoring
 collect_ignore_glob = [
-    "app/base/*",
+    "app/base/app-base-header_test.py",
     "app/cf/*",
     "app/wf/*",
     "app/app-get_test.py",
@@ -45,12 +45,12 @@ collect_ignore_glob = [
 
 
 # patch targets  ---------------------------------------------------------------
-@pytest.fixture
+@pytest.fixture(scope="session")
 def patch_target_get():
     return "dify_open_webui_adapter.requests.get"
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def patch_target_post():
     return "dify_open_webui_adapter.requests.post"
 
@@ -153,6 +153,11 @@ def configs_mux(config_raw_wf1, config_raw_cf1, config_raw_cf2):
 # during init  =================================================================
 
 
+@pytest.fixture
+def endpoint_info(base_url):
+    return base_url + "/info"
+
+
 # app names  -------------------------------------------------------------------
 @pytest.fixture(scope="session")
 def app_response_name_wf1():
@@ -165,43 +170,40 @@ def app_response_name_cf1():
 
 
 # response obj  ----------------------------------------------------------------
-@pytest.fixture
+@pytest.fixture(scope="class")
 def info_response_wf1(app_response_name_wf1):
     return {"mode": "workflow", "name": app_response_name_wf1}
 
 
-@pytest.fixture
+@pytest.fixture(scope="class")
 def info_response_cf1(app_response_name_cf1):
     return {"mode": "advanced-chat", "name": app_response_name_cf1}
 
 
-@pytest.fixture
-def info_response_cf2():
-    return {"mode": "advanced-chat"}
-
-
 # mock obj  --------------------------------------------------------------------
-@pytest.fixture
+@pytest.fixture(scope="class")
 def mock_info_wf(info_response_wf1):
     mock_resp = Mock()
     mock_resp.json.return_value = info_response_wf1
     return mock_resp
 
 
-@pytest.fixture
+@pytest.fixture(scope="class")
 def mock_info_cf(info_response_cf1):
     mock_resp = Mock()
     mock_resp.json.return_value = info_response_cf1
     return mock_resp
 
 
-# TODO
+# configurations  ==============================================================
+
+
 @pytest.fixture
-def assertee_info_wf(endpoint_info, authorization_wf1):
+def mock_assertee_info_wf(endpoint_info, auth_key_wf1):
     args = [endpoint_info]
     kwargs = {
         "headers": {
-            "Authorization": authorization_wf1,
+            "Authorization": "Bearer " + auth_key_wf1,
             "Content-Type": "application/json",
         },
         "timeout": 30,
@@ -210,11 +212,11 @@ def assertee_info_wf(endpoint_info, authorization_wf1):
 
 
 @pytest.fixture
-def assertee_info_cf(endpoint_info, authorization_cf1):
+def mock_assertee_info_cf(endpoint_info, auth_key_cf1):
     args = [endpoint_info]
     kwargs = {
         "headers": {
-            "Authorization": authorization_cf1,
+            "Authorization": "Bearer " + auth_key_cf1,
             "Content-Type": "application/json",
         },
         "timeout": 30,
@@ -249,9 +251,6 @@ def base_url2():
 
 
 # endpoints  -------------------------------------------------------------------
-@pytest.fixture
-def endpoint_info(base_url):
-    return base_url + "/info"
 
 
 @pytest.fixture
@@ -262,19 +261,6 @@ def endpoint_wf(base_url):
 @pytest.fixture
 def endpoint_cf(base_url):
     return base_url + "/chat-messages"
-
-
-# configurations  ==============================================================
-
-
-@pytest.fixture(scope="session")
-def authorization_wf1(auth_key_wf1):
-    return "Bearer " + auth_key_wf1
-
-
-@pytest.fixture(scope="session")
-def authorization_cf1(auth_key_cf1):
-    return "Bearer " + auth_key_cf1
 
 
 # model  =======================================================================

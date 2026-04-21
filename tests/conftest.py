@@ -110,7 +110,6 @@ def config_raw_cf2(auth_key_cf2):
     return {
         "key": auth_key_cf2,
         "model_id": "example-chatflow-model-2",
-        "name": "Aux Example Chatflow Model/App",
         "disallows_streaming": True,
     }
 

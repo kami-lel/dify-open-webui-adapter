@@ -11,13 +11,15 @@ AppModelConfig creation
 
 class TestWf1:  # ==============================================================
 
-    def test_key(_, config_wf1):
+    def test_key(_, config_wf1, auth_key_wf1):
         opt = config_wf1
+        key_answer = auth_key_wf1
+
         print(opt)
         assert hasattr(opt, "key")
         value = opt.key
         assert isinstance(value, str)
-        assert len(value) != 0
+        assert value == key_answer
 
     def test_model_id(_, config_wf1):
         opt = config_wf1
@@ -26,7 +28,74 @@ class TestWf1:  # ==============================================================
         assert hasattr(opt, "model_id")
         value = opt.model_id
         assert isinstance(value, str)
-        assert len(value) != 0
+        assert value == "example-workflow-model"
+
+    def test_name(_, config_wf1, app_name_wf1):
+        opt = config_wf1
+        print(opt)
+
+        assert hasattr(opt, "name")
+        value = opt.name
+        assert isinstance(value, str)
+        assert value == app_name_wf1
 
 
-# TODO use other configs too
+class TestCf1:  # ==============================================================
+
+    def test_key(_, config_cf1, auth_key_cf1):
+        opt = config_cf1
+        key_answer = auth_key_cf1
+
+        print(opt)
+        assert hasattr(opt, "key")
+        value = opt.key
+        assert isinstance(value, str)
+        assert value == key_answer
+
+    def test_model_id(_, config_cf1):
+        opt = config_cf1
+        print(opt)
+
+        assert hasattr(opt, "model_id")
+        value = opt.model_id
+        assert isinstance(value, str)
+        assert value == "example-chatflow-model"
+
+    def test_name(_, config_cf1, app_name_cf1):
+        opt = config_cf1
+        print(opt)
+
+        assert hasattr(opt, "name")
+        value = opt.name
+        assert isinstance(value, str)
+        assert value == app_name_cf1
+
+
+class TestCf2:  # ==============================================================
+
+    def test_key(_, config_cf2, auth_key_cf2):
+        opt = config_cf2
+        key_answer = auth_key_cf2
+
+        print(opt)
+        assert hasattr(opt, "key")
+        value = opt.key
+        assert isinstance(value, str)
+        assert value == key_answer
+
+    def test_model_id(_, config_cf2):
+        opt = config_cf2
+        print(opt)
+
+        assert hasattr(opt, "model_id")
+        value = opt.model_id
+        assert isinstance(value, str)
+        assert value == "example-chatflow-model-2"
+
+    def test_name(_, config_cf2):
+        opt = config_cf2
+        print(opt)
+
+        assert hasattr(opt, "name")
+        value = opt.name
+        assert value is None

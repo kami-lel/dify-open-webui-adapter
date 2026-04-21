@@ -19,6 +19,8 @@ from dify_open_webui_adapter import (
     Pipe,
 )
 
+from tests import mock_sefx_info
+
 # Hack remove test ignoring
 collect_ignore_glob = [
     "app/base/app-base-header_test.py",
@@ -36,8 +38,11 @@ collect_ignore_glob = [
 
 
 @pytest.fixture(scope="session")
-def pipe_obj(configs_mux, patch_target_configs):
-    with patch(patch_target_configs, configs_mux):
+def pipe_obj(configs_mux, patch_target_configs, patch_target_get):
+    with (
+        patch(patch_target_configs, configs_mux),
+        patch(patch_target_get, side_effect=mock_sefx_info),
+    ):
         return Pipe()
 
 

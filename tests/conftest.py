@@ -23,6 +23,15 @@ if project_root_path not in sys.path:
 
 from dify_open_webui_adapter import OWUModel, DifyAppType
 
+# Hack remove test ignoring
+collect_ignore_glob = [
+    "app/*",
+    "model/*",
+    "pipe/*",
+    "round/*",
+    "http_test.py",
+]
+
 # pytest fixtures  #############################################################
 
 

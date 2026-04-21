@@ -56,6 +56,24 @@ def pipe_args1():
 
 # app/model configuration  =====================================================
 
+# keys  ------------------------------------------------------------------------
+
+
+@pytest.fixture(scope="session")
+def auth_key_wf1():
+    return "068937402cc741689986cc5b6ed433a"
+
+
+@pytest.fixture(scope="session")
+def auth_key_cf1():
+    return "f2277b0e16154cba981c866bdc124386"
+
+
+@pytest.fixture(scope="session")
+def auth_key_cf2():
+    return "820ab10b649b4c748513cb8e7a628063"
+
+
 # raw dicts  -------------------------------------------------------------------
 
 
@@ -76,9 +94,9 @@ def config_raw_cf1(auth_key_cf1):
 
 
 @pytest.fixture(scope="session")
-def config_raw_cf2():
+def config_raw_cf2(auth_key_cf2):
     return {
-        "key": "820ab10b649b4c748513cb8e7a628063",
+        "key": auth_key_cf2,
         "model_id": "example-chatflow-model-2",
         "name": "Aux Example Chatflow Model/App",
         "disallows_streaming": True,
@@ -150,16 +168,6 @@ def endpoint_cf(base_url):
 
 
 # configurations  ==============================================================
-
-
-@pytest.fixture(scope="session")
-def auth_key_wf1():
-    return "068937402cc741689986cc5b6ed433a"
-
-
-@pytest.fixture(scope="session")
-def auth_key_cf1():
-    return "f2277b0e16154cba981c866bdc124386"
 
 
 @pytest.fixture(scope="session")

@@ -45,7 +45,7 @@ collect_ignore_glob = [
 # pytest fixtures  #############################################################
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def pipe_obj(configs_mux, patch_target_configs):
     with patch(patch_target_configs, configs_mux):
         return Pipe()

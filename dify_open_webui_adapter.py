@@ -162,7 +162,7 @@ class Pipe:  # =================================================================
         self.apps = {}
         for config_dict in APP_MODEL_CONFIGS:
             # create config
-            config = AppModelConfig(config_dict)
+            config = AppModelConfig.model_validate(config_dict)
             # create model & app
             model = OWUModel(config)
             app = BaseDifyApp.create_app(config)

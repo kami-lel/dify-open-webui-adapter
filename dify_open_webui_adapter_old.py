@@ -664,8 +664,6 @@ class Pipe:  ###################################################################
         base_url = base_url_override or DIFY_BACKEND_API_BASE_URL
         app_model_configs = app_model_configs_override or APP_MODEL_CONFIGS
 
-        _check_app_model_configs_structure(app_model_configs)
-
         # populate containers   ------------------------------------------------
         self.model_containers = {}
         for config in app_model_configs:

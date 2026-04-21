@@ -113,8 +113,14 @@ class BaseDifyApp:  # ==========================================================
     # Public Methods  **********************************************************
 
     @staticmethod
-    def create_app():
+    def create_app(config):
         pass
+
+    # constructor  *************************************************************
+
+    def __init__(self, config):
+        self.config = config
+        self.model = None  # to be assigned
 
 
 class WorkflowApp(BaseDifyApp):  # =============================================
@@ -133,7 +139,11 @@ class ChatflowApp(BaseDifyApp):  # =============================================
 
 class OWUModel:  # =============================================================
 
-    pass
+    # constructor  *************************************************************
+
+    def __init__(self, config):
+        self.config = config
+        self.app = None  # to be assigned
 
 
 class Pipe:  # =================================================================
@@ -145,7 +155,26 @@ class Pipe:  # =================================================================
         pass  # configuration via Python constants
 
     def __init__(self):
-        pass
+        AppModelConfig.validate_app_model_configs(APP_MODEL_CONFIGS)
+
+        # create models & apps  ------------------------------------------------
+        self.models = {}
+        self.apps = {}
+        for config_dict in APP_MODEL_CONFIGS:
+            # create config
+            config = AppModelConfig(config_dict)
+            # create model & app
+            model = OWUModel(config)
+            app = BaseDifyApp.create_app(config)
+
+            # connect model & app
+            model.app = app
+            app.model = model
+
+            # save model & app
+            model_id = model.model_id
+            self.models[model_id] = model
+            self.apps[model_id] = app
 
     def pipes(self):
         pass

@@ -140,7 +140,7 @@ class BaseDifyApp:  # ==========================================================
         try:
             response_object = requests.get(
                 info_url,
-                headers=cls._create_http_header(config.key),
+                headers=cls._create_http_header(config),
                 timeout=REQUEST_TIMEOUT,
             )
             response_object.raise_for_status()
@@ -179,20 +179,17 @@ class BaseDifyApp:  # ==========================================================
     # private method  **********************************************************
 
     @staticmethod
-    def _create_http_header(key, enable_stream=False):
+    def _create_http_header(config, enable_stream=False):
         """
-        FIXME FIXME docstring
-        TODO TODO unit tests
-
-        :param key:
-        :type key: str
+        :param config:
+        :type config: AppModelConfig
         :param enable_stream:
         :type enable_stream: bool, optional
-        :return: http header object provided to `requests.get`
+        :return: create a http header object provided to `requests.get/.post`
         :rtype: dict
         """
         header_dict = {
-            "Authorization": "Bearer {}".format(key),
+            "Authorization": "Bearer {}".format(config.key),
             "Content-Type": "application/json",
         }
 
@@ -203,6 +200,10 @@ class BaseDifyApp:  # ==========================================================
 
     @property
     def _http_header(self):
+        """
+        :return: http header object for current round
+        :rtype: dict
+        """
         return self._create_http_header(
             self.config.key, enable_stream=self.current_enable_stream
         )

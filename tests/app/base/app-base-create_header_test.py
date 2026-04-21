@@ -1,23 +1,24 @@
 """
-http_test.py
+app-base-create_header_test.py
 
 Unit Tests (using pytest) for:
 
-create_http_header()
+BaseDifyApp._create_http_header()
 """
 
-from dify_open_webui_adapter import create_http_header
-
-# pytest fixtures  #############################################################
+# TODO TODO unit tests
 
 
-# tests  #######################################################################
+from dify_open_webui_adapter import BaseDifyApp
+
+
+# Pytest unit tests  ###########################################################
 class TestHttpHeader:
 
     def test_no_stream1(_):
         key = "866bdc1"
 
-        opt = create_http_header(key, enable_stream=False)
+        opt = BaseDifyApp._create_http_header(key, enable_stream=False)
 
         print(opt)
         assert opt == {
@@ -28,7 +29,7 @@ class TestHttpHeader:
     def test_stream1(_):
         key = "f2277b"
 
-        opt = create_http_header(key, enable_stream=True)
+        opt = BaseDifyApp._create_http_header(key, enable_stream=True)
 
         print(opt)
         assert opt == {

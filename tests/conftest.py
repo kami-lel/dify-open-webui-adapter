@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import pytest
 
@@ -27,6 +27,7 @@ from dify_open_webui_adapter import (
     AppModelConfig,
     WorkflowApp,
     ChatflowApp,
+    Pipe,
 )
 
 # Hack remove test ignoring
@@ -36,11 +37,18 @@ collect_ignore_glob = [
     "app/wf/*",
     "app/app-get_test.py",
     "model/model-reply-last_test.py",
-    "pipe/*",
+    "pipe/pipe-pipes_test.py",
+    "pipe/pipe-pipe_test.py",
     "round/*",
 ]
 
 # pytest fixtures  #############################################################
+
+
+@pytest.fixture
+def pipe_obj(configs_mux, patch_target_configs):
+    with patch(patch_target_configs, configs_mux):
+        return Pipe()
 
 
 # patch targets  ---------------------------------------------------------------
@@ -52,6 +60,11 @@ def patch_target_get():
 @pytest.fixture(scope="session")
 def patch_target_post():
     return "dify_open_webui_adapter.requests.post"
+
+
+@pytest.fixture(scope="session")
+def patch_target_configs():
+    return "dify_open_webui_adapter.APP_MODEL_CONFIGS"
 
 
 # app/model configuration  =====================================================

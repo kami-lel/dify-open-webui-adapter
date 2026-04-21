@@ -15,8 +15,8 @@ __author__ = "kamiLeL"
 
 
 # Bug keeps sending chat to the same chat id, when use from continue
-# Bug fail to do pass thru
 # Todo make file upload
+# todo pass thru variables
 
 
 # config  ######################################################################
@@ -277,7 +277,7 @@ class BaseDifyApp:  # ==========================================================
         :rtype: dict
         """
         return self._create_http_header(
-            self.config.key, enable_stream=self.model.current_call.enable_stream
+            self.config.key, enable_stream=self.model.call.enable_stream
         )
 
 
@@ -310,9 +310,11 @@ class OWUModel:  # =============================================================
     def __init__(self, config):
         self.config = config
 
+        self.name = provided_name or response_name or self.model_id
+
         # to be assigned
         self.app = None
-        self.current_call = None
+        self.call = None
 
 
 class Pipe:  # =================================================================

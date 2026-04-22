@@ -1,4 +1,5 @@
 import json
+from unittest.mock import MagicMock
 
 # mock obj  --------------------------------------------------------------------
 # def mock_info_wf(info_response_wf1):
@@ -14,12 +15,21 @@ import json
 
 
 def mock_sefx_get(url, **kwargs):
+    mock_resp = MagicMock()
+    print(url)
     print(kwargs)
+
     pass  # TODO
+    return mock_resp
 
 
-def mock_sefx_post(self, **kwargs):
+def mock_sefx_post(url, **kwargs):
+    mock_resp = MagicMock()
+    print(url)
+    print(kwargs)
+
     pass  # Todo
+    return mock_resp
 
 
 def _convert_entries2lines(entries):

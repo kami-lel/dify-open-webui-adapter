@@ -15,13 +15,11 @@ import pytest
 
 from dify_open_webui_adapter import BaseDifyApp, WorkflowApp, ChatflowApp
 
-from tests import mock_sefx_get
-
 # Pytest fixtures  #############################################################
 
 
 @pytest.fixture(scope="class")
-def testee_wf1(config_wf1, patch_target_get):
+def testee_wf1(config_wf1, patch_target_get, mock_sefx_get):
     config = config_wf1
 
     with patch(patch_target_get, side_effect=mock_sefx_get) as mock_get:
@@ -31,7 +29,7 @@ def testee_wf1(config_wf1, patch_target_get):
 
 
 @pytest.fixture(scope="class")
-def testee_cf1(config_cf1, patch_target_get):
+def testee_cf1(config_cf1, patch_target_get, mock_sefx_get):
     config = config_cf1
 
     with patch(patch_target_get, side_effect=mock_sefx_get) as mock_get:

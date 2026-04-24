@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, MagicMock, patch
 
 import pytest
 
@@ -19,8 +19,6 @@ from dify_open_webui_adapter import (
     Pipe,
 )
 
-from tests import mock_sefx_get
-
 # Hack remove test ignoring
 collect_ignore_glob = [
     "app/base/app-base-header_test.py",
@@ -38,7 +36,9 @@ collect_ignore_glob = [
 
 
 @pytest.fixture(scope="session")
-def pipe_obj(configs_mux, patch_target_configs, patch_target_get):
+def pipe_obj(
+    configs_mux, patch_target_configs, patch_target_get, mock_sefx_get
+):
     with (
         patch(patch_target_configs, configs_mux),
         patch(patch_target_get, side_effect=mock_sefx_get),
@@ -333,6 +333,35 @@ def mock_base():
     mock_resp = Mock()
     mock_resp.status_code = 201
     return mock_resp
+
+
+# mock obj  --------------------------------------------------------------------
+@pytest.fixture
+def mock_info_wf(info_response_wf1):
+    mock_resp = Mock()
+    mock_resp.json.return_value = info_response_wf1
+    return mock_resp
+
+
+@pytest.fixture
+def mock_info_cf(info_response_cf1):
+    mock_resp = Mock()
+    mock_resp.json.return_value = info_response_cf1
+    return mock_resp
+
+
+@pytest.fixture(scope="session")
+def mock_sefx_get():
+    def get(url, **kwargs):
+
+        mock_resp = MagicMock()
+        print(url)
+        print(kwargs)
+
+        pass  # TODO
+        return mock_resp
+
+    return get
 
 
 # streaming  ===================================================================

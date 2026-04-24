@@ -229,7 +229,9 @@ class BaseDifyApp:  # ==========================================================
             app_type = DifyAppType(info_response["mode"])
         except (KeyError, ValueError) as err:
             raise ValueError(
-                "missing App Type ('mode') from Dify: {}".format(info_response)
+                "missing App Type (missing 'mode') from Dify: {}".format(
+                    info_response
+                )
             ) from err
 
         # create app  ----------------------------------------------------------

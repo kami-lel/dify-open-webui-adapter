@@ -119,7 +119,8 @@ class TestErr:  # ==============================================================
             print(opt)
             assert (
                 opt
-                == "missing App Type ('mode') from Dify: {'name': 'Some Names'}"
+                == "missing App Type (missing 'mode') from Dify: "
+                "{'name': 'Some Names'}"
             )
 
     def test_bad_connections(_, config_wf1, patch_target_get):

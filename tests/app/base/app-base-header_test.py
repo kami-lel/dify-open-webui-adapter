@@ -6,31 +6,7 @@ Unit Tests (using pytest) for:
 BaseDifyApp.http_header
 """
 
-
-class Test1:  # ================================================================
-
-    def test_no_stream(_, app_wf_skip1, authorization_wf1):
-        app = app_wf_skip1
-        app.current_enable_stream = False
-        opt = app.http_header
-
-        print(opt)
-        assert opt == {
-            "Authorization": authorization_wf1,
-            "Content-Type": "application/json",
-        }
-
-    def test_stream(_, app_wf_skip1, authorization_wf1):
-        app = app_wf_skip1
-        app.current_enable_stream = True
-        opt = app.http_header
-
-        print(opt)
-        assert opt == {
-            "Authorization": authorization_wf1,
-            "Content-Type": "application/json",
-            "Accept": "text/event-stream",
-        }
+# Pytest unit tests  ###########################################################
 
 
 class Test2:  # ================================================================

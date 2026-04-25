@@ -263,6 +263,8 @@ def app_direct_cf2(config_cf2, info_response_cf2):
 
 # replies  =====================================================================
 
+# HACK rm these
+
 
 @pytest.fixture(scope="class")
 def call_args_wf1(model_id_wf1):

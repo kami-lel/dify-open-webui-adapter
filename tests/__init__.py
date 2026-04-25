@@ -1,5 +1,19 @@
 import json
 
+from dify_open_webui_adapter import PipeCall
+
+
+def create_test_call(model_id="default-model-id", stream=False):
+    body = {"model": "dify2owu." + model_id}
+    user = {}
+    metadata = {}
+
+    if stream:
+        body["stream"] = True
+
+    return PipeCall(body=body, user=user, metadata=metadata)
+
+
 # Hack rm below
 
 

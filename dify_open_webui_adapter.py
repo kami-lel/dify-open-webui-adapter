@@ -125,15 +125,6 @@ class PipeCall(BaseModel):
     metadata: _PipeCallMetadata
     message: str = ""  # placeholder
 
-    @computed_field(return_type=bool)
-    @property
-    def enable_stream(self):
-        """
-        :return: whether current call allows streaming
-        :rtype: bool
-        """
-        return self.body.stream
-
     @computed_field(return_type=str)
     @property
     def username(self):
@@ -259,10 +250,6 @@ class BaseDifyApp:  # ==========================================================
         else:
             return ChatflowApp(config, info_response)
 
-    def reply(self, call):
-        # Todo make file upload
-        pass  # TODO calling
-
     # constructor  *************************************************************
 
     def __init__(self, config, info_response):
@@ -308,7 +295,7 @@ class BaseDifyApp:  # ==========================================================
         :rtype: dict
         """
         return self._create_http_header(
-            self.config.key, enable_stream=self.model.call.enable_stream
+            self.config, enable_stream=self.model.is_using_stream
         )
 
     # magic methods  ***********************************************************
@@ -352,6 +339,21 @@ class OWUModel:  # =============================================================
     :param app:
     :type app: Workflow or Chatflow
     """
+
+    # Public Method  ***********************************************************
+
+    def reply(self, call):
+        # Todo make file upload
+        self.call = call
+        # Todo write reply logic
+
+    @property
+    def is_using_stream(self):  # TODO unit test
+        """
+        :return: whether using stream during replying in current round
+        :rtype: bool
+        """
+        return (not self.config.disallows_streaming) and self.call.body.stream
 
     # constructor  *************************************************************
 

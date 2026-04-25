@@ -106,8 +106,7 @@ class _PipeCallBody(BaseModel):
 
     stream: Optional[bool] = Field(default=False)
     model: str
-    # HACK
-    # messages: list[dict[str, str]] = Field(min_length=1)
+    messages: list[dict[str, str]] = Field(min_length=1)
 
 
 class _PipeCallUser(BaseModel):

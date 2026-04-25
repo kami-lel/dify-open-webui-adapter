@@ -416,15 +416,6 @@ def mock_base():
 
 
 @pytest.fixture
-def pipe_body1():
-    return {
-        "stream": False,
-        "model": "dify_open_webui_adapter.example-chatflow-model",
-        "messages": [{"role": "user", "content": "FIRST USER MESSAGE"}],
-    }
-
-
-@pytest.fixture
 def pipe_args_stream1(pipe_body1, pipe_args_no_stream1):
     _, user, metadata = pipe_args_no_stream1
     body = pipe_body1

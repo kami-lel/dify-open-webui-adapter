@@ -27,4 +27,4 @@ class TestErr:
         opt = exec_info.value.args[0]
 
         print(opt)
-        assert opt == ""  # BUG
+        assert opt == "missing model with model_id: aaazzz"

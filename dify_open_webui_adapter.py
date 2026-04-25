@@ -160,7 +160,7 @@ class PipeCall(BaseModel):
         :rtype: str
         """
         full_model_id = self.body.model
-        _, _, model_id = full_model_id.partition(".")
+        model_id = full_model_id.rsplit(".", 1)[-1]
         return model_id
 
     def model_post_init(self, __context):

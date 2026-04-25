@@ -1,5 +1,7 @@
 import json
 
+# Hack rm below
+
 
 def _convert_entries2lines(entries):
     return ["data: " + json.dumps(e) for e in entries]

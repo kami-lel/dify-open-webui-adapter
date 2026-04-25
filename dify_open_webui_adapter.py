@@ -348,7 +348,7 @@ class OWUModel:  # =============================================================
         # Todo write reply logic
 
     @property
-    def is_using_stream(self):  # TODO unit test
+    def is_using_stream(self):
         """
         :return: whether using stream during replying in current round
         :rtype: bool

@@ -3,33 +3,48 @@ app-base-header_test.py
 
 Unit Tests (using pytest) for:
 
-BaseDifyApp.http_header
+BaseDifyApp._create_http_header()
 """
 
+from dify_open_webui_adapter import BaseDifyApp
+
+
 # Pytest unit tests  ###########################################################
+class TestHttpHeader:
 
+    def test_no_stream(_, config_wf1, auth_key_wf1):
+        config = config_wf1
+        key_answer = auth_key_wf1
 
-class Test2:  # ================================================================
-
-    def test_no_stream(_, app_cf_skip1, authorization_cf1):
-        app = app_cf_skip1
-        app.current_enable_stream = False
-        opt = app.http_header
-
+        opt = BaseDifyApp._create_http_header(config, enable_stream=False)
         print(opt)
+
         assert opt == {
-            "Authorization": authorization_cf1,
+            "Authorization": "Bearer " + key_answer,
             "Content-Type": "application/json",
         }
 
-    def test_stream(_, app_cf_skip1, authorization_cf1):
-        app = app_cf_skip1
-        app.current_enable_stream = True
-        opt = app.http_header
+    def test_stream(_, config_cf1, auth_key_cf1):
+        config = config_cf1
+        key_answer = auth_key_cf1
 
+        opt = BaseDifyApp._create_http_header(config, enable_stream=True)
         print(opt)
+
         assert opt == {
-            "Authorization": authorization_cf1,
+            "Authorization": "Bearer " + key_answer,
             "Content-Type": "application/json",
             "Accept": "text/event-stream",
+        }
+
+    def test_dft(_, config_cf2, auth_key_cf2):
+        config = config_cf2
+        key_answer = auth_key_cf2
+
+        opt = BaseDifyApp._create_http_header(config)
+        print(opt)
+
+        assert opt == {
+            "Authorization": "Bearer " + key_answer,
+            "Content-Type": "application/json",
         }

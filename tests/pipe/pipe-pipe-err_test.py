@@ -14,8 +14,8 @@ import pytest
 class TestErr:
 
     @pytest.mark.asyncio
-    async def test_no_model(_, pipe_obj, call_args_wf1):
-        call_args = call_args_wf1
+    async def test_no_model(_, pipe_obj, call_args_empty):
+        call_args = call_args_empty
         body = call_args["body"]
         body["model"] = "aaazzz"
         user = call_args["user"]

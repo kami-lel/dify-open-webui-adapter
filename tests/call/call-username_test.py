@@ -16,8 +16,8 @@ from dify_open_webui_adapter import PipeCall
 
 class TestName:
 
-    def test_dft(_, call_args_wf1):
-        args = copy.copy(call_args_wf1)
+    def test_dft(_, call_args_empty):
+        args = copy.copy(call_args_empty)
         args["user"] = {}
 
         call = PipeCall(**args)
@@ -26,9 +26,9 @@ class TestName:
         print(opt)
         assert opt == "user"
 
-    def test_only_id(_, call_args_wf1):
+    def test_only_id(_, call_args_empty):
         ipt = "11223344"
-        args = copy.copy(call_args_wf1)
+        args = copy.copy(call_args_empty)
         args["user"] = {"id": ipt}
 
         call = PipeCall(**args)
@@ -37,9 +37,9 @@ class TestName:
         print(opt)
         assert opt == ipt
 
-    def test_only_email(_, call_args_wf1):
+    def test_only_email(_, call_args_empty):
         ipt = "123@gmail"
-        args = copy.copy(call_args_wf1)
+        args = copy.copy(call_args_empty)
         args["user"] = {"email": ipt}
 
         call = PipeCall(**args)
@@ -48,9 +48,9 @@ class TestName:
         print(opt)
         assert opt == ipt
 
-    def test_only_username(_, call_args_wf1):
+    def test_only_username(_, call_args_empty):
         ipt = "some user"
-        args = copy.copy(call_args_wf1)
+        args = copy.copy(call_args_empty)
         args["user"] = {"username": ipt}
 
         call = PipeCall(**args)
@@ -59,9 +59,9 @@ class TestName:
         print(opt)
         assert opt == ipt
 
-    def test_only_name(_, call_args_wf1):
+    def test_only_name(_, call_args_empty):
         ipt = "some user"
-        args = copy.copy(call_args_wf1)
+        args = copy.copy(call_args_empty)
         args["user"] = {"name": ipt}
 
         call = PipeCall(**args)
@@ -70,8 +70,8 @@ class TestName:
         print(opt)
         assert opt == ipt
 
-    def test_mux1(_, call_args_wf1):
-        args = copy.copy(call_args_wf1)
+    def test_mux1(_, call_args_empty):
+        args = copy.copy(call_args_empty)
         args["user"] = {
             "id": "11223344",
             "name": "some user",
@@ -85,8 +85,8 @@ class TestName:
         print(opt)
         assert opt == "some user"
 
-    def test_mux2(_, call_args_wf1):
-        args = copy.copy(call_args_wf1)
+    def test_mux2(_, call_args_empty):
+        args = copy.copy(call_args_empty)
         args["user"] = {
             "name": "some user",
             "email": "123@gmail",
@@ -98,8 +98,8 @@ class TestName:
         print(opt)
         assert opt == "some user"
 
-    def test_mux3(_, call_args_wf1):
-        args = copy.copy(call_args_wf1)
+    def test_mux3(_, call_args_empty):
+        args = copy.copy(call_args_empty)
         args["user"] = {
             "id": "11223344",
             "name": "",

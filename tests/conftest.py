@@ -261,39 +261,42 @@ def app_direct_cf2(config_cf2, info_response_cf2):
     return ChatflowApp(config_cf2, info_response_cf2)
 
 
-# replies  =====================================================================
-
-# HACK rm these
+# call  ========================================================================
 
 
 @pytest.fixture(scope="class")
-def call_args_wf1(model_id_wf1):
+def call_args_empty(model_id_wf1):
     body = {"model": "dify2owu." + model_id_wf1}
     user = {}
     metadata = {}
     return {"body": body, "user": user, "metadata": metadata}
 
 
-@pytest.fixture(scope="class")
-def call_wf1(call_args_wf1):
-    args = call_args_wf1
-    return PipeCall(**args)
+# replies  =====================================================================
+
+# HACK rm these
 
 
-@pytest.fixture(scope="class")
-def call_cf1(model_id_cf1):
-    body = {"model": "dify2owu." + model_id_cf1}
-    user = {}
-    metadata = {}
-    return PipeCall(body=body, user=user, metadata=metadata)
+# @pytest.fixture(scope="class")
+# def call_wf1(call_args_empty):
+#     args = call_args_empty
+#     return PipeCall(**args)
 
 
-@pytest.fixture(scope="class")
-def call_cf2(model_id_cf2):
-    body = {"model": "dify2owu." + model_id_cf2}
-    user = {}
-    metadata = {}
-    return PipeCall(body=body, user=user, metadata=metadata)
+# @pytest.fixture(scope="class")
+# def call_cf1(model_id_cf1):
+#     body = {"model": "dify2owu." + model_id_cf1}
+#     user = {}
+#     metadata = {}
+#     return PipeCall(body=body, user=user, metadata=metadata)
+
+
+# @pytest.fixture(scope="class")
+# def call_cf2(model_id_cf2):
+#     body = {"model": "dify2owu." + model_id_cf2}
+#     user = {}
+#     metadata = {}
+#     return PipeCall(body=body, user=user, metadata=metadata)
 
 
 # Hack rm below  ###############################################################

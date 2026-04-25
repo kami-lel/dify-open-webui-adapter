@@ -17,6 +17,7 @@ __author__ = "kamiLeL"
 # Bug keeps sending chat to the same chat id, when use from continue
 # Todo make file upload
 # todo pass thru variables
+# FIXME endpoint unit tests
 
 
 # config  ######################################################################
@@ -192,6 +193,16 @@ class BaseDifyApp:  # ==========================================================
     :type info_response: dict
     """
 
+    # abstract method  *********************************************************
+
+    @property
+    def chat_endpoint(self):
+        """
+        :return: url for accessing endpoint for LLM chatting
+        :rtype: str
+        """
+        raise NotImplementedError
+
     # Public Methods  **********************************************************
 
     @classmethod
@@ -210,11 +221,9 @@ class BaseDifyApp:  # ==========================================================
         """
         # get app type & name  -------------------------------------------------
         # by accessing Dify /info
-        info_url = DIFY_BACKEND_API_BASE_URL + "/info"
-
         try:
             response_object = requests.get(
-                info_url,
+                cls._info_endpoint,
                 headers=cls._create_http_header(config),
                 timeout=REQUEST_TIMEOUT,
             )
@@ -250,6 +259,11 @@ class BaseDifyApp:  # ==========================================================
         )
 
         self.model = None  # must to be assigned
+
+    # private properties  ******************************************************
+
+    # url for accessing ``/info`` endpoint
+    _info_endpoint = DIFY_BACKEND_API_BASE_URL + "/info"
 
     # private method  **********************************************************
 
@@ -293,12 +307,20 @@ class BaseDifyApp:  # ==========================================================
 
 class WorkflowApp(BaseDifyApp):  # =============================================
 
-    pass
+    # implement BaseDifyApp  ***************************************************
+
+    @property
+    def chat_endpoint(self):
+        return DIFY_BACKEND_API_BASE_URL + "/workflows/run"
 
 
 class ChatflowApp(BaseDifyApp):  # =============================================
 
-    pass
+    # implement BaseDifyApp  ***************************************************
+
+    @property
+    def chat_endpoint(self):
+        return DIFY_BACKEND_API_BASE_URL + "/chat-messages"
 
 
 # OWU side  ####################################################################

@@ -200,10 +200,6 @@ class WorkflowApp(BaseDifyApp):
 
     # implement BaseDifyApp  ===================================================
 
-    @property
-    def main_url(self):
-        return "{}/workflows/run".format(self.base_url)
-
     def _reply_blocking(self):
         """
         :raises ConnectionError:
@@ -270,10 +266,6 @@ class ChatflowApp(BaseDifyApp):
         self.chat2conversation_ids = {}
 
     # implement BaseDifyApp  ===================================================
-
-    @property
-    def main_url(self):
-        return "{}/chat-messages".format(self.base_url)
 
     def _reply_blocking(self):
         """

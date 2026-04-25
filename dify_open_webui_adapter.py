@@ -14,8 +14,6 @@ __version__ = "3.0.0-alpha"
 __author__ = "kamiLeL"
 
 
-# Bug keeps sending chat to the same chat id, when use from continue
-# Todo make file upload
 # todo pass thru variables
 
 
@@ -92,6 +90,10 @@ class AppModelConfig(BaseModel):  # ============================================
                 )
             )
 
+    def reply(self, call):
+        # Todo make file upload
+        pass  # TODO calling
+
 
 # pipe call  ===================================================================
 OWU_USER_ROLE = "user"  # key in body
@@ -100,6 +102,7 @@ OWU_USER_ROLE = "user"  # key in body
 class _PipeCallBody(BaseModel):
 
     stream: Optional[bool] = Field(default=False)
+    model: str  # TODO unit test
 
 
 class _PipeCallUser(BaseModel):
@@ -147,6 +150,16 @@ class PipeCall(BaseModel):
             or self.user.email
             or self.user.id
         )
+
+    @computed_field(return_type=str)
+    @property
+    def model_id(self):  # TODO unit test
+        """
+        :return: model id required by this call
+        :rtype: str
+        """
+        full_model_id = self.body.model
+        return full_model_id.split(".", 1)[1]
 
     def model_post_init(self, __context):
         return  # Hack
@@ -399,3 +412,10 @@ class Pipe:  # =================================================================
 
     async def pipe(self, body, __user__, __metadata__):
         owu_call = PipeCall(body=body, user=__user__, metadata=__metadata__)
+
+        # Bug keeps sending chat to the same chat id, when use from continue
+        model = self.models.get(owu_call.model_id)
+        if model is None:
+            raise ValueError  # TODO
+
+        return model.reply(owu_call)

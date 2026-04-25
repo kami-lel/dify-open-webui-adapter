@@ -33,6 +33,7 @@ DEBUG_PIPE_DIRECT_RESPONSE = False
 
 
 from enum import Enum
+import json
 from typing import Optional
 import requests
 
@@ -412,11 +413,57 @@ class Pipe:  # =================================================================
         ]
 
     async def pipe(self, body, __user__, __metadata__):
+        """
+        main pipe logic per round
+
+
+        :param body: message body
+        :type body: dict
+        :param __user__: user information
+        :type __user__: dict
+        :raises KeyError: missing `"model"` in `body`
+        :return: replied message by the model
+        :rtype: str
+        """
+        if DEBUG_PIPE_DIRECT_RESPONSE:
+            return self._generate_pipe_direct_response(
+                body, __user__, __metadata__
+            )
+
         owu_call = PipeCall(body=body, user=__user__, metadata=__metadata__)
 
         # Bug keeps sending chat to the same chat id, when use from continue
         model = self.models.get(owu_call.model_id)
         if model is None:
-            raise ValueError  # TODO TODO
+            raise ValueError(
+                "missing model with model_id: {}".format(owu_call.model_id)
+            )
 
         return model.reply(owu_call)
+
+    # private method  **********************************************************
+
+    @staticmethod
+    def _generate_pipe_direct_response(body, user, metadata):
+        return """## `body`
+
+    ```json
+    {}
+    ```
+
+    ## `__user__`
+
+    ```json
+    {}
+    ```
+
+    ## `__metadata__`
+
+    ```json
+    {}
+    ```
+    """.format(
+            json.dumps(body, indent=2),
+            json.dumps(user, indent=2),
+            json.dumps(metadata, indent=2),
+        )

@@ -447,42 +447,7 @@ class _StreamingConversationRound:
 
 class Pipe:  ###################################################################
 
-    def __init__(
-        self,
-        app_model_configs_override=None,
-        base_url_override=None,
-        skip_get_app_type_and_name=False,
-    ):
-        base_url = base_url_override or DIFY_BACKEND_API_BASE_URL
-        app_model_configs = app_model_configs_override or APP_MODEL_CONFIGS
-
-        # populate containers   ------------------------------------------------
-        self.model_containers = {}
-        for config in app_model_configs:
-            model = OWUModel(
-                base_url,
-                config,
-                skip_get_app_type_and_name=skip_get_app_type_and_name,
-            )
-            model_id = model.model_id
-            self.model_containers[model_id] = model
-
     async def pipe(self, body, __user__, __metadata__):
-        """
-        main pipe logic per round
-
-
-        :param body: message body
-        :type body: dict
-        :param __user__: user information
-        :type __user__: dict
-        :raises KeyError: missing `"model"` in `body`
-        :return: replied message by the model
-        :rtype: str
-        """
-        if DEBUG_PIPE_DIRECT_RESPONSE:
-            return _generate_pipe_direct_response(body, __user__, __metadata__)
-
         if "model" not in body:
             raise IndexError("missing entry 'model' in body")
 
@@ -496,28 +461,3 @@ class Pipe:  ###################################################################
 
 
 # helper methods  ==============================================================
-
-
-def _generate_pipe_direct_response(body, user, metadata):
-    return """## `body`
-
-```json
-{}
-```
-
-## `__user__`
-
-```json
-{}
-```
-
-## `__metadata__`
-
-```json
-{}
-```
-""".format(
-        json.dumps(body, indent=2),
-        json.dumps(user, indent=2),
-        json.dumps(metadata, indent=2),
-    )

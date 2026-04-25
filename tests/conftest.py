@@ -14,6 +14,7 @@ from dify_open_webui_adapter import (
     OWUModel,
     DifyAppType,
     AppModelConfig,
+    PipeCall,
     WorkflowApp,
     ChatflowApp,
     Pipe,
@@ -264,11 +265,17 @@ def app_direct_cf2(config_cf2, info_response_cf2):
 
 
 @pytest.fixture(scope="class")
-def pipe_args1(model_id_cf1):
+def call_args_wf1(model_id_cf1):
     body = {"model": model_id_cf1}
     user = {}
     metadata = {}
     return {"body": body, "user": user, "metadata": metadata}
+
+
+@pytest.fixture(scope="class")
+def call_wf1(call_args_wf1):
+    args = call_args_wf1
+    return PipeCall(**args)
 
 
 # Hack rm below  ###############################################################

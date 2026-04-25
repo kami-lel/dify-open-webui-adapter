@@ -4,76 +4,86 @@ pipe-pipes_test.py
 Unit Tests (using pytest) for: Pipe.pipes()
 """
 
+from unittest.mock import patch
+
 import pytest
 
-# FIXME working
+from dify_open_webui_adapter import Pipe
+
+# Pytest fixtures  #############################################################
 
 
-# pytest fixtures  #############################################################
-@pytest.fixture(scope="session")
-def pipe_pipes0(pipe0):
-    return pipe0.pipes()
+@pytest.fixture(scope="class")
+def pipes_result_single(
+    configs_single, patch_target_configs, patch_target_get, mock_sefx_get
+):
+    configs = configs_single
+
+    with (
+        patch(patch_target_configs, configs),
+        patch(patch_target_get, side_effect=mock_sefx_get),
+    ):
+        pipe = Pipe()
+        return pipe.pipes()
 
 
-@pytest.fixture(scope="session")
-def pipe_pipes1(pipe1):
-    return pipe1.pipes()
+@pytest.fixture(scope="class")
+def pipes_result_mux(pipe_obj):
+    return pipe_obj.pipes()
 
 
-# pytest  ######################################################################
+# Pytest unit tests  ###########################################################
 
 
-class Test0:  # ================================================================
+class TestSingle:  # ===========================================================
 
-    def test_type(_, pipe_pipes0):
-        opt = pipe_pipes0
-
-        print(opt)
+    def test_type(_, pipes_result_single):
+        opt = pipes_result_single
         assert isinstance(opt, list)
+
+    def test_len(_, pipes_result_single):
+        opt = pipes_result_single
         assert len(opt) == 1
 
-    def test1(_, pipe_pipes0):
-        opt = pipe_pipes0[0]
-
+    def test_cf1(_, pipes_result_single):
+        opt = pipes_result_single[0]
         print(opt)
         assert opt == {
             "id": "example-chatflow-model",
-            "name": "example-chatflow-model",
+            "name": "My Chatflow App",
         }
 
 
-class Test1:  # ================================================================
+class TestMux:  # ==============================================================
 
-    def test_type(_, pipe_pipes1):
-        opt = pipe_pipes1
-
-        print(opt)
+    def test_type(_, pipes_result_mux):
+        opt = pipes_result_mux
         assert isinstance(opt, list)
+
+    def test_len(_, pipes_result_mux):
+        opt = pipes_result_mux
         assert len(opt) == 3
 
-    def test1(_, pipe_pipes1):
-        opt = pipe_pipes1[0]
-
+    def test_wf1(_, pipes_result_mux):
+        opt = pipes_result_mux[0]
         print(opt)
         assert opt == {
             "id": "example-workflow-model",
-            "name": "example-workflow-model",
+            "name": "My Workflow App",
         }
 
-    def test2(_, pipe_pipes1):
-        opt = pipe_pipes1[1]
-
+    def test_cf1(_, pipes_result_mux):
+        opt = pipes_result_mux[1]
         print(opt)
         assert opt == {
             "id": "example-chatflow-model",
-            "name": "example-chatflow-model",
+            "name": "My Chatflow App",
         }
 
-    def test3(_, pipe_pipes1):
-        opt = pipe_pipes1[2]
-
+    def test_cf2(_, pipes_result_mux):
+        opt = pipes_result_mux[2]
         print(opt)
         assert opt == {
             "id": "example-chatflow-model-2",
-            "name": "Aux Example Chatflow Model/App",
+            "name": "example-chatflow-model-2",
         }

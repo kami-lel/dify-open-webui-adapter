@@ -164,11 +164,11 @@ class PipeCall(BaseModel):  # **************************************************
     # post-init  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     def model_post_init(self, __context):  # pylint: disable=arguments-differ
-        return  # HACK
         for section in reversed(self.body.messages):
             if section["role"] == PIPE_USER_ROLE:
                 self.message = section["content"]
 
+        return  # HACK
         raise ValueError("missing {} message in body".format(PIPE_USER_ROLE))
 
 

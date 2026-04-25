@@ -17,7 +17,6 @@ __author__ = "kamiLeL"
 # Bug keeps sending chat to the same chat id, when use from continue
 # Todo make file upload
 # todo pass thru variables
-# FIXME endpoint unit tests
 
 
 # config  ######################################################################
@@ -196,7 +195,7 @@ class BaseDifyApp:  # ==========================================================
     # abstract method  *********************************************************
 
     @property
-    def chat_endpoint(self):
+    def _chat_endpoint(self):
         """
         :return: url for accessing endpoint for LLM chatting
         :rtype: str
@@ -310,7 +309,7 @@ class WorkflowApp(BaseDifyApp):  # =============================================
     # implement BaseDifyApp  ***************************************************
 
     @property
-    def chat_endpoint(self):
+    def _chat_endpoint(self):
         return DIFY_BACKEND_API_BASE_URL + "/workflows/run"
 
 
@@ -319,7 +318,7 @@ class ChatflowApp(BaseDifyApp):  # =============================================
     # implement BaseDifyApp  ***************************************************
 
     @property
-    def chat_endpoint(self):
+    def _chat_endpoint(self):
         return DIFY_BACKEND_API_BASE_URL + "/chat-messages"
 
 

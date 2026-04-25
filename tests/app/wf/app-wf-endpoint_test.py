@@ -3,24 +3,16 @@ app-wf-endpoint_test.py
 
 Unit Tests (using pytest) for:
 
-WorkflowApp.main_url
+WorkflowApp._chat_endpoint
 """
 
+
 # tests  #######################################################################
-
-
 class Test1:
 
-    def test1(_, app_wf_skip1, endpoint_wf):
-        opt = app_wf_skip1.main_url
+    def test_wf1(_, app_direct_wf1):
+        app = app_direct_wf1
 
+        opt = app._chat_endpoint
         print(opt)
-        assert isinstance(opt, str)
-        assert opt == endpoint_wf
-
-    def test_local1(_, app_wf_alt_url):
-        opt = app_wf_alt_url.main_url
-
-        print(opt)
-        assert isinstance(opt, str)
-        assert opt == "https://55.44.33.22/v1/workflows/run"
+        assert opt == "https://api.dify.ai/v1/workflows/run"

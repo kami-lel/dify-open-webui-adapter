@@ -3,36 +3,24 @@ app-cf-endpoint_test.py
 
 Unit Tests (using pytest) for:
 
-- ChatflowApp.main_url
+- ChatflowApp._chat_endpoint
 """
 
-import pytest
-
-from dify_open_webui_adapter import OWUModel, DifyAppType, ChatflowApp
-
-# pytest fixtures  #############################################################
-
-
-@pytest.fixture(scope="session")
-def app_cf_alt_url(base_url2, config_cf1):
-    return ChatflowApp(None, base_url2, config_cf1)
-
-
-# tests  #######################################################################
+# Pytest unit tests  ###########################################################
 
 
 class Test1:
 
-    def test1(_, app_cf_skip1, endpoint_cf):
-        opt = app_cf_skip1.main_url
+    def test_cf1(_, app_direct_cf1):
+        app = app_direct_cf1
 
+        opt = app._chat_endpoint
         print(opt)
-        assert isinstance(opt, str)
-        assert opt == endpoint_cf
+        assert opt == "https://api.dify.ai/v1/chat-messages"
 
-    def test_local1(_, app_cf_alt_url):
-        opt = app_cf_alt_url.main_url
+    def test_cf2(_, app_direct_cf2):
+        app = app_direct_cf2
 
+        opt = app._chat_endpoint
         print(opt)
-        assert isinstance(opt, str)
-        assert opt == "https://55.44.33.22/v1/chat-messages"
+        assert opt == "https://api.dify.ai/v1/chat-messages"

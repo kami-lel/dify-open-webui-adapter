@@ -317,12 +317,6 @@ def pipe_call_args(model_id_wf1):
     return {"body": body, "user": user, "metadata": metadata}
 
 
-@pytest.fixture(scope="class")
-def pipe_call(pipe_call_args):
-    args = pipe_call_args
-    return PipeCall(**args)
-
-
 # Hack rm below  ###############################################################
 
 

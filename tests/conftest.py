@@ -182,6 +182,11 @@ def configs_mux(config_raw_wf1, config_raw_cf1, config_raw_cf2):
 # during init  =================================================================
 
 
+@pytest.fixture(scope="session")
+def base_url():
+    return "https://api.dify.ai/v1"
+
+
 @pytest.fixture
 def endpoint_info(base_url):
     return base_url + "/info"
@@ -261,129 +266,6 @@ def app_direct_cf2(config_cf2, info_response_cf2):
     return ChatflowApp(config_cf2, info_response_cf2)
 
 
-# call  ========================================================================
-
-
-@pytest.fixture(scope="class")
-def call_args_empty(model_id_wf1):
-    body = {"model": "dify2owu." + model_id_wf1}
-    user = {}
-    metadata = {}
-    return {"body": body, "user": user, "metadata": metadata}
-
-
-# replies  =====================================================================
-
-# HACK rm these
-
-
-# @pytest.fixture(scope="class")
-# def call_wf1(call_args_empty):
-#     args = call_args_empty
-#     return PipeCall(**args)
-
-
-# @pytest.fixture(scope="class")
-# def call_cf1(model_id_cf1):
-#     body = {"model": "dify2owu." + model_id_cf1}
-#     user = {}
-#     metadata = {}
-#     return PipeCall(body=body, user=user, metadata=metadata)
-
-
-# @pytest.fixture(scope="class")
-# def call_cf2(model_id_cf2):
-#     body = {"model": "dify2owu." + model_id_cf2}
-#     user = {}
-#     metadata = {}
-#     return PipeCall(body=body, user=user, metadata=metadata)
-
-
-# Hack rm below  ###############################################################
-
-
-# base urls  -------------------------------------------------------------------
-@pytest.fixture(scope="session")
-def base_url():
-    return "https://api.dify.ai/v1"
-
-
-@pytest.fixture(scope="session")
-def base_url2():
-    return "https://55.44.33.22/v1"
-
-
-# endpoints  -------------------------------------------------------------------
-
-
-@pytest.fixture
-def endpoint_wf(base_url):
-    return base_url + "/workflows/run"
-
-
-@pytest.fixture
-def endpoint_cf(base_url):
-    return base_url + "/chat-messages"
-
-
-# model  =======================================================================
-@pytest.fixture()
-def model_wf_skip1(base_url, config_raw_wf1):
-    return OWUModel(
-        base_url,
-        config_raw_wf1,
-        skip_get_app_type_and_name=True,
-        app_type_override=DifyAppType.WORKFLOW,
-    )
-
-
-@pytest.fixture()
-def model_cf_skip1(base_url, config_raw_cf1):
-    return OWUModel(
-        base_url,
-        config_raw_cf1,
-        skip_get_app_type_and_name=True,
-        app_type_override=DifyAppType.CHATFLOW,
-    )
-
-
-@pytest.fixture()
-def model_cf_skip2(base_url, config_raw_cf2):
-    return OWUModel(
-        base_url,
-        config_raw_cf2,
-        skip_get_app_type_and_name=True,
-        app_type_override=DifyAppType.CHATFLOW,
-    )
-
-
-# app  =========================================================================
-@pytest.fixture()
-def app_wf_skip1(model_wf_skip1):
-    return model_wf_skip1.app
-
-
-@pytest.fixture()
-def app_cf_skip1(model_cf_skip1):
-    return model_cf_skip1.app
-
-
-@pytest.fixture()
-def app_cf_skip2(model_cf_skip2):
-    return model_cf_skip2.app
-
-
-# mocks  =======================================================================
-
-
-# mock  ------------------------------------------------------------------------
-@pytest.fixture
-def mock_base():
-    mock_resp = Mock()
-    mock_resp.status_code = 201
-    return mock_resp
-
-
 # mock obj  --------------------------------------------------------------------
 @pytest.fixture(scope="class")
 def mock_info_wf(info_response_wf1):
@@ -424,6 +306,28 @@ def mock_sefx_get(
             raise NotImplementedError
 
     return get
+
+
+# call  ========================================================================
+
+
+@pytest.fixture(scope="class")
+def call_args_empty(model_id_wf1):
+    body = {"model": "dify2owu." + model_id_wf1}
+    user = {}
+    metadata = {}
+    return {"body": body, "user": user, "metadata": metadata}
+
+
+# Hack rm below  ###############################################################
+
+
+# mock  ------------------------------------------------------------------------
+@pytest.fixture
+def mock_base():
+    mock_resp = Mock()
+    mock_resp.status_code = 201
+    return mock_resp
 
 
 # streaming  ===================================================================

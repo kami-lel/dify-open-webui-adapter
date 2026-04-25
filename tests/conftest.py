@@ -64,6 +64,25 @@ def patch_target_configs():
 
 # app/model configuration  =====================================================
 
+
+# model ids  -------------------------------------------------------------------
+
+
+@pytest.fixture(scope="session")
+def model_id_wf1():
+    return "example-workflow-model"
+
+
+@pytest.fixture(scope="session")
+def model_id_cf1():
+    return "example-chatflow-model"
+
+
+@pytest.fixture(scope="session")
+def model_id_cf2():
+    return "example-chatflow-model-2"
+
+
 # keys  ------------------------------------------------------------------------
 
 
@@ -97,28 +116,28 @@ def app_given_name_cf1():
 
 
 @pytest.fixture(scope="session")
-def config_raw_wf1(auth_key_wf1, app_given_name_wf1):
+def config_raw_wf1(auth_key_wf1, app_given_name_wf1, model_id_wf1):
     return {
         "key": auth_key_wf1,
-        "model_id": "example-workflow-model",
+        "model_id": model_id_wf1,
         "name": app_given_name_wf1,
     }
 
 
 @pytest.fixture(scope="session")
-def config_raw_cf1(auth_key_cf1, app_given_name_cf1):
+def config_raw_cf1(auth_key_cf1, app_given_name_cf1, model_id_cf1):
     return {
         "key": auth_key_cf1,
-        "model_id": "example-chatflow-model",
+        "model_id": model_id_cf1,
         "name": app_given_name_cf1,
     }
 
 
 @pytest.fixture(scope="session")
-def config_raw_cf2(auth_key_cf2):
+def config_raw_cf2(auth_key_cf2, model_id_cf2):
     return {
         "key": auth_key_cf2,
-        "model_id": "example-chatflow-model-2",
+        "model_id": model_id_cf2,
         "disallows_streaming": True,
     }
 

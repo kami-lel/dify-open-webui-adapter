@@ -283,6 +283,13 @@ class BaseDifyApp:  # ==========================================================
             self.config.key, enable_stream=self.model.call.enable_stream
         )
 
+    # magic methods  ***********************************************************
+
+    def __repr__(self):
+        return "{}({})".format(
+            type(self).__name__, self.response_name or self.config.model_id
+        )
+
 
 class WorkflowApp(BaseDifyApp):  # =============================================
 

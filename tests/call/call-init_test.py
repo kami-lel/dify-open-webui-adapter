@@ -18,8 +18,8 @@ from dify_open_webui_adapter import (
 
 # Pytest fixtures  #############################################################
 @pytest.fixture
-def local_call(call_args_empty):
-    return PipeCall(**call_args_empty)
+def local_call(pipe_call_args):
+    return PipeCall(**pipe_call_args)
 
 
 # Pytest unit tests  ###########################################################

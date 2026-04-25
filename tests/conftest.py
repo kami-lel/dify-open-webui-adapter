@@ -12,6 +12,7 @@ if project_root_path not in sys.path:
 
 from dify_open_webui_adapter import (
     AppModelConfig,
+    PipeCall,
     WorkflowApp,
     ChatflowApp,
     Pipe,
@@ -306,7 +307,7 @@ def mock_sefx_get(
 
 
 @pytest.fixture(scope="class")
-def call_args_empty(model_id_wf1):
+def pipe_call_args(model_id_wf1):
     body = {
         "model": "dify2owu." + model_id_wf1,
         "messages": [{"role": "user", "content": "Hello Dify"}],
@@ -314,6 +315,12 @@ def call_args_empty(model_id_wf1):
     user = {}
     metadata = {}
     return {"body": body, "user": user, "metadata": metadata}
+
+
+@pytest.fixture(scope="class")
+def pipe_call(pipe_call_args):
+    args = pipe_call_args
+    return PipeCall(**args)
 
 
 # Hack rm below  ###############################################################

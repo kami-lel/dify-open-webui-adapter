@@ -6,26 +6,30 @@ Unit Tests (using pytest) for:
 PipeCall.message
 """
 
-# FIXME
+import pytest
+
+# Pytest fixtures  #############################################################
 
 
-@pytest.fixture
-def pipe_body2():
-    return {
-        "stream": False,
-        "model": "dify_open_webui_adapter.example-chatflow-model",
-        "messages": [
-            {"role": "user", "content": "FIRST USER MESSAGE"},
-            {"role": "assistant", "content": "FIRST BOT REPLY"},
-            {"role": "user", "content": "SECOND USER MESSAGE"},
-            {"role": "assistant", "content": "SECOND BOT REPLY"},
-            {"role": "user", "content": "THIRD USER MESSAGE"},
-        ],
-    }
+@pytest.fixture(scope="class")
+def local_call(pipe_call):
+    call = pipe_call.model_copy()
+    call.body.messages = [
+        {"role": "user", "content": "FIRST USER MESSAGE"},
+        {"role": "assistant", "content": "FIRST BOT REPLY"},
+        {"role": "user", "content": "SECOND USER MESSAGE"},
+        {"role": "assistant", "content": "SECOND BOT REPLY"},
+        {"role": "user", "content": "THIRD USER MESSAGE"},
+    ]
+    return call
 
 
 # Pytest unit tests  ###########################################################
+
+
 class TestGet:
+
+    # FIXME
 
     def test1(_, model_wf_skip1, pipe_body1):
         model = model_wf_skip1

@@ -6,8 +6,6 @@ Unit Tests (using pytest) for: class Pipe initialization
 
 # Pytest unit tests  ###########################################################
 
-# BUG must mock by different functions
-
 
 class TestPipe:  # =============================================================
 
@@ -22,3 +20,6 @@ class TestPipe:  # =============================================================
 
     def test_app_size(_, pipe_obj):
         assert len(pipe_obj.apps) == 3
+
+
+# TODO mm pipe inits

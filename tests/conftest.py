@@ -351,7 +351,14 @@ def mock_info_cf(info_response_cf1):
 
 
 @pytest.fixture(scope="class")
-def mock_sefx_get(auth_key_wf1, auth_key_cf1, mock_info_wf, mock_info_cf):
+def mock_sefx_get(
+    auth_key_wf1,
+    auth_key_cf1,
+    auth_key_cf2,
+    mock_info_wf,
+    mock_info_cf,
+    info_response_cf2,
+):
     def get(url, **kwargs):
         key = kwargs["headers"]["Authorization"][7:]
 
@@ -359,6 +366,11 @@ def mock_sefx_get(auth_key_wf1, auth_key_cf1, mock_info_wf, mock_info_cf):
             return mock_info_wf
         elif key == auth_key_cf1:
             return mock_info_cf
+        elif key == auth_key_cf2:
+            mock_resp = Mock()
+            mock_resp.json.return_value = info_response_cf2
+            return mock_resp
+
         else:
             raise NotImplementedError
 

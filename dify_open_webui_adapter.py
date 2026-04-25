@@ -14,9 +14,6 @@ __version__ = "3.0.0-alpha"
 __author__ = "kamiLeL"
 
 
-# todo pass thru variables
-
-
 # config  ######################################################################
 DIFY_BACKEND_API_BASE_URL = "https://api.dify.ai/v1"
 APP_MODEL_CONFIGS = []
@@ -66,6 +63,8 @@ class AppModelConfig(BaseModel):  # ============================================
     reply_output_variable_identifier: Optional[str] = Field(
         default="answer", min_length=1
     )
+
+    # todo pass thru variables
 
     # Public Methods ***********************************************************
 
@@ -222,6 +221,14 @@ class BaseDifyApp:  # ==========================================================
         """
         raise NotImplementedError
 
+    @property
+    def _chat_payload(self):
+        """
+        :return: payload data (json-dumped) sent to Dify during chat request
+        :rtype: str
+        """
+        raise NotImplementedError
+
     # Public Methods  **********************************************************
 
     @classmethod
@@ -319,6 +326,14 @@ class BaseDifyApp:  # ==========================================================
             self.config, enable_stream=self.model.is_using_stream
         )
 
+    @property
+    def _response_mode(self):
+        """
+        :return: "streaming" or "blocking", used in request payload
+        :rtype: str
+        """
+        return "streaming" if self.model.is_using_stream else "blocking"
+
     # magic methods  ***********************************************************
 
     def __repr__(self):
@@ -328,6 +343,15 @@ class BaseDifyApp:  # ==========================================================
 
 
 class WorkflowApp(BaseDifyApp):  # =============================================
+    """
+    representing a Workflow App in Dify
+
+
+    :param config:
+    :type config: AppModelConfig
+    :param info_response:
+    :type info_response: dict
+    """
 
     # implement BaseDifyApp  ***************************************************
 
@@ -335,14 +359,49 @@ class WorkflowApp(BaseDifyApp):  # =============================================
     def _chat_endpoint(self):
         return DIFY_BACKEND_API_BASE_URL + "/workflows/run"
 
+    @property
+    def _chat_payload(self):
+        payload_dict = {
+            "inputs": {
+                self.config.query_input_field_identifier: (
+                    self.model.call.message
+                )
+            },
+            "response_mode": self._response_mode,
+            "user": "user",  # Todo read from config
+        }
+
+        return json.dumps(payload_dict)
+
 
 class ChatflowApp(BaseDifyApp):  # =============================================
+    """
+    representing a Chatflow App in Dify
+
+
+    :param config:
+    :type config: AppModelConfig
+    :param info_response:
+    :type info_response: dict
+    """
 
     # implement BaseDifyApp  ***************************************************
 
     @property
     def _chat_endpoint(self):
         return DIFY_BACKEND_API_BASE_URL + "/chat-messages"
+
+    @property
+    def _chat_payload(self):
+        payload_dict = {
+            "query": self.model.call.message,
+            "response_mode": self._response_mode,
+            "user": "user",  # Todo
+            "conversation_id": "",  # Todo
+            "auto_generate_name": False,
+            "inputs": {},
+        }
+        return json.dumps(payload_dict)
 
 
 # OWU side  ####################################################################

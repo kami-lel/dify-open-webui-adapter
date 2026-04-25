@@ -20,10 +20,6 @@ DEFINED_APP_MODEL_CONFIG_KEYS = (
     "disallows_streaming",
 )
 
-# Dify constants  **************************************************************
-DEFAULT_QUERY_INPUT_FIELD_IDENTIFIER = "query"
-DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER = "answer"
-
 
 # Dify side  ###################################################################
 class BaseDifyApp:
@@ -86,28 +82,9 @@ class BaseDifyApp:
 
     # abstract methods  ========================================================
 
-    @property
-    def main_url(self):
-        """
-        :return: endpoint URL to access Dify
-        :rtype: str
-        """
-        raise NotImplementedError
-
     def _reply_blocking(self):
         """
         :return: the response
-        :rtype: str
-        """
-        raise NotImplementedError
-
-    def _create_reply_payload(self):
-        """
-        generate payload during .reply()
-
-
-        :return: JSON-formatted request payload data,
-                e.g. it can be feed to ``requests.post(data=~)``
         :rtype: str
         """
         raise NotImplementedError
@@ -135,22 +112,11 @@ class BaseDifyApp:
 
 
 class WorkflowApp(BaseDifyApp):
-    """
-    representing a Workflow App in Dify
-    """
 
     # constructor  =============================================================
     def __init__(self, model, base_url, config):
         super().__init__(model, base_url, config)
         # read from config  ----------------------------------------------------
-        self.query_identifier = config.get(
-            "query_input_field_identifier",
-            DEFAULT_QUERY_INPUT_FIELD_IDENTIFIER,
-        )
-        self.reply_identifier = config.get(
-            "reply_output_variable_identifier",
-            DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER,
-        )
         # read additional input fields
         self.input_fields = {
             k: v
@@ -179,25 +145,8 @@ class WorkflowApp(BaseDifyApp):
         finally:
             response_object.close()
 
-    def _create_reply_payload(self):
-        payload_dict = {
-            "inputs": {
-                self.query_identifier: self.current_user_msg_content,
-                **self.input_fields,
-            },
-            "response_mode": (
-                "streaming" if self.current_enable_stream else "blocking"
-            ),
-            "user": DIFY_USER_ROLE,
-        }
-
-        return json.dumps(payload_dict)
-
 
 class ChatflowApp(BaseDifyApp):
-    """
-    representing a Chatflow App in Dify
-    """
 
     # properties  ==============================================================
 
@@ -248,19 +197,6 @@ class ChatflowApp(BaseDifyApp):
 
         finally:
             response_object.close()
-
-    def _create_reply_payload(self):
-        payload_dict = {
-            "query": self.current_user_msg_content,
-            "response_mode": (
-                "streaming" if self.current_enable_stream else "blocking"
-            ),
-            "user": DIFY_USER_ROLE,
-            "conversation_id": self.conversation_id,
-            "auto_generate_name": False,
-            "inputs": {},
-        }
-        return json.dumps(payload_dict)
 
 
 # helper class  ================================================================

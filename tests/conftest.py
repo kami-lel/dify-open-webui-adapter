@@ -12,7 +12,6 @@ if project_root_path not in sys.path:
 
 from dify_open_webui_adapter import (
     AppModelConfig,
-    PipeCall,
     WorkflowApp,
     ChatflowApp,
     Pipe,
@@ -21,10 +20,8 @@ from dify_open_webui_adapter import (
 # Hack remove test ignoring
 collect_ignore_glob = [
     "app/cf/app-cf-reply-block_test.py",
-    "app/cf/app-cf-reply-payload_test.py",
     "app/cf/app-cf-reply-response_test.py",
     "app/wf/app-wf-reply-block_test.py",
-    "app/wf/app-wf-reply-payload_test.py",
     "app/wf/app-wf-reply-response_test.py",
     "pipe/pipe-pipe_test.py",
     "round/*",

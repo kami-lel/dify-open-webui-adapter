@@ -3,8 +3,10 @@ import json
 from dify_open_webui_adapter import PipeCall
 
 
-def create_test_call(model_id="default-model-id", stream=False):
-    body = {"model": "dify2owu." + model_id}
+def create_test_call(model_id="default-model-id", stream=False, messages=None):
+    messages = messages or [{"role": "user", "content": "Hello Dify"}]
+
+    body = {"model": "dify2owu." + model_id, "messages": messages}
     user = {}
     metadata = {}
 

@@ -11,10 +11,7 @@ if project_root_path not in sys.path:
     sys.path.insert(0, project_root_path)
 
 from dify_open_webui_adapter import (
-    OWUModel,
-    DifyAppType,
     AppModelConfig,
-    PipeCall,
     WorkflowApp,
     ChatflowApp,
     Pipe,
@@ -311,7 +308,10 @@ def mock_sefx_get(
 
 @pytest.fixture(scope="class")
 def call_args_empty(model_id_wf1):
-    body = {"model": "dify2owu." + model_id_wf1}
+    body = {
+        "model": "dify2owu." + model_id_wf1,
+        "messages": [{"role": "user", "content": "Hello Dify"}],
+    }
     user = {}
     metadata = {}
     return {"body": body, "user": user, "metadata": metadata}

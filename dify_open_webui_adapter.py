@@ -99,13 +99,15 @@ class AppModelConfig(BaseModel):  # ============================================
 
 
 # pipe call  ===================================================================
-OWU_USER_ROLE = "user"  # key in body
+PIPE_USER_ROLE = "user"  # key in body
 
 
 class _PipeCallBody(BaseModel):
 
     stream: Optional[bool] = Field(default=False)
     model: str
+    # HACK
+    # messages: list[dict[str, str]] = Field(min_length=1)
 
 
 class _PipeCallUser(BaseModel):
@@ -120,16 +122,20 @@ class _PipeCallMetadata(BaseModel):
     pass
 
 
-class PipeCall(BaseModel):
+class PipeCall(BaseModel):  # **************************************************
     """
     a wrapper class containing all infos of a single OWU Pipe Function request,
     i.e. a single call from Pipe.pipe()
     """
 
+    # Fields  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     body: _PipeCallBody
     user: _PipeCallUser
     metadata: _PipeCallMetadata
     message: str = ""  # placeholder
+
+    # Public Properties  +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     @computed_field(return_type=str)
     @property
@@ -156,13 +162,15 @@ class PipeCall(BaseModel):
         model_id = full_model_id.rsplit(".", 1)[-1]
         return model_id
 
-    def model_post_init(self, __context):
-        return  # HACK
-        for section in reversed(self.body["messages"]):
-            if section["role"] == OWU_USER_ROLE:
-                return section["content"]
+    # post-init  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-        raise ValueError("missing {} message in body".format(OWU_USER_ROLE))
+    def model_post_init(self, __context):  # pylint: disable=arguments-differ
+        return  # HACK
+        for section in reversed(self.body.messages):
+            if section["role"] == PIPE_USER_ROLE:
+                self.message = section["content"]
+
+        raise ValueError("missing {} message in body".format(PIPE_USER_ROLE))
 
 
 # Dify side  ###################################################################

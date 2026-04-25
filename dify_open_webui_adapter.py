@@ -73,6 +73,12 @@ class AppModelConfig(BaseModel):  # ============================================
     def validate_app_model_configs(app_model_configs):
         """
         validate basic structure of ``APP_MODEL_CONFIGS``
+
+
+        :param app_model_configs:
+        :type app_model_configs: list[AppModelConfig]
+        :raises ValueError:
+        :raises TypeError:
         """
         if len(app_model_configs) == 0:
             raise ValueError(
@@ -181,6 +187,11 @@ class DifyAppType(Enum):
     CHATFLOW = "advanced-chat"  # multi-turn chats
 
 
+class StreamResponse:  # =======================================================
+
+    pass
+
+
 class BaseDifyApp:  # ==========================================================
     """
     logic container representing an **App** in Dify,
@@ -249,6 +260,9 @@ class BaseDifyApp:  # ==========================================================
             return WorkflowApp(config, info_response)
         else:
             return ChatflowApp(config, info_response)
+
+    def reply(self):
+        pass  # TODO
 
     # constructor  *************************************************************
 
@@ -343,9 +357,16 @@ class OWUModel:  # =============================================================
     # Public Method  ***********************************************************
 
     def reply(self, call):
+        """
+        :param call:
+        :type call: PipeCall
+        :return: the response of current round
+        :rtype: str or StreamResponse
+        """
         # Todo make file upload
         self.call = call
-        # Todo write reply logic
+
+        return self.app.reply()
 
     @property
     def is_using_stream(self):
@@ -370,6 +391,12 @@ class OWUModel:  # =============================================================
 class Pipe:  # =================================================================
     """
     Pipe class required by OWU Pipe Function
+
+
+    :raises ValueError:
+    :raises TypeError:
+    :raises ConnectionError:
+    :raises pydantic.ValidationError:
     """
 
     class Valves(BaseModel):  # pylint: disable=missing-class-docstring

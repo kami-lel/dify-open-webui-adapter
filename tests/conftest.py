@@ -22,14 +22,12 @@ from dify_open_webui_adapter import (
 
 # Hack remove test ignoring
 collect_ignore_glob = [
-    "app/base/app-base-header_test.py",
     "app/cf/app-cf-reply-block_test.py",
     "app/cf/app-cf-reply-payload_test.py",
     "app/cf/app-cf-reply-response_test.py",
     "app/wf/app-wf-reply-block_test.py",
     "app/wf/app-wf-reply-payload_test.py",
     "app/wf/app-wf-reply-response_test.py",
-    "app/app-get_test.py",
     "model/model-reply-last_test.py",
     "pipe/pipe-pipe_test.py",
     "round/*",

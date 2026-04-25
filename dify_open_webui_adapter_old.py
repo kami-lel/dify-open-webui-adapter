@@ -25,46 +25,6 @@ DEFAULT_QUERY_INPUT_FIELD_IDENTIFIER = "query"
 DEFAULT_REPLY_OUTPUT_VARIABLE_IDENTIFIER = "answer"
 
 
-# Open WebUI side  #############################################################
-class OWUModel:
-    """
-    logic & data container representing a single pipe **model** in Open WebUI,
-    handling OWU side's logic (parse `body`, etc.)
-
-
-    :param base_url:
-    :type base_url: str
-    :param config: an entry of APP_MODEL_CONFIGS
-    :type config: dict
-    :raises ValueError:
-    :raises TypeError:
-    """
-
-    # public methods  ==========================================================
-
-    def reply(self, body, user, metadata):
-        """
-        handle OWU side of processing per-round response of conversation
-
-
-        :param body: `body` given by OWU Pipe.pipe()
-        :type body: dict
-        :param user: `__user__` given by Pipe.pipe()
-        :type user: dict
-        :param metadata: `__metadata__` given by Pipe.pipe()
-        :type metadata: dict
-        :raises ConnectionError:
-        :raises ValueError:
-        :raises KeyError:
-        :return: the response
-        :rtype: str
-        """
-
-        opt = self.app.reply()
-
-        return opt
-
-
 # Dify side  ###################################################################
 class BaseDifyApp:
     """

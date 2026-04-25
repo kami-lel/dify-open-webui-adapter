@@ -167,8 +167,9 @@ class PipeCall(BaseModel):  # **************************************************
         for section in reversed(self.body.messages):
             if section["role"] == PIPE_USER_ROLE:
                 self.message = section["content"]
+                return
 
-        return  # HACK
+        # BUG not correct type of error to raise
         raise ValueError("missing {} message in body".format(PIPE_USER_ROLE))
 
 

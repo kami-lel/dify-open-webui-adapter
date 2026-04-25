@@ -91,10 +91,6 @@ class AppModelConfig(BaseModel):  # ============================================
                 )
             )
 
-    def reply(self, call):
-        # Todo make file upload
-        pass  # TODO calling
-
 
 # pipe call  ===================================================================
 OWU_USER_ROLE = "user"  # key in body
@@ -262,6 +258,10 @@ class BaseDifyApp:  # ==========================================================
             return WorkflowApp(config, info_response)
         else:
             return ChatflowApp(config, info_response)
+
+    def reply(self, call):
+        # Todo make file upload
+        pass  # TODO calling
 
     # constructor  *************************************************************
 

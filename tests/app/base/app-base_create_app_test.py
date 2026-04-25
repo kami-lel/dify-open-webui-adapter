@@ -45,6 +45,7 @@ class TestWf1:  # ==============================================================
 
     def test_type(_, testee_wf1):
         app, _ = testee_wf1
+        print(app)
         assert isinstance(app, WorkflowApp)
 
     def test_config(_, testee_wf1, config_wf1):

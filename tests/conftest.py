@@ -35,7 +35,7 @@ collect_ignore_glob = [
 # pytest fixtures  #############################################################
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="class")
 def pipe_obj(
     configs_mux, patch_target_configs, patch_target_get, mock_sefx_get
 ):
@@ -336,30 +336,31 @@ def mock_base():
 
 
 # mock obj  --------------------------------------------------------------------
-@pytest.fixture
+@pytest.fixture(scope="class")
 def mock_info_wf(info_response_wf1):
     mock_resp = Mock()
     mock_resp.json.return_value = info_response_wf1
     return mock_resp
 
 
-@pytest.fixture
+@pytest.fixture(scope="class")
 def mock_info_cf(info_response_cf1):
     mock_resp = Mock()
     mock_resp.json.return_value = info_response_cf1
     return mock_resp
 
 
-@pytest.fixture(scope="session")
-def mock_sefx_get():
+@pytest.fixture(scope="class")
+def mock_sefx_get(auth_key_wf1, auth_key_cf1, mock_info_wf, mock_info_cf):
     def get(url, **kwargs):
+        key = kwargs["headers"]["Authorization"][7:]
 
-        mock_resp = MagicMock()
-        print(url)
-        print(kwargs)
-
-        pass  # TODO
-        return mock_resp
+        if key == auth_key_wf1:
+            return mock_info_wf
+        elif key == auth_key_cf1:
+            return mock_info_cf
+        else:
+            raise NotImplementedError
 
     return get
 

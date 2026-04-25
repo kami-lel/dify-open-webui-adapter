@@ -25,7 +25,6 @@ collect_ignore_glob = [
     "app/wf/app-wf-reply-block_test.py",
     "app/wf/app-wf-reply-payload_test.py",
     "app/wf/app-wf-reply-response_test.py",
-    "model/model-reply-last_test.py",
     "pipe/pipe-pipe_test.py",
     "round/*",
 ]

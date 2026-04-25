@@ -169,7 +169,6 @@ class PipeCall(BaseModel):  # **************************************************
                 self.message = section["content"]
                 return
 
-        # BUG not correct type of error to raise
         raise ValueError("missing {} message in body".format(PIPE_USER_ROLE))
 
 

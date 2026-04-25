@@ -264,8 +264,8 @@ def app_direct_cf2(config_cf2, info_response_cf2):
 
 
 @pytest.fixture(scope="class")
-def pipe_args1():
-    body = {}
+def pipe_args1(model_id_cf1):
+    body = {"model": model_id_cf1}
     user = {}
     metadata = {}
     return {"body": body, "user": user, "metadata": metadata}

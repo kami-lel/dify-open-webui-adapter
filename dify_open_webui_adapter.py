@@ -102,7 +102,7 @@ OWU_USER_ROLE = "user"  # key in body
 class _PipeCallBody(BaseModel):
 
     stream: Optional[bool] = Field(default=False)
-    model: str  # TODO unit test
+    model: str
 
 
 class _PipeCallUser(BaseModel):
@@ -153,13 +153,14 @@ class PipeCall(BaseModel):
 
     @computed_field(return_type=str)
     @property
-    def model_id(self):  # TODO unit test
+    def model_id(self):
         """
         :return: model id required by this call
         :rtype: str
         """
         full_model_id = self.body.model
-        return full_model_id.split(".", 1)[1]
+        _, _, model_id = full_model_id.partition(".")
+        return model_id
 
     def model_post_init(self, __context):
         return  # Hack
@@ -416,6 +417,6 @@ class Pipe:  # =================================================================
         # Bug keeps sending chat to the same chat id, when use from continue
         model = self.models.get(owu_call.model_id)
         if model is None:
-            raise ValueError  # TODO
+            raise ValueError  # TODO TODO
 
         return model.reply(owu_call)

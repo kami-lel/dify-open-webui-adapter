@@ -42,14 +42,6 @@ class OWUModel:
 
     # public methods  ==========================================================
 
-    def get_model_id_and_name(self):
-        """
-        :return: an entry of this model,
-                such that it can be served to ``Pipe.pipes()``
-        :rtype: dict{str: str}
-        """
-        return {"id": self.model_id, "name": self.name}
-
     def reply(self, body, user, metadata):
         """
         handle OWU side of processing per-round response of conversation
@@ -482,23 +474,6 @@ class Pipe:  ###################################################################
             )
             model_id = model.model_id
             self.model_containers[model_id] = model
-
-    def pipes(self):
-        """
-        :return: all models, e.g.::
-
-            [
-                {"id": "model_id_1", "name": "First Model"},
-                {"id": "model_id_2", "name": "Second Model"},
-                {"id": "model_id_3", "name": "Third Model"},
-            ]
-
-        :rtype: list(dict)
-        """
-        return [
-            model.get_model_id_and_name()
-            for model in self.model_containers.values()
-        ]
 
     async def pipe(self, body, __user__, __metadata__):
         """

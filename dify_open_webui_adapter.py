@@ -360,7 +360,21 @@ class Pipe:  # =================================================================
             self.apps[model_id] = app
 
     def pipes(self):
-        pass
+        """
+        :return: all models, e.g.::
+
+            [
+                {"id": "model_id_1", "name": "First Model"},
+                {"id": "model_id_2", "name": "Second Model"},
+                {"id": "model_id_3", "name": "Third Model"},
+            ]
+
+        :rtype: list(dict)
+        """
+        return [
+            {"id": model_id, "name": model.display_name}
+            for model_id, model in self.models.items()
+        ]
 
     async def pipe(self, body, __user__, __metadata__):
         owu_call = PipeCall(body=body, user=__user__, metadata=__metadata__)

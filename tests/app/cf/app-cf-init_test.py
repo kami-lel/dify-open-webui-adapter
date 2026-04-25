@@ -9,20 +9,43 @@ Unit Tests (using pytest) for:
 # tests  #######################################################################
 
 
-class Test1:  # ================================================================
+class TestCf1:  # ==============================================================
 
-    def test_chat_id(_, app_cf_skip1):
-        app = app_cf_skip1
-        opt = app.current_chat_id
+    def test_config(_, app_direct_cf1, config_cf1):
+        app = app_direct_cf1
 
+        opt = app.config
         print(opt)
-        assert isinstance(opt, str)
-        assert opt == ""
+        assert opt is config_cf1
 
-    def test_ids(_, app_cf_skip1):
-        app = app_cf_skip1
-        opt = app.chat2conversation_ids
+    def test_model(_, app_direct_cf1):
+        app = app_direct_cf1
+        assert app.model is None
 
+    def test_name(_, app_direct_cf1, app_response_name_cf1):
+        app = app_direct_cf1
+
+        opt = app.response_name
         print(opt)
-        assert isinstance(opt, dict)
-        assert opt == {}
+        assert opt == app_response_name_cf1
+
+
+class TestCf2:  # ==============================================================
+
+    def test_config(_, app_direct_cf2, config_cf2):
+        app = app_direct_cf2
+
+        opt = app.config
+        print(opt)
+        assert opt is config_cf2
+
+    def test_model(_, app_direct_cf2):
+        app = app_direct_cf2
+        assert app.model is None
+
+    def test_name(_, app_direct_cf2):
+        app = app_direct_cf2
+
+        opt = app.response_name
+        print(opt)
+        assert opt is None

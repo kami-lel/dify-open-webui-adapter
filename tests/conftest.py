@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from unittest.mock import Mock, MagicMock, patch
+from unittest.mock import Mock, patch
 
 import pytest
 
@@ -22,11 +22,9 @@ from dify_open_webui_adapter import (
 # Hack remove test ignoring
 collect_ignore_glob = [
     "app/base/app-base-header_test.py",
-    "app/cf/app-cf-init_test.py",
     "app/cf/app-cf-reply-block_test.py",
     "app/cf/app-cf-reply-payload_test.py",
     "app/cf/app-cf-reply-response_test.py",
-    "app/wf/app-wf-init_test.py",
     "app/wf/app-wf-reply-block_test.py",
     "app/wf/app-wf-reply-payload_test.py",
     "app/wf/app-wf-reply-response_test.py",

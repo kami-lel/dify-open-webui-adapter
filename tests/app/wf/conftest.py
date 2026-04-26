@@ -25,6 +25,9 @@ def model_changed_input(base_url, config_wf1):
     return model
 
 
+# Hack conftest clean up
+
+
 @pytest.fixture
 def mock_block_wf(mock_base):
     mock_resp = mock_base

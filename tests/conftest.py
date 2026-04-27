@@ -184,6 +184,7 @@ def configs_mux(
     config_raw_wf2 = {
         "key": auth_key_wf2,
         "model_id": model_id_wf2,
+        "query_input_field_identifier": "Input",
     }
     return [config_raw_wf1, config_raw_wf2, config_raw_cf1, config_raw_cf2]
 

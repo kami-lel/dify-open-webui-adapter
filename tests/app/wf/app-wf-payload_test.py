@@ -46,9 +46,8 @@ class Test1:  # ================================================================
 
 class TestChgIpt:  # ===========================================================
 
-    def test_no_stream(_, pipe_obj, model_id_wf1):
-        return  # HACK
-        model_id = model_id_wf1
+    def test_no_stream(_, pipe_obj, model_id_wf2):
+        model_id = model_id_wf2
         app = pipe_obj.apps[model_id]
         model = pipe_obj.models[model_id]
         model.call = create_test_call(model_id=model_id, stream=False)
@@ -58,22 +57,21 @@ class TestChgIpt:  # ===========================================================
         print(opt)
         assert (
             opt
-            == '{"inputs": {"Input": "USER MESSAGE"}, '
+            == '{"inputs": {"Input": "Hello Dify"}, '
             '"response_mode": "blocking", "user": "user"}'
         )
 
-    def test_stream(_, pipe_obj, model_id_wf1):
-        return  # HACK
-        model_id = model_id_wf1
+    def test_stream(_, pipe_obj, model_id_wf2):
+        model_id = model_id_wf2
         app = pipe_obj.apps[model_id]
         model = pipe_obj.models[model_id]
-        model.call = create_test_call(model_id=model_id, stream=False)
+        model.call = create_test_call(model_id=model_id, stream=True)
 
         opt = app._chat_payload
 
         print(opt)
         assert (
             opt
-            == '{"inputs": {"Input": "USER MESSAGE"}, '
+            == '{"inputs": {"Input": "Hello Dify"}, '
             '"response_mode": "streaming", "user": "user"}'
         )

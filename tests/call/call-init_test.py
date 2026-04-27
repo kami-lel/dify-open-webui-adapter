@@ -9,14 +9,15 @@ OWURequest creation
 import pytest
 
 from dify_open_webui_adapter import (
-    PipeCall,
     _PipeCallBody,
     _PipeCallMetadata,
     _PipeCallUser,
+    PipeCall,
 )
 
-
 # Pytest fixtures  #############################################################
+
+
 @pytest.fixture
 def local_call(pipe_call_args):
     return PipeCall(**pipe_call_args)

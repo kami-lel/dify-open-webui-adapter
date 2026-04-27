@@ -15,6 +15,9 @@ import requests
 
 import pytest
 
+
+from tests import create_info_mock_base
+
 # Pytest fixtures  #############################################################
 
 
@@ -51,8 +54,11 @@ def testee_reply_block(patch_target_post, endpoint_wf, authorization_wf1):
 class TestResponse:
 
     def test_no_stream(
-        _, app_wf_skip1, patch_target_post, mock_block_wf, assertee_wf_block
+        _,
+        pipe_obj,
+        model_id_wf1,
     ):
+
         app = app_wf_skip1
         app.current_user_msg_content = "PRIMARY"
         app.current_enable_stream = False

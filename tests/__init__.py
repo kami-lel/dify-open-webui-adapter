@@ -17,7 +17,7 @@ def create_test_call(model_id="default-model-id", stream=False, messages=None):
     return PipeCall(body=body, user=user, metadata=metadata)
 
 
-def create_ok_mock_resp():
+def create_info_mock_base():
     mock_resp = Mock()
     mock_resp.status_code = 201
     mock_resp.json.return_value = {"mode": "workflow"}

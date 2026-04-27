@@ -418,6 +418,9 @@ class WorkflowApp(BaseDifyApp):  # =============================================
 
         return json.dumps(payload_dict)
 
+    def _reply_blocking(self):
+        pass  # TODO
+
 
 class ChatflowApp(BaseDifyApp):  # =============================================
     """
@@ -448,6 +451,9 @@ class ChatflowApp(BaseDifyApp):  # =============================================
         }
         return json.dumps(payload_dict)
 
+    def _reply_blocking(self):
+        pass  # Todo
+
 
 # OWU side  ####################################################################
 # OWU constants  ===============================================================
@@ -472,7 +478,7 @@ class OWUModel:  # =============================================================
         :param call:
         :type call: PipeCall
         :return: the response of current round
-        :rtype: str or StreamResponse
+        :rtype: str (blocking mode) or StreamResponse (streaming mode)
         """
         # Todo make file upload
         self.call = call

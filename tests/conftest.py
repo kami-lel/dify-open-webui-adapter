@@ -70,6 +70,11 @@ def model_id_wf1():
 
 
 @pytest.fixture(scope="session")
+def model_id_wf2():
+    return "workflow-model-changed-input"
+
+
+@pytest.fixture(scope="session")
 def model_id_cf1():
     return "example-chatflow-model"
 
@@ -85,6 +90,11 @@ def model_id_cf2():
 @pytest.fixture(scope="session")
 def auth_key_wf1():
     return "068937402cc741689986cc5b6ed433a"
+
+
+@pytest.fixture(scope="session")
+def auth_key_wf2():
+    return "f1iFcsVcrbuLdVzkgHdq7n8cTUX8gt2c"
 
 
 @pytest.fixture(scope="session")
@@ -168,8 +178,14 @@ def configs_single(config_raw_cf1):
 
 
 @pytest.fixture(scope="session")
-def configs_mux(config_raw_wf1, config_raw_cf1, config_raw_cf2):
-    return [config_raw_wf1, config_raw_cf1, config_raw_cf2]
+def configs_mux(
+    config_raw_wf1, config_raw_cf1, config_raw_cf2, auth_key_wf2, model_id_wf2
+):
+    config_raw_wf2 = {
+        "key": auth_key_wf2,
+        "model_id": model_id_wf2,
+    }
+    return [config_raw_wf1, config_raw_wf2, config_raw_cf1, config_raw_cf2]
 
 
 # during init  =================================================================
@@ -277,6 +293,7 @@ def mock_info_cf(info_response_cf1):
 @pytest.fixture(scope="class")
 def mock_sefx_get(
     auth_key_wf1,
+    auth_key_wf2,
     auth_key_cf1,
     auth_key_cf2,
     mock_info_wf,
@@ -288,6 +305,10 @@ def mock_sefx_get(
 
         if key == auth_key_wf1:
             return mock_info_wf
+        if key == auth_key_wf2:
+            mock_resp = Mock()
+            mock_resp.json.return_value = {"mode": "workflow"}
+            return mock_resp
         elif key == auth_key_cf1:
             return mock_info_cf
         elif key == auth_key_cf2:

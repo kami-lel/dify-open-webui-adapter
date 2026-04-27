@@ -13,10 +13,10 @@ class TestPipe:  # =============================================================
         assert isinstance(pipe_obj.models, dict)
 
     def test_model_size(_, pipe_obj):
-        assert len(pipe_obj.models) == 3
+        assert len(pipe_obj.models) == 4
 
     def test_app_type(_, pipe_obj):
         assert isinstance(pipe_obj.apps, dict)
 
     def test_app_size(_, pipe_obj):
-        assert len(pipe_obj.apps) == 3
+        assert len(pipe_obj.apps) == 4

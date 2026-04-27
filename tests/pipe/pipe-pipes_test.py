@@ -62,7 +62,7 @@ class TestMux:  # ==============================================================
 
     def test_len(_, pipes_result_mux):
         opt = pipes_result_mux
-        assert len(opt) == 3
+        assert len(opt) == 4
 
     def test_wf1(_, pipes_result_mux):
         opt = pipes_result_mux[0]
@@ -73,7 +73,7 @@ class TestMux:  # ==============================================================
         }
 
     def test_cf1(_, pipes_result_mux):
-        opt = pipes_result_mux[1]
+        opt = pipes_result_mux[2]
         print(opt)
         assert opt == {
             "id": "example-chatflow-model",
@@ -81,7 +81,7 @@ class TestMux:  # ==============================================================
         }
 
     def test_cf2(_, pipes_result_mux):
-        opt = pipes_result_mux[2]
+        opt = pipes_result_mux[3]
         print(opt)
         assert opt == {
             "id": "example-chatflow-model-2",

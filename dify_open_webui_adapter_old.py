@@ -49,37 +49,6 @@ class BaseDifyApp:
         else:
             return self._reply_blocking()
 
-    def open_reply_response(self):
-        """
-        open a `Response` object connecting to Dify for replying
-
-
-        :return: Response object
-        :rtype: requests.Response
-        :raises ConnectionError:
-        """
-        try:
-            timeout = (
-                STREAM_REQUEST_TIMEOUT
-                if self.current_enable_stream
-                else REQUEST_TIMEOUT
-            )
-            response_obj = requests.post(
-                self.main_url,
-                headers=self.http_header,
-                data=self._create_reply_payload(),
-                stream=self.current_enable_stream,
-                timeout=timeout,
-            )
-            response_obj.raise_for_status()
-            return response_obj
-
-        # handle network errors
-        except requests.exceptions.RequestException as err:
-            raise ConnectionError(
-                "fail request to Dify: {}".format(err.args[0])
-            ) from err
-
     # abstract methods  ========================================================
 
     def _reply_blocking(self):

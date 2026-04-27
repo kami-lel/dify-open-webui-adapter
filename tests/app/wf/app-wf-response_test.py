@@ -15,9 +15,6 @@ import requests
 
 import pytest
 
-
-from tests import create_info_mock_base, create_test_call
-
 # Pytest fixtures  #############################################################
 
 

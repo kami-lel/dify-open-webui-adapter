@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -17,7 +17,7 @@ from dify_open_webui_adapter import (
     Pipe,
 )
 
-from tests import create_info_mock_base
+from tests import create_mock_resp
 
 # Hack remove test ignoring
 collect_ignore_glob = [
@@ -278,15 +278,13 @@ def app_direct_cf2(config_cf2, info_response_cf2):
 # mock obj  --------------------------------------------------------------------
 @pytest.fixture(scope="class")
 def mock_info_wf(info_response_wf1):
-    mock_resp = create_info_mock_base()
-    mock_resp.json.return_value = info_response_wf1
+    mock_resp = create_mock_resp(return_value=info_response_wf1)
     return mock_resp
 
 
 @pytest.fixture(scope="class")
 def mock_info_cf(info_response_cf1):
-    mock_resp = create_info_mock_base()
-    mock_resp.json.return_value = info_response_cf1
+    mock_resp = create_mock_resp(return_value=info_response_cf1)
     return mock_resp
 
 
@@ -306,14 +304,12 @@ def mock_sefx_get(
         if key == auth_key_wf1:
             return mock_info_wf
         if key == auth_key_wf2:
-            mock_resp = create_info_mock_base()
-            mock_resp.json.return_value = {"mode": "workflow"}
+            mock_resp = create_mock_resp(return_value={"mode": "workflow"})
             return mock_resp
         elif key == auth_key_cf1:
             return mock_info_cf
         elif key == auth_key_cf2:
-            mock_resp = create_info_mock_base()
-            mock_resp.json.return_value = info_response_cf2
+            mock_resp = create_mock_resp(return_value=info_response_cf2)
             return mock_resp
 
         else:

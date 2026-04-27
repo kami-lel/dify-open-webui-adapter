@@ -16,7 +16,7 @@ import requests
 import pytest
 
 
-from tests import create_info_mock_base
+from tests import create_info_mock_base, create_test_call
 
 # Pytest fixtures  #############################################################
 
@@ -53,18 +53,16 @@ def testee_reply_block(patch_target_post, endpoint_wf, authorization_wf1):
 # Pytest unit tests  ###########################################################
 class TestResponse:
 
-    def test_no_stream(
-        _,
-        pipe_obj,
-        model_id_wf1,
-    ):
-
-        app = app_wf_skip1
-        app.current_user_msg_content = "PRIMARY"
-        app.current_enable_stream = False
-
+    def test_no_stream(_, pipe_obj, model_id_wf1, patch_target_post):
+        model_id = model_id_wf1
+        app = pipe_obj.apps[model_id]
+        model = pipe_obj.models[model_id]
         patch_target = patch_target_post
-        mock_resp = mock_block_wf
+
+        call = create_test_call(model_id=model_id, stream=False)
+        model.call = call
+
+        mock_resp = None  # BUG
 
         with patch(patch_target, return_value=mock_resp) as mock_post:
             opt = app.open_reply_response()

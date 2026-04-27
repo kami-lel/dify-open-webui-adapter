@@ -1,9 +1,9 @@
 """
-app-wf-reply-response_test.py
+app-wf-response_test.py
 
 Unit Tests (using pytest) for:
 
-WorkflowApp.open_reply_response()
+WorkflowApp.open_chat_response() (inherited from BaseDifyApp)
 """
 
 # FIXME

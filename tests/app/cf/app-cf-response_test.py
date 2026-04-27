@@ -1,9 +1,9 @@
 """
-app-cf-reply-response_test.py
+app-cf-response_test.py
 
 Unit Tests (using pytest) for:
 
-ChatflowApp.open_reply_response()
+ChatflowApp.open_chat_response() (inherited from BaseDifyApp)
 """
 
 # FIXME

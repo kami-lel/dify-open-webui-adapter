@@ -35,8 +35,6 @@ class Test1:  # ================================================================
         opt = app._chat_payload
 
         print(opt)
-
-        print(opt)
         assert (
             opt
             == '{"inputs": {"query": "Hello Dify"}, '

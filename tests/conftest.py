@@ -17,6 +17,8 @@ from dify_open_webui_adapter import (
     Pipe,
 )
 
+from tests import create_ok_mock_resp
+
 # Hack remove test ignoring
 collect_ignore_glob = [
     "app/cf/app-cf-reply-block_test.py",
@@ -276,14 +278,14 @@ def app_direct_cf2(config_cf2, info_response_cf2):
 # mock obj  --------------------------------------------------------------------
 @pytest.fixture(scope="class")
 def mock_info_wf(info_response_wf1):
-    mock_resp = Mock()
+    mock_resp = create_ok_mock_resp()
     mock_resp.json.return_value = info_response_wf1
     return mock_resp
 
 
 @pytest.fixture(scope="class")
 def mock_info_cf(info_response_cf1):
-    mock_resp = Mock()
+    mock_resp = create_ok_mock_resp()
     mock_resp.json.return_value = info_response_cf1
     return mock_resp
 
@@ -304,13 +306,13 @@ def mock_sefx_get(
         if key == auth_key_wf1:
             return mock_info_wf
         if key == auth_key_wf2:
-            mock_resp = Mock()
+            mock_resp = create_ok_mock_resp()
             mock_resp.json.return_value = {"mode": "workflow"}
             return mock_resp
         elif key == auth_key_cf1:
             return mock_info_cf
         elif key == auth_key_cf2:
-            mock_resp = Mock()
+            mock_resp = create_ok_mock_resp()
             mock_resp.json.return_value = info_response_cf2
             return mock_resp
 
@@ -334,15 +336,13 @@ def pipe_call_args(model_id_wf1):
     return {"body": body, "user": user, "metadata": metadata}
 
 
+# reply blocking  ==============================================================
+
+
+# reply streaming  =============================================================
+
+
 # Hack rm below  ###############################################################
-
-
-# mock  ------------------------------------------------------------------------
-@pytest.fixture
-def mock_base():
-    mock_resp = Mock()
-    mock_resp.status_code = 201
-    return mock_resp
 
 
 # streaming  ===================================================================

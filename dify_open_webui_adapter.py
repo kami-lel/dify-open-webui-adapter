@@ -229,6 +229,9 @@ class BaseDifyApp:  # ==========================================================
         """
         raise NotImplementedError
 
+    def _reply_blocking(self):
+        pass  # Todo
+
     # Public Methods  **********************************************************
 
     @classmethod
@@ -276,9 +279,23 @@ class BaseDifyApp:  # ==========================================================
             return ChatflowApp(config, info_response)
 
     def reply(self):
-        pass  # Todo
+        """
+        handle Dify side of processing per-round response of conversation,
+        by requesting Dify Backend API
 
-    def open_chat_response(self):  # FIXME
+
+        :raises ConnectionError:
+        :raises KeyError:
+        :return: the response
+        :rtype: str or Iterable
+        """
+        if self.model.is_using_stream:
+            raise NotImplementedError  # Todo
+            # return _StreamingConversationRound(self)
+        else:
+            return self._reply_blocking()
+
+    def open_chat_response(self):
         """
         open a `Response` object connecting to Dify for replying
 
@@ -287,17 +304,16 @@ class BaseDifyApp:  # ==========================================================
         :rtype: requests.Response
         :raises ConnectionError:
         """
+
+        enable_stream = self.model.is_using_stream
+        timeout = STREAM_REQUEST_TIMEOUT if enable_stream else REQUEST_TIMEOUT
+
         try:
-            timeout = (
-                STREAM_REQUEST_TIMEOUT
-                if self.current_enable_stream
-                else REQUEST_TIMEOUT
-            )
             response_obj = requests.post(
-                self.main_url,
-                headers=self.http_header,
-                data=self._create_reply_payload(),
-                stream=self.current_enable_stream,
+                self._chat_endpoint,
+                headers=self._http_header,
+                data=self._chat_payload,
+                stream=enable_stream,
                 timeout=timeout,
             )
             response_obj.raise_for_status()
@@ -305,9 +321,7 @@ class BaseDifyApp:  # ==========================================================
 
         # handle network errors
         except requests.exceptions.RequestException as err:
-            raise ConnectionError(
-                "fail request to Dify: {}".format(err.args[0])
-            ) from err
+            raise ConnectionError(CONNECTION_ERR_MSG + err.args[0]) from err
 
     # constructor  *************************************************************
 

@@ -92,6 +92,11 @@ def auth_key_wf1():
 
 
 @pytest.fixture(scope="session")
+def authorization_wf1(auth_key_wf1):
+    return "Bearer " + auth_key_wf1
+
+
+@pytest.fixture(scope="session")
 def auth_key_wf2():
     return "f1iFcsVcrbuLdVzkgHdq7n8cTUX8gt2c"
 
@@ -102,8 +107,18 @@ def auth_key_cf1():
 
 
 @pytest.fixture(scope="session")
+def authorization_cf1(auth_key_cf1):
+    return "Bearer " + auth_key_cf1
+
+
+@pytest.fixture(scope="session")
 def auth_key_cf2():
     return "820ab10b649b4c748513cb8e7a628063"
+
+
+@pytest.fixture(scope="session")
+def authorization_cf2(auth_key_cf2):
+    return "Bearer " + auth_key_cf2
 
 
 # app names  -------------------------------------------------------------------
@@ -232,11 +247,11 @@ def info_response_cf2():
 
 
 @pytest.fixture
-def mock_assertee_info_wf(endpoint_info, auth_key_wf1):
+def mock_assertee_info_wf(endpoint_info, authorization_wf1):
     args = [endpoint_info]
     kwargs = {
         "headers": {
-            "Authorization": "Bearer " + auth_key_wf1,
+            "Authorization": authorization_wf1,
             "Content-Type": "application/json",
         },
         "timeout": 30,
@@ -245,11 +260,11 @@ def mock_assertee_info_wf(endpoint_info, auth_key_wf1):
 
 
 @pytest.fixture
-def mock_assertee_info_cf(endpoint_info, auth_key_cf1):
+def mock_assertee_info_cf(endpoint_info, authorization_cf1):
     args = [endpoint_info]
     kwargs = {
         "headers": {
-            "Authorization": "Bearer " + auth_key_cf1,
+            "Authorization": authorization_cf1,
             "Content-Type": "application/json",
         },
         "timeout": 30,
@@ -318,7 +333,7 @@ def mock_sefx_get(
     return get
 
 
-# call  ========================================================================
+# during chat  =================================================================
 
 
 @pytest.fixture(scope="class")

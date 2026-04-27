@@ -4,6 +4,12 @@ import pytest
 
 # Pytest fixtures  #############################################################
 
+
+@pytest.fixture(scope="session")
+def chat_endpoint_wf(base_url):
+    return base_url + "/workflows/run"
+
+
 # Hack conftest clean up
 
 

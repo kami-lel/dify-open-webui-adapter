@@ -4,7 +4,7 @@ from unittest.mock import Mock
 from dify_open_webui_adapter import PipeCall
 
 
-def create_test_call_args(
+def create_pipe_call_args(
     model_id="default-model-id", stream=False, messages=None
 ):
     messages = messages or [{"role": "user", "content": "Hello Dify"}]
@@ -19,8 +19,8 @@ def create_test_call_args(
     return body, user, metadata
 
 
-def create_test_call(*args, **kwargs):
-    body, user, metadata = create_test_call_args(*args, **kwargs)
+def create_pipe_call(*args, **kwargs):
+    body, user, metadata = create_pipe_call_args(*args, **kwargs)
     return PipeCall(body=body, user=user, metadata=metadata)
 
 

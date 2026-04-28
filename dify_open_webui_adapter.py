@@ -422,7 +422,7 @@ class WorkflowApp(BaseDifyApp):  # =============================================
                 )
             },
             "response_mode": self._response_mode,
-            "user": "user",  # Todo read from config
+            "user": self.model.call.username,
         }
 
         return json.dumps(payload_dict)
@@ -469,7 +469,7 @@ class ChatflowApp(BaseDifyApp):  # =============================================
         payload_dict = {
             "query": self.model.call.message,
             "response_mode": self._response_mode,
-            "user": "user",  # Todo
+            "user": self.model.call.username,
             "conversation_id": "",  # Todo
             "auto_generate_name": False,
             "inputs": {},

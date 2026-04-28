@@ -6,7 +6,7 @@ Unit Tests (using pytest) for:
 PipeCall.model_id
 """
 
-from tests import create_test_call
+from tests import create_pipe_call
 
 # Pytest unit tests  ###########################################################
 
@@ -15,7 +15,7 @@ class TestNormal:  # ===========================================================
 
     def test_wf1(_, model_id_wf1):
         model_id = model_id_wf1
-        call = create_test_call(model_id="dify2owu." + model_id)
+        call = create_pipe_call(model_id="dify2owu." + model_id)
 
         opt = call.model_id
         print(opt)
@@ -23,7 +23,7 @@ class TestNormal:  # ===========================================================
 
     def test_cf1(_, model_id_cf1):
         model_id = model_id_cf1
-        call = create_test_call(model_id="dify2owu." + model_id)
+        call = create_pipe_call(model_id="dify2owu." + model_id)
 
         opt = call.model_id
         print(opt)
@@ -31,7 +31,7 @@ class TestNormal:  # ===========================================================
 
     def test_cf2(_, model_id_cf2):
         model_id = model_id_cf2
-        call = create_test_call(model_id="dify2owu." + model_id)
+        call = create_pipe_call(model_id="dify2owu." + model_id)
 
         opt = call.model_id
         print(opt)
@@ -42,7 +42,7 @@ class TestNoPrefix:  # =========================================================
 
     def test_wf1(_, model_id_wf1):
         model_id = model_id_wf1
-        call = create_test_call(model_id=model_id)
+        call = create_pipe_call(model_id=model_id)
 
         opt = call.model_id
         print(opt)
@@ -50,7 +50,7 @@ class TestNoPrefix:  # =========================================================
 
     def test_cf1(_, model_id_cf1):
         model_id = model_id_cf1
-        call = create_test_call(model_id=model_id)
+        call = create_pipe_call(model_id=model_id)
 
         opt = call.model_id
         print(opt)
@@ -58,7 +58,7 @@ class TestNoPrefix:  # =========================================================
 
     def test_cf2(_, model_id_cf2):
         model_id = model_id_cf2
-        call = create_test_call(model_id=model_id)
+        call = create_pipe_call(model_id=model_id)
 
         opt = call.model_id
         print(opt)

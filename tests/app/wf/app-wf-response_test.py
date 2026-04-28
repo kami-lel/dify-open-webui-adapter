@@ -14,7 +14,7 @@ import requests
 import pytest
 
 
-from tests import create_test_call, create_mock_resp
+from tests import create_pipe_call, create_mock_resp
 
 # Pytest fixtures  #############################################################
 
@@ -26,7 +26,7 @@ def testee_no_stream(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
     model = pipe_obj.models[model_id]
     patch_target = patch_target_post
 
-    call = create_test_call(model_id=model_id, stream=False)
+    call = create_pipe_call(model_id=model_id, stream=False)
     model.call = call
 
     mock_resp = mock_chat_wf
@@ -44,7 +44,7 @@ def testee_stream(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
     model = pipe_obj.models[model_id]
     patch_target = patch_target_post
 
-    call = create_test_call(model_id=model_id, stream=True)
+    call = create_pipe_call(model_id=model_id, stream=True)
     model.call = call
 
     mock_resp = mock_chat_wf
@@ -88,7 +88,7 @@ class TestErr:  # ==============================================================
         model = pipe_obj.models[model_id]
         patch_target = patch_target_post
 
-        call = create_test_call(model_id=model_id, stream=False)
+        call = create_pipe_call(model_id=model_id, stream=False)
         model.call = call
 
         with patch(

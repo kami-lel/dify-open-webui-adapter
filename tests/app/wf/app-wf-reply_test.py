@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 import pytest
 
-from tests import create_test_call
+from tests import create_pipe_call
 
 
 # Pytest fixtures  #############################################################
@@ -22,7 +22,7 @@ def testee_dft(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
     model = pipe_obj.models[model_id]
     patch_target = patch_target_post
 
-    call = create_test_call(model_id=model_id, stream=False)
+    call = create_pipe_call(model_id=model_id, stream=False)
     model.call = call
 
     mock_resp = mock_chat_wf

@@ -6,7 +6,7 @@ Unit Tests (using pytest) for:
 OWUModel.is_using_stream
 """
 
-from tests import create_test_call
+from tests import create_pipe_call
 
 # Pytest unit tests  ###########################################################
 
@@ -17,7 +17,7 @@ class TestStream:
         model_id = model_id_wf1
         model = pipe_obj.models[model_id]
 
-        call = create_test_call(model_id=model_id, stream=True)
+        call = create_pipe_call(model_id=model_id, stream=True)
         model.call = call
 
         opt = model.is_using_stream
@@ -28,7 +28,7 @@ class TestStream:
         model_id = model_id_wf1
         model = pipe_obj.models[model_id]
 
-        call = create_test_call(model_id=model_id, stream=False)
+        call = create_pipe_call(model_id=model_id, stream=False)
         model.call = call
 
         opt = model.is_using_stream
@@ -39,7 +39,7 @@ class TestStream:
         model_id = model_id_cf2
         model = pipe_obj.models[model_id]
 
-        call = create_test_call(model_id=model_id, stream=True)
+        call = create_pipe_call(model_id=model_id, stream=True)
         model.call = call
 
         opt = model.is_using_stream
@@ -50,7 +50,7 @@ class TestStream:
         model_id = model_id_cf2
         model = pipe_obj.models[model_id]
 
-        call = create_test_call(model_id=model_id, stream=False)
+        call = create_pipe_call(model_id=model_id, stream=False)
         model.call = call
 
         opt = model.is_using_stream

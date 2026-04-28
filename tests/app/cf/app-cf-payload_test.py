@@ -6,7 +6,7 @@ Unit Tests (using pytest) for:
 ChatflowApp._chat_payload()
 """
 
-from tests import create_test_call
+from tests import create_pipe_call
 
 
 class Test1:  # ================================================================
@@ -15,7 +15,7 @@ class Test1:  # ================================================================
         model_id = model_id_cf1
         app = pipe_obj.apps[model_id]
         model = pipe_obj.models[model_id]
-        model.call = create_test_call(model_id=model_id, stream=False)
+        model.call = create_pipe_call(model_id=model_id, stream=False)
 
         opt = app._chat_payload
 
@@ -31,7 +31,7 @@ class Test1:  # ================================================================
         model_id = model_id_cf1
         app = pipe_obj.apps[model_id]
         model = pipe_obj.models[model_id]
-        model.call = create_test_call(model_id=model_id, stream=True)
+        model.call = create_pipe_call(model_id=model_id, stream=True)
 
         opt = app._chat_payload
 

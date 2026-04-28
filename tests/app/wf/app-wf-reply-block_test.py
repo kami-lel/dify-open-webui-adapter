@@ -12,7 +12,7 @@ from unittest.mock import patch
 
 import pytest
 
-from tests import convert_key2authorization, create_mock_resp, create_test_call
+from tests import convert_key2authorization, create_mock_resp, create_pipe_call
 
 
 # Pytest fixtures  #############################################################
@@ -23,7 +23,7 @@ def testee_dft(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
     model = pipe_obj.models[model_id]
     patch_target = patch_target_post
 
-    call = create_test_call(model_id=model_id, stream=False)
+    call = create_pipe_call(model_id=model_id, stream=False)
     model.call = call
 
     mock_resp = mock_chat_wf
@@ -42,7 +42,7 @@ def testee_changed(pipe_obj, model_id_wf2, patch_target_post):
     model = pipe_obj.models[model_id]
     patch_target = patch_target_post
 
-    call = create_test_call(model_id=model_id, stream=False)
+    call = create_pipe_call(model_id=model_id, stream=False)
     model.call = call
 
     returned_value = {"data": {"outputs": {"Output": "DIFY REPLIED MESSAGE"}}}
@@ -117,7 +117,7 @@ class TestErr:  # ==============================================================
         model = pipe_obj.models[model_id]
         patch_target = patch_target_post
 
-        call = create_test_call(model_id=model_id, stream=False)
+        call = create_pipe_call(model_id=model_id, stream=False)
         model.call = call
 
         mock_resp_returned_value = {}
@@ -139,7 +139,7 @@ class TestErr:  # ==============================================================
         model = pipe_obj.models[model_id]
         patch_target = patch_target_post
 
-        call = create_test_call(model_id=model_id, stream=False)
+        call = create_pipe_call(model_id=model_id, stream=False)
         model.call = call
 
         returned_value = {"data": {}}
@@ -165,7 +165,7 @@ class TestErr:  # ==============================================================
         model = pipe_obj.models[model_id]
         patch_target = patch_target_post
 
-        call = create_test_call(model_id=model_id, stream=False)
+        call = create_pipe_call(model_id=model_id, stream=False)
         model.call = call
 
         returned_value = {"data": {"outputs": {}}}

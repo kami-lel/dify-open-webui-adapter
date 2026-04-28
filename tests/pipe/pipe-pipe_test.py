@@ -13,7 +13,7 @@ from unittest.mock import patch
 
 import pytest
 
-from tests import create_test_call_args
+from tests import create_pipe_call_args
 
 # Pytest fixtures  #############################################################
 
@@ -25,7 +25,7 @@ def testee_wf_block(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
 
     mock_resp = mock_chat_wf
 
-    body, user, metadata = create_test_call_args(model_id=model_id)
+    body, user, metadata = create_pipe_call_args(model_id=model_id)
 
     with patch(patch_target, return_value=mock_resp) as mock_post:
         replied = asyncio.run(

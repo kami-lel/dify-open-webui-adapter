@@ -6,7 +6,7 @@ Unit Tests (using pytest) for:
 Workflow._http_header (inherited from BaseDifyApp._http_header)
 """
 
-from tests import convert_key2authorization, create_test_call
+from tests import convert_key2authorization, create_pipe_call
 
 # Pytest unit tests  ###########################################################
 
@@ -18,7 +18,7 @@ class TestWf1:  # ==============================================================
         app = pipe_obj.apps[model_id]
         model = pipe_obj.models[model_id]
 
-        call = create_test_call(model_id=model_id, stream=False)
+        call = create_pipe_call(model_id=model_id, stream=False)
         model.call = call
 
         opt = app._http_header
@@ -34,7 +34,7 @@ class TestWf1:  # ==============================================================
         app = pipe_obj.apps[model_id]
         model = pipe_obj.models[model_id]
 
-        call = create_test_call(model_id=model_id, stream=True)
+        call = create_pipe_call(model_id=model_id, stream=True)
         model.call = call
 
         opt = app._http_header

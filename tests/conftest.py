@@ -324,20 +324,6 @@ def mock_sefx_get(
     return get
 
 
-# during chat  =================================================================
-
-
-@pytest.fixture(scope="class")
-def pipe_call_args(model_id_wf1):  # TODO rm?
-    body = {
-        "model": "dify2owu." + model_id_wf1,
-        "messages": [{"role": "user", "content": "Hello Dify"}],
-    }
-    user = {}
-    metadata = {}
-    return {"body": body, "user": user, "metadata": metadata}
-
-
 # reply blocking  ==============================================================
 
 

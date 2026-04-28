@@ -7,7 +7,11 @@ from dify_open_webui_adapter import PipeCall
 def create_pipe_call_args(
     model_id="default-model-id", stream=False, messages=None, user_dict=None
 ):
-    messages = messages or [{"role": "user", "content": "Hello Dify"}]
+    messages = (
+        [{"role": "user", "content": "Hello Dify"}]
+        if messages is None
+        else messages
+    )
 
     body = {"model": "dify2owu." + model_id, "messages": messages}
     user = user_dict or {}

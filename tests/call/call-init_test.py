@@ -12,15 +12,16 @@ from dify_open_webui_adapter import (
     _PipeCallBody,
     _PipeCallMetadata,
     _PipeCallUser,
-    PipeCall,
 )
+from tests import create_pipe_call
 
 # Pytest fixtures  #############################################################
 
 
 @pytest.fixture
-def local_call(pipe_call_args):
-    return PipeCall(**pipe_call_args)
+def local_call(model_id_wf1):
+    model_id = model_id_wf1
+    return create_pipe_call(model_id=model_id)
 
 
 # Pytest unit tests  ###########################################################

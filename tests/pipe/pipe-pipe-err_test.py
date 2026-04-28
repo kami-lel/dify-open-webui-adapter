@@ -8,18 +8,17 @@ errors handling in Pipe.pipe()
 
 import pytest
 
+from tests import create_pipe_call_args
+
 # Pytest unit tests  ###########################################################
 
 
 class TestErr:
 
     @pytest.mark.asyncio
-    async def test_no_model(_, pipe_obj, pipe_call_args):
-        call_args = pipe_call_args
-        body = call_args["body"]
+    async def test_no_model(_, pipe_obj):
+        body, user, metadata = create_pipe_call_args()
         body["model"] = "aaazzz"
-        user = call_args["user"]
-        metadata = call_args["metadata"]
 
         with pytest.raises(ValueError) as exec_info:
             await pipe_obj.pipe(body=body, __user__=user, __metadata__=metadata)

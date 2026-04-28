@@ -435,8 +435,7 @@ class BaseDifyApp:  # ==========================================================
         :rtype: str or Iterable
         """
         if self.model.is_using_stream:
-            raise NotImplementedError  # Todo
-            # return _StreamingConversationRound(self)
+            return StreamResponse(self)
         else:
             return self._reply_blocking()
 

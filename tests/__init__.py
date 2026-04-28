@@ -24,6 +24,10 @@ def create_mock_resp(return_value):
     return mock_resp
 
 
+def convert_key2authorization(key):
+    return "Bearer " + key
+
+
 # Hack rm below
 
 

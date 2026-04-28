@@ -1,5 +1,7 @@
 import pytest
 
+from tests import convert_key2authorization
+
 # Hack conftest clean up
 # pytest fixtures  #############################################################
 
@@ -21,7 +23,7 @@ def app_cf_stream(app_cf_skip1):
 
 
 @pytest.fixture
-def assertee_wf_stream(endpoint_wf, authorization_wf1):
+def assertee_wf_stream(endpoint_wf, auth_key_wf1):
     assert_args = [endpoint_wf]
 
     data = (
@@ -32,7 +34,7 @@ def assertee_wf_stream(endpoint_wf, authorization_wf1):
 
     assert_kwargs = {
         "headers": {
-            "Authorization": authorization_wf1,
+            "Authorization": convert_key2authorization(auth_key_wf1),
             "Content-Type": "application/json",
             "Accept": "text/event-stream",
         },
@@ -44,7 +46,7 @@ def assertee_wf_stream(endpoint_wf, authorization_wf1):
 
 
 @pytest.fixture
-def assertee_cf_stream(endpoint_cf, authorization_cf1):
+def assertee_cf_stream(endpoint_cf, auth_key_cf1):
 
     data = (
         '{"query": "PRIMARY", '
@@ -58,7 +60,7 @@ def assertee_cf_stream(endpoint_cf, authorization_cf1):
     assert_args = [endpoint_cf]
     assert_kwargs = {
         "headers": {
-            "Authorization": authorization_cf1,
+            "Authorization": convert_key2authorization(auth_key_cf1),
             "Content-Type": "application/json",
             "Accept": "text/event-stream",
         },

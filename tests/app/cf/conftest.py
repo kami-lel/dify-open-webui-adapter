@@ -3,13 +3,15 @@ from unittest.mock import Mock
 
 import pytest
 
+from tests import convert_key2authorization
+
 # Pytest fixtures  #############################################################
 
 # Hack conftest clean up
 
 
 @pytest.fixture
-def testee_block(patch_target_post, endpoint_cf, authorization_cf1):
+def testee_block(patch_target_post, endpoint_cf, auth_key_cf1):
     patch_target = patch_target_post
 
     mock_resp = Mock()
@@ -23,7 +25,7 @@ def testee_block(patch_target_post, endpoint_cf, authorization_cf1):
 
     assert_kwargs = {
         "headers": {
-            "Authorization": authorization_cf1,
+            "Authorization": convert_key2authorization(auth_key_cf1),
             "Content-Type": "application/json",
         },
         "data": json.dumps({

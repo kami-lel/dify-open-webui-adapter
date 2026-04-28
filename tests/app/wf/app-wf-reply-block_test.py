@@ -12,7 +12,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from tests import create_mock_resp, create_test_call
+from tests import convert_key2authorization, create_mock_resp, create_test_call
 
 
 # Pytest fixtures  #############################################################
@@ -89,15 +89,13 @@ class TestChg:  # ==============================================================
 
         assert opt == "DIFY REPLIED MESSAGE"
 
-    def test_assert_call(
-        _, testee_changed, chat_endpoint_wf, authorization_wf2
-    ):
+    def test_assert_call(_, testee_changed, chat_endpoint_wf, auth_key_wf2):
         _, mock_post = testee_changed
 
         assert_args = [chat_endpoint_wf]
         assert_kwargs = {
             "headers": {
-                "Authorization": authorization_wf2,
+                "Authorization": convert_key2authorization(auth_key_wf2),
                 "Content-Type": "application/json",
             },
             "data": json.dumps({

@@ -2,6 +2,8 @@ import json
 
 import pytest
 
+from tests import convert_key2authorization
+
 # Pytest fixtures  #############################################################
 
 
@@ -28,12 +30,12 @@ def mock_block_wf(mock_base):
 
 
 @pytest.fixture
-def assertee_wf_block(endpoint_wf, authorization_wf1):
+def assertee_wf_block(endpoint_wf, auth_key_wf1):
     args = [endpoint_wf]
 
     kwargs = {
         "headers": {
-            "Authorization": authorization_wf1,
+            "Authorization": convert_key2authorization(auth_key_wf1),
             "Content-Type": "application/json",
         },
         "data": json.dumps({

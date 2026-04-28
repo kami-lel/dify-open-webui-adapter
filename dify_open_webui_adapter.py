@@ -428,7 +428,7 @@ class WorkflowApp(BaseDifyApp):  # =============================================
         return json.dumps(payload_dict)
 
     def _reply_blocking(self):
-        response_object = self.open_reply_response()
+        response_object = self.open_chat_response()
         response = response_object.json()
 
         try:

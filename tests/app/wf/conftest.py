@@ -10,6 +10,11 @@ def chat_endpoint_wf(base_url):
     return base_url + "/workflows/run"
 
 
+@pytest.fixture
+def mock_assertee_block():
+    return
+
+
 # Hack conftest clean up
 
 

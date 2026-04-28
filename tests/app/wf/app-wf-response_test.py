@@ -20,7 +20,7 @@ from tests import create_test_call, create_mock_resp
 
 
 @pytest.fixture(scope="class")
-def testee_no_stream(pipe_obj, model_id_wf1, patch_target_post):
+def testee_no_stream(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
     model_id = model_id_wf1
     app = pipe_obj.apps[model_id]
     model = pipe_obj.models[model_id]
@@ -29,7 +29,7 @@ def testee_no_stream(pipe_obj, model_id_wf1, patch_target_post):
     call = create_test_call(model_id=model_id, stream=False)
     model.call = call
 
-    mock_resp = create_mock_resp(return_value=None)  # Hack use return value
+    mock_resp = mock_chat_wf
 
     with patch(patch_target, return_value=mock_resp) as mock_post:
         resp_obj = app.open_chat_response()
@@ -38,7 +38,7 @@ def testee_no_stream(pipe_obj, model_id_wf1, patch_target_post):
 
 
 @pytest.fixture(scope="class")
-def testee_stream(pipe_obj, model_id_wf1, patch_target_post):
+def testee_stream(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
     model_id = model_id_wf1
     app = pipe_obj.apps[model_id]
     model = pipe_obj.models[model_id]
@@ -47,7 +47,7 @@ def testee_stream(pipe_obj, model_id_wf1, patch_target_post):
     call = create_test_call(model_id=model_id, stream=True)
     model.call = call
 
-    mock_resp = create_mock_resp(return_value=None)  # Hack use return value
+    mock_resp = mock_chat_wf
 
     with patch(patch_target, return_value=mock_resp) as mock_post:
         resp_obj = app.open_chat_response()
@@ -87,51 +87,26 @@ def testee_reply_block(patch_target_post, endpoint_wf, authorization_wf1):
 # Pytest unit tests  ###########################################################
 class TestNoStream:  # =========================================================
 
-    def test_resp_obj(_):
-        pass  # Hack unit test for response obj
+    def test_resp_obj(_, testee_no_stream, mock_chat_wf):
+        mock_resp, _ = testee_no_stream
+        assert mock_resp is mock_chat_wf
 
-    def test_assert_call(
-        _, testee_no_stream, chat_endpoint_wf, authorization_wf1
-    ):
+    def test_assert_call(_, testee_no_stream, mock_assertee_chat_wf_block):
         _, mock_post = testee_no_stream
-        mock_post.assert_called_once_with(
-            chat_endpoint_wf,
-            headers={
-                "Authorization": authorization_wf1,
-                "Content-Type": "application/json",
-            },
-            data=json.dumps({
-                "inputs": {"query": "Hello Dify"},
-                "response_mode": "blocking",
-                "user": "user",
-            }),
-            stream=False,
-            timeout=30,
-        )
+        assert_args, assert_kwargs = mock_assertee_chat_wf_block
+        mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
 
 class TestStream:  # ===========================================================
 
-    def test_resp_obj(_):
-        pass  # Hack unit test for response obj
+    def test_resp_obj(_, testee_stream, mock_chat_wf):
+        mock_resp, _ = testee_stream
+        assert mock_resp is mock_chat_wf
 
-    def test_assert_call(_, testee_stream, chat_endpoint_wf, authorization_wf1):
+    def test_assert_call(_, testee_stream, mock_assertee_chat_wf_stream):
         _, mock_post = testee_stream
-        mock_post.assert_called_once_with(
-            chat_endpoint_wf,
-            headers={
-                "Authorization": authorization_wf1,
-                "Content-Type": "application/json",
-                "Accept": "text/event-stream",
-            },
-            data=json.dumps({
-                "inputs": {"query": "Hello Dify"},
-                "response_mode": "streaming",
-                "user": "user",
-            }),
-            stream=True,
-            timeout=300,
-        )
+        assert_args, assert_kwargs = mock_assertee_chat_wf_stream
+        mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
 
 class TestErr:  # ==============================================================

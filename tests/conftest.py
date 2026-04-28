@@ -1,3 +1,4 @@
+import json
 import sys
 from pathlib import Path
 from unittest.mock import patch
@@ -347,6 +348,55 @@ def pipe_call_args(model_id_wf1):
 
 
 # reply blocking  ==============================================================
+
+
+@pytest.fixture(scope="class")
+def mock_chat_wf():
+    value = {}
+    return create_mock_resp(return_value=value)
+
+
+@pytest.fixture(scope="class")
+def mock_assertee_chat_wf_block(chat_endpoint_wf, authorization_wf1):
+    assert_args = [chat_endpoint_wf]
+
+    assert_kwargs = {
+        "headers": {
+            "Authorization": authorization_wf1,
+            "Content-Type": "application/json",
+        },
+        "data": json.dumps({
+            "inputs": {"query": "Hello Dify"},
+            "response_mode": "blocking",
+            "user": "user",
+        }),
+        "stream": False,
+        "timeout": 30,
+    }
+
+    return assert_args, assert_kwargs
+
+
+@pytest.fixture(scope="class")
+def mock_assertee_chat_wf_stream(chat_endpoint_wf, authorization_wf1):
+    assert_args = [chat_endpoint_wf]
+
+    assert_kwargs = {
+        "headers": {
+            "Authorization": authorization_wf1,
+            "Content-Type": "application/json",
+            "Accept": "text/event-stream",
+        },
+        "data": json.dumps({
+            "inputs": {"query": "Hello Dify"},
+            "response_mode": "streaming",
+            "user": "user",
+        }),
+        "stream": True,
+        "timeout": 300,
+    }
+
+    return assert_args, assert_kwargs
 
 
 # reply streaming  =============================================================

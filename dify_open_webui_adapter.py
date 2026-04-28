@@ -177,6 +177,7 @@ class PipeCall(BaseModel):  # **************************************************
 REQUEST_TIMEOUT = 30
 STREAM_REQUEST_TIMEOUT = 300
 CONNECTION_ERR_MSG = "fail to connect Dify: "
+KEY_ERR_MSG = "miss entry with key {} in Dify chat response:\n{}"
 
 
 # Dify helpers  ================================================================
@@ -439,9 +440,7 @@ class WorkflowApp(BaseDifyApp):  # =============================================
 
         except KeyError as err:
             raise KeyError(
-                "miss entry with key {} in Dify chat response:\n{}".format(
-                    repr(err.args[0]), response
-                )
+                KEY_ERR_MSG.format(repr(err.args[0]), response)
             ) from err
 
         finally:
@@ -478,7 +477,19 @@ class ChatflowApp(BaseDifyApp):  # =============================================
         return json.dumps(payload_dict)
 
     def _reply_blocking(self):
-        pass  # TODO
+        response_object = self.open_chat_response()
+        response = response_object.json()
+
+        try:
+            return response["answer"]
+
+        except KeyError as err:
+            raise KeyError(
+                KEY_ERR_MSG.format(repr(err.args[0]), response)
+            ) from err
+
+        finally:
+            response_object.close()
 
     # private property  ********************************************************
 

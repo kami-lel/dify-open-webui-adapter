@@ -25,6 +25,8 @@ collect_ignore_glob = [
     "app/cf/app-cf-reply-block_test.py",
     "app/cf/app-cf-response_test.py",
     "round/*",
+    "app/wf/app-wf-reply-block_test.py",
+    "pipe/pipe-pipe_test.py",
 ]
 
 # pytest fixtures  #############################################################
@@ -99,6 +101,11 @@ def authorization_wf1(auth_key_wf1):
 @pytest.fixture(scope="session")
 def auth_key_wf2():
     return "f1iFcsVcrbuLdVzkgHdq7n8cTUX8gt2c"
+
+
+@pytest.fixture(scope="session")
+def authorization_wf2(auth_key_wf2):
+    return "Bearer " + auth_key_wf2
 
 
 @pytest.fixture(scope="session")
@@ -199,6 +206,7 @@ def configs_mux(
         "key": auth_key_wf2,
         "model_id": model_id_wf2,
         "query_input_field_identifier": "Input",
+        "reply_output_variable_identifier": "Output",
     }
     return [config_raw_wf1, config_raw_wf2, config_raw_cf1, config_raw_cf2]
 

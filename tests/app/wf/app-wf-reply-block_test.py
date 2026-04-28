@@ -6,12 +6,13 @@ Unit Tests (using pytest) for:
 - WorkflowApp._reply_blocking()
 """
 
+import json
 from unittest.mock import Mock, patch
 
 
 import pytest
 
-from tests import create_test_call
+from tests import create_mock_resp, create_test_call
 
 
 # Pytest fixtures  #############################################################
@@ -34,10 +35,9 @@ def testee_dft(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
 
 
 @pytest.fixture(scope="class")
-def testee_changed(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
+def testee_changed(pipe_obj, model_id_wf2, patch_target_post, mock_chat_wf):
     # different output fields
-    # TODO
-    model_id = model_id_wf1
+    model_id = model_id_wf2
     app = pipe_obj.apps[model_id]
     model = pipe_obj.models[model_id]
     patch_target = patch_target_post
@@ -45,7 +45,8 @@ def testee_changed(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
     call = create_test_call(model_id=model_id, stream=False)
     model.call = call
 
-    mock_resp = mock_chat_wf
+    returned_value = {"data": {"outputs": {"Output": "DIFY REPLIED MESSAGE"}}}
+    mock_resp = create_mock_resp(return_value=returned_value)
 
     with patch(patch_target, return_value=mock_resp) as mock_post:
         replied = app._reply_blocking()
@@ -88,9 +89,25 @@ class TestChg:  # ==============================================================
 
         assert opt == "DIFY REPLIED MESSAGE"
 
-    def test_assert_call(_, testee_changed, mock_assertee_chat_wf_block):
+    def test_assert_call(
+        _, testee_changed, chat_endpoint_wf, authorization_wf2
+    ):
         _, mock_post = testee_changed
-        assert_args, assert_kwargs = mock_assertee_chat_wf_block
+
+        assert_args = [chat_endpoint_wf]
+        assert_kwargs = {
+            "headers": {
+                "Authorization": authorization_wf2,
+                "Content-Type": "application/json",
+            },
+            "data": json.dumps({
+                "inputs": {"Input": "Hello Dify"},
+                "response_mode": "blocking",
+                "user": "user",
+            }),
+            "stream": False,
+            "timeout": 30,
+        }
         mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
 

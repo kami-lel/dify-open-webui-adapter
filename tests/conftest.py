@@ -25,7 +25,6 @@ collect_ignore_glob = [
     "app/cf/app-cf-reply-block_test.py",
     "app/cf/app-cf-response_test.py",
     "round/*",
-    "pipe/pipe-pipe_test.py",
 ]
 
 # pytest fixtures  #############################################################
@@ -198,9 +197,14 @@ def base_url():
     return "https://api.dify.ai/v1"
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def endpoint_info(base_url):
     return base_url + "/info"
+
+
+@pytest.fixture(scope="session")
+def chat_endpoint_wf(base_url):
+    return base_url + "/workflows/run"
 
 
 # app names  -------------------------------------------------------------------

@@ -1,12 +1,13 @@
 """
-model-reply_test.py
+app-wf-reply-block_test.py
 
 Unit Tests (using pytest) for:
 
-OWUModel.reply()
+WorkflowApp.reply()
 """
 
 from unittest.mock import patch
+
 
 import pytest
 
@@ -15,17 +16,19 @@ from tests import create_test_call
 
 # Pytest fixtures  #############################################################
 @pytest.fixture(scope="class")
-def testee_wf_block(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
+def testee_dft(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
     model_id = model_id_wf1
+    app = pipe_obj.apps[model_id]
     model = pipe_obj.models[model_id]
     patch_target = patch_target_post
 
     call = create_test_call(model_id=model_id, stream=False)
+    model.call = call
 
     mock_resp = mock_chat_wf
 
     with patch(patch_target, return_value=mock_resp) as mock_post:
-        replied = model.reply(call)
+        replied = app.reply()
 
         return replied, mock_post
 
@@ -33,23 +36,23 @@ def testee_wf_block(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
 # Pytest unit tests  ###########################################################
 
 
-class TestWfBlock:  # ==========================================================
+class TestBlock:  # ============================================================
 
-    def test_replied_type(_, testee_wf_block):
-        opt, _ = testee_wf_block
+    def test_replied_type(_, testee_dft):
+        opt, _ = testee_dft
 
         print(opt)
         assert isinstance(opt, str)
 
-    def test_replied_content(_, testee_wf_block):
-        opt, _ = testee_wf_block
+    def test_replied_content(_, testee_dft):
+        opt, _ = testee_dft
 
         assert opt == "DIFY REPLIED MESSAGE"
 
-    def test_assert_call(_, testee_wf_block, mock_assertee_chat_wf_block):
-        _, mock_post = testee_wf_block
+    def test_assert_call(_, testee_dft, mock_assertee_chat_wf_block):
+        _, mock_post = testee_dft
         assert_args, assert_kwargs = mock_assertee_chat_wf_block
         mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
 
 
-# Todo more unit tests
+# Todo unit test for stream

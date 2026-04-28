@@ -1,12 +1,10 @@
 """
-pipe-pipe-wf_test.py
+pipe-pipe-wf-block_test.py
 
 Unit Tests (using pytest) for:
 
-Pipe.pipe() working with Workflow
+Pipe.pipe() working with Workflow & blocking
 """
-
-# Todo complete unit tests
 
 import asyncio
 import json

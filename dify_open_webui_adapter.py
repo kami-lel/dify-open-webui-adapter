@@ -478,7 +478,7 @@ class ChatflowApp(BaseDifyApp):  # =============================================
         return json.dumps(payload_dict)
 
     def _reply_blocking(self):
-        pass  # Todo
+        pass  # TODO
 
     # private property  ********************************************************
 
@@ -517,7 +517,7 @@ class OWUModel:  # =============================================================
         :return: the response of current round
         :rtype: str (blocking mode) or StreamResponse (streaming mode)
         """
-        # Todo make file upload
+        # todo make file upload
         self.call = call
 
         return self.app.reply()
@@ -615,7 +615,6 @@ class Pipe:  # =================================================================
 
         owu_call = PipeCall(body=body, user=__user__, metadata=__metadata__)
 
-        # Bug keeps sending chat to the same chat id, when use from continue
         model = self.models.get(owu_call.model_id)
         if model is None:
             raise ValueError(

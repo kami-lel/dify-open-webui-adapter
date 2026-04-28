@@ -9,6 +9,9 @@ ChatflowApp._conversation_id
 # Pytest unit tests  ###########################################################
 
 
+from tests import create_pipe_call
+
+
 class TestChatId:
 
     def test_chg_chat_id(_, pipe_obj, model_id_cf1):
@@ -20,14 +23,7 @@ class TestChatId:
             model_id=model_id, stream=False, chat_id=chat_id
         )
 
-        opt = app._chat_payload
+        opt = app._conversation_id
 
         print(opt)
-        assert opt == json.dumps({
-            "query": "Hello Dify",
-            "response_mode": "blocking",
-            "user": "user",
-            "conversation_id": chat_id,
-            "auto_generate_name": False,
-            "inputs": {},
-        })
+        assert opt == chat_id

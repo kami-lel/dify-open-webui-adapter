@@ -6,68 +6,74 @@ Unit Tests (using pytest) for:
 ChatflowApp._reply_blocking()
 """
 
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import pytest
 
+from tests import create_mock_resp, create_pipe_call
 
-# pytest  ######################################################################
-class TestBlock:
 
-    def test_no_stream(_, app_cf_skip1, testee_block):
-        app = app_cf_skip1
-        app.current_user_msg_content = "PRIMARY"
-        app.current_enable_stream = False
+# Pytest fixtures  #############################################################
+@pytest.fixture(scope="class")
+def testee_dft(pipe_obj, model_id_cf1, patch_target_post, mock_chat_cf):
+    model_id = model_id_cf1
+    app = pipe_obj.apps[model_id]
+    model = pipe_obj.models[model_id]
+    patch_target = patch_target_post
 
-        patch_target, mock_resp, assert_args, assert_kwargs = testee_block
+    call = create_pipe_call(model_id=model_id, stream=False)
+    model.call = call
 
-        with patch(patch_target, return_value=mock_resp) as mock_post:
-            opt = app._reply_blocking()
+    mock_resp = mock_chat_cf
 
-            print(opt)
-            assert opt == "DIFY REPLIED MESSAGE"
+    with patch(patch_target, return_value=mock_resp) as mock_post:
+        replied = app._reply_blocking()
 
-            mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+        return replied, mock_post
 
-    # err handling  ============================================================
 
-    def test_no_conversation_id(_, app_cf_skip1, patch_target_post):
-        app = app_cf_skip1
-        app.current_user_msg_content = "PRIMARY"
-        app.current_enable_stream = False
+# Pytest unit tests  ###########################################################
 
+
+class TestBlock:  # ============================================================
+
+    def test_replied_type(_, testee_dft):
+        opt, _ = testee_dft
+
+        print(opt)
+        assert isinstance(opt, str)
+
+    def test_replied_content(_, testee_dft):
+        opt, _ = testee_dft
+
+        assert opt == "DIFY REPLIED MESSAGE"
+
+    def test_assert_call(_, testee_dft, mock_assertee_chat_cf_block):
+        _, mock_post = testee_dft
+        assert_args, assert_kwargs = mock_assertee_chat_cf_block
+        mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+
+
+class TestErr:  # ==============================================================
+
+    def test_bad_answ(_, pipe_obj, model_id_cf1, patch_target_post):
+        model_id = model_id_cf1
+        app = pipe_obj.apps[model_id]
+        model = pipe_obj.models[model_id]
         patch_target = patch_target_post
-        mock_resp = Mock()
-        mock_resp.status_code = 201
-        mock_resp.json.return_value = {
-            "ok": True,
-            "answer": "DIFY ANSWER",
-        }
 
-        with patch(patch_target, return_value=mock_resp):
-            with pytest.raises(KeyError) as exec_info:
-                app._reply_blocking()
+        call = create_pipe_call(model_id=model_id, stream=False)
+        model.call = call
 
-            opt = exec_info.value.args[0]
+        mock_resp_returned_value = {}
+        mock_resp = create_mock_resp(return_value=mock_resp_returned_value)
 
-            print(opt)
-            assert opt == "miss key in Dify response: conversation_id"
+        with (
+            patch(patch_target, return_value=mock_resp),
+            pytest.raises(KeyError) as exec_info,
+        ):
+            app._reply_blocking()
 
-    def test_answer(_, app_cf_skip1, patch_target_post):
-        app = app_cf_skip1
-        app.current_user_msg_content = "PRIMARY"
-        app.current_enable_stream = False
-
-        patch_target = patch_target_post
-        mock_resp = Mock()
-        mock_resp.status_code = 201
-        mock_resp.json.return_value = {"conversation_id": "???", "ok": True}
-
-        with patch(patch_target, return_value=mock_resp):
-            with pytest.raises(KeyError) as exec_info:
-                app._reply_blocking()
-
-            opt = exec_info.value.args[0]
-
-            print(opt)
-            assert opt == "miss key in Dify response: answer"
+        opt = exec_info.value.args[0]
+        print(opt)
+        assert opt == "miss entry with key 'answer' in Dify chat response:\n{}"

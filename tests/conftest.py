@@ -381,7 +381,7 @@ def mock_assertee_chat_wf_stream(chat_endpoint_wf, auth_key_wf1):
 
 @pytest.fixture(scope="class")
 def mock_chat_cf():
-    returned_value = {"data": {"outputs": {"answer": "DIFY REPLIED MESSAGE"}}}
+    returned_value = {"answer": "DIFY REPLIED MESSAGE"}
     return create_mock_resp(return_value=returned_value)
 
 

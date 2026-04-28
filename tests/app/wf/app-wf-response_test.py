@@ -6,15 +6,14 @@ Unit Tests (using pytest) for:
 WorkflowApp.open_chat_response() (inherited from BaseDifyApp)
 """
 
-import json
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 import requests
 
 
 import pytest
 
 
-from tests import create_pipe_call, create_mock_resp
+from tests import create_pipe_call
 
 # Pytest fixtures  #############################################################
 

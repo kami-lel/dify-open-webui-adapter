@@ -6,8 +6,6 @@ Unit Tests (using pytest) for:
 ChatflowApp.open_chat_response() (inherited from BaseDifyApp)
 """
 
-# FIXME
-
 from unittest.mock import patch, Mock
 import json
 import requests
@@ -15,9 +13,72 @@ import requests
 
 import pytest
 
-from tests import convert_key2authorization
+from tests import convert_key2authorization, create_pipe_call
+
+# Pytest fixtures  #############################################################
 
 
+@pytest.fixture(scope="class")
+def testee_block(pipe_obj, model_id_cf1, patch_target_post, mock_chat_cf):
+    model_id = model_id_cf1
+    app = pipe_obj.apps[model_id]
+    model = pipe_obj.models[model_id]
+    patch_target = patch_target_post
+
+    call = create_pipe_call(model_id=model_id, stream=False)
+    model.call = call
+
+    mock_resp = mock_chat_cf
+
+    with patch(patch_target, return_value=mock_resp) as mock_post:
+        resp_obj = app.open_chat_response()
+
+        return resp_obj, mock_post
+
+
+@pytest.fixture(scope="class")
+def testee_stream(pipe_obj, model_id_cf1, patch_target_post, mock_chat_cf):
+    model_id = model_id_cf1
+    app = pipe_obj.apps[model_id]
+    model = pipe_obj.models[model_id]
+    patch_target = patch_target_post
+
+    call = create_pipe_call(model_id=model_id, stream=True)
+    model.call = call
+
+    mock_resp = mock_chat_cf
+
+    with patch(patch_target, return_value=mock_resp) as mock_post:
+        resp_obj = app.open_chat_response()
+
+        return resp_obj, mock_post
+
+
+# Pytest unit tests  ###########################################################
+
+
+class TestBlock:  # ============================================================
+
+    def test_resp_obj(_, testee_block, mock_chat_cf1):
+        mock_resp, _ = testee_block
+        assert mock_resp is mock_chat_cf1
+
+    def test_assert_call(_, testee_block, mock_assertee_chat_cf_block):
+        _, mock_post = testee_block
+        assert_args, assert_kwargs = mock_assertee_chat_cf_block
+        mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+
+
+class TestStream:  # ===========================================================
+
+    pass
+
+
+class TestErr:  # ==============================================================
+    pass
+
+
+# HACK rm below
 # Pytest fixtures  #############################################################
 @pytest.fixture
 def testee_stream(patch_target_post, endpoint_cf, auth_key_cf1):

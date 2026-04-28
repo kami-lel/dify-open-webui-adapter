@@ -205,6 +205,11 @@ def chat_endpoint_wf(base_url):
     return base_url + "/workflows/run"
 
 
+@pytest.fixture(scope="session")
+def chat_endpoint_cf(base_url):
+    return base_url + "/chat-messages"
+
+
 # app names  -------------------------------------------------------------------
 @pytest.fixture(scope="session")
 def app_response_name_wf1():
@@ -359,6 +364,55 @@ def mock_assertee_chat_wf_stream(chat_endpoint_wf, auth_key_wf1):
     assert_kwargs = {
         "headers": {
             "Authorization": convert_key2authorization(auth_key_wf1),
+            "Content-Type": "application/json",
+            "Accept": "text/event-stream",
+        },
+        "data": json.dumps({
+            "inputs": {"query": "Hello Dify"},
+            "response_mode": "streaming",
+            "user": "user",
+        }),
+        "stream": True,
+        "timeout": 300,
+    }
+
+    return assert_args, assert_kwargs
+
+
+@pytest.fixture(scope="class")
+def mock_chat_cf():
+    returned_value = {"data": {"outputs": {"answer": "DIFY REPLIED MESSAGE"}}}
+    return create_mock_resp(return_value=returned_value)
+
+
+@pytest.fixture(scope="class")
+def mock_assertee_chat_cf_block(chat_endpoint_cf, auth_key_cf1):
+    assert_args = [chat_endpoint_cf]
+
+    assert_kwargs = {
+        "headers": {
+            "Authorization": convert_key2authorization(auth_key_cf1),
+            "Content-Type": "application/json",
+        },
+        "data": json.dumps({
+            "inputs": {"query": "Hello Dify"},
+            "response_mode": "blocking",
+            "user": "user",
+        }),
+        "stream": False,
+        "timeout": 30,
+    }
+
+    return assert_args, assert_kwargs
+
+
+@pytest.fixture(scope="class")
+def mock_assertee_chat_cf_stream(chat_endpoint_cf, auth_key_cf1):
+    assert_args = [chat_endpoint_cf]
+
+    assert_kwargs = {
+        "headers": {
+            "Authorization": convert_key2authorization(auth_key_cf1),
             "Content-Type": "application/json",
             "Accept": "text/event-stream",
         },

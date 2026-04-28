@@ -230,7 +230,16 @@ class BaseDifyApp:  # ==========================================================
         raise NotImplementedError
 
     def _reply_blocking(self):
-        pass  # Todo
+        """
+        connect to Dify to perform single chat round with blocking mode
+
+
+        :raises KeyError:
+        :raises ConnectionError:
+        :return: the response content
+        :rtype: str
+        """
+        raise NotImplementedError
 
     # Public Methods  **********************************************************
 
@@ -419,7 +428,19 @@ class WorkflowApp(BaseDifyApp):  # =============================================
         return json.dumps(payload_dict)
 
     def _reply_blocking(self):
-        pass  # TODO
+        response_object = self.open_reply_response()
+        response = response_object.json()
+
+        try:
+            return response["data"]["outputs"][self.reply_identifier]
+
+        except KeyError as err:
+            raise KeyError(
+                "miss key in Dify response: {}".format(err.args[0])
+            ) from err
+
+        finally:
+            response_object.close()
 
 
 class ChatflowApp(BaseDifyApp):  # =============================================

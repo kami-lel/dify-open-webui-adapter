@@ -22,8 +22,7 @@ from tests import create_mock_resp
 # Hack remove test ignoring
 collect_ignore_glob = [
     "app/cf/app-cf-reply-block_test.py",
-    "app/wf/app-wf-reply-block_test.py",
-    "pipe/pipe-pipe_test.py",
+    "app/cf/app-cf-response_test.py",
     "round/*",
 ]
 

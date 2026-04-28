@@ -6,7 +6,7 @@ Unit Tests (using pytest) for:
 ChatflowApp.open_chat_response() (inherited from BaseDifyApp)
 """
 
-# FIXME
+# Fixme
 
 from unittest.mock import patch, Mock
 import json

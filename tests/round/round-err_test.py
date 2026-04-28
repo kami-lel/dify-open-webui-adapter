@@ -1,10 +1,4 @@
-"""
-round-err_test.py
-
-Unit Tests (using pytest) for:
-
-errs handling in _StreamingConversationRound.__next__()
-"""
+# HACK rm below
 
 from unittest.mock import patch
 from json import JSONDecodeError

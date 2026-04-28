@@ -5,7 +5,11 @@ from dify_open_webui_adapter import PipeCall
 
 
 def create_pipe_call_args(
-    model_id="default-model-id", stream=False, messages=None, user_dict=None
+    model_id="default-model-id",
+    stream=False,
+    messages=None,
+    user_dict=None,
+    chat_id="",
 ):
     messages = (
         [{"role": "user", "content": "Hello Dify"}]
@@ -15,7 +19,7 @@ def create_pipe_call_args(
 
     body = {"model": "dify2owu." + model_id, "messages": messages}
     user = user_dict or {}
-    metadata = {}
+    metadata = {"chat_id": chat_id}
 
     if stream:
         body["stream"] = True

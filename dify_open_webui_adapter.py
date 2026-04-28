@@ -117,7 +117,8 @@ class _PipeCallUser(BaseModel):
 
 
 class _PipeCallMetadata(BaseModel):
-    pass
+
+    chat_id: Optional[str] = Field(default="")
 
 
 class PipeCall(BaseModel):  # **************************************************
@@ -470,7 +471,7 @@ class ChatflowApp(BaseDifyApp):  # =============================================
             "query": self.model.call.message,
             "response_mode": self._response_mode,
             "user": self.model.call.username,
-            "conversation_id": "",  # TODO
+            "conversation_id": self._conversation_id,
             "auto_generate_name": False,
             "inputs": {},
         }
@@ -478,6 +479,17 @@ class ChatflowApp(BaseDifyApp):  # =============================================
 
     def _reply_blocking(self):
         pass  # Todo
+
+    # private property  ********************************************************
+
+    @property
+    def _conversation_id(self):
+        """
+        :return: conversation_id sent to Dify Chat endpoint
+        :rtype: str
+        """
+        # todo save messages content, to pattern match for chat_id
+        return self.model.call.metadata.chat_id
 
 
 # OWU side  ####################################################################

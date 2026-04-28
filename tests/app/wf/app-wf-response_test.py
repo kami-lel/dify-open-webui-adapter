@@ -55,35 +55,6 @@ def testee_stream(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
         return resp_obj, mock_post
 
 
-@pytest.fixture
-def testee_reply_block(patch_target_post, endpoint_wf, authorization_wf1):
-    patch_target = patch_target_post
-
-    mock_resp = Mock()
-    mock_resp.status_code = 201
-    mock_resp.json.return_value = {"ok": True}
-    mock_resp.text = "APP REPLIED MESSAGE"
-
-    assert_args = [endpoint_wf]
-
-    assert_kwargs = {
-        "headers": {
-            "Authorization": authorization_wf1,
-            "Content-Type": "application/json",
-            "Accept": "text/event-stream",
-        },
-        "data": json.dumps({
-            "inputs": {"query": "PRIMARY"},
-            "response_mode": "streaming",
-            "user": "user",
-        }),
-        "stream": True,
-        "timeout": 300,
-    }
-
-    return patch_target, mock_resp, assert_args, assert_kwargs
-
-
 # Pytest unit tests  ###########################################################
 class TestNoStream:  # =========================================================
 

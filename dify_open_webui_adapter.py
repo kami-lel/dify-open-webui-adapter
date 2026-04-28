@@ -432,7 +432,9 @@ class WorkflowApp(BaseDifyApp):  # =============================================
         response = response_object.json()
 
         try:
-            return response["data"]["outputs"][self.reply_identifier]
+            return response["data"]["outputs"][
+                self.config.reply_output_variable_identifier
+            ]
 
         except KeyError as err:
             raise KeyError(

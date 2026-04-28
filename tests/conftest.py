@@ -352,8 +352,8 @@ def pipe_call_args(model_id_wf1):
 
 @pytest.fixture(scope="class")
 def mock_chat_wf():
-    value = {}
-    return create_mock_resp(return_value=value)
+    returned_value = {"data": {"outputs": {"answer": "DIFY REPLIED MESSAGE"}}}
+    return create_mock_resp(return_value=returned_value)
 
 
 @pytest.fixture(scope="class")

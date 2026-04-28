@@ -438,7 +438,9 @@ class WorkflowApp(BaseDifyApp):  # =============================================
 
         except KeyError as err:
             raise KeyError(
-                "miss key in Dify response: {}".format(err.args[0])
+                "miss entry with key {} in Dify chat response:\n{}".format(
+                    repr(err.args[0]), response
+                )
             ) from err
 
         finally:

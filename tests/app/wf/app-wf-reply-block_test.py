@@ -35,7 +35,7 @@ def testee_dft(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
 
 
 @pytest.fixture(scope="class")
-def testee_changed(pipe_obj, model_id_wf2, patch_target_post, mock_chat_wf):
+def testee_changed(pipe_obj, model_id_wf2, patch_target_post):
     # different output fields
     model_id = model_id_wf2
     app = pipe_obj.apps[model_id]
@@ -111,55 +111,76 @@ class TestChg:  # ==============================================================
 
 class TestErr:  # ==============================================================
 
-    # FIXME
+    def test_bad_key1(_, pipe_obj, model_id_wf1, patch_target_post):
+        model_id = model_id_wf1
+        app = pipe_obj.apps[model_id]
+        model = pipe_obj.models[model_id]
+        patch_target = patch_target_post
 
-    def test_bad_key1(_, app_wf_skip1, patch_target_post):
-        app = app_wf_skip1
-        app.current_user_msg_content = "PRIMARY"
-        app.current_enable_stream = False
+        call = create_test_call(model_id=model_id, stream=False)
+        model.call = call
 
-        mock_resp = Mock()
-        mock_resp.status_code = 201
-        mock_resp.json.return_value = {}
+        mock_resp_returned_value = {}
+        mock_resp = create_mock_resp(return_value=mock_resp_returned_value)
 
-        with patch(patch_target_post, return_value=mock_resp):
-            with pytest.raises(KeyError) as exec_info:
-                app._reply_blocking()
+        with (
+            patch(patch_target, return_value=mock_resp),
+            pytest.raises(KeyError) as exec_info,
+        ):
+            app._reply_blocking()
 
-            opt = exec_info.value.args[0]
-            print(opt)
-            assert opt == "miss key in Dify response: data"
+        opt = exec_info.value.args[0]
+        print(opt)
+        assert opt == "miss entry with key 'data' in Dify chat response:\n{}"
 
-    def test_bad_key2(_, app_wf_skip1, patch_target_post):
-        app = app_wf_skip1
-        app.current_user_msg_content = "PRIMARY"
-        app.current_enable_stream = False
+    def test_bad_key2(_, pipe_obj, model_id_wf1, patch_target_post):
+        model_id = model_id_wf1
+        app = pipe_obj.apps[model_id]
+        model = pipe_obj.models[model_id]
+        patch_target = patch_target_post
 
-        mock_resp = Mock()
-        mock_resp.status_code = 201
-        mock_resp.json.return_value = {"data": {}}
+        call = create_test_call(model_id=model_id, stream=False)
+        model.call = call
 
-        with patch(patch_target_post, return_value=mock_resp):
-            with pytest.raises(KeyError) as exec_info:
-                app._reply_blocking()
+        returned_value = {"data": {}}
+        mock_resp = create_mock_resp(return_value=returned_value)
 
-            opt = exec_info.value.args[0]
-            print(opt)
-            assert opt == "miss key in Dify response: outputs"
+        with (
+            patch(patch_target, return_value=mock_resp),
+            pytest.raises(KeyError) as exec_info,
+        ):
+            app._reply_blocking()
 
-    def test_bad_key3(_, app_wf_skip1, patch_target_post):
-        app = app_wf_skip1
-        app.current_user_msg_content = "PRIMARY"
-        app.current_enable_stream = False
+        opt = exec_info.value.args[0]
+        print(opt)
+        assert (
+            opt
+            == "miss entry with key 'outputs' in Dify chat response:\n"
+            "{'data': {}}"
+        )
 
-        mock_resp = Mock()
-        mock_resp.status_code = 201
-        mock_resp.json.return_value = {"data": {"outputs": {}}}
+    def test_bad_key3(_, pipe_obj, model_id_wf1, patch_target_post):
+        model_id = model_id_wf1
+        app = pipe_obj.apps[model_id]
+        model = pipe_obj.models[model_id]
+        patch_target = patch_target_post
 
-        with patch(patch_target_post, return_value=mock_resp):
-            with pytest.raises(KeyError) as exec_info:
-                app._reply_blocking()
+        call = create_test_call(model_id=model_id, stream=False)
+        model.call = call
 
-            opt = exec_info.value.args[0]
-            print(opt)
-            assert opt == "miss key in Dify response: answer"
+        returned_value = {"data": {"outputs": {}}}
+        mock_resp = create_mock_resp(return_value=returned_value)
+
+        with (
+            patch(patch_target, return_value=mock_resp),
+            pytest.raises(KeyError) as exec_info,
+        ):
+            app._reply_blocking()
+
+        opt = exec_info.value.args[0]
+        print(opt)
+        assert (
+            opt
+            == "miss entry with key 'answer' in Dify chat response:\n"
+            "{'data': {'outputs': {}}}"
+        )

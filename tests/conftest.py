@@ -389,19 +389,21 @@ def mock_chat_cf():
 def mock_assertee_chat_cf_block(chat_endpoint_cf, auth_key_cf1):
     assert_args = [chat_endpoint_cf]
 
+    data = {
+        "query": "Hello Dify",
+        "response_mode": "blocking",
+        "user": "user",
+        "conversation_id": "",
+        "auto_generate_name": False,
+        "inputs": {},
+    }
+
     assert_kwargs = {
         "headers": {
             "Authorization": convert_key2authorization(auth_key_cf1),
             "Content-Type": "application/json",
         },
-        "data": json.dumps({
-            "query": "Hello Dify",
-            "response_mode": "blocking",
-            "user": "user",
-            "conversation_id": "",
-            "auto_generate_name": False,
-            "inputs": {},
-        }),
+        "data": json.dumps(data),
         "stream": False,
         "timeout": 30,
     }
@@ -413,20 +415,22 @@ def mock_assertee_chat_cf_block(chat_endpoint_cf, auth_key_cf1):
 def mock_assertee_chat_cf_stream(chat_endpoint_cf, auth_key_cf1):
     assert_args = [chat_endpoint_cf]
 
+    data = {
+        "query": "Hello Dify",
+        "response_mode": "streaming",
+        "user": "user",
+        "conversation_id": "",
+        "auto_generate_name": False,
+        "inputs": {},
+    }
+
     assert_kwargs = {
         "headers": {
             "Authorization": convert_key2authorization(auth_key_cf1),
             "Content-Type": "application/json",
             "Accept": "text/event-stream",
         },
-        "data": json.dumps({
-            "query": "Hello Dify",
-            "response_mode": "streaming",
-            "user": "user",
-            "conversation_id": "",
-            "auto_generate_name": False,
-            "inputs": {},
-        }),
+        "data": json.dumps(data),
         "stream": True,
         "timeout": 300,
     }
@@ -522,29 +526,3 @@ def mock_assertee_chat_cf_stream(chat_endpoint_cf, auth_key_cf1):
 #         STREAM_ENTRIES_CF3
 #     )
 #     return mock_resp
-
-
-# .pipe() args  ================================================================
-
-
-@pytest.fixture
-def pipe_args_stream1(pipe_body1, pipe_args_no_stream1):
-    _, user, metadata = pipe_args_no_stream1
-    body = pipe_body1
-    body["stream"] = True
-    return body, user, metadata
-
-
-@pytest.fixture
-def pipe_args_no_stream2(pipe_body2):
-    body = pipe_body2
-    user = {}
-    metadata = {}
-    return body, user, metadata
-
-
-def pipe_args_stream2(pipe_body2, pipe_args_no_stream2):
-    _, user, metadata = pipe_args_no_stream2
-    body = pipe_body2
-    body["stream"] = True
-    return body, user, metadata

@@ -50,6 +50,3 @@ class TestWfBlock:  # ==========================================================
         _, mock_post = testee_wf_block
         assert_args, assert_kwargs = mock_assertee_chat_wf_block
         mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
-
-
-# Todo more unit tests

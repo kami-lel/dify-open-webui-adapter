@@ -1,5 +1,5 @@
 """
-app-wf-reply-block_test.py
+app-wf-reply_test.py
 
 Unit Tests (using pytest) for:
 
@@ -53,6 +53,3 @@ class TestBlock:  # ============================================================
         _, mock_post = testee_dft
         assert_args, assert_kwargs = mock_assertee_chat_wf_block
         mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
-
-
-# Todo unit test for stream

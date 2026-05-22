@@ -22,7 +22,7 @@ def create_pipe_call_args(
     metadata = {"chat_id": chat_id}
 
     if stream:
-        body["stream"] = True  # TODO support actual streaming
+        body["stream"] = True
 
     return body, user, metadata
 

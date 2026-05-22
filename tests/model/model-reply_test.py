@@ -15,14 +15,16 @@ from tests import create_pipe_call
 
 # Pytest fixtures  #############################################################
 @pytest.fixture(scope="class")
-def testee_wf_block(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
+def testee_wf_block(
+    pipe_obj, model_id_wf1, patch_target_post, mock_chat_block_wf
+):
     model_id = model_id_wf1
     model = pipe_obj.models[model_id]
     patch_target = patch_target_post
 
     call = create_pipe_call(model_id=model_id, stream=False)
 
-    mock_resp = mock_chat_wf
+    mock_resp = mock_chat_block_wf
 
     with patch(patch_target, return_value=mock_resp) as mock_post:
         replied = model.reply(call)

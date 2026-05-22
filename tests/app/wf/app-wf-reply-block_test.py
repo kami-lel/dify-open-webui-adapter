@@ -17,7 +17,7 @@ from tests import convert_key2authorization, create_mock_resp, create_pipe_call
 
 # Pytest fixtures  #############################################################
 @pytest.fixture(scope="class")
-def testee_dft(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
+def testee_dft(pipe_obj, model_id_wf1, patch_target_post, mock_chat_block_wf):
     model_id = model_id_wf1
     app = pipe_obj.apps[model_id]
     model = pipe_obj.models[model_id]
@@ -26,7 +26,7 @@ def testee_dft(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
     call = create_pipe_call(model_id=model_id, stream=False)
     model.call = call
 
-    mock_resp = mock_chat_wf
+    mock_resp = mock_chat_block_wf
 
     with patch(patch_target, return_value=mock_resp) as mock_post:
         replied = app._reply_blocking()

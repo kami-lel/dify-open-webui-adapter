@@ -20,7 +20,7 @@ from tests import create_pipe_call
 
 
 @pytest.fixture(scope="class")
-def testee_wf(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
+def testee_wf(pipe_obj, model_id_wf1, patch_target_post, mock_chat_stream_wf):
     model_id = model_id_wf1
     app = pipe_obj.apps[model_id]
     model = pipe_obj.models[model_id]
@@ -29,7 +29,7 @@ def testee_wf(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
     call = create_pipe_call(model_id=model_id, stream=True)
     model.call = call
 
-    mock_resp = mock_chat_wf
+    mock_resp = mock_chat_stream_wf
 
     with patch(patch_target, return_value=mock_resp) as mock_post:
         sr = ResponseStream(app)
@@ -38,7 +38,7 @@ def testee_wf(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
 
 
 @pytest.fixture(scope="class")
-def testee_cf(pipe_obj, model_id_cf1, patch_target_post, mock_chat_cf):
+def testee_cf(pipe_obj, model_id_cf1, patch_target_post, mock_chat_stream_cf):
     model_id = model_id_cf1
     app = pipe_obj.apps[model_id]
     model = pipe_obj.models[model_id]
@@ -47,7 +47,7 @@ def testee_cf(pipe_obj, model_id_cf1, patch_target_post, mock_chat_cf):
     call = create_pipe_call(model_id=model_id, stream=True)
     model.call = call
 
-    mock_resp = mock_chat_cf
+    mock_resp = mock_chat_stream_cf
 
     with patch(patch_target, return_value=mock_resp) as mock_post:
         sr = ResponseStream(app)

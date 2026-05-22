@@ -17,11 +17,13 @@ from tests import create_pipe_call_args
 
 
 @pytest.fixture(scope="class")
-def testee_block1(pipe_obj, model_id_cf1, patch_target_post, mock_chat_cf):
+def testee_block1(
+    pipe_obj, model_id_cf1, patch_target_post, mock_chat_block_cf
+):
     model_id = model_id_cf1
     patch_target = patch_target_post
 
-    mock_resp = mock_chat_cf
+    mock_resp = mock_chat_block_cf
 
     body, user, metadata = create_pipe_call_args(model_id=model_id)
 

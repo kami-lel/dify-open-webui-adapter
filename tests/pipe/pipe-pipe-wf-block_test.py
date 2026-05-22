@@ -18,11 +18,13 @@ from tests import convert_key2authorization, create_pipe_call_args
 
 
 @pytest.fixture(scope="class")
-def testee_block1(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
+def testee_block1(
+    pipe_obj, model_id_wf1, patch_target_post, mock_chat_block_wf
+):
     model_id = model_id_wf1
     patch_target = patch_target_post
 
-    mock_resp = mock_chat_wf
+    mock_resp = mock_chat_block_wf
 
     body, user, metadata = create_pipe_call_args(model_id=model_id)
 
@@ -35,11 +37,13 @@ def testee_block1(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
 
 
 @pytest.fixture(scope="class")
-def testee_block2(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
+def testee_block2(
+    pipe_obj, model_id_wf1, patch_target_post, mock_chat_block_wf
+):
     model_id = model_id_wf1
     patch_target = patch_target_post
 
-    mock_resp = mock_chat_wf
+    mock_resp = mock_chat_block_wf
 
     user_dict = {
         "id": "11223344",

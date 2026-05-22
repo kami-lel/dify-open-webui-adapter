@@ -331,7 +331,7 @@ def mock_sefx_get(
 
 
 @pytest.fixture(scope="class")
-def mock_chat_wf():
+def mock_chat_block_wf():
     returned_value = {"data": {"outputs": {"answer": "DIFY REPLIED MESSAGE"}}}
     return create_mock_resp(return_value=returned_value)
 
@@ -358,29 +358,7 @@ def mock_assertee_chat_wf_block(chat_endpoint_wf, auth_key_wf1):
 
 
 @pytest.fixture(scope="class")
-def mock_assertee_chat_wf_stream(chat_endpoint_wf, auth_key_wf1):
-    assert_args = [chat_endpoint_wf]
-
-    assert_kwargs = {
-        "headers": {
-            "Authorization": convert_key2authorization(auth_key_wf1),
-            "Content-Type": "application/json",
-            "Accept": "text/event-stream",
-        },
-        "data": json.dumps({
-            "inputs": {"query": "Hello Dify"},
-            "response_mode": "streaming",
-            "user": "user",
-        }),
-        "stream": True,
-        "timeout": 300,
-    }
-
-    return assert_args, assert_kwargs
-
-
-@pytest.fixture(scope="class")
-def mock_chat_cf():
+def mock_chat_block_cf():
     returned_value = {"answer": "DIFY REPLIED MESSAGE"}
     return create_mock_resp(return_value=returned_value)
 
@@ -411,6 +389,45 @@ def mock_assertee_chat_cf_block(chat_endpoint_cf, auth_key_cf1):
     return assert_args, assert_kwargs
 
 
+# reply streaming  =============================================================
+
+# FIXME actual provide streamable mock
+
+
+@pytest.fixture(scope="class")
+def mock_chat_stream_wf():
+    returned_value = {"data": {"outputs": {"answer": "DIFY REPLIED MESSAGE"}}}
+    return create_mock_resp(return_value=returned_value)
+
+
+@pytest.fixture(scope="class")
+def mock_assertee_chat_wf_stream(chat_endpoint_wf, auth_key_wf1):
+    assert_args = [chat_endpoint_wf]
+
+    assert_kwargs = {
+        "headers": {
+            "Authorization": convert_key2authorization(auth_key_wf1),
+            "Content-Type": "application/json",
+            "Accept": "text/event-stream",
+        },
+        "data": json.dumps({
+            "inputs": {"query": "Hello Dify"},
+            "response_mode": "streaming",
+            "user": "user",
+        }),
+        "stream": True,
+        "timeout": 300,
+    }
+
+    return assert_args, assert_kwargs
+
+
+@pytest.fixture(scope="class")
+def mock_chat_stream_cf():
+    returned_value = {"answer": "DIFY REPLIED MESSAGE"}
+    return create_mock_resp(return_value=returned_value)
+
+
 @pytest.fixture(scope="class")
 def mock_assertee_chat_cf_stream(chat_endpoint_cf, auth_key_cf1):
     assert_args = [chat_endpoint_cf]
@@ -436,6 +453,3 @@ def mock_assertee_chat_cf_stream(chat_endpoint_cf, auth_key_cf1):
     }
 
     return assert_args, assert_kwargs
-
-
-# reply streaming  =============================================================

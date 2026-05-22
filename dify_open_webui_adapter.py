@@ -222,9 +222,9 @@ class _SSEType(Flag):
         return self != self.IRRELEVANT
 
 
-class Stream:
+class ResponseStream:
     """
-    represents a single **Stream** conversation response round with Dify
+    represents a single streaming conversation response round with Dify
 
 
     :raises ValueError:
@@ -435,7 +435,7 @@ class BaseDifyApp:  # ==========================================================
         :rtype: str or Iterable
         """
         if self.model.is_using_stream:
-            return Stream(self)
+            return ResponseStream(self)
         else:
             return self._reply_blocking()
 

@@ -21,7 +21,6 @@ from tests import create_pipe_call
 
 @pytest.fixture(scope="class")
 def testee_wf(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
-    # FIXME make working
     model_id = model_id_wf1
     app = pipe_obj.apps[model_id]
     model = pipe_obj.models[model_id]
@@ -33,13 +32,48 @@ def testee_wf(pipe_obj, model_id_wf1, patch_target_post, mock_chat_wf):
     mock_resp = mock_chat_wf
 
     with patch(patch_target, return_value=mock_resp) as mock_post:
-        resp_obj = app.open_chat_response()
+        sr = ResponseStream(app)
 
-        return resp_obj, mock_post
+        return sr, mock_post
 
 
 # Pytest unit tests  ###########################################################
-class TestWf:  # ==============================================================
+
+
+class TestConst:
+
+    def test1(_):
+        assert ResponseStream._TEXT_STREAM_ENCODING == "utf-8"
+
+    def test2(_):
+        assert ResponseStream._STREAM_PREFIX == "data: "
+
+
+class TestWf:  # ===============================================================
+
+    # test .app  ---------------------------------------------------------------
+    def test_app(_, testee_wf, pipe_obj, model_id_wf1):
+        testee = testee_wf
+        sr, _ = testee
+        app = sr.app
+
+        assert app is pipe_obj.apps[model_id_wf1]
+
+    # test .response  ----------------------------------------------------------
+    def test_resp_obj(_, testee_wf, mock_chat_wf):
+        testee = testee_wf
+        sr, _ = testee
+        resp = sr.response
+
+        assert resp is mock_chat_wf
+
+    def test_assert_call(_, testee_wf, mock_assertee_chat_wf_stream):
+        testee = testee_wf
+        _, mock_post = testee
+        assert_args, assert_kwargs = mock_assertee_chat_wf_stream
+        mock_post.assert_called_once_with(*assert_args, **assert_kwargs)
+
+    # test .iter_lines  --------------------------------------------------------
 
     pass
 

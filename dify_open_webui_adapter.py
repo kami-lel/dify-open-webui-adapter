@@ -239,7 +239,7 @@ class ResponseStream:
     def __init__(self, app):
         self.app = app
         # cache the response for closing when finished this round
-        self.response = self.app.open_reply_response()
+        self.response = self.app.open_chat_response()
         self.iter_lines = self.response.iter_lines()
 
     # implement iter()  --------------------------------------------------------

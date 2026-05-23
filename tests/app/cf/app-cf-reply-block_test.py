@@ -10,7 +10,7 @@ from unittest.mock import patch
 
 import pytest
 
-from tests import create_mock_resp, create_pipe_call
+from tests import create_mock_resp_block, create_pipe_call
 
 
 # Pytest fixtures  #############################################################
@@ -66,7 +66,9 @@ class TestErr:  # ==============================================================
         model.call = call
 
         mock_resp_returned_value = {}
-        mock_resp = create_mock_resp(return_value=mock_resp_returned_value)
+        mock_resp = create_mock_resp_block(
+            return_value=mock_resp_returned_value
+        )
 
         with (
             patch(patch_target, return_value=mock_resp),

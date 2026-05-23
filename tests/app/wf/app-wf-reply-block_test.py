@@ -12,7 +12,11 @@ from unittest.mock import patch
 
 import pytest
 
-from tests import convert_key2authorization, create_mock_resp, create_pipe_call
+from tests import (
+    convert_key2authorization,
+    create_mock_resp_block,
+    create_pipe_call,
+)
 
 
 # Pytest fixtures  #############################################################
@@ -46,7 +50,7 @@ def testee_changed(pipe_obj, model_id_wf2, patch_target_post):
     model.call = call
 
     returned_value = {"data": {"outputs": {"Output": "DIFY REPLIED MESSAGE"}}}
-    mock_resp = create_mock_resp(return_value=returned_value)
+    mock_resp = create_mock_resp_block(return_value=returned_value)
 
     with patch(patch_target, return_value=mock_resp) as mock_post:
         replied = app._reply_blocking()
@@ -121,7 +125,9 @@ class TestErr:  # ==============================================================
         model.call = call
 
         mock_resp_returned_value = {}
-        mock_resp = create_mock_resp(return_value=mock_resp_returned_value)
+        mock_resp = create_mock_resp_block(
+            return_value=mock_resp_returned_value
+        )
 
         with (
             patch(patch_target, return_value=mock_resp),
@@ -143,7 +149,7 @@ class TestErr:  # ==============================================================
         model.call = call
 
         returned_value = {"data": {}}
-        mock_resp = create_mock_resp(return_value=returned_value)
+        mock_resp = create_mock_resp_block(return_value=returned_value)
 
         with (
             patch(patch_target, return_value=mock_resp),
@@ -169,7 +175,7 @@ class TestErr:  # ==============================================================
         model.call = call
 
         returned_value = {"data": {"outputs": {}}}
-        mock_resp = create_mock_resp(return_value=returned_value)
+        mock_resp = create_mock_resp_block(return_value=returned_value)
 
         with (
             patch(patch_target, return_value=mock_resp),

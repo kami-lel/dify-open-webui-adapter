@@ -18,7 +18,11 @@ from dify_open_webui_adapter import (
     Pipe,
 )
 
-from tests import convert_key2authorization, create_mock_resp
+from tests import (
+    convert_key2authorization,
+    create_mock_resp_block,
+    create_mock_resp_stream,
+)
 
 # Hack remove test ignoring
 collect_ignore_glob = [
@@ -287,13 +291,13 @@ def app_direct_cf2(config_cf2, info_response_cf2):
 # mock obj  --------------------------------------------------------------------
 @pytest.fixture(scope="class")
 def mock_info_wf(info_response_wf1):
-    mock_resp = create_mock_resp(return_value=info_response_wf1)
+    mock_resp = create_mock_resp_block(return_value=info_response_wf1)
     return mock_resp
 
 
 @pytest.fixture(scope="class")
 def mock_info_cf(info_response_cf1):
-    mock_resp = create_mock_resp(return_value=info_response_cf1)
+    mock_resp = create_mock_resp_block(return_value=info_response_cf1)
     return mock_resp
 
 
@@ -313,12 +317,14 @@ def mock_sefx_get(
         if key == auth_key_wf1:
             return mock_info_wf
         if key == auth_key_wf2:
-            mock_resp = create_mock_resp(return_value={"mode": "workflow"})
+            mock_resp = create_mock_resp_block(
+                return_value={"mode": "workflow"}
+            )
             return mock_resp
         elif key == auth_key_cf1:
             return mock_info_cf
         elif key == auth_key_cf2:
-            mock_resp = create_mock_resp(return_value=info_response_cf2)
+            mock_resp = create_mock_resp_block(return_value=info_response_cf2)
             return mock_resp
 
         else:
@@ -333,7 +339,7 @@ def mock_sefx_get(
 @pytest.fixture(scope="class")
 def mock_chat_block_wf():
     returned_value = {"data": {"outputs": {"answer": "DIFY REPLIED MESSAGE"}}}
-    return create_mock_resp(return_value=returned_value)
+    return create_mock_resp_block(return_value=returned_value)
 
 
 @pytest.fixture(scope="class")
@@ -360,7 +366,7 @@ def mock_assertee_chat_wf_block(chat_endpoint_wf, auth_key_wf1):
 @pytest.fixture(scope="class")
 def mock_chat_block_cf():
     returned_value = {"answer": "DIFY REPLIED MESSAGE"}
-    return create_mock_resp(return_value=returned_value)
+    return create_mock_resp_block(return_value=returned_value)
 
 
 @pytest.fixture(scope="class")
@@ -391,13 +397,10 @@ def mock_assertee_chat_cf_block(chat_endpoint_cf, auth_key_cf1):
 
 # reply streaming  =============================================================
 
-# FIXME actual provide streamable mock
-
 
 @pytest.fixture(scope="class")
-def mock_chat_stream_wf():
-    returned_value = {"data": {"outputs": {"answer": "DIFY REPLIED MESSAGE"}}}
-    return create_mock_resp(return_value=returned_value)
+def mock_chat_stream_wf1():
+    return create_mock_resp_stream("wf1")
 
 
 @pytest.fixture(scope="class")
@@ -423,9 +426,8 @@ def mock_assertee_chat_wf_stream(chat_endpoint_wf, auth_key_wf1):
 
 
 @pytest.fixture(scope="class")
-def mock_chat_stream_cf():
-    returned_value = {"answer": "DIFY REPLIED MESSAGE"}
-    return create_mock_resp(return_value=returned_value)
+def mock_chat_stream_cf1():
+    return create_mock_resp_stream("cf1")
 
 
 @pytest.fixture(scope="class")

@@ -1,5 +1,5 @@
 import json
-from unittest.mock import Mock
+from unittest.mock import MagicMock, Mock
 
 from dify_open_webui_adapter import PipeCall
 
@@ -32,7 +32,7 @@ def create_pipe_call(*args, **kwargs):
     return PipeCall(body=body, user=user, metadata=metadata)
 
 
-def create_mock_resp(return_value):
+def create_mock_resp_block(return_value):
     mock_resp = Mock()
     mock_resp.status_code = 201
     mock_resp.json.return_value = return_value
@@ -43,7 +43,16 @@ def convert_key2authorization(key):
     return "Bearer " + key
 
 
-# Hack rm below
+def load_stream_entries_testee(entry):
+    return []  # TODO
+
+
+def create_mock_resp_stream(entry):
+    mock_resp = MagicMock()
+    mock_resp.status_code = 201
+
+    mock_resp.iter_lines.return_value = iter(load_stream_entries_testee(entry))
+    return mock_resp
 
 
 def _convert_entries2lines(entries):

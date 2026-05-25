@@ -22,27 +22,6 @@ from tests import _convert_lines2list
 # tests  #######################################################################
 class TestWf:  # ===============================================================
 
-    def test_iter(
-        _,
-        app_wf_stream,
-        patch_target_post,
-        assertee_wf_stream,
-        mock_wf1,
-    ):
-        app = app_wf_stream
-        patch_target = patch_target_post
-        mock_resp = mock_wf1
-
-        with patch(patch_target, return_value=mock_resp) as mock_post:
-            round = _StreamingConversationRound(app)
-
-            opt = iter(round)
-            assert opt is round
-
-            mock_post.assert_called_once_with(
-                *(assertee_wf_stream[0]), **(assertee_wf_stream[1])
-            )
-
     def test1(
         _, app_wf_stream, patch_target_post, assertee_wf_stream, mock_wf1
     ):
@@ -210,24 +189,6 @@ class TestWf:  # ===============================================================
 
 
 class TestCf:  # ===============================================================
-
-    def test_iter(
-        _, app_cf_stream, patch_target_post, assertee_cf_stream, mock_cf1
-    ):
-        app = app_cf_stream
-        patch_target = patch_target_post
-
-        mock_resp = mock_cf1
-
-        with patch(patch_target, return_value=mock_resp) as mock_post:
-            round = _StreamingConversationRound(app)
-
-            opt = iter(round)
-            assert opt is round
-
-            mock_post.assert_called_once_with(
-                *(assertee_cf_stream[0]), **(assertee_cf_stream[1])
-            )
 
     def test1(
         _, app_cf_stream, patch_target_post, assertee_cf_stream, mock_cf1

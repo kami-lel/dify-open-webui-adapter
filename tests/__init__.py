@@ -46,10 +46,12 @@ def convert_key2authorization(key):
 
 def load_stream_entries_testee(entry):
     filepath = (
-        Path(__file__).parent / "testee" / ("stream_entries_" + entry + ".json")
-    ).absolute
+        Path(__file__).parent / "testee" / f"stream_entries_{entry}.json"
+    ).resolve()
 
-    entries = []  # TODO TODO
+    with open(filepath, encoding="utf-8") as f:
+        entries = json.load(f)  # parse JSON array from file
+
     lines = ["data: " + json.dumps(e) for e in entries]
     encoded = [ll.encode(encoding="utf-8") for ll in lines]
 

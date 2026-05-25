@@ -96,7 +96,29 @@ class TestWf:  # ===============================================================
         testee = testee_wf
         sr, _ = testee
         lines = list(sr.iter_lines)
-        assert lines == []
+
+        print(lines)
+        assert lines == [
+            (
+                b'data: {"event": "text_chunk", "workflow_run_id": "b790",'
+                b' "task_id": "04db", "data": {"text": "FIRST RESPONSE'
+                b' MESSAGE", "from_variable_selector": ["4502", "output"]}}'
+            ),
+            (
+                b'data: {"event": "text_chunk", "workflow_run_id": "b790",'
+                b' "task_id": "04db", "data": {"text": "SECOND RESPONSE'
+                b' MESSAGE", "from_variable_selector": ["4502", "output"]}}'
+            ),
+            (
+                b'data: {"event": "text_chunk", "workflow_run_id": "b790",'
+                b' "task_id": "04db", "data": {"text": "THIRD RESPONSE'
+                b' MESSAGE", "from_variable_selector": ["4502", "output"]}}'
+            ),
+            (
+                b'data: {"event": "workflow_finished", "workflow_run_id":'
+                b' "b790", "task_id": "04db", "data": {}}'
+            ),
+        ]
 
 
 class TestCf:  # ==============================================================
@@ -128,4 +150,30 @@ class TestCf:  # ==============================================================
         testee = testee_cf
         sr, _ = testee
         lines = list(sr.iter_lines)
-        assert lines == []  # TODO mpl uni tests
+
+        print(lines)
+        assert lines == [
+            (
+                b'data: {"event": "message", "conversation_id": "c0cf",'
+                b' "message_id": "ff06", "created_at": 1768046345, "task_id":'
+                b' "5863", "id": "ff06", "answer": "FIRST RESPONSE MESSAGE",'
+                b' "from_variable_selector": ["llm", "text"]}'
+            ),
+            (
+                b'data: {"event": "message", "conversation_id": "c0cf",'
+                b' "message_id": "ff06", "created_at": 1768046345, "task_id":'
+                b' "5863", "id": "ff06", "answer": "SECOND RESPONSE MESSAGE",'
+                b' "from_variable_selector": ["llm", "text"]}'
+            ),
+            (
+                b'data: {"event": "message", "conversation_id": "c0cf",'
+                b' "message_id": "ff06", "created_at": 1768046345, "task_id":'
+                b' "5863", "id": "ff06", "answer": "THIRD RESPONSE MESSAGE",'
+                b' "from_variable_selector": ["llm", "text"]}'
+            ),
+            (
+                b'data: {"event": "workflow_finished", "conversation_id":'
+                b' "c0cf", "message_id": "ff06", "created_at": 1768046345,'
+                b' "task_id": "5863", "workflow_run_id": "561d", "data": {}}'
+            ),
+        ]

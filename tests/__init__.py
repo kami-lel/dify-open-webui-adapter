@@ -1,5 +1,6 @@
 import json
 from unittest.mock import MagicMock, Mock
+from pathlib import Path
 
 from dify_open_webui_adapter import PipeCall
 
@@ -44,7 +45,15 @@ def convert_key2authorization(key):
 
 
 def load_stream_entries_testee(entry):
-    return []  # TODO
+    filepath = (
+        Path(__file__).parent / "testee" / ("stream_entries_" + entry + ".json")
+    ).absolute
+
+    entries = []  # TODO TODO
+    lines = ["data: " + json.dumps(e) for e in entries]
+    encoded = [ll.encode(encoding="utf-8") for ll in lines]
+
+    return encoded
 
 
 def create_mock_resp_stream(entry):
@@ -53,17 +62,3 @@ def create_mock_resp_stream(entry):
 
     mock_resp.iter_lines.return_value = iter(load_stream_entries_testee(entry))
     return mock_resp
-
-
-def _convert_entries2lines(entries):
-    return ["data: " + json.dumps(e) for e in entries]
-
-
-def _convert_lines2list(entries):
-    return [
-        ll.encode(encoding="utf-8") for ll in _convert_entries2lines(entries)
-    ]
-
-
-def _convert_entries2iter(entries):
-    return iter(_convert_lines2list(entries))

@@ -172,10 +172,9 @@ class TestWF:  # ===============================================================
             ]
 
 
-# FIXME
-class OTestCF:  # ===============================================================
+class TestCF:  # ===============================================================
 
-    def test1(_, testee_cf1):
+    def test1(_, testee_cf1):  # BUG
         sr, _ = testee_cf1
 
         assert next(sr) == "FIRST RESPONSE MESSAGE"

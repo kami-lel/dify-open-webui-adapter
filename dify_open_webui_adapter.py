@@ -283,12 +283,13 @@ class ResponseStream:
                 elif event is _SSEType.text_chunk:
                     text = data["data"]["text"]
 
+                # Fixme conversation id extraction from stream
                 # extract conversation_id for Chatflow, if it's empty
-                if (
-                    isinstance(self.app, ChatflowApp)
-                    and not self.app.conversation_id
-                ):
-                    self.app.conversation_id = data["conversation_id"]
+                # if (
+                #     isinstance(self.app, ChatflowApp)
+                #     and not self.app.conversation_id
+                # ):
+                #     self.app.conversation_id = data["conversation_id"]
 
             except StopIteration as err:
                 raise ValueError(

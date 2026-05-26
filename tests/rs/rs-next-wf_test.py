@@ -1,26 +1,34 @@
 """
-rs-next_test.py
+rs-next-wf_test.py
 
 Unit Tests (using pytest) for:
 
-- .__next__()
-
-using stream_entries_wf1.json
+.__next__() using wf
 """
 
-# TODO
-
-
-# Pytest unit tests  ###########################################################
-
-
 from unittest.mock import patch
+
+import pytest
 
 from dify_open_webui_adapter import ResponseStream
 from tests import create_mock_resp_stream, create_pipe_call
 
+# Pytest unit tests  ###########################################################
 
-class TestWF:  # ===============================================================
+
+class TestNext:
+
+    def test1(_, testee_wf1):
+        sr, _ = testee_wf1
+
+        assert next(sr) == "FIRST RESPONSE MESSAGE"
+        assert next(sr) == "SECOND RESPONSE MESSAGE"
+        assert next(sr) == "THIRD RESPONSE MESSAGE"
+        with pytest.raises(StopIteration):
+            next(sr)
+
+
+class TestList:
 
     def test1(_, testee_wf1):
         sr, _ = testee_wf1
@@ -170,13 +178,3 @@ class TestWF:  # ===============================================================
                 " garden",
                 ".",
             ]
-
-
-class TestCF:  # ===============================================================
-
-    def test1(_, testee_cf1):  # BUG
-        sr, _ = testee_cf1
-
-        assert next(sr) == "FIRST RESPONSE MESSAGE"
-        assert next(sr) == "SECOND RESPONSE MESSAGE"
-        assert next(sr) == "THIRD RESPONSE MESSAGE"

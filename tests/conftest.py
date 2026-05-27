@@ -22,9 +22,10 @@ from tests import (
     convert_key2authorization,
     create_mock_resp_block,
     create_mock_resp_stream,
+    load_stream_entries_testee,
 )
 
-# Hack remove test ignoring
+# HACK remove test ignoring
 collect_ignore_glob = [
     "round/*",
 ]
@@ -400,7 +401,8 @@ def mock_assertee_chat_cf_block(chat_endpoint_cf, auth_key_cf1):
 
 @pytest.fixture(scope="class")
 def mock_chat_stream_wf1():
-    return create_mock_resp_stream("wf1")
+    entries = load_stream_entries_testee("wf1")
+    return create_mock_resp_stream(entries)
 
 
 @pytest.fixture(scope="class")
@@ -427,7 +429,8 @@ def mock_assertee_chat_wf_stream(chat_endpoint_wf, auth_key_wf1):
 
 @pytest.fixture(scope="class")
 def mock_chat_stream_cf1():
-    return create_mock_resp_stream("cf1")
+    entries = load_stream_entries_testee("cf1")
+    return create_mock_resp_stream(entries)
 
 
 @pytest.fixture(scope="class")

@@ -44,7 +44,7 @@ def convert_key2authorization(key):
     return "Bearer " + key
 
 
-def load_stream_entries_testee(entry, should_insert_event_ping=False):
+def load_stream_entries_testee(entry):
     filepath = (
         Path(__file__).parent / "testee" / f"stream_entries_{entry}.json"
     ).resolve()
@@ -52,23 +52,14 @@ def load_stream_entries_testee(entry, should_insert_event_ping=False):
     with open(filepath, encoding="utf-8") as f:
         entries = json.load(f)  # parse JSON array from file
 
-    lines = ["data: " + json.dumps(e) for e in entries]
-
-    if should_insert_event_ping:
-        lines.insert(1, "event: ping")
-
-    encoded = [ll.encode(encoding="utf-8") for ll in lines]
-
-    return encoded
+    return ["data: " + json.dumps(e) for e in entries]
 
 
-def create_mock_resp_stream(entry, should_insert_event_ping=False):
+def create_mock_resp_stream(entries):
     mock_resp = MagicMock()
     mock_resp.status_code = 201
 
-    mock_resp.iter_lines.return_value = iter(
-        load_stream_entries_testee(
-            entry, should_insert_event_ping=should_insert_event_ping
-        )
-    )
+    encoded = [ll.encode(encoding="utf-8") for ll in entries]
+
+    mock_resp.iter_lines.return_value = iter(encoded)
     return mock_resp

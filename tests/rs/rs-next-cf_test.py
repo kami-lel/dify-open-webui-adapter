@@ -11,7 +11,11 @@ from unittest.mock import patch
 import pytest
 
 from dify_open_webui_adapter import ResponseStream
-from tests import create_mock_resp_stream, create_pipe_call
+from tests import (
+    create_mock_resp_stream,
+    create_pipe_call,
+    load_stream_entries_testee,
+)
 
 # Pytest unit tests  ###########################################################
 
@@ -51,9 +55,9 @@ class TestList:
         call = create_pipe_call(model_id=model_id, stream=True)
         model.call = call
 
-        mock_resp = create_mock_resp_stream(
-            "cf1", should_insert_event_ping=True
-        )
+        entries = load_stream_entries_testee("cf1")
+        entries.insert(0, "event: ping")
+        mock_resp = create_mock_resp_stream(entries)
 
         with patch(patch_target, return_value=mock_resp):
             sr = ResponseStream(app)
@@ -76,7 +80,8 @@ class TestList:
         call = create_pipe_call(model_id=model_id, stream=True)
         model.call = call
 
-        mock_resp = create_mock_resp_stream("cf2")
+        entries = load_stream_entries_testee("cf2")
+        mock_resp = create_mock_resp_stream(entries)
 
         with patch(patch_target, return_value=mock_resp):
             sr = ResponseStream(app)
@@ -119,7 +124,8 @@ class TestList:
         call = create_pipe_call(model_id=model_id, stream=True)
         model.call = call
 
-        mock_resp = create_mock_resp_stream("cf3")
+        entries = load_stream_entries_testee("cf3")
+        mock_resp = create_mock_resp_stream(entries)
 
         with patch(patch_target, return_value=mock_resp):
             sr = ResponseStream(app)

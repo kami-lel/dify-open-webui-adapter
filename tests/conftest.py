@@ -25,11 +25,6 @@ from tests import (
     load_stream_entries_testee,
 )
 
-# HACK remove test ignoring
-collect_ignore_glob = [
-    "round/*",
-]
-
 # pytest fixtures  #############################################################
 
 

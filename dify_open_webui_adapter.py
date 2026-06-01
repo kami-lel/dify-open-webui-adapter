@@ -195,7 +195,8 @@ class DifyAppType(Enum):
 # StreamResponse  ==============================================================
 
 
-class _SSEType(Flag):
+
+class _SSEType(Flag):  # *******************************************************
     """
     represent a single **relevant** SSE specified by Dify Backend API
     """
@@ -222,7 +223,18 @@ class _SSEType(Flag):
         return self != self.IRRELEVANT
 
 
-class ResponseStream:
+class _ResponseStreamEntryData(BaseModel):  # **********************************
+
+    text: str
+
+
+class _ResponseStreamEntry(BaseModel):  # **************************************
+
+    pass
+
+
+
+class ResponseStream:  # *******************************************************
     """
     represents a single streaming conversation response round with Dify
 
@@ -296,7 +308,7 @@ class ResponseStream:
                     "exhaust text/event-stream without ending event"
                 ) from err
 
-            except UnicodeDecodeError as err:
+            except UnicodeDecodeError as err:  # FIXME use BaseModel
                 err.args = (
                     "fail to decode text/event-stream: {}".format(str(err)),
                     *(err.args[1:]),

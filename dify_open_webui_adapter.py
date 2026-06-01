@@ -34,7 +34,7 @@ import json
 from typing import Optional
 import requests
 
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, Field, computed_field, model_validator
 
 
 # helpers  #####################################################################
@@ -325,14 +325,14 @@ class ResponseStream:  # *******************************************************
                     "exhaust text/event-stream without ending event"
                 ) from err
 
-            except UnicodeDecodeError as err:  # FIXME use BaseModel
+            except UnicodeDecodeError as err:
                 err.args = (
                     "fail to decode text/event-stream: {}".format(str(err)),
                     *(err.args[1:]),
                 )
                 raise  # re-raise
 
-            except json.JSONDecodeError as err:
+            except json.JSONDecodeError as err:  # FIXME use BaseModel
                 err.args = (
                     "fail to parse text/event-stream as JSON: {}: {}".format(
                         err.args[0], raw
@@ -341,7 +341,7 @@ class ResponseStream:  # *******************************************************
                 )
                 raise  # re-raise
 
-            except KeyError as err:
+            except KeyError as err:  # FIXME use BaseModel
                 raise KeyError(
                     "miss key in text/event-stream content: {}".format(str(err))
                 ) from err

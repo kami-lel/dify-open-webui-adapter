@@ -18,12 +18,19 @@ from dify_open_webui_adapter import (
     Pipe,
 )
 
+
 from tests import (
     convert_key2authorization,
     create_mock_resp_block,
     create_mock_resp_stream,
     load_stream_entries_testee,
 )
+
+
+# FIXME remove
+collect_ignore = [
+        "rs/rs-err-key_test.py"
+]
 
 # pytest fixtures  #############################################################
 

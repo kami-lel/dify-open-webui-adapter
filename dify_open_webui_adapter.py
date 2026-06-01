@@ -225,13 +225,30 @@ class _SSEType(Flag):  # *******************************************************
 
 class _ResponseStreamEntryData(BaseModel):  # **********************************
 
-    text: str
+    text: str = Field(..., min_length=1)
 
 
 class _ResponseStreamEntry(BaseModel):  # **************************************
 
-    pass
+    event: str = Field(..., min_length=1)
+    data: Optional[_ResponseStreamEntryData] = None
+    answer: Optional[str] = Field(None, min_length=1)
 
+    @model_validator(mode="after")
+    def check_data_or_answer(self):
+        """
+        validate model cross-field constraints
+
+        ensure at least one of ``data`` or ``answer`` is present, and that
+        ``answer`` is non-empty when provided
+
+
+        :return:
+        :rtype: _ResponseStreamEntry
+        """
+        if self.data is None and self.answer is None:
+            raise ValueError("data or answer must be present")
+        return self
 
 
 class ResponseStream:  # *******************************************************

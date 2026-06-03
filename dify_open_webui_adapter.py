@@ -34,7 +34,13 @@ import json
 from typing import Optional
 import requests
 
-from pydantic import BaseModel, Field, computed_field, model_validator
+from pydantic import (
+    BaseModel,
+    Field,
+    computed_field,
+    field_validator,
+    model_validator,
+)
 
 
 # helpers  #####################################################################
@@ -195,7 +201,6 @@ class DifyAppType(Enum):
 # StreamResponse  ==============================================================
 
 
-
 class _SSEType(Flag):  # *******************************************************
     """
     represent a single **relevant** SSE specified by Dify Backend API
@@ -215,12 +220,24 @@ class _SSEType(Flag):  # *******************************************************
     # events which indicate end of current round response
     IS_END = workflow_finished | message_end
 
-    def __bool__(self):
-        """
-        :return: whether event is a relevant event
-        :rtype: bool
-        """
-        return self != self.IRRELEVANT
+
+# Stream Lines  ****************************************************************
+
+
+class _StreamLineBase(BaseModel):  # +++++++++++++++++++++++++++++++++++++++++++
+
+    event: _SSEType
+
+    @field_validator("event", mode="before")
+    @classmethod
+    def _parse_event(cls, v):
+        try:
+            return _SSEType[v]
+        except KeyError:
+            return None
+
+
+# TODO TODO use stepped
 
 
 class _ResponseStreamEntryData(BaseModel):  # **********************************
@@ -266,18 +283,20 @@ class ResponseStream:  # *******************************************************
     _STREAM_PREFIX = "data: "
 
     def __init__(self, app):
-        self.app = app
+        self._app = app
         # cache the response for closing when finished this round
-        self.response = self.app.open_chat_response()
-        self.iter_lines = self.response.iter_lines()
+        self._response = self._app.open_chat_response()
+        self._iter_lines = self._response.iter_lines()
 
-    # implement iter()  --------------------------------------------------------
+        self._debug_lines = None
+
+    # implement iter()  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     def __iter__(self):
         return self  # make self an Iterator
 
     def __next__(self):
-        debug_lines = ["\n"]
+        self._debug_lines = ["\n"]
 
         text = None
         event = _SSEType.IRRELEVANT  # default
@@ -285,20 +304,9 @@ class ResponseStream:  # *******************************************************
         # consume self.iter_lines until find relevant events
         while not event:
             try:
-                raw = next(self.iter_lines)
+                raw_line = next(self._iter_lines)
 
-                line = raw.decode(self._TEXT_STREAM_ENCODING)
-                if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
-                    debug_lines.append(line)
-
-                # deal with data: prefix
-                if not line.startswith(self._STREAM_PREFIX):
-                    continue  # not start w/ "data: ", skip
-                line = line[len(self._STREAM_PREFIX) :]
-
-                # parse data as JSON
-                data = json.loads(line)
-                event_value = data["event"]
+                line_dict = self._convert_raw_line2dict(raw_line)
 
                 # deal with only relevant types of SSE
                 try:
@@ -335,7 +343,7 @@ class ResponseStream:  # *******************************************************
             except json.JSONDecodeError as err:  # FIXME use BaseModel
                 err.args = (
                     "fail to parse text/event-stream as JSON: {}: {}".format(
-                        err.args[0], raw
+                        err.args[0], raw_line
                     ),
                     *(err.args[1:]),
                 )
@@ -350,18 +358,39 @@ class ResponseStream:  # *******************************************************
 
         if event in _SSEType.IS_END:  # end of current respond
             if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
-                debug_lines.insert(1, "# LAST PASS")
-                return "\n\n".join(debug_lines)
+                self._debug_lines.insert(1, "# LAST PASS")
+                return "\n\n".join(self._debug_lines)
 
-            self.response.close()
+            self._response.close()
             raise StopIteration
 
         if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
-            debug_lines.insert(1, "# PASS")
-            return "\n\n".join(debug_lines)
+            self._debug_lines.insert(1, "# PASS")
+            return "\n\n".join(self._debug_lines)
 
         # a text chunk as part of current respond
         return text
+
+    # private methods  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    def _convert_raw_line2dict(self, raw_line):
+        # BUG BUG working
+        try:
+            decoded = raw_line.decode(self._TEXT_STREAM_ENCODING)
+            if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
+                self._debug_lines.append(decoded)
+
+            # deal with "data: " prefix
+            if not line.startswith(self._STREAM_PREFIX):
+                continue  # not start w/ "data: ", skip
+            line = line[len(self._STREAM_PREFIX) :]
+
+            # parse data as JSON
+            data = json.loads(line)
+            event_value = data["event"]
+
+        except:
+            pass
 
 
 class BaseDifyApp:  # ==========================================================

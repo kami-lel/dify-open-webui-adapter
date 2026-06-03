@@ -225,16 +225,29 @@ class _SSEType(Flag):  # *******************************************************
 @dataclass
 class _SSELine:  # *************************************************************
 
-    # FIXME FIXME organize
-
-    _TEXT_STREAM_ENCODING = "utf-8"
-    _STREAM_PREFIX = "data: "
-
     event: _SSEType = field(default=None)
     text: str = field(default=None)
 
     @classmethod
-    def from_raw_line(cls, raw_line):
+    def parse_from_raw_line(cls, raw_line):
+        """
+        parse one ``text/event-stream`` raw line into an :class:`_SSELine`
+
+        decodes ``raw_line``, checks ``_STREAM_PREFIX``, parses JSON,
+        resolves ``data["event"]`` to a known ``_SSEType``, and extracts text
+        for supported text-carrying events.
+
+
+        :param raw_line: raw bytes from the stream
+        :type raw_line: bytes
+        :return: parsed ``_SSELine``; returns an irrelevant-event line
+            when prefix/event type is not recognized
+        :rtype: _SSELine
+        :raises UnicodeDecodeError: decode failure using
+            ``_TEXT_STREAM_ENCODING``
+        :raises json.JSONDecodeError: JSON parse failure
+        :raises KeyError: missing required keys in parsed payload
+        """
         # decode  --------------------------------------------------------------
         try:
             line = raw_line.decode(cls._TEXT_STREAM_ENCODING)
@@ -247,7 +260,7 @@ class _SSELine:  # *************************************************************
 
         # prefix check => skip  ------------------------------------------------
         if not line.startswith(cls._STREAM_PREFIX):
-            return cls(event=_SSEType.IRRELEVANT)
+            return cls._create_irrelevant_event_line()
         line = line[len(cls._STREAM_PREFIX) :]
 
         # JSON parse  ----------------------------------------------------------
@@ -273,7 +286,7 @@ class _SSELine:  # *************************************************************
         try:
             event = _SSEType[event_value]
         except KeyError:  # not a relevant event => skip
-            return cls(event=_SSEType.IRRELEVANT)
+            return cls._create_irrelevant_event_line()
 
         # extract text; non-text events (IS_END etc.) carry no text  -----------
         try:
@@ -289,6 +302,21 @@ class _SSELine:  # *************************************************************
             ) from err
 
         return cls(text=text, event=event)
+
+    # helpers  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    _TEXT_STREAM_ENCODING = "utf-8"
+    _STREAM_PREFIX = "data: "
+
+    @classmethod
+    def _create_irrelevant_event_line(cls):
+        """
+        create and return irrelevant ``_SSELine`` instance
+
+        :return: ``_SSELine`` with ``event`` set to ``_SSEType.IRRELEVANT``
+        :rtype: _SSELine
+        """
+        return cls(event=_SSEType.IRRELEVANT)
 
 
 class ResponseStream:  # *******************************************************
@@ -326,10 +354,11 @@ class ResponseStream:  # *******************************************************
             try:
                 raw_line = next(self._iter_lines)
 
-                line = _SSELine.from_raw_line(raw_line)
+                line = _SSELine.parse_from_raw_line(raw_line)
+                # BUG BUG event not updated
 
                 # deal with only relevant types of SSE
-                if not bool(line.event):
+                if not line.event:
                     continue
 
                 # Fixme conversation id extraction from stream

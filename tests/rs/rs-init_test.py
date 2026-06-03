@@ -6,20 +6,7 @@ Unit Tests (using pytest) for:
 ResponseStream.__init__()
 """
 
-from dify_open_webui_adapter import ResponseStream
-
-# BUG BUG
-
 # Pytest unit tests  ###########################################################
-
-
-class TestConst:
-
-    def test1(_):
-        assert ResponseStream._TEXT_STREAM_ENCODING == "utf-8"
-
-    def test2(_):
-        assert ResponseStream._STREAM_PREFIX == "data: "
 
 
 class TestWf:  # ===============================================================
@@ -28,7 +15,7 @@ class TestWf:  # ===============================================================
     def test_app(_, testee_wf1, pipe_obj, model_id_wf1):
         testee = testee_wf1
         sr, _ = testee
-        app = sr.app
+        app = sr._app
 
         assert app is pipe_obj.apps[model_id_wf1]
 
@@ -36,7 +23,7 @@ class TestWf:  # ===============================================================
     def test_resp_obj(_, testee_wf1, mock_chat_stream_wf1):
         testee = testee_wf1
         sr, _ = testee
-        resp = sr.response
+        resp = sr._response
 
         assert resp is mock_chat_stream_wf1
 
@@ -50,7 +37,7 @@ class TestWf:  # ===============================================================
     def test_lines(_, testee_wf1):
         testee = testee_wf1
         sr, _ = testee
-        lines = list(sr.iter_lines)
+        lines = list(sr._iter_lines)
 
         print(lines)
         assert lines == [
@@ -82,7 +69,7 @@ class TestCf:  # ==============================================================
     def test_app(_, testee_cf1, pipe_obj, model_id_cf1):
         testee = testee_cf1
         sr, _ = testee
-        app = sr.app
+        app = sr._app
 
         assert app is pipe_obj.apps[model_id_cf1]
 
@@ -90,7 +77,7 @@ class TestCf:  # ==============================================================
     def test_resp_obj(_, testee_cf1, mock_chat_stream_cf1):
         testee = testee_cf1
         sr, _ = testee
-        resp = sr.response
+        resp = sr._response
 
         assert resp is mock_chat_stream_cf1
 
@@ -104,7 +91,7 @@ class TestCf:  # ==============================================================
     def test_lines(_, testee_cf1):
         testee = testee_cf1
         sr, _ = testee
-        lines = list(sr.iter_lines)
+        lines = list(sr._iter_lines)
 
         print(lines)
         assert lines == [

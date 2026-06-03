@@ -29,6 +29,7 @@ DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE = False
 # pylint: disable=wrong-import-position
 
 
+from dataclasses import dataclass, field
 from enum import Enum, Flag, auto
 import json
 from typing import Optional
@@ -221,51 +222,73 @@ class _SSEType(Flag):  # *******************************************************
     IS_END = workflow_finished | message_end
 
 
-# Stream Lines  ****************************************************************
+@dataclass
+class _SSELine:  # *************************************************************
 
+    # FIXME FIXME organize
 
-class _StreamLineBase(BaseModel):  # +++++++++++++++++++++++++++++++++++++++++++
+    _TEXT_STREAM_ENCODING = "utf-8"
+    _STREAM_PREFIX = "data: "
 
-    event: _SSEType
+    event: _SSEType = field(default=None)
+    text: str = field(default=None)
 
-    @field_validator("event", mode="before")
     @classmethod
-    def _parse_event(cls, v):
+    def from_raw_line(cls, raw_line):
+        # decode  --------------------------------------------------------------
         try:
-            return _SSEType[v]
-        except KeyError:
-            return None
+            line = raw_line.decode(cls._TEXT_STREAM_ENCODING)
+        except UnicodeDecodeError as err:
+            err.args = (
+                "fail to decode text/event-stream: {}".format(str(err)),
+                *(err.args[1:]),
+            )
+            raise
 
+        # prefix check => skip  ------------------------------------------------
+        if not line.startswith(cls._STREAM_PREFIX):
+            return cls(event=_SSEType.IRRELEVANT)
+        line = line[len(cls._STREAM_PREFIX) :]
 
-# TODO TODO use stepped
+        # JSON parse  ----------------------------------------------------------
+        try:
+            data = json.loads(line)
+        except json.JSONDecodeError as err:
+            err.args = (
+                "fail to parse text/event-stream as JSON: {}: {}".format(
+                    err.args[0], raw_line
+                ),
+                *(err.args[1:]),
+            )
+            raise
 
+        # resolve event type  --------------------------------------------------
+        try:
+            event_value = data["event"]
+        except KeyError as err:
+            raise KeyError(
+                "miss key in text/event-stream content: {}".format(str(err))
+            ) from err
 
-class _ResponseStreamEntryData(BaseModel):  # **********************************
+        try:
+            event = _SSEType[event_value]
+        except KeyError:  # not a relevant event => skip
+            return cls(event=_SSEType.IRRELEVANT)
 
-    text: str = Field(..., min_length=1)
+        # extract text; non-text events (IS_END etc.) carry no text  -----------
+        try:
+            if event is _SSEType.message:
+                text = data["answer"]
+            elif event is _SSEType.text_chunk:
+                text = data["data"]["text"]
+            else:
+                return cls(event=event)
+        except KeyError as err:
+            raise KeyError(
+                "miss key in text/event-stream content: {}".format(str(err))
+            ) from err
 
-
-class _ResponseStreamEntry(BaseModel):  # **************************************
-
-    event: str = Field(..., min_length=1)
-    data: Optional[_ResponseStreamEntryData] = None
-    answer: Optional[str] = Field(None, min_length=1)
-
-    @model_validator(mode="after")
-    def check_data_or_answer(self):
-        """
-        validate model cross-field constraints
-
-        ensure at least one of ``data`` or ``answer`` is present, and that
-        ``answer`` is non-empty when provided
-
-
-        :return:
-        :rtype: _ResponseStreamEntry
-        """
-        if self.data is None and self.answer is None:
-            raise ValueError("data or answer must be present")
-        return self
+        return cls(text=text, event=event)
 
 
 class ResponseStream:  # *******************************************************
@@ -278,9 +301,6 @@ class ResponseStream:  # *******************************************************
     :raises json.JSONDecodeError:
     :raises KeyError:
     """
-
-    _TEXT_STREAM_ENCODING = "utf-8"
-    _STREAM_PREFIX = "data: "
 
     def __init__(self, app):
         self._app = app
@@ -306,23 +326,11 @@ class ResponseStream:  # *******************************************************
             try:
                 raw_line = next(self._iter_lines)
 
-                line_dict = self._convert_raw_line2dict(raw_line)
-                if not line_dict:
-                    continue
-
-                # TODO TODO
+                line = _SSELine.from_raw_line(raw_line)
 
                 # deal with only relevant types of SSE
-                try:
-                    event = _SSEType[event_value]
-                except KeyError:  # not a relevant event
+                if not bool(line.event):
                     continue
-
-                # extract text
-                if event is _SSEType.message:
-                    text = data["answer"]
-                elif event is _SSEType.text_chunk:
-                    text = data["data"]["text"]
 
                 # Fixme conversation id extraction from stream
                 # extract conversation_id for Chatflow, if it's empty
@@ -335,11 +343,6 @@ class ResponseStream:  # *******************************************************
             except StopIteration as err:
                 raise ValueError(
                     "exhaust text/event-stream without ending event"
-                ) from err
-
-            except KeyError as err:  # FIXME use BaseModel
-                raise KeyError(
-                    "miss key in text/event-stream content: {}".format(str(err))
                 ) from err
 
         # an relevant event is found  ------------------------------------------
@@ -358,39 +361,6 @@ class ResponseStream:  # *******************************************************
 
         # a text chunk as part of current respond
         return text
-
-    # private methods  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    def _convert_raw_line2dict(self, raw_line):
-        try:
-            decoded = raw_line.decode(self._TEXT_STREAM_ENCODING)
-            if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
-                self._debug_lines.append(decoded)
-
-            # deal with "data: " prefix
-            if not decoded.startswith(self._STREAM_PREFIX):
-                return None  # not start w/ "data: ", skip
-
-            line = decoded[len(self._STREAM_PREFIX) :]
-
-            # parse data as JSON
-            return json.loads(line)
-
-        except UnicodeDecodeError as err:
-            err.args = (
-                "fail to decode text/event-stream: {}".format(str(err)),
-                *(err.args[1:]),
-            )
-            raise  # re-raise
-
-        except json.JSONDecodeError as err:
-            err.args = (
-                "fail to parse text/event-stream as JSON: {}: {}".format(
-                    err.args[0], raw_line
-                ),
-                *(err.args[1:]),
-            )
-            raise  # re-raise
 
 
 class BaseDifyApp:  # ==========================================================

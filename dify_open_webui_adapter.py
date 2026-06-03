@@ -307,6 +307,10 @@ class ResponseStream:  # *******************************************************
                 raw_line = next(self._iter_lines)
 
                 line_dict = self._convert_raw_line2dict(raw_line)
+                if not line_dict:
+                    continue
+
+                # TODO TODO
 
                 # deal with only relevant types of SSE
                 try:
@@ -333,22 +337,6 @@ class ResponseStream:  # *******************************************************
                     "exhaust text/event-stream without ending event"
                 ) from err
 
-            except UnicodeDecodeError as err:
-                err.args = (
-                    "fail to decode text/event-stream: {}".format(str(err)),
-                    *(err.args[1:]),
-                )
-                raise  # re-raise
-
-            except json.JSONDecodeError as err:  # FIXME use BaseModel
-                err.args = (
-                    "fail to parse text/event-stream as JSON: {}: {}".format(
-                        err.args[0], raw_line
-                    ),
-                    *(err.args[1:]),
-                )
-                raise  # re-raise
-
             except KeyError as err:  # FIXME use BaseModel
                 raise KeyError(
                     "miss key in text/event-stream content: {}".format(str(err))
@@ -374,23 +362,35 @@ class ResponseStream:  # *******************************************************
     # private methods  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     def _convert_raw_line2dict(self, raw_line):
-        # BUG BUG working
         try:
             decoded = raw_line.decode(self._TEXT_STREAM_ENCODING)
             if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
                 self._debug_lines.append(decoded)
 
             # deal with "data: " prefix
-            if not line.startswith(self._STREAM_PREFIX):
-                continue  # not start w/ "data: ", skip
-            line = line[len(self._STREAM_PREFIX) :]
+            if not decoded.startswith(self._STREAM_PREFIX):
+                return None  # not start w/ "data: ", skip
+
+            line = decoded[len(self._STREAM_PREFIX) :]
 
             # parse data as JSON
-            data = json.loads(line)
-            event_value = data["event"]
+            return json.loads(line)
 
-        except:
-            pass
+        except UnicodeDecodeError as err:
+            err.args = (
+                "fail to decode text/event-stream: {}".format(str(err)),
+                *(err.args[1:]),
+            )
+            raise  # re-raise
+
+        except json.JSONDecodeError as err:
+            err.args = (
+                "fail to parse text/event-stream as JSON: {}: {}".format(
+                    err.args[0], raw_line
+                ),
+                *(err.args[1:]),
+            )
+            raise  # re-raise
 
 
 class BaseDifyApp:  # ==========================================================

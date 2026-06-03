@@ -301,7 +301,22 @@ class _SSELine:  # *************************************************************
                 "miss key in text/event-stream content: {}".format(str(err))
             ) from err
 
+        # Fixme conversation id extraction from stream
+        # extract conversation_id for Chatflow, if it's empty
+        # if (
+        #     isinstance(self.app, ChatflowApp)
+        #     and not self.app.conversation_id
+        # ):
+        #     self.app.conversation_id = data["conversation_id"]
+
         return cls(text=text, event=event)
+
+    def __bool__(self):
+        """
+        :return: whether the line contains a relevant event
+        :rtype: bool
+        """
+        return bool(self.event)
 
     # helpers  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -346,28 +361,13 @@ class ResponseStream:  # *******************************************************
     def __next__(self):
         self._debug_lines = ["\n"]
 
-        text = None
-        event = _SSEType.IRRELEVANT  # default
+        line = None
 
         # consume self.iter_lines until find relevant events
-        while not event:
+        while not line:
             try:
                 raw_line = next(self._iter_lines)
-
                 line = _SSELine.parse_from_raw_line(raw_line)
-                # BUG BUG event not updated
-
-                # deal with only relevant types of SSE
-                if not line.event:
-                    continue
-
-                # Fixme conversation id extraction from stream
-                # extract conversation_id for Chatflow, if it's empty
-                # if (
-                #     isinstance(self.app, ChatflowApp)
-                #     and not self.app.conversation_id
-                # ):
-                #     self.app.conversation_id = data["conversation_id"]
 
             except StopIteration as err:
                 raise ValueError(
@@ -376,7 +376,7 @@ class ResponseStream:  # *******************************************************
 
         # an relevant event is found  ------------------------------------------
 
-        if event in _SSEType.IS_END:  # end of current respond
+        if line.event in _SSEType.IS_END:  # end of current respond
             if DEBUG_CONVERSATION_ROUND_DIRECT_RESPONSE:
                 self._debug_lines.insert(1, "# LAST PASS")
                 return "\n\n".join(self._debug_lines)
@@ -389,7 +389,7 @@ class ResponseStream:  # *******************************************************
             return "\n\n".join(self._debug_lines)
 
         # a text chunk as part of current respond
-        return text
+        return line.text
 
 
 class BaseDifyApp:  # ==========================================================

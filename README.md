@@ -1,8 +1,8 @@
 # dify-open-webui-adapter README
 
 Integrate **Open WebUI** and **Dify** by exposing a Dify App
-(Workflow or Chatflow) as Open WebUI model using Open WebUI's
-[Pipe Functions](https://docs.openwebui.com/features/plugin/functions/pipe/)
+(Workflow or Chatflow) as an Open WebUI model using Open WebUI's
+[Pipe Functions](https://docs.openwebui.com/features/plugin/functions/pipe/).
 
 
 
@@ -120,121 +120,48 @@ APP_MODEL_CONFIGS = [
 
 ## Control Flow
 
-Entities Relationships:
-
 ```mermaid
 erDiagram
-    Pipe ||--o{ Model: contains
-    Model ||--|| App: contains
+    Pipe ||--o{ OWUModel: contains
+    OWUModel ||--|| BaseDifyApp: contains
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-#### function initialization
+#### Initialization
 
 ```mermaid
 sequenceDiagram
-    OWU->>pipe: initialize function
-    note over OWU,pipe: pipe.__init__()
-
-    pipe->>model: create model by:
-    note over pipe,model: model.__init__()
-
-    model->>app: get app type & name by
-    note over model,app: BaseDifyAPp.get_app_type_and_name()
-
-    app->>Dify: request by providing
-    note over app,Dify: key
-    Dify->>app: return app type & name
-
-    app->>model:
-
-    model->>app: create app by:
-    note over model,app: app.__init__()
-
-    app->>model: save app into:
-    note over app,model: model.app
-
-    model->>pipe: save model into:
-    note over pipe,model: pipe.model_containers
-
-    pipe->>OWU:
+    OWU->>Pipe: pipe.__init__()
+    Pipe->>OWUModel: create per config entry
+    OWUModel->>BaseDifyApp: GET /info (fetch type & name)
+    BaseDifyApp->>Dify: request with key
+    Dify->>BaseDifyApp: app type & name
+    BaseDifyApp->>OWUModel: create WorkflowApp or ChatflowApp
+    OWUModel->>Pipe: stored in models{} and apps{}
+    Pipe->>OWU:
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-#### models listing
+#### Models Listing
 
 ```mermaid
 sequenceDiagram
-    OWU->>pipe: get list of models by:
-    note over OWU,pipe: pipe.pipes()
-
-    pipe->>model: per model in pipe.model_containers:
-    note over pipe,model: model.get_model_id_and_name()
-
-    model->>pipe: return model id & name
-
-    pipe->>OWU:return model infos
+    OWU->>Pipe: pipe.pipes()
+    Pipe->>OWUModel: collect id & name per model
+    OWUModel->>Pipe: return model info
+    Pipe->>OWU: return [{id, name}, ...]
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-#### replying
+#### Replying
 
 ```mermaid
 sequenceDiagram
-    OWU->>pipe: ask for reply
-    note over OWU,pipe: pipe.pipe()
-
-    pipe->>model: find model by model id, then:
-    note over pipe,model: model.reply()
-
-    model->>app: update:
-    note over model,app: app.current_user_msg_content()
-    app->>model:
-
-    model->>app: update:
-    note over model,app: app.current_enable_stream()
-    app->>model:
-
-    model->>app:
-    note over model,app: app.reply()
-
-    app->>Dify:
-    Dify->>app:
-
-    app->>model:
-    model->>pipe:
-    pipe->>OWU:
+    OWU->>Pipe: pipe.pipe()
+    Pipe->>OWUModel: model.reply(call)
+    OWUModel->>BaseDifyApp: app.reply()
+    BaseDifyApp->>Dify: POST /workflows/run or /chat-messages
+    Dify->>BaseDifyApp: response (blocking or SSE stream)
+    BaseDifyApp->>OWUModel: str or ResponseStream
+    OWUModel->>Pipe:
+    Pipe->>OWU:
 ```
+
 
